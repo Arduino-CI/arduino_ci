@@ -28,9 +28,9 @@ module ArduinoCI
       def autolocate
         ret = new
 
-        osx_place = "/Applications/Arduino.app/Contents/MacOS/Arduino"
+        osx_place = "/Applications/Arduino.app/Contents/MacOS"
         if File.exist? osx_place
-          ret.cmd_path = File.join(osx_place, "arduino")
+          ret.cmd_path = File.join(osx_place, "Arduino")
           ret.lib_dir = File.join(osx_place, "Libraries")
           return ret
         end
