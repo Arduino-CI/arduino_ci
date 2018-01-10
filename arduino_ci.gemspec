@@ -6,7 +6,7 @@ require "arduino_ci/version"
 Gem::Specification.new do |spec|
   spec.name          = "arduino_ci"
   spec.version       = ArduinoCI::VERSION
-  spec.licenses      = ['Apache 2.0']
+  spec.licenses      = ['Apache-2.0']
   spec.authors       = ["Ian Katz"]
   spec.email         = ["ifreecarve@gmail.com"]
 
