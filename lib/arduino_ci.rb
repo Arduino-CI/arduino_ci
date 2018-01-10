@@ -37,6 +37,7 @@ module ArduinoCI
       # attempt to determine if the machine is running a graphical display (i.e. not Travis)
       def existing_display?
         return true if RUBY_PLATFORM.include? "darwin"
+        return true if ENV["DISPLAY"].nil?
         return true if ENV["DISPLAY"].include? ":"
         false
       end
