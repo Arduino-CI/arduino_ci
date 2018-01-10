@@ -52,11 +52,12 @@ module ArduinoCI
 
     # Enable a virtual display for the duration of the given block
     def with_display
-      enable
+      was_enabled = @enabled
+      enable unless was_enabled
       begin
         yield environment
       ensure
-        disable
+        disable unless was_enabled
       end
     end
 
