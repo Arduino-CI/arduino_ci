@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Built gems are `.gitignore`d
+- Updated gems based on Github's security advisories
 
 ### Security
 
