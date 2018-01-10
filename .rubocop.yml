@@ -1,0 +1,80 @@
+AllCops:
+  Exclude:
+    - '*.gemspec'
+    - 'spec/*.rb'
+    - '**/generated_parser/*'
+    - './vendor/**/*'
+
+# inherit_from: .rubocop_todo.yml
+
+# Extra lines for readability
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundMethodBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+# Configuration parameters: AllowForAlignment.
+Layout/ExtraSpacing:
+  Enabled: false
+
+Metrics/LineLength:
+  Description: Limit lines to 80 characters.
+  StyleGuide: https://github.com/bbatsov/ruby-style-guide#80-character-limits
+  Enabled: true
+  Max: 130
+
+# Configuration parameters: CountComments.
+Metrics/ClassLength:
+  Enabled: false
+  Max: 400
+
+Metrics/AbcSize:
+  Enabled: false
+  Max: 50
+
+Metrics/MethodLength:
+  Enabled: false
+  Max: 50
+
+# Configuration parameters: CountKeywordArgs.
+Metrics/ParameterLists:
+  Max: 7
+
+Style/BlockComments:
+  Enabled: false
+
+Style/ColonMethodCall:
+  Enabled: false
+
+# if you find "a == 3" readable and "3 == a" 'unreadable', do not contribute to this project.
+Style/YodaCondition:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/FormatString:
+  Enabled: false
+
+# Offense count: 1
+Metrics/CyclomaticComplexity:
+  Enabled: false
+  Max: 11
+
+# Offense count: 1
+Metrics/PerceivedComplexity:
+  Enabled: false
+  Max: 14
+
+# Cop supports --auto-correct.
+Style/RedundantSelf:
+  Enabled: false
+
+# because apostrophes
+Style/StringLiterals:
+  Enabled: false
+
+Style/TrailingCommaInLiteral:
+  Enabled: false
