@@ -26,8 +26,14 @@ module ArduinoCI
       @installation = installation
     end
 
+    def run(*args)
+      full_args = [@installation.cmd_path] + args
+      puts "Running $ #{full_args.join(' ')}"
+      system(*full_args)
+    end
+
     def board_installed?(board)
-      system(@installation, "--board", board)
+      run("--board", board)
     end
 
   end

@@ -13,3 +13,4 @@ script:
    - bundle exec rubocop --version
    - bundle exec rubocop -D .
    - bundle exec rspec
+   - bundle exec ci_system_check.rb
