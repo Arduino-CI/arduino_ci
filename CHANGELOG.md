@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- `ArduinoInstallation` class for managing lib / executable paths
+- `DisplayManager` class for managing Xvfb instance if needed
 
 ### Changed
 
