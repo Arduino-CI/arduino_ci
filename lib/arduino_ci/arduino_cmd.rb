@@ -27,9 +27,10 @@ module ArduinoCI
     end
 
     def run(*args)
-      full_args = [@display_mgr.environment, @installation.cmd_path] + args
-      puts "Running $ #{full_args.join(' ')}"
-      system(*full_args)
+      full_args = [@installation.cmd_path] + args
+      full_cmd = [@display_mgr.environment] + full_args
+      puts "Running #{@display_mgr.environment} $ #{full_args.join(' ')}"
+      system(*full_cmd)
     end
 
     def board_installed?(board)
