@@ -41,6 +41,8 @@ module ArduinoCI
       @pid = pipe.pid
       sleep(3)  # TODO: test a connection to the X server?
       @enabled = true
+      puts "\n\nxdpyinfo:\n\n"
+      system(environment, "xdpyinfo")
     end
 
     # disable the virtual display
