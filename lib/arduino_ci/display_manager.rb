@@ -134,9 +134,13 @@ module ArduinoCI
         actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
         full_cmd = env_vars.empty? ? actual_args : [env_vars] + actual_args
 
-        puts "Running #{env_vars} $ #{args.join(' ')}"
+        puts "Running #{env_vars} $ #{actual_args.join(' ')}"
+        puts "Full_cmd is #{full_cmd}"
+        puts "kwargs is #{kwargs}"
         ret = system(*full_cmd, **kwargs)
+        puts "system call to #{actual_args[0]} has completed"
       end
+      puts "with_display has completed"
       ret
     end
 
@@ -147,7 +151,7 @@ module ArduinoCI
 
     def environment
       return nil unless @existing || @enabled
-      return {} if @existing
+      return { "EXISTING_DISPLAY" => "YES" } if @existing
       { "DISPLAY" => DESIRED_DISPLAY }
     end
 
