@@ -80,6 +80,28 @@ module ArduinoCI
       end
     end
 
+    # run a command in a display
+    def run(*args, **kwargs)
+      ret = false
+      # do some work to extract & merge environment variables if they exist
+      has_env = !args.empty? && args[0].class == Hash
+      with_display do |env_vars|
+        env_vars = {} if env_vars.nil?
+        env_vars.merge!(args[0]) if has_env
+        actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
+        full_cmd = env_vars.empty? ? actual_args : [env_vars] + actual_args
+
+        puts "Running #{env_vars} $ #{args.join(' ')}"
+        ret = system(*full_cmd, **kwargs)
+      end
+      ret
+    end
+
+    # run a command in a display with no output
+    def run_silent(*args)
+      run(*args, out: File::NULL, err: File::NULL)
+    end
+
     def environment
       return nil unless @existing || @enabled
       return {} if @existing
