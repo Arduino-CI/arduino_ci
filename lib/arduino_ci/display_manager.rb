@@ -24,6 +24,31 @@ module ArduinoCI
       false
     end
 
+    # check whether a process is alive
+    # https://stackoverflow.com/a/32513298/2063546
+    def alive?(pid)
+      Process.kill(0, pid)
+      true
+    rescue
+      false
+    end
+
+    # check whether an X server is taking connections
+    def xserver_exist?
+      run_silent(nil, ["xdpyinfo"])
+    end
+
+    def xvfb_launched?(pid, timeout)
+      Timeout.timeout(timeout) do
+        loop do
+          return false unless alive? pid
+          return true if xserver_exist?
+        end
+      end
+    rescue Timeout::Error
+      false
+    end
+
     # enable a virtual display
     def enable
       if @existing
@@ -35,14 +60,18 @@ module ArduinoCI
       return unless @pid.nil?  # TODO: disable first?
 
       # open Xvfb
-      xvfb_cmd = ["Xvfb", ":1", "-ac", "-screen", "0", "1280x1024x16"]
+      xvfb_cmd = [
+        "Xvfb",
+        "+extension", "RANDR",
+        ":1",
+        "-ac",
+        "-screen", "0",
+        "1280x1024x16",
+      ]
       puts "pipeline_start for Xvfb"
       pipe = IO.popen(xvfb_cmd)
       @pid = pipe.pid
-      sleep(3)  # TODO: test a connection to the X server?
-      @enabled = true
-      puts "\n\nxdpyinfo:\n\n"
-      system(environment, "xdpyinfo")
+      @enabled = xvfb_launched?(@pid, 30)
     end
 
     # disable the virtual display
