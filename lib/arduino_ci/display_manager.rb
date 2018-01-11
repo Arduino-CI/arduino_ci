@@ -25,8 +25,13 @@ module ArduinoCI
 
     # enable a virtual display
     def enable
-      return @enabled = true if @existing   # silent no-op if built in display
-      return unless @pid.nil?
+      if @existing
+        puts "DisplayManager: no-op for what appears to be an existing display"
+        @enabled = true
+        return
+      end
+
+      return unless @pid.nil?  # TODO: disable first?
 
       @enabled = true
       @pid = fork do
