@@ -1,16 +1,4 @@
-# Cross-platform way of finding an executable in the $PATH.
-# via https://stackoverflow.com/a/5471032/2063546
-#   which('ruby') #=> /usr/bin/ruby
-def which(cmd)
-  exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
-  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
-    exts.each do |ext|
-      exe = File.join(path, "#{cmd}#{ext}")
-      return exe if File.executable?(exe) && !File.directory?(exe)
-    end
-  end
-  nil
-end
+require "arduino_ci/host"
 
 module ArduinoCI
 
@@ -35,7 +23,7 @@ module ArduinoCI
           return ret
         end
 
-        posix_place = which("arduino")
+        posix_place = Host.which("arduino")
         unless posix_place.nil?
           ret.cmd_path = posix_place
           ret.lib_dir = File.join(ENV['HOME'], "Sketchbook") # assume linux
