@@ -37,7 +37,7 @@ module ArduinoCI
 
     # check whether an X server is taking connections
     def xserver_exist?(display)
-      run_silent({ "DISPLAY" => display }, ["xdpyinfo"])
+      run_silent({ "DISPLAY" => display }, "xdpyinfo")
     end
 
     # wait for the xvfb command to launch
