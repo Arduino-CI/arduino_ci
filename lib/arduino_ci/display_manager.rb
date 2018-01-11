@@ -17,16 +17,16 @@ module ArduinoCI
 
     # attempt to determine if the machine is running a graphical display (i.e. not Travis)
     def existing_display?
-      return true if RUBY_PLATFORM.include? "darwin"
-      return true if ENV["DISPLAY"].nil?
-      return true if ENV["DISPLAY"].include? ":"
+      return true  if RUBY_PLATFORM.include? "darwin"
+      return false if ENV["DISPLAY"].nil?
+      return true  if ENV["DISPLAY"].include? ":"
       false
     end
 
     # enable a virtual display
     def enable
       if @existing
-        puts "DisplayManager: no-op for what appears to be an existing display"
+        puts "DisplayManager enable: no-op for what appears to be an existing display"
         @enabled = true
         return
       end
