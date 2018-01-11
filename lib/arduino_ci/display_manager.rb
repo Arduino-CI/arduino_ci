@@ -2,6 +2,8 @@ require 'arduino_ci/host'
 require 'singleton'
 require 'timeout'
 
+DESIRED_DISPLAY = ":1.0".freeze
+
 module ArduinoCI
 
   # When arduino commands run, they need a graphical display.
@@ -34,15 +36,20 @@ module ArduinoCI
     end
 
     # check whether an X server is taking connections
-    def xserver_exist?
-      run_silent(nil, ["xdpyinfo"])
+    def xserver_exist?(display)
+      run_silent({ "DISPLAY" => display }, ["xdpyinfo"])
     end
 
-    def xvfb_launched?(pid, timeout)
+    # wait for the xvfb command to launch
+    # @param display [String] the value of the DISPLAY env var
+    # @param pid [Int] the process of Xvfb
+    # @param timeout [Int] the timeout in seconds
+    # @return [Bool] whether we detected a launch
+    def xvfb_launched?(display, pid, timeout)
       Timeout.timeout(timeout) do
         loop do
           return false unless alive? pid
-          return true if xserver_exist?
+          return true if xserver_exist? display
         end
       end
     rescue Timeout::Error
@@ -71,7 +78,7 @@ module ArduinoCI
       puts "pipeline_start for Xvfb"
       pipe = IO.popen(xvfb_cmd)
       @pid = pipe.pid
-      @enabled = xvfb_launched?(@pid, 30)
+      @enabled = xvfb_launched?(DESIRED_DISPLAY, @pid, 30)
     end
 
     # disable the virtual display
@@ -134,7 +141,7 @@ module ArduinoCI
     def environment
       return nil unless @existing || @enabled
       return {} if @existing
-      { "DISPLAY" => ":1.0" }
+      { "DISPLAY" => DESIRED_DISPLAY }
     end
 
     # On finalize, ensure child process is ended
