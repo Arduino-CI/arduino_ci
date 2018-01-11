@@ -9,10 +9,12 @@ module ArduinoCI
     class << self
       protected :new
 
+      # @return [ArduinoCmd] A command object with a best guess (or nil) for the installation
       def autolocate
         new(ArduinoInstallation.autolocate)
       end
 
+      # @return [ArduinoCmd] A command object, installing Arduino if necessary
       def autolocate!
         new(ArduinoInstallation.autolocate!)
       end
@@ -21,6 +23,7 @@ module ArduinoCI
 
     attr_accessor :installation
 
+    # @param installation [ArduinoInstallation] the location of the Arduino program installation
     def initialize(installation)
       @display_mgr = DisplayManager::instance
       @installation = installation
