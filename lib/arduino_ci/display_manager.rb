@@ -128,6 +128,8 @@ module ArduinoCI
         full_cmd = env_vars.empty? ? actual_args : [env_vars] + actual_args
 
         puts "Running #{env_vars} $ #{args.join(' ')}"
+        puts "Full_cmd is #{full_cmd}"
+        puts "kwargs is #{kwargs}"
         ret = system(*full_cmd, **kwargs)
       end
       ret
