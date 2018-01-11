@@ -81,7 +81,7 @@ module ArduinoCI
     def environment
       return nil unless @existing || @enabled
       return {} if @existing
-      { DISPLAY => ":1.0" }
+      { "DISPLAY" => ":1.0" }
     end
 
     # On finalize, ensure child process is ended
