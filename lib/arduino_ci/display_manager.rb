@@ -1,5 +1,6 @@
 require 'arduino_ci/host'
 require 'singleton'
+require 'timeout'
 
 module ArduinoCI
 
@@ -33,27 +34,38 @@ module ArduinoCI
 
       return unless @pid.nil?  # TODO: disable first?
 
-      @enabled = true
-      @pid = fork do
-        puts "Forking Xvfb"
-        system("Xvfb", ":1", "-ac", "-screen", "0", "1280x1024x16")
-        puts "Xvfb unexpectedly quit!"
-      end
+      # open Xvfb
+      xvfb_cmd = ["Xvfb", ":1", "-ac", "-screen", "0", "1280x1024x16"]
+      puts "pipeline_start for Xvfb"
+      pipe = IO.popen(xvfb_cmd)
+      @pid = pipe.pid
       sleep(3)  # TODO: test a connection to the X server?
+      @enabled = true
     end
 
     # disable the virtual display
     def disable
-      return @enabled = false if @existing  # silent no-op if built in display
-      return if @pid.nil?
+      if @existing
+        puts "DisplayManager disable: no-op for what appears to be an existing display"
+        return @enabled = false
+      end
 
+      return @enabled = false if @pid.nil?
+
+      # https://www.whatastruggle.com/timeout-a-subprocess-in-ruby
       begin
-        Process.kill 9, @pid
+        Timeout.timeout(30) do
+          Process.kill("TERM", @pid)
+          puts "Xvfb TERMed"
+        end
+      rescue Timeout::Error
+        Process.kill(9, @pid)
+        puts "Xvfb KILLed"
       ensure
         Process.wait @pid
+        @enabled = false
         @pid = nil
       end
-      puts "Xvfb killed"
     end
 
     # Enable a virtual display for the duration of the given block
