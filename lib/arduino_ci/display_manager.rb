@@ -34,24 +34,23 @@ module ArduinoCI
 
       return unless @pid.nil?  # TODO: disable first?
 
-      @enabled = true
       # open Xvfb
       xvfb_cmd = ["Xvfb", ":1", "-ac", "-screen", "0", "1280x1024x16"]
       puts "pipeline_start for Xvfb"
       pipe = IO.popen(xvfb_cmd)
       @pid = pipe.pid
       sleep(3)  # TODO: test a connection to the X server?
+      @enabled = true
     end
 
     # disable the virtual display
     def disable
       if @existing
         puts "DisplayManager disable: no-op for what appears to be an existing display"
-        @enabled = true
-        return
+        return @enabled = false
       end
 
-      return if @pid.nil?
+      return @enabled = false if @pid.nil?
 
       # https://www.whatastruggle.com/timeout-a-subprocess-in-ruby
       begin
@@ -64,6 +63,7 @@ module ArduinoCI
         puts "Xvfb KILLed"
       ensure
         Process.wait @pid
+        @enabled = false
       end
     end
 
