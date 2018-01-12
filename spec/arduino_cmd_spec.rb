@@ -27,4 +27,15 @@ RSpec.describe ArduinoCI::ArduinoCmd do
       expect(arduino_cmd.board_installed? "eggs:milk:wheat").to be false
     end
   end
+
+  context "set_pref" do
+    arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
+    ArduinoCI::DisplayManager::instance.enable
+
+    it "Sets key to what it was before" do
+      upload_verify = arduino_cmd.prefs_cache["upload.verify"]
+      result = arduino_cmd.set_pref("upload.verify", upload_verify)
+      expect(result).to be true
+    end
+  end
 end

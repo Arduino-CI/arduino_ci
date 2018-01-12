@@ -19,5 +19,13 @@ board_tests.each do |k, v|
   got_problem = true if v != result
 end
 
+urls = [
+  "https://adafruit.github.io/arduino-board-index/package_adafruit_index.json",
+  "http://arduino.esp8266.com/stable/package_esp8266com_index.json"
+]
+
+result = arduino_cmd.set_pref("boardsmanager.additional.urls", urls.join(","))
+got_problem = true unless result
+
 abort if got_problem
 exit(0)

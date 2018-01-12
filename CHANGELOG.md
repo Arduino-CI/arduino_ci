@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `DisplayManager` class for managing Xvfb instance if needed
 - `ArduinoCmd` captures and caches preferences
 - `ArduinoCmd` reports on whether a board is installed
+- `ArduinoCmd` sets preferences
 
 ### Changed
 - `DisplayManger.with_display` doesn't `disable` if the display was enabled prior to starting the block

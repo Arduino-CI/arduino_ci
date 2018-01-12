@@ -51,6 +51,16 @@ module ArduinoCI
       ret
     end
 
+    # set a preference key/value pair
+    # @param key [String] the preference key
+    # @param value [String] the preference value
+    # @return [bool] whether the command succeeded
+    def set_pref(key, value)
+      success = run_with_gui_guess(" about preferences", "--pref", "#{key}=#{value}", "--save-prefs")
+      @prefs_cache[key] = value if success
+      success
+    end
+
     # run the arduino command
     # @return [Hash] {:out => StringIO, :err => StringIO }
     def run(*args, **kwargs)
