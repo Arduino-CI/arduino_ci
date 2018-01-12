@@ -20,11 +20,15 @@ RSpec.describe ArduinoCI::ArduinoCmd do
     arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
     ArduinoCI::DisplayManager::instance.enable
     it "Finds installed boards" do
-      expect(arduino_cmd.board_installed? "arduino:avr:uno").to be true
+      uno_installed = arduino_cmd.board_installed? "arduino:avr:uno"
+      expect(uno_installed).to be true
+      expect(uno_installed).not_to be nil
     end
 
     it "Doesn't find bogus boards" do
-      expect(arduino_cmd.board_installed? "eggs:milk:wheat").to be false
+      bogus_installed = arduino_cmd.board_installed? "eggs:milk:wheat"
+      expect(bogus_installed).to be false
+      expect(bogus_installed).not_to be nil
     end
   end
 

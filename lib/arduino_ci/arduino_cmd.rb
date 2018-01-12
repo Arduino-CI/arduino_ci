@@ -58,13 +58,13 @@ module ArduinoCI
     # @param value [String] the preference value
     # @return [bool] whether the command succeeded
     def set_pref(key, value)
-      success = run_with_gui_guess(" about preferences", "--pref", "#{key}=#{value}", "--save-prefs")
+      resp = run_and_capture(" about preferences", "--pref", "#{key}=#{value}", "--save-prefs")
+      success = resp[:success]
       @prefs_cache[key] = value if success
       success
     end
 
     # run the arduino command
-    # @return [Hash] {:out => StringIO, :err => StringIO }
     def run(*args, **kwargs)
       full_args = [@installation.cmd_path] + args
       @display_mgr.run(*full_args, **kwargs)
@@ -75,7 +75,8 @@ module ArduinoCI
       # so, assume that if we don't get a rapid reply that things are not installed
       x3 = @prefs_response_time * 3
       Timeout.timeout(x3) do
-        run(*args, **kwargs)
+        result = run_and_capture(*args, **kwargs)
+        result[:success]
       end
     rescue Timeout::Error
       puts "No response in #{x3} seconds. Assuming graphical modal error message#{message}."
@@ -97,6 +98,9 @@ module ArduinoCI
       { out: str_out, err: str_err, success: success }
     end
 
+    # check whether a board is installed
+    # we do this by just selecting a board.
+    #   the arduino binary will error if unrecognized and do a successful no-op if it's installed
     def board_installed?(boardname)
       run_with_gui_guess(" about board not installed", "--board", boardname)
     end
@@ -105,16 +109,16 @@ module ArduinoCI
     # @param name [String] the board name
     # @return [bool] whether the command succeeded
     def install_board(boardname)
-      run("--install-boards", boardname)
+      run_and_capture("--install-boards", boardname)[:success]
     end
 
     # install a library by name
     # @param name [String] the library name
     # @return [bool] whether the command succeeded
     def install_library(library_name)
-      result = run("--install-library", library_name)
-      @library_is_indexed = true if result
-      result
+      result = run_and_capture("--install-library", library_name)
+      @library_is_indexed = true if result[:success]
+      result[:success]
     end
 
     # update the library index
