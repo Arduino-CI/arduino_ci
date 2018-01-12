@@ -16,6 +16,11 @@ module ArduinoCI
       @existing = existing_display?
       @enabled = false
       @pid = nil
+
+      @xv_pipe_out_wr = nil
+      @xv_pipe_err_wr = nil
+      @xv_pipe_out    = nil
+      @xv_pipe_err    = nil
     end
 
     # attempt to determine if the machine is running a graphical display (i.e. not Travis)
@@ -71,6 +76,8 @@ module ArduinoCI
       end
 
       return unless @pid.nil?  # TODO: disable first?
+      @xv_pipe_out.close unless @xv_pipe_out.nil?
+      @xv_pipe_err.close unless @xv_pipe_err.nil?
 
       # open Xvfb
       xvfb_cmd = [
@@ -81,8 +88,11 @@ module ArduinoCI
         "-screen", "0",
         "1280x1024x16",
       ]
-      puts "pipeline_start for Xvfb"
-      pipe = IO.popen(xvfb_cmd)
+      puts "Xvfb launching"
+
+      @xv_pipe_out, @xv_pipe_out_wr = IO.pipe
+      @xv_pipe_err, @xv_pipe_err_wr = IO.pipe
+      pipe = IO.popen(xvfb_cmd, stdout: @xv_pipe_out_wr, err: @xv_pipe_err_wr)
       @pid = pipe.pid
       @enabled = xvfb_launched?(DESIRED_DISPLAY, @pid, 30)
     end
@@ -109,6 +119,9 @@ module ArduinoCI
         Process.wait @pid
         @enabled = false
         @pid = nil
+
+        @xv_pipe_out_wr.close
+        @xv_pipe_err_wr.close
       end
     end
 
@@ -133,14 +146,11 @@ module ArduinoCI
         env_vars.merge!(args[0]) if has_env
         actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
         full_cmd = env_vars.empty? ? actual_args : [env_vars] + actual_args
-
-        puts "Running #{env_vars} $ #{actual_args.join(' ')}"
-        puts "Full_cmd is #{full_cmd}"
-        puts "kwargs is #{kwargs}"
+        shell_vars = env_vars.map { |k, v| "#{k}=#{v}" }.join(" ")
+        puts " $ #{shell_vars} #{actual_args.join(' ')}"
         ret = system(*full_cmd, **kwargs)
-        puts "system call to #{actual_args[0]} has completed"
+        puts "#{actual_args[0]} has completed"
       end
-      puts "with_display has completed"
       ret
     end
 

@@ -40,7 +40,6 @@ module ArduinoCI
         start = Time.now
         resp = run_and_capture("--get-pref")
         @prefs_response_time = Time.now - start
-        puts "prefs_response_time = #{@prefs_response_time} = #{Time.now} - #{start}"
       end
       return nil unless resp[:success]
       lines = resp[:out].split("\n").select { |l| l.include? "=" }
