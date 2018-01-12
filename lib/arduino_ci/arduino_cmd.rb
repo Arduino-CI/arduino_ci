@@ -56,7 +56,18 @@ module ArduinoCI
     def run(*args, **kwargs)
       full_args = [@installation.cmd_path] + args
       @display_mgr.run(*full_args, **kwargs)
+    end
 
+    def run_with_gui_guess(message, *args, **kwargs)
+      # On Travis CI, we get an error message in the GUI instead of on STDERR
+      # so, assume that if we don't get a rapid reply that things are not installed
+      x3 = @prefs_response_time * 3
+      Timeout.timeout(x3) do
+        run(*args, **kwargs)
+      end
+    rescue Timeout::Error
+      puts "No response in #{x3} seconds. Assuming graphical modal error message#{message}."
+      false
     end
 
     # run a command and capture its output
