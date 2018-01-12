@@ -76,7 +76,15 @@ module ArduinoCI
     end
 
     def board_installed?(board)
-      run("--board", board)
+      # On Travis CI, we get an error message in the GUI instead of on STDERR
+      # so, assume that if we don't get a rapid reply that things are not installed
+      x3 = @prefs_response_time * 3
+      Timeout.timeout(x3) do
+        run("--board", board)
+      end
+    rescue Timeout::Error
+      puts "No response in #{x3} seconds. Assuming graphical modal error message about board not installed."
+      false
     end
 
   end
