@@ -24,6 +24,7 @@ module ArduinoCI
     attr_accessor :installation
     attr_reader   :prefs_cache
     attr_reader   :prefs_response_time
+    attr_reader   :library_is_indexed
 
     # @param installation [ArduinoInstallation] the location of the Arduino program installation
     def initialize(installation)
@@ -31,6 +32,7 @@ module ArduinoCI
       @installation        = installation
       @prefs_response_time = nil
       @prefs_cache         = prefs
+      @library_is_indexed  = false
     end
 
     # fetch preferences to a hash
@@ -95,8 +97,31 @@ module ArduinoCI
       { out: str_out, err: str_err, success: success }
     end
 
-    def board_installed?(board)
-      run_with_gui_guess(" about board not installed", "--board", board)
+    def board_installed?(boardname)
+      run_with_gui_guess(" about board not installed", "--board", boardname)
+    end
+
+    # install a board by name
+    # @param name [String] the board name
+    # @return [bool] whether the command succeeded
+    def install_board(boardname)
+      run("--install-boards", boardname)
+    end
+
+    # install a library by name
+    # @param name [String] the library name
+    # @return [bool] whether the command succeeded
+    def install_library(library_name)
+      result = run("--install-library", library_name)
+      @library_is_indexed = true if result
+      result
+    end
+
+    # update the library index
+    def update_library_index
+      # install random lib so the arduino IDE grabs a new library index
+      # see: https://github.com/arduino/Arduino/issues/3535
+      install_library("USBHost")
     end
 
   end

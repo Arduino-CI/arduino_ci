@@ -27,5 +27,9 @@ urls = [
 result = arduino_cmd.set_pref("boardsmanager.additional.urls", urls.join(","))
 got_problem = true unless result
 
+got_problem = true unless arduino_cmd.install_board("arduino:sam")
+got_problem = true unless arduino_cmd.install_library("USBHost")
+got_problem = true unless arduino_cmd.library_is_indexed
+
 abort if got_problem
 exit(0)
