@@ -22,17 +22,57 @@ module ArduinoCI
     end
 
     attr_accessor :installation
+    attr_reader   :prefs_cache
+    attr_reader   :prefs_response_time
 
     # @param installation [ArduinoInstallation] the location of the Arduino program installation
     def initialize(installation)
-      @display_mgr = DisplayManager::instance
-      @installation = installation
+      @display_mgr         = DisplayManager::instance
+      @installation        = installation
+      @prefs_response_time = nil
+      @prefs_cache         = prefs
+    end
+
+    # fetch preferences to a hash
+    def prefs
+      resp = nil
+      @display_mgr.with_display do
+        start = Time.now
+        resp = run_and_capture("--get-pref")
+        @prefs_response_time = Time.now - start
+        puts "prefs_response_time = #{@prefs_response_time} = #{Time.now} - #{start}"
+      end
+      return nil unless resp[:success]
+      lines = resp[:out].split("\n").select { |l| l.include? "=" }
+      ret = lines.each_with_object({}) do |e, acc|
+        parts = e.split("=", 2)
+        acc[parts[0]] = parts[1]
+        acc
+      end
+      ret
     end
 
     # run the arduino command
-    def run(*args)
+    # @return [Hash] {:out => StringIO, :err => StringIO }
+    def run(*args, **kwargs)
       full_args = [@installation.cmd_path] + args
-      @display_mgr.run(*full_args)
+      @display_mgr.run(*full_args, **kwargs)
+
+    end
+
+    # run a command and capture its output
+    # @return [Hash] {:out => StringIO, :err => StringIO, :success => bool}
+    def run_and_capture(*args)
+      pipe_out, pipe_out_wr = IO.pipe
+      pipe_err, pipe_err_wr = IO.pipe
+      success = run(*args, out: pipe_out_wr, err: pipe_err_wr)
+      pipe_out_wr.close
+      pipe_err_wr.close
+      str_out = pipe_out.read
+      str_err = pipe_err.read
+      pipe_out.close
+      pipe_err.close
+      { out: str_out, err: str_err, success: success }
     end
 
     def board_installed?(board)

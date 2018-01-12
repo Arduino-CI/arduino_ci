@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - `ArduinoInstallation` class for managing lib / executable paths
 - `DisplayManager` class for managing Xvfb instance if needed
-- `ArduinoCmd` can report on whether a board is installed
+- `ArduinoCmd` captures and caches preferences
+- `ArduinoCmd` reports on whether a board is installed
 
 ### Changed
 - `DisplayManger.with_display` doesn't `disable` if the display was enabled prior to starting the block

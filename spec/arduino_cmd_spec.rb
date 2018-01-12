@@ -11,6 +11,8 @@ RSpec.describe ArduinoCI::ArduinoCmd do
     it "Finds the Arduino executable" do
       arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
       expect(arduino_cmd.installation.cmd_path).not_to be nil
+      expect(arduino_cmd.prefs_cache.class).to be Hash
+      expect(arduino_cmd.prefs_response_time).not_to be nil
     end
   end
 
