@@ -84,10 +84,12 @@ module ArduinoCI
 
     # run a command and capture its output
     # @return [Hash] {:out => StringIO, :err => StringIO, :success => bool}
-    def run_and_capture(*args)
+    def run_and_capture(*args, **kwargs)
       pipe_out, pipe_out_wr = IO.pipe
       pipe_err, pipe_err_wr = IO.pipe
-      success = run(*args, out: pipe_out_wr, err: pipe_err_wr)
+      our_kwargs = { out: pipe_out_wr, err: pipe_err_wr }
+      eventual_kwargs = kwargs.merge(our_kwargs)
+      success = run(*args, **eventual_kwargs)
       pipe_out_wr.close
       pipe_err_wr.close
       str_out = pipe_out.read
