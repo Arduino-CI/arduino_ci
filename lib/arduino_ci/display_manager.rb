@@ -11,11 +11,13 @@ module ArduinoCI
   class DisplayManager
     include Singleton
     attr_reader :enabled
+    attr_accessor :debug
 
     def initialize
       @existing = existing_display?
       @enabled = false
       @pid = nil
+      @debug = false
 
       @xv_pipe_out_wr = nil
       @xv_pipe_err_wr = nil
@@ -58,7 +60,7 @@ module ArduinoCI
             return false
           end
           x = xserver_exist? display
-          puts "xdpyinfo reports X server status as #{x}"
+          puts "xdpyinfo reports X server status as #{x}" if debug
           return true if x
           sleep(0.1)
         end
@@ -70,7 +72,7 @@ module ArduinoCI
     # enable a virtual display
     def enable
       if @existing
-        puts "DisplayManager enable: no-op for what appears to be an existing display"
+        puts "DisplayManager enable: no-op for what appears to be an existing display" if debug
         @enabled = true
         return
       end
@@ -88,7 +90,7 @@ module ArduinoCI
         "-screen", "0",
         "1280x1024x16",
       ]
-      puts "Xvfb launching"
+      puts "Xvfb launching" if debug
 
       @xv_pipe_out, @xv_pipe_out_wr = IO.pipe
       @xv_pipe_err, @xv_pipe_err_wr = IO.pipe
@@ -100,7 +102,7 @@ module ArduinoCI
     # disable the virtual display
     def disable
       if @existing
-        puts "DisplayManager disable: no-op for what appears to be an existing display"
+        puts "DisplayManager disable: no-op for what appears to be an existing display" if debug
         return @enabled = false
       end
 
@@ -110,11 +112,11 @@ module ArduinoCI
       begin
         Timeout.timeout(30) do
           Process.kill("TERM", @pid)
-          puts "Xvfb TERMed"
+          puts "Xvfb TERMed" if debug
         end
       rescue Timeout::Error
         Process.kill(9, @pid)
-        puts "Xvfb KILLed"
+        puts "Xvfb KILLed" if debug
       ensure
         Process.wait @pid
         @enabled = false
