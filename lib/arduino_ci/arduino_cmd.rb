@@ -58,8 +58,7 @@ module ArduinoCI
     # @param value [String] the preference value
     # @return [bool] whether the command succeeded
     def set_pref(key, value)
-      resp = run_and_capture(" about preferences", "--pref", "#{key}=#{value}", "--save-prefs")
-      success = resp[:success]
+      success = run_with_gui_guess(" about preferences", "--pref", "#{key}=#{value}", "--save-prefs")
       @prefs_cache[key] = value if success
       success
     end
