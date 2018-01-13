@@ -24,12 +24,13 @@ urls = [
   "http://arduino.esp8266.com/stable/package_esp8266com_index.json"
 ]
 
-result = arduino_cmd.set_pref("boardsmanager.additional.urls", urls.join(","))
-got_problem = true unless result
+got_problem = true unless arduino_cmd.set_pref("boardsmanager.additional.urls", urls.join(","))
 
 got_problem = true unless arduino_cmd.install_board("arduino:sam")
 got_problem = true unless arduino_cmd.install_library("USBHost")
 got_problem = true unless arduino_cmd.library_is_indexed
+
+got_problem = true unless arduino_cmd.set_pref("compiler.warning_level", "all")
 
 abort if got_problem
 exit(0)
