@@ -88,7 +88,7 @@ module ArduinoCI
       pipe_out, pipe_out_wr = IO.pipe
       pipe_err, pipe_err_wr = IO.pipe
       our_kwargs = { out: pipe_out_wr, err: pipe_err_wr }
-      eventual_kwargs = kwargs.merge(our_kwargs)
+      eventual_kwargs = our_kwargs.merge(kwargs)
       success = run(*args, **eventual_kwargs)
       pipe_out_wr.close
       pipe_err_wr.close
@@ -117,7 +117,8 @@ module ArduinoCI
     # @param name [String] the board name
     # @return [bool] whether the command succeeded
     def install_board(boardname)
-      run_and_capture("--install-boards", boardname)[:success]
+      # TODO: find out why IO.pipe fails but File::NULL succeeds :(
+      run_and_capture("--install-boards", boardname, out: File::NULL)[:success]
     end
 
     # install a library by name
