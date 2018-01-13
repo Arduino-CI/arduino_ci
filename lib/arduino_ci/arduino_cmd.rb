@@ -83,7 +83,7 @@ module ArduinoCI
     end
 
     # run a command and capture its output
-    # @return [Hash] {:out => StringIO, :err => StringIO, :success => bool}
+    # @return [Hash] {:out => String, :err => String, :success => bool}
     def run_and_capture(*args, **kwargs)
       pipe_out, pipe_out_wr = IO.pipe
       pipe_err, pipe_err_wr = IO.pipe
@@ -97,6 +97,13 @@ module ArduinoCI
       pipe_out.close
       pipe_err.close
       { out: str_out, err: str_err, success: success }
+    end
+
+    # run a command and don't capture its output, but use the same signature
+    # @return [Hash] {:out => String, :err => String, :success => bool}
+    def run_wrap(*args, **kwargs)
+      success = run(*args, **kwargs)
+      { out: "NOPE, use run_and_capture", err: "NOPE, use run_and_capture", success: success }
     end
 
     # check whether a board is installed
