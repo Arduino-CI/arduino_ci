@@ -6,14 +6,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- `ArduinoInstallation` class for managing lib / executable paths
+- `DisplayManager` class for managing Xvfb instance if needed
+- `ArduinoCmd` captures and caches preferences
+- `ArduinoCmd` reports on whether a board is installed
+- `ArduinoCmd` sets preferences
+- `ArduinoCmd` installs boards
+- `ArduinoCmd` installs libraries
+- `ArduinoCmd` selects boards (compiler preference)
 
 ### Changed
+- `DisplayManger.with_display` doesn't `disable` if the display was enabled prior to starting the block
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Built gems are `.gitignore`d
+- Updated gems based on Github's security advisories
 
 ### Security
 
