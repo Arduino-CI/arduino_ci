@@ -49,5 +49,16 @@ simple_sketch = File.join(File.dirname(File.dirname(__FILE__)), "spec", "FakeSke
 puts "verify a simple sketch"
 got_problem = true unless arduino_cmd.verify_sketch(simple_sketch)
 
+library_path = File.join(File.dirname(File.dirname(__FILE__)), "SampleProjects", "DoSomething")
+puts "verify the examples of a library (#{library_path})..."
+puts " - Install the library"
+installed_library_path = arduino_cmd.install_local_library(library_path)
+got_problem = true if installed_library_path.nil?
+puts " - Iterate over the examples"
+arduino_cmd.each_library_example(installed_library_path) do |example_path|
+  puts "Iterating #{example_path}"
+  got_problem = true unless arduino_cmd.verify_sketch(example_path)
+end
+
 abort if got_problem
 exit(0)

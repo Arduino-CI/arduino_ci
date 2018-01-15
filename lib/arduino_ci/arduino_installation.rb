@@ -55,7 +55,7 @@ module ArduinoCI
               "processing.app.Base",
             ]
           end
-          ret.lib_dir = File.join(osx_place, "Libraries")
+          ret.lib_dir = File.join(osx_place, "Libraries") # TODO: probably wrong
           ret.requires_x = false
           return ret
         end

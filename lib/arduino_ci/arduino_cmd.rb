@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'arduino_ci/display_manager'
 require 'arduino_ci/arduino_installation'
 
@@ -159,6 +160,12 @@ module ArduinoCI
       result[:success]
     end
 
+    # generate the (very likely) path of a library given its name
+    def library_path(library_name)
+      sketchbook = get_pref("sketchbook.path")
+      File.join(sketchbook, library_name)
+    end
+
     # update the library index
     def update_library_index
       # install random lib so the arduino IDE grabs a new library index
@@ -193,5 +200,42 @@ module ArduinoCI
       run("--verify", path, err: :out)
     end
 
+    # ensure that the given library is installed, or symlinked as appropriate
+    # return the path of the prepared library, or nil
+    def install_local_library(library_path)
+      library_name = File.basename(library_path)
+      destination_path = File.join(@installation.lib_dir, library_name)
+
+      # things get weird if the sketchbook contains the library.
+      # check that first
+      if File.exist? destination_path
+        uhoh = "There is already a library '#{library_name}' in the library directory"
+        return destination_path if destination_path == library_path
+
+        # maybe it's a symlink? that would be OK
+        if File.symlink?(destination_path)
+          return destination_path if File.readlink(destination_path) == library_path
+          puts "#{uhoh} and it's not symlinked to #{library_path}"
+          return nil
+        end
+
+        puts "#{uhoh}.  It may need to be removed manually."
+        return nil
+      end
+
+      # install the library
+      FileUtils.ln_s(library_path, destination_path)
+      destination_path
+    end
+
+    def each_library_example(installed_library_path)
+      example_path = File.join(installed_library_path, "examples")
+      examples = Pathname.new(example_path).children.select(&:directory?).map(&:to_path).map(&File.method(:basename))
+      examples.each do |e|
+        proj_file = File.join(example_path, e, "#{e}.ino")
+        puts "Considering #{proj_file}"
+        yield proj_file if File.exist?(proj_file)
+      end
+    end
   end
 end
