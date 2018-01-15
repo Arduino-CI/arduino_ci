@@ -1,0 +1,12 @@
+language: ruby
+
+env:
+    - PLATFORMIO_CI_SRC=examples/DoSomething/DoSomething.ino
+
+install:
+    - bundle install
+
+script:
+    # board IDS come from here I think
+    #  http://docs.platformio.org/en/latest/platforms/atmelavr.html#arduino
+    - platformio ci --lib="." --board=uno
