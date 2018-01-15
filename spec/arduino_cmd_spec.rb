@@ -15,8 +15,8 @@ RSpec.describe ArduinoCI::ArduinoCmd do
   context "autolocate!" do
     it "Finds the Arduino executable" do
       arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
-      expect(arduino_cmd.installation.cmd_path).not_to be nil
-      expect(arduino_cmd.prefs_cache.class).to be Hash
+      expect(arduino_cmd.installation.base_cmd).not_to be nil
+      expect(arduino_cmd.prefs.class).to be Hash
       expect(arduino_cmd.prefs_response_time).not_to be nil
     end
   end
@@ -42,7 +42,7 @@ RSpec.describe ArduinoCI::ArduinoCmd do
     ArduinoCI::DisplayManager::instance.enable
 
     it "Sets key to what it was before" do
-      upload_verify = arduino_cmd.prefs_cache["upload.verify"]
+      upload_verify = arduino_cmd.get_pref("upload.verify")
       result = arduino_cmd.set_pref("upload.verify", upload_verify)
       expect(result).to be true
     end

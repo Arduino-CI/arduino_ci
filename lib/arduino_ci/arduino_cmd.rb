@@ -22,7 +22,6 @@ module ArduinoCI
     end
 
     attr_accessor :installation
-    attr_reader   :prefs_cache
     attr_reader   :prefs_response_time
     attr_reader   :library_is_indexed
 
@@ -31,26 +30,47 @@ module ArduinoCI
       @display_mgr         = DisplayManager::instance
       @installation        = installation
       @prefs_response_time = nil
-      @prefs_cache         = prefs
+      @prefs_cache         = nil
       @library_is_indexed  = false
     end
 
-    # fetch preferences to a hash
-    def prefs
-      resp = nil
-      @display_mgr.with_display do
-        start = Time.now
-        resp = run_and_capture("--get-pref")
-        @prefs_response_time = Time.now - start
-      end
-      return nil unless resp[:success]
-      lines = resp[:out].split("\n").select { |l| l.include? "=" }
+    def _parse_pref_string(arduino_output)
+      lines = arduino_output.split("\n").select { |l| l.include? "=" }
       ret = lines.each_with_object({}) do |e, acc|
         parts = e.split("=", 2)
         acc[parts[0]] = parts[1]
         acc
       end
       ret
+    end
+
+    # fetch preferences to a hash
+    def _prefs
+      resp = nil
+      if @installation.requires_x
+        @display_mgr.with_display do
+          start = Time.now
+          resp = run_and_capture("--get-pref")
+          @prefs_response_time = Time.now - start
+        end
+      else
+        start = Time.now
+        resp = run_and_capture("--get-pref")
+        @prefs_response_time = Time.now - start
+      end
+      return nil unless resp[:success]
+      _parse_pref_string(resp[:out])
+    end
+
+    def prefs
+      @prefs_cache = _prefs if @prefs_cache.nil?
+      @prefs_cache.clone
+    end
+
+    # get a preference key
+    def get_pref(key)
+      data = @prefs_cache.nil? ? prefs : @prefs_cache
+      data[key]
     end
 
     # set a preference key/value pair
@@ -65,13 +85,22 @@ module ArduinoCI
 
     # run the arduino command
     def run(*args, **kwargs)
-      full_args = [@installation.cmd_path] + args
-      @display_mgr.run(*full_args, **kwargs)
+      full_args = @installation.base_cmd + args
+      if @installation.requires_x
+        @display_mgr.run(*full_args, **kwargs)
+      else
+        Host.run(*full_args, **kwargs)
+      end
     end
 
     def run_with_gui_guess(message, *args, **kwargs)
       # On Travis CI, we get an error message in the GUI instead of on STDERR
       # so, assume that if we don't get a rapid reply that things are not installed
+
+      # if we don't need X, we can skip this whole thing
+      return run_and_capture(*args, **kwargs)[:success] unless @installation.requires_x
+
+      prefs if @prefs_response_time.nil?
       x3 = @prefs_response_time * 3
       Timeout.timeout(x3) do
         result = run_and_capture(*args, **kwargs)
