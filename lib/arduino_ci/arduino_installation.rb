@@ -1,5 +1,7 @@
 require "arduino_ci/host"
 
+DESIRED_ARDUINO_IDE_VERSION = "1.8.5".freeze
+
 module ArduinoCI
 
   # Manage the OS-specific install location of Arduino
@@ -55,9 +57,11 @@ module ArduinoCI
       end
 
       def force_install
-        system("wget", "https://downloads.arduino.cc/arduino-1.6.5-linux64.tar.xz")
-        system("tar", "xf", "arduino-1.6.5-linux64.tar.xz")
-        system("mv", "arduino-1.6.5", force_install_location)
+        pkgname = "arduino-#{DESIRED_ARDUINO_IDE_VERSION}"
+        tarfile = "#{pkgname}-linux64.tar.xz"
+        system("wget", "https://downloads.arduino.cc/#{tarfile}")
+        system("tar", "xf", tarfile)
+        system("mv", pkgname, force_install_location)
       end
 
     end
