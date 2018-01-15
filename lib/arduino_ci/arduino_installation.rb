@@ -1,6 +1,7 @@
 require "arduino_ci/host"
 
 DESIRED_ARDUINO_IDE_VERSION = "1.8.5".freeze
+USE_BUILDER = false
 
 module ArduinoCI
 
@@ -18,7 +19,7 @@ module ArduinoCI
       def from_forced_install
         ret = new
         builder = File.join(force_install_location, "arduino-builder")
-        if File.exist? builder
+        if USE_BUILDER && File.exist?(builder)
           ret.base_cmd = [builder]
           ret.requires_x = false
         else
@@ -59,20 +60,19 @@ module ArduinoCI
           return ret
         end
 
-        # # AAARRRRGGGGHHH
-        # # Even though arduino-builder is an awesome CLI for Arduino,
-        # # ALL THE OPTIONS ARE DIFFERENT (single vs double dash for flags)
-        # #  USELESS FOR THE TIME BEING
-        #
-        # posix_place = Host.which("arduino-builder")
-        # unless posix_place.nil?
-        #   ret = new
-        #   ret.base_cmd = [posix_place]
-        #   ret.lib_dir = File.join(ENV['HOME'], "Sketchbook") # assume linux
-        #   ret.requires_x = false
-        #   # https://learn.adafruit.com/adafruit-all-about-arduino-libraries-install-use/how-to-install-a-library
-        #   return ret
-        # end
+        # AAARRRRGGGGHHH
+        # Even though arduino-builder is an awesome CLI for Arduino,
+        # ALL THE OPTIONS ARE DIFFERENT (single vs double dash for flags)
+        #  USELESS FOR THE TIME BEING
+        posix_place = Host.which("arduino-builder")
+        if USE_BUILDER && !posix_place.nil?
+          ret = new
+          ret.base_cmd = [posix_place]
+          ret.lib_dir = File.join(ENV['HOME'], "Sketchbook") # assume linux
+          ret.requires_x = false
+          # https://learn.adafruit.com/adafruit-all-about-arduino-libraries-install-use/how-to-install-a-library
+          return ret
+        end
 
         posix_place = Host.which("arduino")
         unless posix_place.nil?
