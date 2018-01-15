@@ -151,7 +151,8 @@ module ArduinoCI
         shell_vars = env_vars.map { |k, v| "#{k}=#{v}" }.join(" ")
         puts " $ #{shell_vars} #{actual_args.join(' ')}"
         ret = system(*full_cmd, **kwargs)
-        puts "#{actual_args[0]} has completed"
+        status = ret ? "succeeded" : "failed"
+        puts "#{actual_args[0]} has #{status}"
       end
       ret
     end
