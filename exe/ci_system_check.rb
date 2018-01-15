@@ -37,8 +37,13 @@ puts "setting compiler warning level"
 got_problem = true unless arduino_cmd.set_pref("compiler.warning_level", "all")
 puts "use board! (install board)"
 got_problem = true unless arduino_cmd.use_board!("arduino:samd:zero")
-puts "verify that board has been installed"
+puts "assert that board has been installed"
 got_problem = true unless arduino_cmd.board_installed?("arduino:samd:zero")
+
+simple_sketch = File.join(File.dirname(File.dirname(__FILE__)), "spec", "FakeSketch", "FakeSketch.ino")
+
+puts "verify a simple sketch"
+got_problem = true unless arduino_cmd.verify_sketch(simple_sketch)
 
 abort if got_problem
 exit(0)

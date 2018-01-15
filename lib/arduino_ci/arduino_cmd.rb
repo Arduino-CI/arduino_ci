@@ -151,5 +151,14 @@ module ArduinoCI
       use_board(boardname)
     end
 
+    def verify_sketch(path)
+      ext = File.extname path
+      unless ext.casecmp(".ino").zero?
+        puts "Refusing to verify sketch with '#{ext}' extension -- rename it to '.ino'!"
+        return false
+      end
+      run("--verify", path, err: :out)
+    end
+
   end
 end
