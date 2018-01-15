@@ -57,12 +57,6 @@ RSpec.describe ArduinoCI::ArduinoCmd do
     sketch_path_mia = get_sketch("NO_FILE_HERE", "foo.ino")
     sketch_path_bad = get_sketch("BadSketch", "BadSketch.ino")
 
-    it "Passes a simple INO sketch at #{sketch_path_ino}" do
-      expect(arduino_cmd.verify_sketch(sketch_path_ino)).to be true
-      # try twice in a row
-      expect(arduino_cmd.verify_sketch(sketch_path_ino)).to be true
-    end
-
     it "Rejects a PDE sketch at #{sketch_path_pde}" do
       expect(arduino_cmd.verify_sketch(sketch_path_pde)).to be false
     end
@@ -74,5 +68,10 @@ RSpec.describe ArduinoCI::ArduinoCmd do
     it "Fails a bad sketch at #{sketch_path_bad}" do
       expect(arduino_cmd.verify_sketch(sketch_path_bad)).to be false
     end
+
+    it "Passes a simple INO sketch at #{sketch_path_ino}" do
+      expect(arduino_cmd.verify_sketch(sketch_path_ino)).to be true
+    end
+
   end
 end
