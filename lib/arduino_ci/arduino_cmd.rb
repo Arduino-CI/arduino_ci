@@ -157,6 +157,10 @@ module ArduinoCI
         puts "Refusing to verify sketch with '#{ext}' extension -- rename it to '.ino'!"
         return false
       end
+      unless File.exist? path
+        puts "Can't verify nonexistent Sketch at '#{path}'!"
+        return false
+      end
       run("--verify", path, err: :out)
     end
 
