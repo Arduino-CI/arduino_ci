@@ -33,12 +33,32 @@ puts "Installing USBHost"
 got_problem = true unless arduino_cmd.install_library("USBHost")
 puts "checking that library is indexed"
 got_problem = true unless arduino_cmd.library_is_indexed
+
+my_board = "arduino:sam:arduino_due_x"
+
+puts "use board! (install board)"
+got_problem = true unless arduino_cmd.use_board!(my_board)
+puts "assert that board has been installed"
+got_problem = true unless arduino_cmd.board_installed?(my_board)
+
 puts "setting compiler warning level"
 got_problem = true unless arduino_cmd.set_pref("compiler.warning_level", "all")
-puts "use board! (install board)"
-got_problem = true unless arduino_cmd.use_board!("arduino:samd:zero")
-puts "verify that board has been installed"
-got_problem = true unless arduino_cmd.board_installed?("arduino:samd:zero")
+
+simple_sketch = File.join(File.dirname(File.dirname(__FILE__)), "spec", "FakeSketch", "FakeSketch.ino")
+
+puts "verify a simple sketch"
+got_problem = true unless arduino_cmd.verify_sketch(simple_sketch)
+
+library_path = File.join(File.dirname(File.dirname(__FILE__)), "SampleProjects", "DoSomething")
+puts "verify the examples of a library (#{library_path})..."
+puts " - Install the library"
+installed_library_path = arduino_cmd.install_local_library(library_path)
+got_problem = true if installed_library_path.nil?
+puts " - Iterate over the examples"
+arduino_cmd.each_library_example(installed_library_path) do |example_path|
+  puts "Iterating #{example_path}"
+  got_problem = true unless arduino_cmd.verify_sketch(example_path)
+end
 
 abort if got_problem
 exit(0)

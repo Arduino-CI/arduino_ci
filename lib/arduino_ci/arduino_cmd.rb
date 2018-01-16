@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'arduino_ci/display_manager'
 require 'arduino_ci/arduino_installation'
 
@@ -22,7 +23,6 @@ module ArduinoCI
     end
 
     attr_accessor :installation
-    attr_reader   :prefs_cache
     attr_reader   :prefs_response_time
     attr_reader   :library_is_indexed
 
@@ -31,26 +31,47 @@ module ArduinoCI
       @display_mgr         = DisplayManager::instance
       @installation        = installation
       @prefs_response_time = nil
-      @prefs_cache         = prefs
+      @prefs_cache         = nil
       @library_is_indexed  = false
     end
 
-    # fetch preferences to a hash
-    def prefs
-      resp = nil
-      @display_mgr.with_display do
-        start = Time.now
-        resp = run_and_capture("--get-pref")
-        @prefs_response_time = Time.now - start
-      end
-      return nil unless resp[:success]
-      lines = resp[:out].split("\n").select { |l| l.include? "=" }
+    def _parse_pref_string(arduino_output)
+      lines = arduino_output.split("\n").select { |l| l.include? "=" }
       ret = lines.each_with_object({}) do |e, acc|
         parts = e.split("=", 2)
         acc[parts[0]] = parts[1]
         acc
       end
       ret
+    end
+
+    # fetch preferences to a hash
+    def _prefs
+      resp = nil
+      if @installation.requires_x
+        @display_mgr.with_display do
+          start = Time.now
+          resp = run_and_capture("--get-pref")
+          @prefs_response_time = Time.now - start
+        end
+      else
+        start = Time.now
+        resp = run_and_capture("--get-pref")
+        @prefs_response_time = Time.now - start
+      end
+      return nil unless resp[:success]
+      _parse_pref_string(resp[:out])
+    end
+
+    def prefs
+      @prefs_cache = _prefs if @prefs_cache.nil?
+      @prefs_cache.clone
+    end
+
+    # get a preference key
+    def get_pref(key)
+      data = @prefs_cache.nil? ? prefs : @prefs_cache
+      data[key]
     end
 
     # set a preference key/value pair
@@ -65,13 +86,22 @@ module ArduinoCI
 
     # run the arduino command
     def run(*args, **kwargs)
-      full_args = [@installation.cmd_path] + args
-      @display_mgr.run(*full_args, **kwargs)
+      full_args = @installation.base_cmd + args
+      if @installation.requires_x
+        @display_mgr.run(*full_args, **kwargs)
+      else
+        Host.run(*full_args, **kwargs)
+      end
     end
 
     def run_with_gui_guess(message, *args, **kwargs)
       # On Travis CI, we get an error message in the GUI instead of on STDERR
       # so, assume that if we don't get a rapid reply that things are not installed
+
+      # if we don't need X, we can skip this whole thing
+      return run_and_capture(*args, **kwargs)[:success] unless @installation.requires_x
+
+      prefs if @prefs_response_time.nil?
       x3 = @prefs_response_time * 3
       Timeout.timeout(x3) do
         result = run_and_capture(*args, **kwargs)
@@ -130,6 +160,12 @@ module ArduinoCI
       result[:success]
     end
 
+    # generate the (very likely) path of a library given its name
+    def library_path(library_name)
+      sketchbook = get_pref("sketchbook.path")
+      File.join(sketchbook, library_name)
+    end
+
     # update the library index
     def update_library_index
       # install random lib so the arduino IDE grabs a new library index
@@ -151,5 +187,55 @@ module ArduinoCI
       use_board(boardname)
     end
 
+    def verify_sketch(path)
+      ext = File.extname path
+      unless ext.casecmp(".ino").zero?
+        puts "Refusing to verify sketch with '#{ext}' extension -- rename it to '.ino'!"
+        return false
+      end
+      unless File.exist? path
+        puts "Can't verify nonexistent Sketch at '#{path}'!"
+        return false
+      end
+      run("--verify", path, err: :out)
+    end
+
+    # ensure that the given library is installed, or symlinked as appropriate
+    # return the path of the prepared library, or nil
+    def install_local_library(library_path)
+      library_name = File.basename(library_path)
+      destination_path = File.join(@installation.lib_dir, library_name)
+
+      # things get weird if the sketchbook contains the library.
+      # check that first
+      if File.exist? destination_path
+        uhoh = "There is already a library '#{library_name}' in the library directory"
+        return destination_path if destination_path == library_path
+
+        # maybe it's a symlink? that would be OK
+        if File.symlink?(destination_path)
+          return destination_path if File.readlink(destination_path) == library_path
+          puts "#{uhoh} and it's not symlinked to #{library_path}"
+          return nil
+        end
+
+        puts "#{uhoh}.  It may need to be removed manually."
+        return nil
+      end
+
+      # install the library
+      FileUtils.ln_s(library_path, destination_path)
+      destination_path
+    end
+
+    def each_library_example(installed_library_path)
+      example_path = File.join(installed_library_path, "examples")
+      examples = Pathname.new(example_path).children.select(&:directory?).map(&:to_path).map(&File.method(:basename))
+      examples.each do |e|
+        proj_file = File.join(example_path, e, "#{e}.ino")
+        puts "Considering #{proj_file}"
+        yield proj_file if File.exist?(proj_file)
+      end
+    end
   end
 end
