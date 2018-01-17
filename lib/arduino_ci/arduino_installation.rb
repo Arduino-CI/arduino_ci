@@ -1,6 +1,7 @@
 require "arduino_ci/host"
 require "arduino_ci/arduino_cmd_osx"
 require "arduino_ci/arduino_cmd_linux"
+require "arduino_ci/arduino_cmd_linux_builder"
 
 DESIRED_ARDUINO_IDE_VERSION = "1.8.5".freeze
 USE_BUILDER = false
@@ -51,6 +52,23 @@ module ArduinoCI
       end
 
       def autolocate_linux
+        if USE_BUILDER
+          builder_name = "arduino-builder"
+          cli_place = Host.which(builder_name)
+          unless cli_place.nil?
+            ret = ArduinoCmdLinuxBuilder.new
+            ret.base_cmd = [cli_place]
+            return ret
+          end
+
+          forced_builder = File.join(force_install_location, builder_name)
+          if File.exist?(forced_builder)
+            ret = ArduinoCmdLinuxBuilder.new
+            ret.base_cmd = [forced_builder]
+            return ret
+          end
+        end
+
         gui_name = "arduino"
         gui_place = Host.which(gui_name)
         unless gui_place.nil?
