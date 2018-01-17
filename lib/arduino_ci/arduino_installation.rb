@@ -78,9 +78,25 @@ module ArduinoCI
         when :linux
           pkgname = "arduino-#{DESIRED_ARDUINO_IDE_VERSION}"
           tarfile = "#{pkgname}-linux64.tar.xz"
-          system("wget", "https://downloads.arduino.cc/#{tarfile}")
-          system("tar", "xf", tarfile)
-          system("mv", pkgname, force_install_location)
+          if File.exist? tarfile
+            puts "Arduino tarfile seems to have been downloaded already"
+          else
+            puts "Downloading Arduino binary with wget"
+            system("wget", "https://downloads.arduino.cc/#{tarfile}")
+          end
+
+          if File.exist? pkgname
+            puts "Tarfile seems to have been extracted already"
+          else
+            puts "Extracting archive with tar"
+            system("tar", "xf", tarfile)
+          end
+
+          if File.exist? force_install_location
+            puts "Arduino binary seems to have already been force-installed"
+          else
+            system("mv", pkgname, force_install_location)
+          end
         end
       end
 
