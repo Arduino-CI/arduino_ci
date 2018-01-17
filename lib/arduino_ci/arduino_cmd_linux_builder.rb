@@ -19,9 +19,8 @@ module ArduinoCI
     end
 
     # run the arduino command
-    def run(*args, **kwargs)
-      full_args = @base_cmd + args
-      Host.run(*full_args, **kwargs)
+    def _run(*args, **kwargs)
+      Host.run(*args, **kwargs)
     end
 
   end

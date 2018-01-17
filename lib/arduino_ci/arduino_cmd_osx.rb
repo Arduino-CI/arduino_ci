@@ -14,9 +14,8 @@ module ArduinoCI
     flag :verify,          "--verify"
 
     # run the arduino command
-    def run(*args, **kwargs)
-      full_args = @base_cmd + args
-      Host.run(*full_args, **kwargs)
+    def _run(*args, **kwargs)
+      Host.run(*args, **kwargs)
     end
 
     def _lib_dir

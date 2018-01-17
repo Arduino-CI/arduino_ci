@@ -36,9 +36,8 @@ module ArduinoCI
     end
 
     # run the arduino command
-    def run(*args, **kwargs)
-      full_args = @base_cmd + args
-      @display_mgr.run(*full_args, **kwargs)
+    def _run(*args, **kwargs)
+      @display_mgr.run(*args, **kwargs)
     end
 
     def run_with_gui_guess(message, *args, **kwargs)

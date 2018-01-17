@@ -87,8 +87,15 @@ module ArduinoCI
     end
 
     # run the arduino command
-    def run(*args, **kwargs)
+    def _run(*args, **kwargs)
       raise "Ian needs to implement this in a subclass #{args} #{kwargs}"
+    end
+
+    # build and run the arduino command
+    def run(*args, **kwargs)
+      # TODO: detect env!!
+      full_args = @base_cmd + args
+      _run(*full_args, **kwargs)
     end
 
     # run a command and capture its output
