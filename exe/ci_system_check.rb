@@ -1,10 +1,7 @@
 require 'arduino_ci'
 
-puts "Enabling display with display manager"
-ArduinoCI::DisplayManager::instance.enable
-
 puts "Autlocating Arduino command"
-arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
+arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
 
 board_tests = {
   "arduino:avr:uno" => true,

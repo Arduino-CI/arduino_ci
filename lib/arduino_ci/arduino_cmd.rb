@@ -1,41 +1,43 @@
 require 'fileutils'
 require 'arduino_ci/display_manager'
-require 'arduino_ci/arduino_installation'
 
 module ArduinoCI
 
   # Wrap the Arduino executable.  This requires, in some cases, a faked display.
   class ArduinoCmd
 
-    class << self
-      protected :new
-
-      # @return [ArduinoCmd] A command object with a best guess (or nil) for the installation
-      def autolocate
-        new(ArduinoInstallation.autolocate)
-      end
-
-      # @return [ArduinoCmd] A command object, installing Arduino if necessary
-      def autolocate!
-        new(ArduinoInstallation.autolocate!)
-      end
-
+    # Enable a shortcut syntax for command line flags
+    # @param name [String] What the flag will be called (prefixed with 'flag_')
+    # @return [void]
+    # @macro [attach] flag
+    #   @!attribute [r] flag_$1
+    #   @return String $2 the text of the command line flag
+    def self.flag(name, text = nil)
+      text = "(flag #{name} not defined)" if text.nil?
+      self.class_eval("def flag_#{name};\"#{text}\";end")
     end
 
     attr_accessor :installation
-    attr_reader   :prefs_response_time
+    attr_accessor :base_cmd
+
     attr_reader   :library_is_indexed
 
-    # @param installation [ArduinoInstallation] the location of the Arduino program installation
-    def initialize(installation)
-      @display_mgr         = DisplayManager::instance
-      @installation        = installation
-      @prefs_response_time = nil
+    # set the command line flags (undefined for now).
+    # These vary between gui/cli
+    flag :get_pref
+    flag :set_pref
+    flag :save_prefs
+    flag :use_board
+    flag :install_boards
+    flag :install_library
+    flag :verify
+
+    def initialize
       @prefs_cache         = nil
       @library_is_indexed  = false
     end
 
-    def _parse_pref_string(arduino_output)
+    def parse_pref_string(arduino_output)
       lines = arduino_output.split("\n").select { |l| l.include? "=" }
       ret = lines.each_with_object({}) do |e, acc|
         parts = e.split("=", 2)
@@ -45,26 +47,21 @@ module ArduinoCI
       ret
     end
 
-    # fetch preferences to a hash
-    def _prefs
-      resp = nil
-      if @installation.requires_x
-        @display_mgr.with_display do
-          start = Time.now
-          resp = run_and_capture("--get-pref")
-          @prefs_response_time = Time.now - start
-        end
-      else
-        start = Time.now
-        resp = run_and_capture("--get-pref")
-        @prefs_response_time = Time.now - start
-      end
+    def _lib_dir
+      "<lib dir not defined>"
+    end
+
+    # fetch preferences to a string
+    def _prefs_raw
+      resp = run_and_capture(flag_get_pref)
       return nil unless resp[:success]
-      _parse_pref_string(resp[:out])
+      resp[:out]
     end
 
     def prefs
-      @prefs_cache = _prefs if @prefs_cache.nil?
+      prefs_raw = _prefs_raw if @prefs_cache.nil?
+      return nil if prefs_raw.nil?
+      @prefs_cache = parse_pref_string(prefs_raw)
       @prefs_cache.clone
     end
 
@@ -74,42 +71,25 @@ module ArduinoCI
       data[key]
     end
 
-    # set a preference key/value pair
+    # underlying preference-setter.
+    # @return [bool] whether the command succeeded
+    def _set_pref(key, value)
+      run_and_capture(flag_set_pref, "#{key}=#{value}", flag_save_prefs)[:success]
+    end
+
+    # set a preference key/value pair, and update the cache.
     # @param key [String] the preference key
     # @param value [String] the preference value
     # @return [bool] whether the command succeeded
     def set_pref(key, value)
-      success = run_with_gui_guess(" about preferences", "--pref", "#{key}=#{value}", "--save-prefs")
+      success = _set_pref(key, value)
       @prefs_cache[key] = value if success
       success
     end
 
     # run the arduino command
     def run(*args, **kwargs)
-      full_args = @installation.base_cmd + args
-      if @installation.requires_x
-        @display_mgr.run(*full_args, **kwargs)
-      else
-        Host.run(*full_args, **kwargs)
-      end
-    end
-
-    def run_with_gui_guess(message, *args, **kwargs)
-      # On Travis CI, we get an error message in the GUI instead of on STDERR
-      # so, assume that if we don't get a rapid reply that things are not installed
-
-      # if we don't need X, we can skip this whole thing
-      return run_and_capture(*args, **kwargs)[:success] unless @installation.requires_x
-
-      prefs if @prefs_response_time.nil?
-      x3 = @prefs_response_time * 3
-      Timeout.timeout(x3) do
-        result = run_and_capture(*args, **kwargs)
-        result[:success]
-      end
-    rescue Timeout::Error
-      puts "No response in #{x3} seconds. Assuming graphical modal error message#{message}."
-      false
+      raise "Ian needs to implement this in a subclass #{args} #{kwargs}"
     end
 
     # run a command and capture its output
@@ -140,7 +120,7 @@ module ArduinoCI
     # we do this by just selecting a board.
     #   the arduino binary will error if unrecognized and do a successful no-op if it's installed
     def board_installed?(boardname)
-      run_with_gui_guess(" about board not installed", "--board", boardname)
+      run_and_capture(flag_use_board, boardname)[:success]
     end
 
     # install a board by name
@@ -148,22 +128,21 @@ module ArduinoCI
     # @return [bool] whether the command succeeded
     def install_board(boardname)
       # TODO: find out why IO.pipe fails but File::NULL succeeds :(
-      run_and_capture("--install-boards", boardname, out: File::NULL)[:success]
+      run_and_capture(flag_install_boards, boardname, out: File::NULL)[:success]
     end
 
     # install a library by name
     # @param name [String] the library name
     # @return [bool] whether the command succeeded
     def install_library(library_name)
-      result = run_and_capture("--install-library", library_name)
+      result = run_and_capture(flag_install_library, library_name)
       @library_is_indexed = true if result[:success]
       result[:success]
     end
 
     # generate the (very likely) path of a library given its name
     def library_path(library_name)
-      sketchbook = get_pref("sketchbook.path")
-      File.join(sketchbook, library_name)
+      File.join(_lib_dir, library_name)
     end
 
     # update the library index
@@ -175,7 +154,7 @@ module ArduinoCI
 
     # use a particular board for compilation
     def use_board(boardname)
-      run_with_gui_guess(" about board not installed", "--board", boardname, "--save-prefs")
+      run_and_capture(flag_use_board, boardname, flag_save_prefs)[:success]
     end
 
     # use a particular board for compilation, installing it if necessary
@@ -197,25 +176,25 @@ module ArduinoCI
         puts "Can't verify nonexistent Sketch at '#{path}'!"
         return false
       end
-      run("--verify", path, err: :out)
+      run(flag_verify, path, err: :out)
     end
 
     # ensure that the given library is installed, or symlinked as appropriate
     # return the path of the prepared library, or nil
-    def install_local_library(library_path)
-      library_name = File.basename(library_path)
-      destination_path = File.join(@installation.lib_dir, library_name)
+    def install_local_library(path)
+      library_name = File.basename(path)
+      destination_path = library_path(library_name)
 
       # things get weird if the sketchbook contains the library.
       # check that first
       if File.exist? destination_path
         uhoh = "There is already a library '#{library_name}' in the library directory"
-        return destination_path if destination_path == library_path
+        return destination_path if destination_path == path
 
         # maybe it's a symlink? that would be OK
         if File.symlink?(destination_path)
-          return destination_path if File.readlink(destination_path) == library_path
-          puts "#{uhoh} and it's not symlinked to #{library_path}"
+          return destination_path if File.readlink(destination_path) == path
+          puts "#{uhoh} and it's not symlinked to #{path}"
           return nil
         end
 
@@ -224,7 +203,7 @@ module ArduinoCI
       end
 
       # install the library
-      FileUtils.ln_s(library_path, destination_path)
+      FileUtils.ln_s(path, destination_path)
       destination_path
     end
 
