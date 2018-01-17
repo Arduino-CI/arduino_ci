@@ -55,9 +55,14 @@ module ArduinoCI
         gui_place = Host.which(gui_name)
         unless gui_place.nil?
           ret = ArduinoCmdLinux.new
-          forced_arduino = File.join(force_install_location, gui_name)
-          forced = File.exist?(forced_arduino)
-          ret.base_cmd = [(forced ? forced_arduino : gui_place)]
+          ret.base_cmd = [gui_place]
+          return ret
+        end
+
+        forced_arduino = File.join(force_install_location, gui_name)
+        if File.exist?(forced_arduino)
+          ret = ArduinoCmdLinux.new
+          ret.base_cmd = [forced_arduino]
           return ret
         end
         nil
