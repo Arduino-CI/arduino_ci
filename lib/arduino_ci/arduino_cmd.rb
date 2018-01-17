@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'arduino_ci/display_manager'
 
 module ArduinoCI
 

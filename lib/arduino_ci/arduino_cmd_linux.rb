@@ -1,4 +1,5 @@
 require 'arduino_ci/arduino_cmd'
+require 'arduino_ci/display_manager'
 
 module ArduinoCI
 

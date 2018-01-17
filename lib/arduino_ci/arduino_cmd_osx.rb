@@ -1,3 +1,4 @@
+require "arduino_ci/host"
 require 'arduino_ci/arduino_cmd'
 
 module ArduinoCI
