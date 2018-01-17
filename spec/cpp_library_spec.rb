@@ -21,4 +21,11 @@ RSpec.describe ArduinoCI::CppLibrary do
     end
   end
 
+  context "build" do
+    arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
+    it "builds libraries" do
+      expect(cpp_library.build(arduino_cmd)).to be true
+    end
+  end
+
 end
