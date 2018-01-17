@@ -25,12 +25,12 @@ module ArduinoCI
       end
 
       def autolocate_osx
-        osx_root = "/Applications/Arduino.app"
+        osx_root = "/Applications/Arduino.app/Contents"
         old_way = false
         return nil unless File.exist? osx_root
 
         ret = ArduinoCmdOSX.new
-        osx_place = "#{osx_root}/Contents/MacOS"
+        osx_place = "#{osx_root}/MacOS"
 
         if old_way
           ret.base_cmd = [File.join(osx_place, "Arduino")]
@@ -38,8 +38,8 @@ module ArduinoCI
           jvm_runtime = `/usr/libexec/java_home`
           ret.base_cmd = [
             "java",
-            "-cp", "#{osx_root}/Contents/Java/*",
-            "-DAPP_DIR=#{osx_root}/Contents/Java",
+            "-cp", "#{osx_root}/Java/*",
+            "-DAPP_DIR=#{osx_root}/Java",
             "-Djava.ext.dirs=$JVM_RUNTIME/Contents/Home/lib/ext/:#{jvm_runtime}/Contents/Home/jre/lib/ext/",
             "-Dfile.encoding=UTF-8",
             "-Dapple.awt.UIElement=true",
@@ -48,6 +48,8 @@ module ArduinoCI
             "processing.app.Base",
           ]
         end
+
+        ret.gcc_cmd = [File.join(osx_root, "Java", "hardware", "tools", "avr", "bin", "avr-gcc")]
         ret
       end
 
@@ -58,6 +60,7 @@ module ArduinoCI
           unless cli_place.nil?
             ret = ArduinoCmdLinuxBuilder.new
             ret.base_cmd = [cli_place]
+            ret.gcc_cmd = Host.which("avr-gcc")
             return ret
           end
 
@@ -65,6 +68,7 @@ module ArduinoCI
           if File.exist?(forced_builder)
             ret = ArduinoCmdLinuxBuilder.new
             ret.base_cmd = [forced_builder]
+            ret.gcc_cmd = [File.join(force_install_location, "hardware", "tools", "avr", "bin", "avr-gcc")]
             return ret
           end
         end
@@ -74,6 +78,7 @@ module ArduinoCI
         unless gui_place.nil?
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [gui_place]
+          ret.gcc_cmd = Host.which("avr-gcc")
           return ret
         end
 
@@ -81,6 +86,7 @@ module ArduinoCI
         if File.exist?(forced_arduino)
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [forced_arduino]
+          ret.gcc_cmd = [File.join(force_install_location, "hardware", "tools", "avr", "bin", "avr-gcc")]
           return ret
         end
         nil

@@ -18,6 +18,7 @@ module ArduinoCI
 
     attr_accessor :installation
     attr_accessor :base_cmd
+    attr_accessor :gcc_cmd
 
     attr_reader   :library_is_indexed
 
@@ -95,6 +96,12 @@ module ArduinoCI
     def run(*args, **kwargs)
       # TODO: detect env!!
       full_args = @base_cmd + args
+      _run(*full_args, **kwargs)
+    end
+
+    def run_gcc(*args, **kwargs)
+      # TODO: detect env!!
+      full_args = @gcc_cmd + args
       _run(*full_args, **kwargs)
     end
 
