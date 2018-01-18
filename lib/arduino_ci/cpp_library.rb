@@ -3,7 +3,7 @@ require "arduino_ci/host"
 
 HPP_EXTENSIONS = [".hpp", ".hh", ".h", ".hxx", ".h++"].freeze
 CPP_EXTENSIONS = [".cpp", ".cc", ".c", ".cxx", ".c++"].freeze
-ARDUINO_HEADER_DIR = File.expand_path("../../../cpp", __FILE__)
+ARDUINO_HEADER_DIR = File.expand_path("../../../cpp/arduino", __FILE__)
 
 module ArduinoCI
 
