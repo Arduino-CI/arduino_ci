@@ -17,7 +17,16 @@ module ArduinoCI
     end
 
     def cpp_files
-      Find.find(@base_dir).select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
+      all_cpp = Find.find(@base_dir).select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
+      all_cpp.reject { |p| p.start_with?(tests_dir) }
+    end
+
+    def tests_dir
+      File.join(@base_dir, "test")
+    end
+
+    def test_files
+      Find.find(tests_dir).select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
     end
 
     def header_dirs

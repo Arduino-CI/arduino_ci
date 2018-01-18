@@ -21,6 +21,22 @@ RSpec.describe ArduinoCI::CppLibrary do
     end
   end
 
+  context "tests_dir" do
+    it "locate the tests directory" do
+      dosomething_header_dirs = ["DoSomething"]
+      relative_path = cpp_library.tests_dir.split("SampleProjects/", 2)[1]
+      expect(relative_path).to eq("DoSomething/test")
+    end
+  end
+
+  context "test_files" do
+    it "finds cpp files in directory" do
+      dosomething_test_files = ["DoSomething/test/basic.cpp"]
+      relative_paths = cpp_library.test_files.map { |f| f.split("SampleProjects/", 2)[1] }
+      expect(relative_paths).to match_array(dosomething_test_files)
+    end
+  end
+
   context "build" do
     arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
     it "builds libraries" do
