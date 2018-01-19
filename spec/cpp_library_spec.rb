@@ -31,7 +31,11 @@ RSpec.describe ArduinoCI::CppLibrary do
 
   context "test_files" do
     it "finds cpp files in directory" do
-      dosomething_test_files = ["DoSomething/test/basic.cpp"]
+      dosomething_test_files = [
+        "DoSomething/test/good-null.cpp",
+        "DoSomething/test/good-library.cpp",
+        "DoSomething/test/bad-null.cpp"
+      ]
       relative_paths = cpp_library.test_files.map { |f| f.split("SampleProjects/", 2)[1] }
       expect(relative_paths).to match_array(dosomething_test_files)
     end
@@ -40,7 +44,21 @@ RSpec.describe ArduinoCI::CppLibrary do
   context "build" do
     arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
     it "builds libraries" do
-      expect(cpp_library.build(arduino_cmd)).to be true
+      cpp_library.cpp_files.each do |path|
+        expect(cpp_library.build(path)).to be true
+      end
+
+    end
+  end
+
+  context "test" do
+    arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
+    it "tests libraries" do
+      test_files = cpp_library.test_files
+      expect(test_files.empty?).to be false
+      test_files.each do |path|
+        expect(cpp_library.test(path)).to eq(path.include?("good"))
+      end
     end
   end
 
