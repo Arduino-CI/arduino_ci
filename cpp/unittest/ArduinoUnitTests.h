@@ -10,16 +10,78 @@ struct Results {
   int skipped;  // TODO: not sure about this
 };
 
+struct TestData {
+  const char* name;
+  int result;
+};
+
 class Test
 {
+  public:
+    class ReporterTAP {
+      private:
+        int mTestCounter;
+        int mAssertCounter;
 
+      public:
+        ReporterTAP() {}
+        ~ReporterTAP() {}
+
+        void onTestRunInit(int numTests) {
+          cout << "TAP version 13" << endl;
+          cout << 1 << ".." << numTests << endl; // we know how many tests, in advance
+          mTestCounter = 0;
+        }
+
+        void onTestStart(TestData td) {
+          mAssertCounter = 0;
+          ++mTestCounter;
+          cout << "# Subtest: " << td.name << endl;
+        }
+
+        void onTestEnd(TestData td) {
+          cout << "    1.." << mAssertCounter << endl;
+          if (td.result == RESULT_PASS) {
+            cout << "ok " << mTestCounter << " - " << td.name << endl;
+          } else {
+            cout << "not ok " << mTestCounter << " - " << td.name << endl;
+          }
+        }
+
+        template <typename A, typename B> void onAssert(
+              const char* file,
+              int line,
+              const char* description,
+              bool pass,
+              const char* lhsRelevance,
+              const char* lhsLabel,
+              const A &lhs,
+              const char* opLabel,
+              const char* rhsRelevance,
+              const char* rhsLabel,
+              const B &rhs
+          ) {
+            cout << "    " << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - ";
+            cout << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl;
+            if (!pass) {
+              cout << "      ---" << endl;
+              cout << "      operator: " << opLabel << endl;
+              cout << "      " << lhsRelevance << ": " << lhs << endl;
+              cout << "      " << rhsRelevance << ": " << rhs << endl;
+              cout << "      at:" << endl;
+              cout << "        file: " << file << endl;
+              cout << "        line: " << line << endl;
+              cout << "      ..." << endl;
+          }
+        }
+    };
 
   private:
+    ReporterTAP* mReporter;
     const char* mName;
 
     // linked list structure for active tests
     static Test* sRoot;
-    static Test* sCurrent;
     Test* mNext;
 
     void append() {
@@ -44,7 +106,6 @@ class Test
 
     // current test result
     int mResult;
-    int mAssertions;
 
   public:
     static const int RESULT_NONE = 0;
@@ -55,78 +116,28 @@ class Test
     const inline char *name() { return mName; }
     const inline int result() { return mResult; }
 
-    Test(const char *_name) : mName(_name)
-    {
+    Test(const char* _name) : mName(_name) {
       mResult = RESULT_NONE;
+      mReporter = 0;
       append();
     }
 
     inline void fail() { mResult = RESULT_FAIL; }
     inline void skip() { mResult = RESULT_SKIP; }
 
-
-    static int mTestCounter;
-    static int mAssertCounter;
-
-    static void onTestRunInit(int numTests) {
-      cout << "TAP version 13" << endl;
-      cout << 1 << ".." << numTests << endl; // we know how many tests, in advance
-      mTestCounter = 0;
-    }
-
-    static void onTestStart(Test* test) {
-      mAssertCounter = 0;
-      ++mTestCounter;
-      cout << "# Subtest: " << test->name() << endl;
-    }
-
-    static void onTestEnd(Test* test) {
-      cout << "    1.." << mAssertCounter << endl;
-      if (test->result() == RESULT_PASS) {
-        cout << "ok " << mTestCounter << " - " << test->name() << endl;
-      } else {
-        cout << "not ok " << mTestCounter << " - " << test->name() << endl;
-      }
-    }
-
-    template <typename A, typename B>
-    static void onAssert(
-        const char* file,
-        int line,
-        const char* description,
-        bool pass,
-        const char* lhsLabel,
-        const A &lhs,
-        const char* opLabel,
-        const char* rhsLabel,
-        const B &rhs
-    ) {
-      cout << "    " << (pass ? "" : "not ") << "ok " << mAssertCounter << " - ";
-      cout << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl;
-      if (!pass) {
-        cout << "      ---" << endl;
-        cout << "      operator: " << opLabel << endl;
-        cout << "      expected: " << lhsLabel << endl;
-        cout << "      actual: " << endl;
-        cout << "      at:" << endl;
-        cout << "        file: " << file << endl;
-        cout << "        line: " << line << endl;
-        cout << "      ..." << endl;
-      }
-    }
-
-    static Results run() {
-      onTestRunInit(numTests());
+    static Results run(ReporterTAP* reporter) {
+      if (reporter) reporter->onTestRunInit(numTests());
       Results results = {0, 0, 0};
 
       for (Test *p = sRoot; p; p = p->mNext) {
-        sCurrent = p;
-        onTestStart(p);
+        TestData td = {p->name(), p->result()};
+        p->mReporter = reporter;
+        if (reporter) reporter->onTestStart(td);
         p->test();
         if (p->mResult == RESULT_PASS) ++results.passed;
         if (p->mResult == RESULT_FAIL) ++results.failed;
         if (p->mResult == RESULT_SKIP) ++results.skipped;
-        onTestEnd(p);
+        if (reporter) reporter->onTestEnd(td);
       }
 
       return results;
@@ -135,9 +146,11 @@ class Test
     // TODO: figure out TAP output like
     // https://api.travis-ci.org/v3/job/283745834/log.txt
     // https://testanything.org/tap-specification.html
-    // parse input and deicde how to report
+    // parse input and decide how to report
     static int run_and_report(int argc, char *argv[]) {
-      Results results = run();
+      // TODO: pick a reporter based on args
+      ReporterTAP rep;
+      Results results = run(&rep);
       return results.failed + results.skipped;
     }
 
@@ -152,16 +165,13 @@ class Test
       excise();
     }
 
-    // FYI
-    // #define assertOp(arg1,op,op_name,arg2) do { if (!assertion<typeof(arg1),typeof(arg2)>(__FILE__,__LINE__,#arg1,(arg1),op_name,op,#arg2,(arg2))) return; } while (0)
-    // #define assertEqual(arg1,arg2)       assertOp(arg1,compareEqual,"==",arg2)
-
     template <typename A, typename B>
     bool assertion(
         const char *file,
         int line,
         const char *description,
-        const char *lhss,
+        const char *lhsRelevance,
+        const char *lhsLabel,
         const A &lhs,
 
         const char *ops,
@@ -170,38 +180,21 @@ class Test
             const A &lhs,
             const B &rhs),
 
-        const char *rhss,
+        const char *rhsRelevance,
+        const char *rhsLabel,
         const B &rhs)
     {
-      ++mAssertCounter;
       bool ok = op(lhs, rhs);
-      onAssert(file, line, description, ok, lhss, lhs, ops, rhss, rhs);
+
+      if (mReporter) {
+        mReporter->onAssert(file, line, description, ok,
+          lhsRelevance, lhsLabel, lhs, ops, rhsRelevance, rhsLabel, rhs);
+      }
 
       if (!ok)
-        sCurrent->fail();
+        fail();
       return ok;
-  }
-
-  public:
-    class Reporter {
-      public:
-        Reporter() {}
-        virtual ~Reporter() {}
-
-        void onInit(int numTests) {}
-        void onTest(Test* test) {}
-        void onTestEnd(Test* test) {}
-        void onAssert() {}
-        void onFinish(Results results) {}
-    };
-
-    class ReporterTAP : Reporter {
-      private:
-
-      public:
-        ReporterTAP() : Reporter() {}
-        ~ReporterTAP() {}
-    };
+    }
 
 };
 
