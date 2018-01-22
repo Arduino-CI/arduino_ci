@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `ArduinoCmd` installs libraries
 - `ArduinoCmd` selects boards (compiler preference)
 - `ArduinoCmd` verifies sketches
+- `CppLibrary` manages GCC for unittests
+- `CIConfig` manages overridable config for all testing
 
 ### Changed
 - `DisplayManger.with_display` doesn't `disable` if the display was enabled prior to starting the block

@@ -1,0 +1,34 @@
+platforms:
+  bogo:
+    board: fakeduino:beep:bogo
+    package: potato:salad
+    gcc:
+      features:
+        - a
+        - b
+      defines:
+        - c
+        - d
+      warnings:
+        - e
+        - f
+      flags:
+        - g
+        - h
+  zero: ~
+  esp8266:
+    board: esp8266:esp8266:booo
+    package: esp8266:esp8266
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+
+compile:
+  platforms:
+    - esp8266
+
+unittest:
+  platforms:
+    - bogo

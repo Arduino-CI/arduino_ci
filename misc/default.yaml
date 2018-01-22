@@ -1,0 +1,73 @@
+platforms:
+  uno:
+    board: arduino:avr:uno
+    package: ~
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  due:
+    board: arduino:sam:arduino_due_x
+    package: arduino:sam
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  zero:
+    board: arduino:samd:zero
+    package: arduino:samd
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  esp8266:
+    board: esp8266:esp8266:huzzah
+    package: esp8266:esp8266
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  leonardo:
+    board: arduino:avr:leonardo
+    package: ~
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  trinket:
+    board: adafruit:avr:trinket5
+    package: adafruit:avr
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  gemma:
+    board: arduino:avr:gemma
+    package: ~
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+
+compile:
+  platforms:
+    - uno
+    - due
+    - zero
+    - esp8266
+    - leonardo
+
+unittest:
+  platforms:
+    - uno
+    - due
+    - zero
+    - esp8266
+    - leonardo
