@@ -48,21 +48,16 @@ module ArduinoCI
             "processing.app.Base",
           ]
         end
-
-        hardware_dir = File.join(osx_root, "Java", "hardware")
-        ret.gcc_cmd = [File.join(hardware_dir, "tools", "avr", "bin", "avr-gcc")]
         ret
       end
 
       def autolocate_linux
-        forced_avr = File.join(force_install_location, "hardware", "tools", "avr")
         if USE_BUILDER
           builder_name = "arduino-builder"
           cli_place = Host.which(builder_name)
           unless cli_place.nil?
             ret = ArduinoCmdLinuxBuilder.new
             ret.base_cmd = [cli_place]
-            ret.gcc_cmd = [Host.which("avr-gcc")]
             return ret
           end
 
@@ -70,7 +65,6 @@ module ArduinoCI
           if File.exist?(forced_builder)
             ret = ArduinoCmdLinuxBuilder.new
             ret.base_cmd = [forced_builder]
-            ret.gcc_cmd = [File.join(forced_avr, "bin", "avr-gcc")]
             return ret
           end
         end
@@ -80,7 +74,6 @@ module ArduinoCI
         unless gui_place.nil?
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [gui_place]
-          ret.gcc_cmd = [Host.which("avr-gcc")]
           return ret
         end
 
@@ -88,7 +81,6 @@ module ArduinoCI
         if File.exist?(forced_arduino)
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [forced_arduino]
-          ret.gcc_cmd = [File.join(forced_avr, "bin", "avr-gcc")]
           return ret
         end
         nil
