@@ -130,11 +130,11 @@ module ArduinoCI
       @package_info[package][:url]
     end
 
-    def build_platforms
+    def platforms_to_build
       @compile_info[:platforms]
     end
 
-    def unittest_platforms
+    def platforms_to_unittest
       @unittest_info[:platforms]
     end
 
