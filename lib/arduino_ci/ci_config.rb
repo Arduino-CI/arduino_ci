@@ -147,15 +147,19 @@ module ArduinoCI
       deep_clone(defn)
     end
 
+    # the URL that gives the download info for a given package (a JSON file).
+    # this is NOT where the package comes from.
     def package_url(package)
       return nil if @package_info[package].nil?
       @package_info[package][:url]
     end
 
+    # platforms to build [the examples on]
     def platforms_to_build
       @compile_info[:platforms]
     end
 
+    # platforms to unit test [the tests on]
     def platforms_to_unittest
       @unittest_info[:platforms]
     end

@@ -23,31 +23,38 @@ module ArduinoCI
       Find.find(some_dir).select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
     end
 
+    # CPP files that are part of the project library under test
     def cpp_files
       cpp_files_in(@base_dir).reject { |p| p.start_with?(tests_dir) }
     end
 
+    # CPP files that are part of the arduino mock library we're providing
     def cpp_files_arduino
       cpp_files_in(ARDUINO_HEADER_DIR)
     end
 
+    # CPP files that are part of the unit test library we're providing
     def cpp_files_unittest
       cpp_files_in(UNITTEST_HEADER_DIR)
     end
 
+    # The directory where we expect to find unit test defintions provided by the user
     def tests_dir
       File.join(@base_dir, "test")
     end
 
+    # The files provided by the user that contain unit tests
     def test_files
       cpp_files_in(tests_dir)
     end
 
+    # Find all directories in the project library that include C++ header files
     def header_dirs
       files = Find.find(@base_dir).select { |path| HPP_EXTENSIONS.include?(File.extname(path)) }
       files.map { |path| File.dirname(path) }.uniq
     end
 
+    # wrapper for the GCC command
     def run_gcc(*args, **kwargs)
       # TODO: detect env!!
       full_args = ["g++"] + args
