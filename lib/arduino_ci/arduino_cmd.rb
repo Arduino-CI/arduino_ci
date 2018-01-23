@@ -133,9 +133,9 @@ module ArduinoCI
     # install a board by name
     # @param name [String] the board name
     # @return [bool] whether the command succeeded
-    def install_board(boardname)
+    def install_boards(boardfamily)
       # TODO: find out why IO.pipe fails but File::NULL succeeds :(
-      run_and_capture(flag_install_boards, boardname, out: File::NULL)[:success]
+      run_and_capture(flag_install_boards, boardfamily, out: File::NULL)[:success]
     end
 
     # install a library by name
@@ -180,7 +180,7 @@ module ArduinoCI
       return true if use_board(boardname)
       boardfamily = boardname.split(":")[0..1].join(":")
       puts "Board '#{boardname}' not found; attempting to install '#{boardfamily}'"
-      return false unless install_board(boardfamily) # guess board family from first 2 :-separated fields
+      return false unless install_boards(boardfamily) # guess board family from first 2 :-separated fields
       use_board(boardname)
     end
 
