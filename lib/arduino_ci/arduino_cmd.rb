@@ -32,7 +32,8 @@ module ArduinoCI
     flag :verify
 
     def initialize
-      @prefs_cache         = nil
+      @prefs_cache         = {}
+      @prefs_fetched       = false
       @library_is_indexed  = false
     end
 
@@ -58,7 +59,7 @@ module ArduinoCI
     end
 
     def prefs
-      prefs_raw = _prefs_raw if @prefs_cache.nil?
+      prefs_raw = _prefs_raw unless @prefs_fetched
       return nil if prefs_raw.nil?
       @prefs_cache = parse_pref_string(prefs_raw)
       @prefs_cache.clone
@@ -66,7 +67,7 @@ module ArduinoCI
 
     # get a preference key
     def get_pref(key)
-      data = @prefs_cache.nil? ? prefs : @prefs_cache
+      data = @prefs_fetched ? @prefs_cache : prefs
       data[key]
     end
 
