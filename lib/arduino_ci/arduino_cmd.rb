@@ -200,19 +200,20 @@ module ArduinoCI
     # ensure that the given library is installed, or symlinked as appropriate
     # return the path of the prepared library, or nil
     def install_local_library(path)
-      library_name = File.basename(path)
+      realpath = File.expand_path(path)
+      library_name = File.basename(realpath)
       destination_path = library_path(library_name)
 
       # things get weird if the sketchbook contains the library.
       # check that first
       if File.exist? destination_path
         uhoh = "There is already a library '#{library_name}' in the library directory"
-        return destination_path if destination_path == path
+        return destination_path if destination_path == realpath
 
         # maybe it's a symlink? that would be OK
         if File.symlink?(destination_path)
-          return destination_path if File.readlink(destination_path) == path
-          puts "#{uhoh} and it's not symlinked to #{path}"
+          return destination_path if File.readlink(destination_path) == realpath
+          puts "#{uhoh} and it's not symlinked to #{realpath}"
           return nil
         end
 
@@ -221,7 +222,7 @@ module ArduinoCI
       end
 
       # install the library
-      FileUtils.ln_s(path, destination_path)
+      FileUtils.ln_s(realpath, destination_path)
       destination_path
     end
 
