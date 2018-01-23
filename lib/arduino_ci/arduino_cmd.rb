@@ -141,8 +141,19 @@ module ArduinoCI
     # @param name [String] the library name
     # @return [bool] whether the command succeeded
     def install_library(library_name)
+      # workaround for https://github.com/arduino/Arduino/issues/3535
+      # use a dummy library name but keep open the possiblity that said library
+      # might be selected by choice for installation
+      workaround_lib = "USBHost"
+      unless @library_is_indexed || workaround_lib == library_name
+        @library_is_indexed = run_and_capture(flag_install_library, workaround_lib)
+      end
+
+      # actual installation
       result = run_and_capture(flag_install_library, library_name)
-      @library_is_indexed = true if result[:success]
+
+      # update flag if necessary
+      @library_is_indexed = (@library_is_indexed || result[:success]) if library_name == workaround_lib
       result[:success]
     end
 

@@ -26,10 +26,12 @@ got_problem = true unless arduino_cmd.set_pref("boardsmanager.additional.urls", 
 
 puts "Installing arduino:sam"
 got_problem = true unless arduino_cmd.install_board("arduino:sam")
-puts "Installing USBHost"
-got_problem = true unless arduino_cmd.install_library("USBHost")
+puts "Installing Adafruit FONA library"
+got_problem = true unless arduino_cmd.install_library("Adafruit FONA Library")
 puts "checking that library is indexed"
 got_problem = true unless arduino_cmd.library_is_indexed
+puts "Installing Adafruit FONA library a second time to see what happens"
+got_problem = true unless arduino_cmd.install_library("Adafruit FONA Library")
 
 my_board = "arduino:sam:arduino_due_x"
 
