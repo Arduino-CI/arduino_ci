@@ -226,14 +226,14 @@ module ArduinoCI
       destination_path
     end
 
-    def each_library_example(installed_library_path)
+    def library_examples(installed_library_path)
       example_path = File.join(installed_library_path, "examples")
       examples = Pathname.new(example_path).children.select(&:directory?).map(&:to_path).map(&File.method(:basename))
-      examples.each do |e|
+      files = examples.map do |e|
         proj_file = File.join(example_path, e, "#{e}.ino")
-        puts "Considering #{proj_file}"
-        yield proj_file if File.exist?(proj_file)
+        File.exist?(proj_file) ? proj_file : nil
       end
+      files.reject(&:nil?)
     end
   end
 end
