@@ -63,6 +63,7 @@ platforms:
       flags:
 
 compile:
+  libraries: ~
   platforms:
     - uno
     - due
@@ -71,6 +72,7 @@ compile:
     - leonardo
 
 unittest:
+  libraries: ~
   platforms:
     - uno
     - due

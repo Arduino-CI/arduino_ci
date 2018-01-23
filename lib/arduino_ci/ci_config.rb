@@ -21,10 +21,12 @@ PLATFORM_SCHEMA = {
 
 COMPILE_SCHEMA = {
   platforms: Array,
+  libraries: Array,
 }.freeze
 
 UNITTEST_SCHEMA = {
   platforms: Array,
+  libraries: Array,
 }.freeze
 module ArduinoCI
 
@@ -136,6 +138,16 @@ module ArduinoCI
 
     def platforms_to_unittest
       @unittest_info[:platforms]
+    end
+
+    def aux_libraries_for_build
+      return [] if @compile_info[:libraries].nil?
+      @compile_info[:libraries]
+    end
+
+    def aux_libraries_for_unittest
+      return [] if @unittest_info[:libraries].nil?
+      @unittest_info[:libraries]
     end
 
   end

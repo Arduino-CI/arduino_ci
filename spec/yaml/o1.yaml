@@ -26,9 +26,14 @@ platforms:
       flags:
 
 compile:
+  libraries:
+    - "Adafruit FONA Library"
   platforms:
     - esp8266
 
 unittest:
+  libraries:
+    - "abc123"
+    - "def456"
   platforms:
     - bogo

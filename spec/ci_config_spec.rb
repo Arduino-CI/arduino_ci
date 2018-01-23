@@ -26,6 +26,8 @@ RSpec.describe ArduinoCI::CIConfig do
       expect(default_config.package_url("adafruit:avr")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
       expect(default_config.platforms_to_build).to match(["uno", "due", "zero", "esp8266", "leonardo"])
       expect(default_config.platforms_to_unittest).to match(["uno", "due", "zero", "esp8266", "leonardo"])
+      expect(default_config.aux_libraries_for_build).to match([])
+      expect(default_config.aux_libraries_for_unittest).to match([])
     end
   end
 
@@ -59,6 +61,8 @@ RSpec.describe ArduinoCI::CIConfig do
       expect(combined_config.package_url("adafruit:avr")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
       expect(combined_config.platforms_to_build).to match(["esp8266"])
       expect(combined_config.platforms_to_unittest).to match(["bogo"])
+      expect(combined_config.aux_libraries_for_build).to match(["Adafruit FONA Library"])
+      expect(combined_config.aux_libraries_for_unittest).to match(["abc123", "def456"])
     end
   end
 
