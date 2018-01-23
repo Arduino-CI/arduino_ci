@@ -14,10 +14,16 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
   end
 
   context "autolocate!" do
+    arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
     it "doesn't fail" do
-      installation = ArduinoCI::ArduinoInstallation.autolocate!
-      expect(installation.base_cmd).not_to be nil
-      expect(installation.lib_dir).not_to be nil
+      expect(arduino_cmd.base_cmd).not_to be nil
+      expect(arduino_cmd.gcc_cmd).not_to be nil
+      expect(arduino_cmd._lib_dir).not_to be nil
+    end
+
+    it "produces a working AVR-GCC" do
+      expect(arduino_cmd.gcc_cmd).not_to be nil
+      expect(arduino_cmd.run_gcc("--version")).to be true
     end
   end
 

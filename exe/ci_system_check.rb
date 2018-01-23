@@ -1,10 +1,7 @@
 require 'arduino_ci'
 
-puts "Enabling display with display manager"
-ArduinoCI::DisplayManager::instance.enable
-
 puts "Autlocating Arduino command"
-arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
+arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
 
 board_tests = {
   "arduino:avr:uno" => true,
@@ -50,6 +47,11 @@ puts "verify a simple sketch"
 got_problem = true unless arduino_cmd.verify_sketch(simple_sketch)
 
 library_path = File.join(File.dirname(File.dirname(__FILE__)), "SampleProjects", "DoSomething")
+
+puts "verify a library with arduino mocks"
+cpp_library = ArduinoCI::CppLibrary.new(library_path)
+got_problem = true unless cpp_library.build(arduino_cmd)
+
 puts "verify the examples of a library (#{library_path})..."
 puts " - Install the library"
 installed_library_path = arduino_cmd.install_local_library(library_path)

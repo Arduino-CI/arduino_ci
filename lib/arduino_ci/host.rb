@@ -1,3 +1,5 @@
+require 'os'
+
 module ArduinoCI
 
   # Tools for interacting with the host machine
@@ -27,8 +29,14 @@ module ArduinoCI
       puts " $ #{shell_vars} #{actual_args.join(' ')}"
       ret = system(*full_cmd, **kwargs)
       status = ret ? "succeeded" : "failed"
-      puts "#{actual_args[0]} has #{status}"
+      puts "Command '#{File.basename(actual_args[0])}' has #{status}"
       ret
+    end
+
+    def self.os
+      return :osx if OS.osx?
+      return :linux if OS.linux?
+      return :windows if OS.windows?
     end
 
   end

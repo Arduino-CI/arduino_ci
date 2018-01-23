@@ -6,24 +6,15 @@ end
 
 
 RSpec.describe ArduinoCI::ArduinoCmd do
-  context "autolocate" do
-    it "Finds the Arduino executable" do
-      arduino_cmd = ArduinoCI::ArduinoCmd.autolocate
-    end
-  end
-
-  context "autolocate!" do
-    it "Finds the Arduino executable" do
-      arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
-      expect(arduino_cmd.installation.base_cmd).not_to be nil
+  arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
+  context "initialize" do
+    it "sets base vars" do
+      expect(arduino_cmd.base_cmd).not_to be nil
       expect(arduino_cmd.prefs.class).to be Hash
-      expect(arduino_cmd.prefs_response_time).not_to be nil
     end
   end
 
   context "board_installed?" do
-    arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
-    ArduinoCI::DisplayManager::instance.enable
     it "Finds installed boards" do
       uno_installed = arduino_cmd.board_installed? "arduino:avr:uno"
       expect(uno_installed).to be true
@@ -38,8 +29,6 @@ RSpec.describe ArduinoCI::ArduinoCmd do
   end
 
   context "set_pref" do
-    arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
-    ArduinoCI::DisplayManager::instance.enable
 
     it "Sets key to what it was before" do
       upload_verify = arduino_cmd.get_pref("upload.verify")
@@ -49,8 +38,6 @@ RSpec.describe ArduinoCI::ArduinoCmd do
   end
 
   context "verify_sketch" do
-    arduino_cmd = ArduinoCI::ArduinoCmd.autolocate!
-    ArduinoCI::DisplayManager::instance.enable
 
     sketch_path_ino = get_sketch("FakeSketch", "FakeSketch.ino")
     sketch_path_pde = get_sketch("FakeSketch", "FakeSketch.pde")
