@@ -61,18 +61,61 @@ module ArduinoCI
       Host.run(*full_args, **kwargs)
     end
 
-    def test_args
-      ["-I#{UNITTEST_HEADER_DIR}"] + build_args + cpp_files_arduino + cpp_files_unittest + cpp_files
+    # GCC command line arguments for including aux libraries
+    def include_args(aux_libraries)
+      places = [ARDUINO_HEADER_DIR, UNITTEST_HEADER_DIR] + header_dirs + aux_libraries
+      places.map { |d| "-I#{d}" }
     end
 
-    def test(test_file)
+    # GCC command line arguments for features (e.g. -fno-weak)
+    def feature_args(ci_gcc_config)
+      return [] if ci_gcc_config[:features].nil?
+      ci_gcc_config[:features].map { |f| "-f#{f}" }
+    end
+
+    # GCC command line arguments for warning (e.g. -Wall)
+    def warning_args(ci_gcc_config)
+      return [] if ci_gcc_config[:warnings].nil?
+      ci_gcc_config[:features].map { |w| "-W#{w}" }
+    end
+
+    # GCC command line arguments for defines (e.g. -Dhave_something)
+    def define_args(ci_gcc_config)
+      return [] if ci_gcc_config[:defines].nil?
+      ci_gcc_config[:defines].map { |d| "-D#{d}" }
+    end
+
+    # GCC command line arguments as-is
+    def flag_args(ci_gcc_config)
+      return [] if ci_gcc_config[:flags].nil?
+      ci_gcc_config[:flags]
+    end
+
+    # All GCC command line args for building any unit test
+    def test_args(aux_libraries, ci_gcc_config)
+      # TODO: something with libraries?
+      cgc = ci_gcc_config
+      ret = include_args(aux_libraries) + cpp_files_arduino + cpp_files_unittest + cpp_files
+      unless ci_gcc_config.nil?
+        ret = feature_args(cgc) + warning_args(cgc) + define_args(cgc) + flag_args(cgc) + ret
+      end
+      ret
+    end
+
+    # run a test of the given unit test file
+    def test_with_configuration(test_file, aux_libraries, ci_gcc_config)
       base = File.basename(test_file)
       executable = File.expand_path("unittest_#{base}.bin")
       File.delete(executable) if File.exist?(executable)
-      args = ["-o", executable] + test_args + [test_file]
+      args = ["-o", executable] + test_args(aux_libraries, ci_gcc_config) + [test_file]
       return false unless run_gcc(*args)
       artifacts << executable
       Host.run(executable)
+    end
+
+    # legacy shortcut for rspec
+    def test(test_file)
+      test_with_configuration(test_file, [], nil)
     end
 
   end

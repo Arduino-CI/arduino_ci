@@ -174,6 +174,38 @@ module ArduinoCI
       @unittest_info[:libraries]
     end
 
+    def features(platform_name)
+      plat = @platform_info[platform_name]
+      return [] if plat.nil?
+      return [] if plat[:gcc].nil?
+      return [] if plat[:gcc][:features].nil?
+      plat[:gcc][:features]
+    end
+
+    def warnings(platform_name)
+      plat = @platform_info[platform_name]
+      return [] if plat.nil?
+      return [] if plat[:gcc].nil?
+      return [] if plat[:gcc][:warnings].nil?
+      plat[:gcc][:warnings]
+    end
+
+    def flags(platform_name)
+      plat = @platform_info[platform_name]
+      return [] if plat.nil?
+      return [] if plat[:gcc].nil?
+      return [] if plat[:gcc][:flags].nil?
+      plat[:gcc][:flags]
+    end
+
+    def defines(platform_name)
+      plat = @platform_info[platform_name]
+      return [] if plat.nil?
+      return [] if plat[:gcc].nil?
+      return [] if plat[:gcc][:flags].nil?
+      plat[:gcc][:flags]
+    end
+
   end
 
 end
