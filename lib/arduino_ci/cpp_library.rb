@@ -54,15 +54,6 @@ module ArduinoCI
       Host.run(*full_args, **kwargs)
     end
 
-    def build_args
-      ["-I#{ARDUINO_HEADER_DIR}"] + header_dirs.map { |d| "-I#{d}" }
-    end
-
-    def build(target_file)
-      args = ["-c", "-o", "arduino_ci_built.bin"] + build_args + [target_file]
-      run_gcc(*args)
-    end
-
     def test_args
       ["-I#{UNITTEST_HEADER_DIR}"] + build_args + cpp_files_arduino + cpp_files_unittest + cpp_files
     end
