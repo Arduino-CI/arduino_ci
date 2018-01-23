@@ -50,9 +50,6 @@ got_problem = true unless arduino_cmd.verify_sketch(simple_sketch)
 
 library_path = File.join(File.dirname(File.dirname(__FILE__)), "SampleProjects", "DoSomething")
 
-puts "verify a library with arduino mocks"
-cpp_library = ArduinoCI::CppLibrary.new(library_path)
-
 puts "verify the examples of a library (#{library_path})..."
 puts " - Install the library"
 installed_library_path = arduino_cmd.install_local_library(library_path)
