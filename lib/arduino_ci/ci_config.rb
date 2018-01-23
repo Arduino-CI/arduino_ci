@@ -30,6 +30,8 @@ UNITTEST_SCHEMA = {
 }.freeze
 module ArduinoCI
 
+  CONFIG_FILENAME = ".arduino-ci.yaml".freeze
+
   # Provide the configuration and CI plan
   # - Read from a base config with default platforms defined
   # - Allow project-specific overrides of platforms
@@ -121,6 +123,24 @@ module ArduinoCI
       overridden_config
     end
 
+    # Try to override config with a file at a given location (if it exists)
+    def attempt_override(config_path)
+      return self unless File.exist? config_path
+      with_override(config_path)
+    end
+
+    # assume the script runs from the working directory of the base project
+    def from_project_library
+      attempt_override(CONFIG_FILENAME)
+    end
+
+    # handle either path to example file or example dir
+    def from_example(example_path)
+      base_dir = File.directory?(example_path) ? example_path : File.dirname(example_path)
+      attempt_override(File.join(base_dir, CONFIG_FILENAME))
+    end
+
+    # get information about a given platform: board name, package name, compiler stuff, etc
     def platform_definition(platform_name)
       defn = @platform_info[platform_name]
       return nil if defn.nil?
