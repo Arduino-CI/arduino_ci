@@ -22,6 +22,10 @@ RSpec.describe ArduinoCI::CIConfig do
       expect(zero[:board]).to eq("arduino:samd:zero")
       expect(zero[:package]).to eq("arduino:samd")
       expect(zero[:gcc].class).to eq(Hash)
+
+      expect(default_config.package_url("adafruit:avr")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
+      expect(default_config.build_platforms).to match(["uno", "due", "zero", "esp8266", "leonardo"])
+      expect(default_config.unittest_platforms).to match(["uno", "due", "zero", "esp8266", "leonardo"])
     end
   end
 
@@ -51,6 +55,10 @@ RSpec.describe ArduinoCI::CIConfig do
       expect(bogo[:gcc][:defines]).to match(["c", "d"])
       expect(bogo[:gcc][:warnings]).to match(["e", "f"])
       expect(bogo[:gcc][:flags]).to match(["g", "h"])
+
+      expect(combined_config.package_url("adafruit:avr")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
+      expect(combined_config.build_platforms).to match(["esp8266"])
+      expect(combined_config.unittest_platforms).to match(["bogo"])
     end
   end
 

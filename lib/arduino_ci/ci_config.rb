@@ -4,6 +4,10 @@ require 'yaml'
 #   project config - .arduino_ci_platforms.yml
 #     example config - .arduino_ci_plan.yml
 
+PACKAGE_SCHEMA = {
+  url: String
+}.freeze
+
 PLATFORM_SCHEMA = {
   board: String,
   package: String,
@@ -40,10 +44,12 @@ module ArduinoCI
       end
     end
 
+    attr_accessor :package_info
     attr_accessor :platform_info
     attr_accessor :compile_info
     attr_accessor :unittest_info
     def initialize
+      @package_info = {}
       @platform_info = {}
       @compile_info = {}
       @unittest_info = {}
@@ -76,6 +82,13 @@ module ArduinoCI
 
     def load_yaml(path)
       yml = YAML.load_file(path)
+      if yml.include?("packages")
+        yml["packages"].each do |k, v|
+          valid_data = validate_data("packages", v, PACKAGE_SCHEMA)
+          @package_info[k] = valid_data
+        end
+      end
+
       if yml.include?("platforms")
         yml["platforms"].each do |k, v|
           valid_data = validate_data("platforms", v, PLATFORM_SCHEMA)
@@ -98,7 +111,9 @@ module ArduinoCI
 
     def with_override(path)
       overridden_config = self.class.new
+      overridden_config.package_info  = deep_clone(@package_info)
       overridden_config.platform_info = deep_clone(@platform_info)
+      overridden_config.compile_info  = deep_clone(@compile_info)
       overridden_config.unittest_info = deep_clone(@unittest_info)
       overridden_config.load_yaml(path)
       overridden_config
@@ -108,6 +123,19 @@ module ArduinoCI
       defn = @platform_info[platform_name]
       return nil if defn.nil?
       deep_clone(defn)
+    end
+
+    def package_url(package)
+      return nil if @package_info[package].nil?
+      @package_info[package][:url]
+    end
+
+    def build_platforms
+      @compile_info[:platforms]
+    end
+
+    def unittest_platforms
+      @unittest_info[:platforms]
     end
 
   end
