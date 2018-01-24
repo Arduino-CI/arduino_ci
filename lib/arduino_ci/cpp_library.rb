@@ -32,7 +32,7 @@ module ArduinoCI
 
     # CPP files that are part of the project library under test
     def cpp_files
-      cpp_files_in(@base_dir).reject { |p| p.start_with?(tests_dir) }
+      cpp_files_in(@base_dir).reject { |p| p.start_with?(tests_dir + File::SEPARATOR) }
     end
 
     # CPP files that are part of the arduino mock library we're providing
