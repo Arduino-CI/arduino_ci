@@ -9,7 +9,7 @@ WIDTH = 80
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate(final = nil)
   puts "Failures: #{@failure_count}"
-  unless @failure_count.zero? && final.nil?
+  unless @failure_count.zero? || final
     puts "Last message: #{@arduino_cmd.last_msg}"
     puts "========== Stdout:"
     puts @arduino_cmd.last_out
@@ -117,8 +117,8 @@ config.platforms_to_unittest.each do |p|
         config.aux_libraries_for_unittest,
         config.gcc_config(p)
       )
+      puts
       unless exe
-        puts
         puts "Last command: #{cpp_library.last_cmd}"
         puts cpp_library.last_out
         puts cpp_library.last_err
