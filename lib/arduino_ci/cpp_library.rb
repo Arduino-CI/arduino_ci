@@ -27,12 +27,17 @@ module ArduinoCI
     end
 
     def cpp_files_in(some_dir)
-      Find.find(some_dir).select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
+      real = File.realpath(some_dir)
+      Find.find(real).select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
     end
 
     # CPP files that are part of the project library under test
     def cpp_files
-      cpp_files_in(@base_dir).reject { |p| p.start_with?(tests_dir + File::SEPARATOR) }
+      real_tests_dir = File.realpath(tests_dir)
+      cpp_files_in(@base_dir).reject do |p|
+        next true if File.dirname(p).include?(tests_dir)
+        next true if File.dirname(p).include?(real_tests_dir)
+      end
     end
 
     # CPP files that are part of the arduino mock library we're providing
