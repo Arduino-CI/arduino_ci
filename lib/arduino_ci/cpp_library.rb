@@ -14,9 +14,16 @@ module ArduinoCI
     attr_reader :base_dir
     attr_reader :artifacts
 
+    attr_reader :last_err
+    attr_reader :last_out
+    attr_reader :last_cmd
+
     def initialize(base_dir)
       @base_dir = base_dir
       @artifacts = []
+      @last_err = ""
+      @last_out = ""
+      @last_msg = ""
     end
 
     def cpp_files_in(some_dir)
@@ -56,9 +63,23 @@ module ArduinoCI
 
     # wrapper for the GCC command
     def run_gcc(*args, **kwargs)
-      # TODO: detect env!!
+      pipe_out, pipe_out_wr = IO.pipe
+      pipe_err, pipe_err_wr = IO.pipe
       full_args = ["g++"] + args
-      Host.run(*full_args, **kwargs)
+      @last_cmd = " $ #{full_args.join(' ')}"
+      our_kwargs = { out: pipe_out_wr, err: pipe_err_wr }
+      eventual_kwargs = our_kwargs.merge(kwargs)
+      success = Host.run(*full_args, **eventual_kwargs)
+
+      pipe_out_wr.close
+      pipe_err_wr.close
+      str_out = pipe_out.read
+      str_err = pipe_err.read
+      pipe_out.close
+      pipe_err.close
+      @last_err = str_err
+      @last_out = str_out
+      success
     end
 
     # GCC command line arguments for including aux libraries
@@ -104,12 +125,22 @@ module ArduinoCI
 
     # run a test of the given unit test file
     def test_with_configuration(test_file, aux_libraries, ci_gcc_config)
+      executable = build_for_test_with_configuration(test_file, aux_libraries, ci_gcc_config)
+      run_test_file(executable)
+    end
+
+    # run a test of the given unit test file
+    def build_for_test_with_configuration(test_file, aux_libraries, ci_gcc_config)
       base = File.basename(test_file)
       executable = File.expand_path("unittest_#{base}.bin")
       File.delete(executable) if File.exist?(executable)
       args = ["-o", executable] + test_args(aux_libraries, ci_gcc_config) + [test_file]
-      return false unless run_gcc(*args)
+      return nil unless run_gcc(*args)
       artifacts << executable
+      executable
+    end
+
+    def run_test_file(executable)
       Host.run(executable)
     end
 

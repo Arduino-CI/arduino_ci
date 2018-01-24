@@ -9,7 +9,7 @@ WIDTH = 80
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate
   puts "Failures: #{@failure_count}"
-  unless failure_count.zero?
+  unless @failure_count.zero?
     puts "Last message: #{@arduino_cmd.last_msg}"
     puts "========== Stdout:"
     puts @arduino_cmd.last_out
@@ -96,10 +96,8 @@ library_examples.each do |example_path|
     attempt("Verifying #{example_name}") do
       ret = @arduino_cmd.verify_sketch(example_path)
       unless ret
-        puts "Last message: #{@arduino_cmd.last_msg}"
-        puts "========== Stdout:"
-        puts @arduino_cmd.last_out
-        puts "========== Stderr:"
+        puts
+        puts "Last command: #{@arduino_cmd.last_msg}"
         puts @arduino_cmd.last_err
       end
       ret
@@ -112,6 +110,22 @@ config.platforms_to_unittest.each do |p|
   assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) }
   cpp_library.test_files.each do |unittest_path|
     unittest_name = File.basename(unittest_path)
-    attempt("Unit testing #{unittest_name}") { cpp_library.test(unittest_path) }
+    attempt("Unit testing #{unittest_name}") do
+      exe = cpp_library.build_for_test_with_configuration(
+        unittest_path,
+        config.aux_libraries_for_unittest,
+        config.gcc_config(p)
+      )
+      unless exe
+        puts
+        puts "Last command: #{cpp_library.last_cmd}"
+        puts cpp_library.last_out
+        puts cpp_library.last_err
+        next false
+      end
+      cpp_library.run_test_file(exe)
+    end
   end
 end
+
+terminate
