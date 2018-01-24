@@ -92,7 +92,17 @@ library_examples.each do |example_path|
     board = all_platforms[p][:board]
     assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) }
     example_name = File.basename(example_path)
-    attempt("Verifying #{example_name}") { @arduino_cmd.verify_sketch(example_path) }
+    attempt("Verifying #{example_name}") do
+      ret = @arduino_cmd.verify_sketch(example_path)
+      unless ret
+        puts "Last message: #{@arduino_cmd.last_msg}"
+        puts "========== Stdout:"
+        puts @arduino_cmd.last_out
+        puts "========== Stderr:"
+        puts @arduino_cmd.last_err
+      end
+      ret
+    end
   end
 end
 

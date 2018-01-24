@@ -211,7 +211,8 @@ module ArduinoCI
         @last_msg = "Can't verify Sketch at nonexistent path '#{path}'!"
         return false
       end
-      run(flag_verify, path, err: :out)
+      ret = run_and_capture(flag_verify, path)
+      ret[:success]
     end
 
     # ensure that the given library is installed, or symlinked as appropriate
