@@ -19,7 +19,7 @@ module ArduinoCI
     attr_reader :last_cmd
 
     def initialize(base_dir)
-      @base_dir = base_dir
+      @base_dir = File.expand_path(base_dir)
       @artifacts = []
       @last_err = ""
       @last_out = ""
@@ -115,9 +115,9 @@ module ArduinoCI
     # All GCC command line args for building any unit test
     def test_args(aux_libraries, ci_gcc_config)
       # TODO: something with libraries?
-      cgc = ci_gcc_config
       ret = include_args(aux_libraries) + cpp_files_arduino + cpp_files_unittest + cpp_files
       unless ci_gcc_config.nil?
+        cgc = ci_gcc_config
         ret = feature_args(cgc) + warning_args(cgc) + define_args(cgc) + flag_args(cgc) + ret
       end
       ret
