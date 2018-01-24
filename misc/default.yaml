@@ -67,7 +67,6 @@ compile:
   platforms:
     - uno
     - due
-    - zero
     - esp8266
     - leonardo
 
@@ -76,6 +75,5 @@ unittest:
   platforms:
     - uno
     - due
-    - zero
     - esp8266
     - leonardo
