@@ -123,13 +123,7 @@ module ArduinoCI
       ret
     end
 
-    # run a test of the given unit test file
-    def test_with_configuration(test_file, aux_libraries, ci_gcc_config)
-      executable = build_for_test_with_configuration(test_file, aux_libraries, ci_gcc_config)
-      run_test_file(executable)
-    end
-
-    # run a test of the given unit test file
+    # build a file for running a test of the given unit test file
     def build_for_test_with_configuration(test_file, aux_libraries, ci_gcc_config)
       base = File.basename(test_file)
       executable = File.expand_path("unittest_#{base}.bin")
@@ -140,13 +134,9 @@ module ArduinoCI
       executable
     end
 
+    # run a test file
     def run_test_file(executable)
       Host.run(executable)
-    end
-
-    # legacy shortcut for rspec
-    def test(test_file)
-      test_with_configuration(test_file, [], nil)
     end
 
   end
