@@ -7,9 +7,9 @@ WIDTH = 80
 @failure_count = 0
 
 # terminate after printing any debug info.  TODO: capture debug info
-def terminate
+def terminate(final = nil)
   puts "Failures: #{@failure_count}"
-  unless @failure_count.zero?
+  unless @failure_count.zero? && final.nil?
     puts "Last message: #{@arduino_cmd.last_msg}"
     puts "========== Stdout:"
     puts @arduino_cmd.last_out
@@ -128,4 +128,4 @@ config.platforms_to_unittest.each do |p|
   end
 end
 
-terminate
+terminate(true)
