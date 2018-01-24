@@ -9,6 +9,13 @@ WIDTH = 80
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate
   puts "Failures: #{@failure_count}"
+  unless failure_count.zero?
+    puts "Last message: #{@arduino_cmd.last_msg}"
+    puts "========== Stdout:"
+    puts @arduino_cmd.last_out
+    puts "========== Stderr:"
+    puts @arduino_cmd.last_err
+  end
   retcode = @failure_count.zero? ? 0 : 1
   exit(retcode)
 end
@@ -41,11 +48,11 @@ end
 
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library
-arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
+@arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
 
 # initialize library under test
-installed_library_path = assure("Installing library under test") { arduino_cmd.install_local_library(".") }
-library_examples = arduino_cmd.library_examples(installed_library_path)
+installed_library_path = assure("Installing library under test") { @arduino_cmd.install_local_library(".") }
+library_examples = @arduino_cmd.library_examples(installed_library_path)
 
 # gather up all required boards so we can install them up front.
 # start with the "platforms to unittest" and add the examples
@@ -64,34 +71,34 @@ end
 all_packages = all_platforms.values.map { |v| v[:package] }.uniq.reject(&:nil?)
 all_urls = all_packages.map { |p| config.package_url(p) }.uniq.reject(&:nil?)
 assure("Setting board manager URLs") do
-  arduino_cmd.set_pref("boardsmanager.additional.urls", all_urls.join(","))
+  @arduino_cmd.set_pref("boardsmanager.additional.urls", all_urls.join(","))
 end
 
 all_packages.each do |p|
   assure("Installing board package #{p}") do
-    arduino_cmd.install_boards(p)
+    @arduino_cmd.install_boards(p)
   end
 end
 
 aux_libraries.each do |l|
-  assure("Installing aux library '#{l}'") { arduino_command.install_library(l) }
+  assure("Installing aux library '#{l}'") { @arduino_cmd.install_library(l) }
 end
 
-attempt("Setting compiler warning level") { arduino_cmd.set_pref("compiler.warning_level", "all") }
+attempt("Setting compiler warning level") { @arduino_cmd.set_pref("compiler.warning_level", "all") }
 
 library_examples.each do |example_path|
   ovr_config = config.from_example(example_path)
   ovr_config.platforms_to_build.each do |p|
     board = all_platforms[p][:board]
-    assure("Switching to board for #{p} (#{board})") { arduino_cmd.use_board(board) }
+    assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) }
     example_name = File.basename(example_path)
-    attempt("Verifying #{example_name}") { arduino_cmd.verify_sketch(example_path) }
+    attempt("Verifying #{example_name}") { @arduino_cmd.verify_sketch(example_path) }
   end
 end
 
 config.platforms_to_unittest.each do |p|
   board = all_platforms[p][:board]
-  assure("Switching to board for #{p} (#{board})") { arduino_cmd.use_board(board) }
+  assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) }
   cpp_library.test_files.each do |unittest_path|
     unittest_name = File.basename(unittest_path)
     attempt("Unit testing #{unittest_name}") { cpp_library.test(unittest_path) }
