@@ -20,17 +20,7 @@ module ArduinoCI
 
     # run a command in a display
     def self.run(*args, **kwargs)
-      # do some work to extract & merge environment variables if they exist
-      has_env = !args.empty? && args[0].class == Hash
-      env_vars = has_env ? args[0] : {}
-      actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
-      full_cmd = env_vars.empty? ? actual_args : [env_vars] + actual_args
-      shell_vars = env_vars.map { |k, v| "#{k}=#{v}" }.join(" ")
-      puts " $ #{shell_vars} #{actual_args.join(' ')}"
-      ret = system(*full_cmd, **kwargs)
-      status = ret ? "succeeded" : "failed"
-      puts "Command '#{File.basename(actual_args[0])}' has #{status}"
-      ret
+      system(*args, **kwargs)
     end
 
     def self.os

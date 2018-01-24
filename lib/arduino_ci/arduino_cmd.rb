@@ -20,6 +20,9 @@ module ArduinoCI
     attr_accessor :base_cmd
 
     attr_reader   :library_is_indexed
+    attr_reader   :last_out
+    attr_reader   :last_err
+    attr_reader   :last_msg
 
     # set the command line flags (undefined for now).
     # These vary between gui/cli
@@ -32,9 +35,12 @@ module ArduinoCI
     flag :verify
 
     def initialize
-      @prefs_cache         = {}
-      @prefs_fetched       = false
-      @library_is_indexed  = false
+      @prefs_cache        = {}
+      @prefs_fetched      = false
+      @library_is_indexed = false
+      @last_out           = ""
+      @last_err           = ""
+      @last_msg           = ""
     end
 
     def parse_pref_string(arduino_output)
@@ -94,9 +100,16 @@ module ArduinoCI
 
     # build and run the arduino command
     def run(*args, **kwargs)
-      # TODO: detect env!!
-      full_args = @base_cmd + args
-      _run(*full_args, **kwargs)
+      # do some work to extract & merge environment variables if they exist
+      has_env = !args.empty? && args[0].class == Hash
+      env_vars = has_env ? args[0] : {}
+      actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
+      full_args = @base_cmd + actual_args
+      full_cmd = env_vars.empty? ? full_args : [env_vars] + full_args
+
+      shell_vars = env_vars.map { |k, v| "#{k}=#{v}" }.join(" ")
+      @last_msg = " $ #{shell_vars} #{full_args.join(' ')}"
+      _run(*full_cmd, **kwargs)
     end
 
     # run a command and capture its output
@@ -113,6 +126,8 @@ module ArduinoCI
       str_err = pipe_err.read
       pipe_out.close
       pipe_err.close
+      @last_err = str_err
+      @last_out = str_out
       { out: str_out, err: str_err, success: success }
     end
 
@@ -189,11 +204,11 @@ module ArduinoCI
     def verify_sketch(path)
       ext = File.extname path
       unless ext.casecmp(".ino").zero?
-        puts "Refusing to verify sketch with '#{ext}' extension -- rename it to '.ino'!"
+        @last_msg = "Refusing to verify sketch with '#{ext}' extension -- rename it to '.ino'!"
         return false
       end
       unless File.exist? path
-        puts "Can't verify nonexistent Sketch at '#{path}'!"
+        @last_msg = "Can't verify Sketch at nonexistent path '#{path}'!"
         return false
       end
       run(flag_verify, path, err: :out)
@@ -215,11 +230,11 @@ module ArduinoCI
         # maybe it's a symlink? that would be OK
         if File.symlink?(destination_path)
           return destination_path if File.readlink(destination_path) == realpath
-          puts "#{uhoh} and it's not symlinked to #{realpath}"
+          @last_msg = "#{uhoh} and it's not symlinked to #{realpath}"
           return nil
         end
 
-        puts "#{uhoh}.  It may need to be removed manually."
+        @last_msg = "#{uhoh}.  It may need to be removed manually."
         return nil
       end
 
