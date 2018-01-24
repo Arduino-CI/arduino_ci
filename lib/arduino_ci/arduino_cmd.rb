@@ -135,7 +135,9 @@ module ArduinoCI
     # @return [bool] whether the command succeeded
     def install_boards(boardfamily)
       # TODO: find out why IO.pipe fails but File::NULL succeeds :(
-      run_and_capture(flag_install_boards, boardfamily, out: File::NULL)[:success]
+      result = run_and_capture(flag_install_boards, boardfamily)
+      already_installed = result[:err].include?("Platform is already installed!")
+      result[:success] || already_installed
     end
 
     # install a library by name
