@@ -216,3 +216,9 @@ class Test
     void task();                   \
   } test_##name##_instance;        \
   void test_##name ::task()
+
+
+#define unittest_main()                      \
+  int main(int argc, char *argv[]) {         \
+    return Test::run_and_report(argc, argv); \
+  }

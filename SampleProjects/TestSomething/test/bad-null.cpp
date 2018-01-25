@@ -7,6 +7,4 @@ unittest(pretend_equal_things_arent)
   assertNotEqual(x, y);
 }
 
-int main(int argc, char *argv[]) {
-  return Test::run_and_report(argc, argv);
-}
+unittest_main()
