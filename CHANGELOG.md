@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Security
 
 
+## [0.1.2] - 2018-01-25
+
+### Fixed
+- Actually package CPP and YAML files into the gem.  Whoops.
+
 ## [0.1.1] - 2018-01-24
 
 ### Added
@@ -53,7 +58,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ifreecarve/arduino_ci/compare/v0.0.1...v0.1.0
 [0.0.1]: https://github.com/ifreecarve/arduino_ci/compare/v0.0.0...v0.0.1
