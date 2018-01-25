@@ -12,11 +12,13 @@ module ArduinoCI
   class ArduinoInstallation
 
     class << self
+      # @return [String] The location where a forced install will go
       def force_install_location
         File.join(ENV['HOME'], 'arduino_ci_ide')
       end
 
       # attempt to find a workable Arduino executable across platforms
+      # @return [ArduinoCI::ArduinoCmd] an instance of the command
       def autolocate
         case Host.os
         when :osx then autolocate_osx
@@ -24,6 +26,7 @@ module ArduinoCI
         end
       end
 
+      # @return [ArduinoCI::ArduinoCmdOSX] an instance of a command
       def autolocate_osx
         osx_root = "/Applications/Arduino.app/Contents"
         old_way = false
@@ -51,6 +54,7 @@ module ArduinoCI
         ret
       end
 
+      # @return [ArduinoCI::ArduinoCmdLinux] an instance of a command
       def autolocate_linux
         if USE_BUILDER
           builder_name = "arduino-builder"
@@ -87,6 +91,7 @@ module ArduinoCI
       end
 
       # Attempt to find a workable Arduino executable across platforms, and install it if we don't
+      # @return [ArduinoCI::ArduinoCmd] an instance of a command
       def autolocate!
         candidate = autolocate
         return candidate unless candidate.nil?
@@ -96,6 +101,8 @@ module ArduinoCI
         autolocate
       end
 
+      # Forcibly install Arduino from the web
+      # @return [bool] Whether the command succeeded
       def force_install
         case Host.os
         when :linux

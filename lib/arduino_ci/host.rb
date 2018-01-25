@@ -7,6 +7,8 @@ module ArduinoCI
     # Cross-platform way of finding an executable in the $PATH.
     # via https://stackoverflow.com/a/5471032/2063546
     #   which('ruby') #=> /usr/bin/ruby
+    # @param cmd [String] the command to search for
+    # @return [String] the full path to the command if it exists
     def self.which(cmd)
       exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
       ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
@@ -23,6 +25,7 @@ module ArduinoCI
       system(*args, **kwargs)
     end
 
+    # return [Symbol] the operating system of the host
     def self.os
       return :osx if OS.osx?
       return :linux if OS.linux?

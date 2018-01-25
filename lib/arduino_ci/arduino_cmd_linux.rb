@@ -22,7 +22,8 @@ module ArduinoCI
       @display_mgr         = DisplayManager::instance
     end
 
-    # fetch preferences to a hash
+    # fetch preferences in their raw form
+    # @return [String] Preferences as a set of lines
     def _prefs_raw
       start = Time.now
       resp = run_and_capture(flag_get_pref)
@@ -31,6 +32,8 @@ module ArduinoCI
       resp[:out]
     end
 
+    # implementation for Arduino library dir location
+    # @return [String] the path to the Arduino libraries directory
     def _lib_dir
       File.join(get_pref("sketchbook.path"), "libraries")
     end
@@ -66,11 +69,14 @@ module ArduinoCI
     # check whether a board is installed
     # we do this by just selecting a board.
     #   the arduino binary will error if unrecognized and do a successful no-op if it's installed
+    # @param boardname [String] The name of the board
+    # @return [bool]
     def board_installed?(boardname)
       run_with_gui_guess(" about board not installed", flag_use_board, boardname)
     end
 
     # use a particular board for compilation
+    # @param boardname [String] The name of the board
     def use_board(boardname)
       run_with_gui_guess(" about board not installed", flag_use_board, boardname, flag_save_prefs)
     end

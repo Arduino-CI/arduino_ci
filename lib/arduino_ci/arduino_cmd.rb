@@ -9,19 +9,28 @@ module ArduinoCI
     # @param name [String] What the flag will be called (prefixed with 'flag_')
     # @return [void]
     # @macro [attach] flag
+    #   The text of the command line flag for $1
     #   @!attribute [r] flag_$1
-    #   @return String $2 the text of the command line flag
+    #   @return [String] the text of the command line flag (`$2` in this case)
     def self.flag(name, text = nil)
       text = "(flag #{name} not defined)" if text.nil?
       self.class_eval("def flag_#{name};\"#{text}\";end")
     end
 
-    attr_accessor :installation
+    # the path to the Arduino executable
+    # @return [String]
     attr_accessor :base_cmd
 
+    # part of a workaround for https://github.com/arduino/Arduino/issues/3535
     attr_reader   :library_is_indexed
+
+    # @return [String] STDOUT of the most recently-run command
     attr_reader   :last_out
+
+    # @return [String] STDERR of the most recently-run command
     attr_reader   :last_err
+
+    # @return [String] the most recently-run command
     attr_reader   :last_msg
 
     # set the command line flags (undefined for now).
@@ -43,6 +52,9 @@ module ArduinoCI
       @last_msg           = ""
     end
 
+    # Convert a preferences dump into a flat hash
+    # @param arduino_output [String] The raw Arduino executable output
+    # @return [Hash] preferences as a hash
     def parse_pref_string(arduino_output)
       lines = arduino_output.split("\n").select { |l| l.include? "=" }
       ret = lines.each_with_object({}) do |e, acc|
@@ -53,17 +65,21 @@ module ArduinoCI
       ret
     end
 
+    # @return [String] the path to the Arduino libraries directory
     def _lib_dir
       "<lib dir not defined>"
     end
 
-    # fetch preferences to a string
+    # fetch preferences in their raw form
+    # @return [String] Preferences as a set of lines
     def _prefs_raw
       resp = run_and_capture(flag_get_pref)
       return nil unless resp[:success]
       resp[:out]
     end
 
+    # Get the Arduino preferences, from cache if possible
+    # @return [Hash] The full set of preferences
     def prefs
       prefs_raw = _prefs_raw unless @prefs_fetched
       return nil if prefs_raw.nil?
@@ -72,12 +88,16 @@ module ArduinoCI
     end
 
     # get a preference key
+    # @param key [String] The preferences key to look up
+    # @return [String] The preference value
     def get_pref(key)
       data = @prefs_fetched ? @prefs_cache : prefs
       data[key]
     end
 
     # underlying preference-setter.
+    # @param key [String] The preference name
+    # @param value [String] The value to set to
     # @return [bool] whether the command succeeded
     def _set_pref(key, value)
       run_and_capture(flag_set_pref, "#{key}=#{value}", flag_save_prefs)[:success]
@@ -141,6 +161,8 @@ module ArduinoCI
     # check whether a board is installed
     # we do this by just selecting a board.
     #   the arduino binary will error if unrecognized and do a successful no-op if it's installed
+    # @param boardname [String] The board to test
+    # @return [bool] Whether the board is installed
     def board_installed?(boardname)
       run_and_capture(flag_use_board, boardname)[:success]
     end
@@ -176,11 +198,14 @@ module ArduinoCI
     end
 
     # generate the (very likely) path of a library given its name
+    # @param library_name [String] The name of the library
+    # @return [String] The fully qualified library name
     def library_path(library_name)
       File.join(_lib_dir, library_name)
     end
 
     # update the library index
+    # @return [bool] Whether the update succeeded
     def update_library_index
       # install random lib so the arduino IDE grabs a new library index
       # see: https://github.com/arduino/Arduino/issues/3535
@@ -188,11 +213,15 @@ module ArduinoCI
     end
 
     # use a particular board for compilation
+    # @param boardname [String] The board to use
+    # @return [bool] whether the command succeeded
     def use_board(boardname)
       run_and_capture(flag_use_board, boardname, flag_save_prefs)[:success]
     end
 
     # use a particular board for compilation, installing it if necessary
+    # @param boardname [String] The board to use
+    # @return [bool] whether the command succeeded
     def use_board!(boardname)
       return true if use_board(boardname)
       boardfamily = boardname.split(":")[0..1].join(":")
@@ -201,6 +230,8 @@ module ArduinoCI
       use_board(boardname)
     end
 
+    # @param path [String] The sketch to verify
+    # @return [bool] whether the command succeeded
     def verify_sketch(path)
       ext = File.extname path
       unless ext.casecmp(".ino").zero?
@@ -217,6 +248,8 @@ module ArduinoCI
 
     # ensure that the given library is installed, or symlinked as appropriate
     # return the path of the prepared library, or nil
+    # @param path [String] library to use
+    # @return [String] the path of the installed library
     def install_local_library(path)
       realpath = File.expand_path(path)
       library_name = File.basename(realpath)
@@ -244,6 +277,8 @@ module ArduinoCI
       destination_path
     end
 
+    # @param installed_library_path [String] The library to query
+    # @return [Array<String>] Example sketch files
     def library_examples(installed_library_path)
       example_path = File.join(installed_library_path, "examples")
       examples = Pathname.new(example_path).children.select(&:directory?).map(&:to_path).map(&File.method(:basename))
