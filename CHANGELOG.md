@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Unit testing support
+- Documentation for all Ruby methods
 - `ArduinoInstallation` class for managing lib / executable paths
 - `DisplayManager` class for managing Xvfb instance if needed
 - `ArduinoCmd` captures and caches preferences
