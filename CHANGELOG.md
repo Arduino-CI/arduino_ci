@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- All test files were reporting "not ok" in TAP output.  Now they are OK iff all asserts pass.
 
 ### Security
 
