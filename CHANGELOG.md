@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - All test files were reporting "not ok" in TAP output.  Now they are OK iff all asserts pass.
+- Directories with a C++ extension in their name could cause problems.  Now they are ignored.
+- `CppLibrary` had trouble with symlinks. It shoudn't anymore.
 
 ### Security
 

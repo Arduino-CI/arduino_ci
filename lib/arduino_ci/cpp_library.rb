@@ -40,7 +40,9 @@ module ArduinoCI
     # @return [Array<String>] The paths of the found files
     def cpp_files_in(some_dir)
       real = File.realpath(some_dir)
-      Find.find(real).select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
+      files = Find.find(real).reject { |path| File.directory?(path) }
+      ret = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
+      ret
     end
 
     # CPP files that are part of the project library under test
@@ -80,8 +82,11 @@ module ArduinoCI
     # Find all directories in the project library that include C++ header files
     # @return [Array<String>]
     def header_dirs
-      files = Find.find(@base_dir).select { |path| HPP_EXTENSIONS.include?(File.extname(path)) }
-      files.map { |path| File.dirname(path) }.uniq
+      real = File.realpath(@base_dir)
+      all_files = Find.find(real).reject { |path| File.directory?(path) }
+      files = all_files.select { |path| HPP_EXTENSIONS.include?(File.extname(path)) }
+      ret = files.map { |path| File.dirname(path) }.uniq
+      ret
     end
 
     # wrapper for the GCC command
