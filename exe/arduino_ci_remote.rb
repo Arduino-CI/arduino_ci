@@ -72,8 +72,10 @@ end
 # do that, set the URLs, and download the packages
 all_packages = all_platforms.values.map { |v| v[:package] }.uniq.reject(&:nil?)
 all_urls = all_packages.map { |p| config.package_url(p) }.uniq.reject(&:nil?)
-assure("Setting board manager URLs") do
-  @arduino_cmd.set_pref("boardsmanager.additional.urls", all_urls.join(","))
+unless all_urls.empty?
+  assure("Setting board manager URLs") do
+    @arduino_cmd.set_pref("boardsmanager.additional.urls", all_urls.join(","))
+  end
 end
 
 all_packages.each do |p|

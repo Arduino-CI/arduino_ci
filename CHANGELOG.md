@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - C++ functions for `assure`; `assert`s will run tests and continue, `assure`s will abort on failures
 
 ### Changed
+- `arduino_ci_remote.rb` doesn't attempt to set URLs if nothing needs to be downloaded
 
 ### Deprecated
 
