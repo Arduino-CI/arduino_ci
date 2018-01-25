@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - `arduino_ci_remote.rb` doesn't attempt to set URLs if nothing needs to be downloaded
+- `arduino_ci_remote.rb` does unit tests first
 
 ### Deprecated
 

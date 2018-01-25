@@ -88,26 +88,6 @@ aux_libraries.each do |l|
   assure("Installing aux library '#{l}'") { @arduino_cmd.install_library(l) }
 end
 
-attempt("Setting compiler warning level") { @arduino_cmd.set_pref("compiler.warning_level", "all") }
-
-library_examples.each do |example_path|
-  ovr_config = config.from_example(example_path)
-  ovr_config.platforms_to_build.each do |p|
-    board = all_platforms[p][:board]
-    assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) }
-    example_name = File.basename(example_path)
-    attempt("Verifying #{example_name}") do
-      ret = @arduino_cmd.verify_sketch(example_path)
-      unless ret
-        puts
-        puts "Last command: #{@arduino_cmd.last_msg}"
-        puts @arduino_cmd.last_err
-      end
-      ret
-    end
-  end
-end
-
 config.platforms_to_unittest.each do |p|
   board = all_platforms[p][:board]
   assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) }
@@ -127,6 +107,26 @@ config.platforms_to_unittest.each do |p|
         next false
       end
       cpp_library.run_test_file(exe)
+    end
+  end
+end
+
+attempt("Setting compiler warning level") { @arduino_cmd.set_pref("compiler.warning_level", "all") }
+
+library_examples.each do |example_path|
+  ovr_config = config.from_example(example_path)
+  ovr_config.platforms_to_build.each do |p|
+    board = all_platforms[p][:board]
+    assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) }
+    example_name = File.basename(example_path)
+    attempt("Verifying #{example_name}") do
+      ret = @arduino_cmd.verify_sketch(example_path)
+      unless ret
+        puts
+        puts "Last command: #{@arduino_cmd.last_msg}"
+        puts @arduino_cmd.last_err
+      end
+      ret
     end
   end
 end
