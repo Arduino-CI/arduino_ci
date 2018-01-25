@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- C++ functions for `assure`; `assert`s will run tests and continue, `assure`s will abort on failures
 
 ### Changed
 
