@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.3] - 2018-01-25
+### Added
 - C++ functions for `assure`; `assert`s will run tests and continue, `assure`s will abort on failures
 - Missing dotfiles in the `DoSomething` project have been committed
 
@@ -14,17 +28,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `arduino_ci_remote.rb` does unit tests first
 - `unittest_main()` is now the macro for the `int main()` of test files
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - All test files were reporting "not ok" in TAP output.  Now they are OK iff all asserts pass.
 - Directories with a C++ extension in their name could cause problems.  Now they are ignored.
 - `CppLibrary` had trouble with symlinks. It shoudn't anymore.
 - `CppLibrary` had trouble with vendor bundles.  It might in the future, but I have a better fix ready to go if it's an issue.
-
-### Security
 
 
 ## [0.1.2] - 2018-01-25
@@ -67,7 +75,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ifreecarve/arduino_ci/compare/v0.0.1...v0.1.0
