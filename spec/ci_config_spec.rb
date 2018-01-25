@@ -19,13 +19,13 @@ RSpec.describe ArduinoCI::CIConfig do
 
       zero = default_config.platform_definition("zero")
       expect(zero.class).to eq(Hash)
-      expect(zero[:board]).to eq("arduino:samd:zero")
+      expect(zero[:board]).to eq("arduino:samd:arduino_zero_native")
       expect(zero[:package]).to eq("arduino:samd")
       expect(zero[:gcc].class).to eq(Hash)
 
       expect(default_config.package_url("adafruit:avr")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
-      expect(default_config.platforms_to_build).to match(["uno", "due", "leonardo"])
-      expect(default_config.platforms_to_unittest).to match(["uno", "due", "leonardo"])
+      expect(default_config.platforms_to_build).to match(["uno", "due", "zero", "leonardo"])
+      expect(default_config.platforms_to_unittest).to match(["uno", "due", "zero", "leonardo"])
       expect(default_config.aux_libraries_for_build).to match([])
       expect(default_config.aux_libraries_for_unittest).to match([])
     end

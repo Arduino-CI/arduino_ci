@@ -19,6 +19,4 @@ unittest(nothing)
 {
 }
 
-int main(int argc, char *argv[]) {
-  return Test::run_and_report(argc, argv);
-}
+unittest_main()

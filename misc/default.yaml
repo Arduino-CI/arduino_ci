@@ -1,3 +1,5 @@
+# Note that ci_config_spec.rb has tests for this file's contents
+
 packages:
   esp8266:esp8266:
     url: http://arduino.esp8266.com/stable/package_esp8266com_index.json
@@ -22,7 +24,7 @@ platforms:
       warnings:
       flags:
   zero:
-    board: arduino:samd:zero
+    board: arduino:samd:arduino_zero_native
     package: arduino:samd
     gcc:
       features:
@@ -30,7 +32,7 @@ platforms:
       warnings:
       flags:
   esp8266:
-    board: esp8266:esp8266:huzzah
+    board: esp8266:esp8266:huzzah:FlashSize=4M3M,CpuFrequency=80
     package: esp8266:esp8266
     gcc:
       features:
@@ -67,6 +69,7 @@ compile:
   platforms:
     - uno
     - due
+    - zero
     - leonardo
 
 unittest:
@@ -74,4 +77,5 @@ unittest:
   platforms:
     - uno
     - due
+    - zero
     - leonardo

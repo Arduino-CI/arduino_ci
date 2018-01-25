@@ -98,9 +98,7 @@ unittest(your_test_name)
   assertEqual(4, doSomething());
 }
 
-int main(int argc, char *argv[]) {
-  return Test::run_and_report(argc, argv);
-}
+unittest_main()
 ```
 
 This test defines one `unittest` (a macro provided by `ArduionUnitTests.h`), called `your_test_name`, which makes some assertions on the target library.  The `int main` section is boilerplate.

@@ -35,12 +35,28 @@ module ArduinoCI
       @last_msg = ""
     end
 
+    # Guess whether a file is part of the vendor bundle (indicating we should ignore it).
+    #
+    # This assumes the vendor bundle will be at `vendor/bundle` and not some other location
+    # @param path [String] The path to check
+    # @return [Array<String>] The paths of the found files
+    def vendor_bundle?(path)
+      # TODO: look for Gemfile, look for .bundle/config and get BUNDLE_PATH from there?
+      base = File.join(@base_dir, "vendor")
+      real = File.join(File.realpath(@base_dir), "vendor")
+      return true if path.start_with?(base)
+      return true if path.start_with?(real)
+      false
+    end
+
     # Get a list of all CPP source files in a directory and its subdirectories
     # @param some_dir [String] The directory in which to begin the search
     # @return [Array<String>] The paths of the found files
     def cpp_files_in(some_dir)
       real = File.realpath(some_dir)
-      Find.find(real).select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
+      files = Find.find(real).reject { |path| File.directory?(path) }
+      ret = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
+      ret
     end
 
     # CPP files that are part of the project library under test
@@ -50,6 +66,7 @@ module ArduinoCI
       cpp_files_in(@base_dir).reject do |p|
         next true if File.dirname(p).include?(tests_dir)
         next true if File.dirname(p).include?(real_tests_dir)
+        next true if vendor_bundle?(p)
       end
     end
 
@@ -80,8 +97,12 @@ module ArduinoCI
     # Find all directories in the project library that include C++ header files
     # @return [Array<String>]
     def header_dirs
-      files = Find.find(@base_dir).select { |path| HPP_EXTENSIONS.include?(File.extname(path)) }
-      files.map { |path| File.dirname(path) }.uniq
+      real = File.realpath(@base_dir)
+      all_files = Find.find(real).reject { |path| File.directory?(path) }
+      unbundled = all_files.reject { |path| vendor_bundle?(path) }
+      files = unbundled.select { |path| HPP_EXTENSIONS.include?(File.extname(path)) }
+      ret = files.map { |path| File.dirname(path) }.uniq
+      ret
     end
 
     # wrapper for the GCC command

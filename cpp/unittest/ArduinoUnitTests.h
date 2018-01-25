@@ -130,14 +130,16 @@ class Test
       Results results = {0, 0, 0};
 
       for (Test *p = sRoot; p; p = p->mNext) {
-        TestData td = {p->name(), p->result()};
+        p->prepare();
         p->mReporter = reporter;
-        if (reporter) reporter->onTestStart(td);
+        TestData t1 = {p->name(), p->result()};
+        if (reporter) reporter->onTestStart(t1);
         p->test();
         if (p->mResult == RESULT_PASS) ++results.passed;
         if (p->mResult == RESULT_FAIL) ++results.failed;
         if (p->mResult == RESULT_SKIP) ++results.skipped;
-        if (reporter) reporter->onTestEnd(td);
+        TestData t2 = {p->name(), p->result()};
+        if (reporter) reporter->onTestEnd(t2);
       }
 
       return results;
@@ -154,8 +156,12 @@ class Test
       return results.failed + results.skipped;
     }
 
+    void prepare() {
+      mResult = RESULT_PASS;  // not None, and not fail unless we hear otherwise
+    }
+
     void test() {
-      mResult = RESULT_PASS; // not None, and not fail unless we hear otherwise
+      // thin wrapper.  nothing to do here for now
       task();
     }
 
@@ -210,3 +216,9 @@ class Test
     void task();                   \
   } test_##name##_instance;        \
   void test_##name ::task()
+
+
+#define unittest_main()                      \
+  int main(int argc, char *argv[]) {         \
+    return Test::run_and_report(argc, argv); \
+  }

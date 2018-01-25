@@ -6,14 +6,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- C++ functions for `assure`; `assert`s will run tests and continue, `assure`s will abort on failures
+- Missing dotfiles in the `DoSomething` project have been committed
 
 ### Changed
+- `arduino_ci_remote.rb` doesn't attempt to set URLs if nothing needs to be downloaded
+- `arduino_ci_remote.rb` does unit tests first
+- `unittest_main()` is now the macro for the `int main()` of test files
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- All test files were reporting "not ok" in TAP output.  Now they are OK iff all asserts pass.
+- Directories with a C++ extension in their name could cause problems.  Now they are ignored.
+- `CppLibrary` had trouble with symlinks. It shoudn't anymore.
+- `CppLibrary` had trouble with vendor bundles.  It might in the future, but I have a better fix ready to go if it's an issue.
 
 ### Security
 
