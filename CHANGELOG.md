@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - All test files were reporting "not ok" in TAP output.  Now they are OK iff all asserts pass.
 - Directories with a C++ extension in their name could cause problems.  Now they are ignored.
 - `CppLibrary` had trouble with symlinks. It shoudn't anymore.
+- `CppLibrary` had trouble with vendor bundles.  It might in the future, but I have a better fix ready to go if it's an issue.
 
 ### Security
 
