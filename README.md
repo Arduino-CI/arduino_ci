@@ -1,6 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci)
 [![Build Status](https://travis-ci.org/ifreecarve/arduino_ci.svg)](https://travis-ci.org/ifreecarve/arduino_ci)
-[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.1.0)
+[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.1.1)
 
 # ArduinoCI Ruby gem (`arduino_ci`)
 
@@ -26,7 +26,29 @@ script:
    - bundle exec arduino_ci_remote.rb
 ```
 
-That's literally all there is to it on the repository side.  You'll need to go to https://travis-ci.org/profile/ and enable testing for your Arduino project.  Once that happens, you should be all set.
+That's literally all there is to it on the repository side.  You'll need to go to https://travis-ci.org/profile/ and enable testing for your Arduino project.  Once that happens, you should be all set.  The script will test all example projects of the library and all unit tests.
+
+### Unit tests in `test/`
+
+All `.cpp` files in the `test/` directory of your Arduino library are assumed to contain unit tests.  Each and every one will be compiled and executed on its own.
+
+The most basic unit test file is as follows:
+
+```C++
+#include <ArduinoUnitTests.h>
+#include "../do-something.h"
+
+unittest(your_test_name)
+{
+  assertEqual(4, doSomething());
+}
+
+int main(int argc, char *argv[]) {
+  return Test::run_and_report(argc, argv);
+}
+```
+
+This test defines one `unittest` (a macro provided by `ArduionUnitTests.h`), called `your_test_name`, which makes some assertions on the target library.  The `int main` section is boilerplate.
 
 
 ## More Documentation
