@@ -7,6 +7,17 @@ end
 
 RSpec.describe ArduinoCI::ArduinoCmd do
   arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
+
+  after(:each) do |example|
+    if example.exception
+      puts "Last message: #{arduino_cmd.last_msg}"
+      puts "========== Stdout:"
+      puts arduino_cmd.last_out
+      puts "========== Stderr:"
+      puts arduino_cmd.last_err
+    end
+  end
+
   context "initialize" do
     it "sets base vars" do
       expect(arduino_cmd.base_cmd).not_to be nil
@@ -25,6 +36,13 @@ RSpec.describe ArduinoCI::ArduinoCmd do
       bogus_installed = arduino_cmd.board_installed? "eggs:milk:wheat"
       expect(bogus_installed).to be false
       expect(bogus_installed).not_to be nil
+    end
+  end
+
+  context "installation of boards" do
+    it "installs and sets boards" do
+      expect(arduino_cmd.install_boards("arduino:sam")).to be true
+      expect(arduino_cmd.use_board("arduino:sam:arduino_due_x")).to be true
     end
   end
 

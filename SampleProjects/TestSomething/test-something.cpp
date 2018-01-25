@@ -1,6 +1,5 @@
-#include <Arduino.h>
-#include "do-something.h"
-int doSomething(void) {
+#include "test-something.h"
+int testSomething(void) {
   millis();  // this line is only here to test that we're able to refer to the builtins
   return 4;
 };

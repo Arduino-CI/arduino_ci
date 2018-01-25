@@ -78,3 +78,6 @@ Style/StringLiterals:
 
 Style/TrailingCommaInLiteral:
   Enabled: false
+
+Style/SymbolArray:
+  Enabled: false

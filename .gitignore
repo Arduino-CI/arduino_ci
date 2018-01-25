@@ -13,4 +13,4 @@ vendor
 .rspec_status
 
 # C++ stuff
-arduino_ci_built.bin
+*.bin

@@ -10,7 +10,11 @@ module ArduinoCI
   # This class handles the setup of that display, if needed.
   class DisplayManager
     include Singleton
+
+    # @return [bool] whether the display manager is currently active
     attr_reader :enabled
+
+    # @return [bool] whether to log messages to the terminal
     attr_accessor :debug
 
     def initialize
@@ -19,6 +23,7 @@ module ArduinoCI
       @pid = nil
       @debug = false
 
+      # pipes for input and output
       @xv_pipe_out_wr = nil
       @xv_pipe_err_wr = nil
       @xv_pipe_out    = nil
@@ -26,6 +31,7 @@ module ArduinoCI
     end
 
     # attempt to determine if the machine is running a graphical display (i.e. not Travis)
+    # @return [bool] whether there is already a GUI that can accept windows
     def existing_display?
       return true  if RUBY_PLATFORM.include? "darwin"
       return false if ENV["DISPLAY"].nil?
@@ -35,6 +41,8 @@ module ArduinoCI
 
     # check whether a process is alive
     # https://stackoverflow.com/a/32513298/2063546
+    # @param pid [Int] the process ID
+    # @return [bool]
     def alive?(pid)
       Process.kill(0, pid)
       true
@@ -43,6 +51,8 @@ module ArduinoCI
     end
 
     # check whether an X server is taking connections
+    # @param display [String] the display variable as it would be specified in the environment
+    # @return [bool]
     def xserver_exist?(display)
       system({ "DISPLAY" => display }, "xdpyinfo", out: File::NULL, err: File::NULL)
     end
@@ -128,6 +138,8 @@ module ArduinoCI
     end
 
     # Enable a virtual display for the duration of the given block
+    # @yield [environment] The code to execute within the display environment
+    # @yieldparam [Hash] the environment variables relating to the display
     def with_display
       was_enabled = @enabled
       enable unless was_enabled
@@ -139,6 +151,7 @@ module ArduinoCI
     end
 
     # run a command in a display
+    # @return [bool]
     def run(*args, **kwargs)
       ret = false
       # do some work to extract & merge environment variables if they exist
@@ -154,10 +167,12 @@ module ArduinoCI
     end
 
     # run a command in a display with no output
+    # @return [bool]
     def run_silent(*args)
       run(*args, out: File::NULL, err: File::NULL)
     end
 
+    # @return [Hash] the environment variables for the display
     def environment
       return nil unless @existing || @enabled
       return { "EXISTING_DISPLAY" => "YES" } if @existing

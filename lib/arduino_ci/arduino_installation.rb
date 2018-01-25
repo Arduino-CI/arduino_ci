@@ -12,11 +12,13 @@ module ArduinoCI
   class ArduinoInstallation
 
     class << self
+      # @return [String] The location where a forced install will go
       def force_install_location
         File.join(ENV['HOME'], 'arduino_ci_ide')
       end
 
       # attempt to find a workable Arduino executable across platforms
+      # @return [ArduinoCI::ArduinoCmd] an instance of the command
       def autolocate
         case Host.os
         when :osx then autolocate_osx
@@ -24,6 +26,7 @@ module ArduinoCI
         end
       end
 
+      # @return [ArduinoCI::ArduinoCmdOSX] an instance of a command
       def autolocate_osx
         osx_root = "/Applications/Arduino.app/Contents"
         old_way = false
@@ -48,21 +51,17 @@ module ArduinoCI
             "processing.app.Base",
           ]
         end
-
-        hardware_dir = File.join(osx_root, "Java", "hardware")
-        ret.gcc_cmd = [File.join(hardware_dir, "tools", "avr", "bin", "avr-gcc")]
         ret
       end
 
+      # @return [ArduinoCI::ArduinoCmdLinux] an instance of a command
       def autolocate_linux
-        forced_avr = File.join(force_install_location, "hardware", "tools", "avr")
         if USE_BUILDER
           builder_name = "arduino-builder"
           cli_place = Host.which(builder_name)
           unless cli_place.nil?
             ret = ArduinoCmdLinuxBuilder.new
             ret.base_cmd = [cli_place]
-            ret.gcc_cmd = [Host.which("avr-gcc")]
             return ret
           end
 
@@ -70,7 +69,6 @@ module ArduinoCI
           if File.exist?(forced_builder)
             ret = ArduinoCmdLinuxBuilder.new
             ret.base_cmd = [forced_builder]
-            ret.gcc_cmd = [File.join(forced_avr, "bin", "avr-gcc")]
             return ret
           end
         end
@@ -80,7 +78,6 @@ module ArduinoCI
         unless gui_place.nil?
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [gui_place]
-          ret.gcc_cmd = [Host.which("avr-gcc")]
           return ret
         end
 
@@ -88,13 +85,13 @@ module ArduinoCI
         if File.exist?(forced_arduino)
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [forced_arduino]
-          ret.gcc_cmd = [File.join(forced_avr, "bin", "avr-gcc")]
           return ret
         end
         nil
       end
 
       # Attempt to find a workable Arduino executable across platforms, and install it if we don't
+      # @return [ArduinoCI::ArduinoCmd] an instance of a command
       def autolocate!
         candidate = autolocate
         return candidate unless candidate.nil?
@@ -104,6 +101,8 @@ module ArduinoCI
         autolocate
       end
 
+      # Forcibly install Arduino from the web
+      # @return [bool] Whether the command succeeded
       def force_install
         case Host.os
         when :linux

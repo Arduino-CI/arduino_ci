@@ -1,0 +1,77 @@
+packages:
+  esp8266:esp8266:
+    url: http://arduino.esp8266.com/stable/package_esp8266com_index.json
+  adafruit:avr:
+    url: https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
+
+platforms:
+  uno:
+    board: arduino:avr:uno
+    package: ~
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  due:
+    board: arduino:sam:arduino_due_x
+    package: arduino:sam
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  zero:
+    board: arduino:samd:zero
+    package: arduino:samd
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  esp8266:
+    board: esp8266:esp8266:huzzah
+    package: esp8266:esp8266
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  leonardo:
+    board: arduino:avr:leonardo
+    package: ~
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  trinket:
+    board: adafruit:avr:trinket5
+    package: adafruit:avr
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  gemma:
+    board: arduino:avr:gemma
+    package: adafruit:avr
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+
+compile:
+  libraries: ~
+  platforms:
+    - uno
+    - due
+    - leonardo
+
+unittest:
+  libraries: ~
+  platforms:
+    - uno
+    - due
+    - leonardo

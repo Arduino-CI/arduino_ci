@@ -14,11 +14,15 @@ module ArduinoCI
     flag :install_library, "--install-library"   # apparently doesn't exist
     flag :verify,          "-compile"
 
+    # linux-specific implementation
+    # @return [String] The path to the library dir
     def _lib_dir
       File.join(get_pref("sketchbook.path"), "libraries")
     end
 
     # run the arduino command
+    # @param [Array<String>] Arguments for the run command
+    # @return [bool] Whether the command succeeded
     def _run(*args, **kwargs)
       Host.run(*args, **kwargs)
     end
