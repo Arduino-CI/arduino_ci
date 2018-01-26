@@ -33,6 +33,8 @@ RSpec.describe ArduinoCI::CppLibrary do
     it "finds cpp files in directory" do
       testsomething_test_files = [
         "TestSomething/test/good-null.cpp",
+        "TestSomething/test/good-math.cpp",
+        "TestSomething/test/good-trig.cpp",
         "TestSomething/test/good-library.cpp",
         "TestSomething/test/bad-null.cpp"
       ]
