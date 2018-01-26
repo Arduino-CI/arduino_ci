@@ -39,6 +39,9 @@ GodmodeState* GODMODE();
 #define highByte(w) ((uint8_t) ((w) >> 8))
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 
+// Character stuff
+#include "WCharacter.h"
+
 
 
 // Time
