@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for all builtin Bits and Bytes functions https://www.arduino.cc/reference/en/
 - Support for GODMODE and time functions
 - Support for Character functions https://www.arduino.cc/reference/en/
+- Many original Arduino `#define`s
 
 ### Changed
 - Made `wget` have quieter output

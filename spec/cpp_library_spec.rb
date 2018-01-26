@@ -37,6 +37,7 @@ RSpec.describe ArduinoCI::CppLibrary do
         "TestSomething/test/good-trig.cpp",
         "TestSomething/test/good-library.cpp",
         "TestSomething/test/good-godmode.cpp",
+        "TestSomething/test/good-defines.cpp",
         "TestSomething/test/good-wcharacter.cpp",
         "TestSomething/test/bad-null.cpp",
       ]

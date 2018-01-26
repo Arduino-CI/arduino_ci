@@ -1,4 +1,5 @@
 #include "AvrMath.h"
+#include "ArduinoDefines.h"
 
 // pow
 // https://stackoverflow.com/a/9681676/2063546
@@ -38,12 +39,9 @@ float sqrt(float x) { return nth_root(x, 2); }
 // http://www.ganssle.com/approx/sincos.cpp
 
 // Math constants we'll use
-double const pi=3.1415926535897932384626433;	// pi
-double const twopi=2.0*pi;                // pi times 2
-double const two_over_pi= 2.0/pi;         // 2/pi
-double const halfpi=pi/2.0;               // pi divided by 2
-double const threehalfpi=3.0*pi/2.0;      // pi times 3/2, used in tan routines
-double const four_over_pi=4.0/pi;         // 4/pi, used in tan routines
+double const two_over_pi= 2.0/PI;         // 2/pi
+double const three_half_pi=3.0*PI/2.0;      // pi times 3/2, used in tan routines
+double const four_over_pi=4.0/PI;         // 4/pi, used in tan routines
 
 
 double cos_121s(double x)
@@ -61,18 +59,19 @@ double cos_121s(double x)
 }
 
 double cos(double x){
-	x = fmod(x, twopi);  // Get rid of values > 2* pi
+	x = fmod(x, TWO_PI);  // Get rid of values > 2* pi
 	if(x<0)x=-x;         // cos(-x) = cos(x)
 	switch ((int)(x * two_over_pi)){
 	case 0: return  cos_121s(x);
-	case 1: return -cos_121s(pi-x);
-	case 2: return -cos_121s(x-pi);
-	case 3: return  cos_121s(twopi-x);
+	case 1: return -cos_121s(PI-x);
+	case 2: return -cos_121s(x-PI);
+	case 3: return  cos_121s(TWO_PI-x);
 	}
+  return 99;
 }
 
 double sin(double x){
-	return cos(halfpi-x);
+	return cos(HALF_PI-x);
 }
 
 double tan_14s(double x)
@@ -94,18 +93,19 @@ double tan_14s(double x)
 double tan(double x){
 	int octant;						// what octant are we in?
 
-	x=fmod(x, twopi);				// Get rid of values >2 *pi
+	x=fmod(x, TWO_PI);				// Get rid of values >2 *pi
 	octant=int(x * four_over_pi);			// Get octant # (0 to 7)
 	switch (octant){
 	case 0: return      tan_14s(x              *four_over_pi);
-	case 1: return  1.0/tan_14s((halfpi-x)     *four_over_pi);
-	case 2: return -1.0/tan_14s((x-halfpi)     *four_over_pi);
-	case 3: return -    tan_14s((pi-x)         *four_over_pi);
-	case 4: return      tan_14s((x-pi)         *four_over_pi);
-	case 5: return  1.0/tan_14s((threehalfpi-x)*four_over_pi);
-	case 6: return -1.0/tan_14s((x-threehalfpi)*four_over_pi);
-	case 7: return -    tan_14s((twopi-x)      *four_over_pi);
+	case 1: return  1.0/tan_14s((HALF_PI-x)     *four_over_pi);
+	case 2: return -1.0/tan_14s((x-HALF_PI)     *four_over_pi);
+	case 3: return -    tan_14s((PI-x)         *four_over_pi);
+	case 4: return      tan_14s((x-PI)         *four_over_pi);
+	case 5: return  1.0/tan_14s((three_half_pi-x)*four_over_pi);
+	case 6: return -1.0/tan_14s((x-three_half_pi)*four_over_pi);
+	case 7: return -    tan_14s((TWO_PI-x)      *four_over_pi);
 	}
+  return 99;
 }
 
 

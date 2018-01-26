@@ -16,6 +16,9 @@ float sqrt(float);
 // https://stackoverflow.com/a/26342944/2063546
 #define fmod(a,b) ((a)-(b)*floor((a)/(b)))
 
+#define radians(deg) ((deg)*DEG_TO_RAD)
+#define degrees(rad) ((rad)*RAD_TO_DEG)
+
 
 // http://www.ganssle.com/approx.htm
 // http://www.ganssle.com/approx/sincos.cpp
