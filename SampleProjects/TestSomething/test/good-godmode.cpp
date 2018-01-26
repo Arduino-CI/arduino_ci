@@ -15,4 +15,16 @@ unittest(millis_micros_and_delay)
   assertEqual(14000, micros());
 }
 
+unittest(random)
+{
+  randomSeed(1);
+  unsigned long x;
+  x = random(4294967293);
+  assertEqual(4294967292, x);
+  x = random(50, 100);
+  assertEqual(83, x);
+  x = random(100);
+  assertEqual(74, x);
+}
+
 unittest_main()

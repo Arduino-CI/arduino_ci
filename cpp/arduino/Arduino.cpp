@@ -21,3 +21,20 @@ void delay(unsigned long millis) {
 void delayMicroseconds(unsigned long micros) {
   godmode.micros += micros;
 }
+
+
+void randomSeed(unsigned long seed)
+{
+  godmode.seed = seed;
+}
+
+long random(long vmax)
+{
+  godmode.seed += 4294967291;  // it's a prime that fits in 32 bits
+  return godmode.seed % vmax;
+}
+
+long random(long vmin, long vmax)
+{
+  return vmin < vmax ? (random(vmax - vmin) + vmin) : vmin;
+}

@@ -9,6 +9,7 @@ Where possible, variable names from the Arduino library are used to avoid confli
 class GodmodeState {
   public:
     unsigned long micros;
+    unsigned long seed;
 
     void resetClock() {
       micros = 0;
@@ -16,6 +17,7 @@ class GodmodeState {
 
     void reset() {
       resetClock();
+      seed = 1;
     }
 
     GodmodeState() {
@@ -87,6 +89,10 @@ inline unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8)
 
 #define word(...) makeWord(__VA_ARGS__)
 
+// random
+void randomSeed(unsigned long seed);
+long random(long vmax);
+long random(long vmin, long vmax);
 
 
 // Time
