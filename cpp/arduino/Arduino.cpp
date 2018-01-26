@@ -38,3 +38,19 @@ long random(long vmin, long vmax)
 {
   return vmin < vmax ? (random(vmax - vmin) + vmin) : vmin;
 }
+
+void digitalWrite(uint8_t pin, uint8_t val) {
+  godmode.digitalPin[pin] = val;
+}
+
+int digitalRead(uint8_t pin) {
+  return godmode.digitalPin[pin];
+}
+
+int analogRead(uint8_t pin) {
+  return godmode.analogPin[pin];
+}
+
+void analogWrite(uint8_t pin, int val) {
+  godmode.analogPin[pin] = val;
+}
