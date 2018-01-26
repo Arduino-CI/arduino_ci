@@ -6,6 +6,26 @@ Where possible, variable names from the Arduino library are used to avoid confli
 
 */
 
+class GodmodeState {
+  public:
+    unsigned long micros;
+
+    void resetClock() {
+      micros = 0;
+    }
+
+    void reset() {
+      resetClock();
+    }
+
+    GodmodeState() {
+      reset();
+    }
+
+};
+
+GodmodeState* GODMODE();
+
 
 // Math and Trig
 #include "AvrMath.h"
@@ -19,10 +39,11 @@ Where possible, variable names from the Arduino library are used to avoid confli
 #define highByte(w) ((uint8_t) ((w) >> 8))
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 
-struct unit_test_state {
-  unsigned long micros;
-};
 
+
+// Time
+void delay(unsigned long millis);
+void delayMicroseconds(unsigned long micros);
 unsigned long millis();
-
 unsigned long micros();
+
