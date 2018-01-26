@@ -199,6 +199,9 @@ module ArduinoCI
     # @param [String] the path to the test file
     # @return [bool] whether all tests were successful
     def run_test_file(executable)
+      @last_cmd = executable
+      @last_out = ""
+      @last_err = ""
       Host.run(executable)
     end
 
