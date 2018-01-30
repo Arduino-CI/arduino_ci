@@ -325,6 +325,99 @@ template  < long N, long M > struct Compare<char [N],char [M]>
     return between(a,b) >= 0;
   } // moreOrEqual
 };
+template  < > struct Compare<bool, bool>
+{
+  inline static int between(bool a, bool b)
+  {
+    return b ? (a ? 0 : -1) : (a ? 1 : 0);
+  } // between
+  inline static bool equal(bool a, bool b)
+  {
+    return between(a,b) == 0;
+  } // equal
+  inline static bool notEqual(bool a, bool b)
+  {
+    return between(a,b) != 0;
+  } // notEqual
+  inline static bool less(bool a, bool b)
+  {
+    return between(a,b) < 0;
+  } // less
+  inline static bool more(bool a, bool b)
+  {
+    return between(a,b) > 0;
+  } // more
+  inline static bool lessOrEqual(bool a, bool b)
+  {
+    return between(a,b) <= 0;
+  } // lessOrEqual
+  inline static bool moreOrEqual(bool a, bool b)
+  {
+    return between(a,b) >= 0;
+  } // moreOrEqual
+};
+template  <typename T> struct Compare<bool, T>
+{
+  inline static int between(bool a, T b)
+  {
+    return b ? (a ? 0 : -1) : (a ? 1 : 0);
+  } // between
+  inline static bool equal(bool a, T b)
+  {
+    return between(a,b) == 0;
+  } // equal
+  inline static bool notEqual(bool a, T b)
+  {
+    return between(a,b) != 0;
+  } // notEqual
+  inline static bool less(bool a, T b)
+  {
+    return between(a,b) < 0;
+  } // less
+  inline static bool more(bool a, T b)
+  {
+    return between(a,b) > 0;
+  } // more
+  inline static bool lessOrEqual(bool a, T b)
+  {
+    return between(a,b) <= 0;
+  } // lessOrEqual
+  inline static bool moreOrEqual(bool a, T b)
+  {
+    return between(a,b) >= 0;
+  } // moreOrEqual
+};
+template  <typename T> struct Compare<T, bool>
+{
+  inline static int between(T a, bool b)
+  {
+    return b ? (a ? 0 : -1) : (a ? 1 : 0);
+  } // between
+  inline static bool equal(T a, bool b)
+  {
+    return between(a,b) == 0;
+  } // equal
+  inline static bool notEqual(T a, bool b)
+  {
+    return between(a,b) != 0;
+  } // notEqual
+  inline static bool less(T a, bool b)
+  {
+    return between(a,b) < 0;
+  } // less
+  inline static bool more(T a, bool b)
+  {
+    return between(a,b) > 0;
+  } // more
+  inline static bool lessOrEqual(T a, bool b)
+  {
+    return between(a,b) <= 0;
+  } // lessOrEqual
+  inline static bool moreOrEqual(T a, bool b)
+  {
+    return between(a,b) >= 0;
+  } // moreOrEqual
+};
 template <typename A, typename B> int compareBetween(const A &a, const B &b) { return Compare<A,B>::between(a,b); }
 template <typename A, typename B> bool compareEqual(const A &a, const B &b) { return Compare<A,B>::equal(a,b); }
 template <typename A, typename B> bool compareNotEqual(const A &a, const B &b) { return Compare<A,B>::notEqual(a,b); }
