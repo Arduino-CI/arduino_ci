@@ -5,15 +5,12 @@ Mock Arduino.h library.
 Where possible, variable names from the Arduino library are used to avoid conflicts
 
 */
-#ifndef __did_sized_types
-typedef unsigned char       uint8_t;
-// typedef __uint16_t      uint16_t;
-// typedef __uint32_t      uint32_t;
-// typedef __uint64_t      uint64_t;
-#define __did_sized_types
-#endif
+// Chars and strings
+#include "WCharacter.h"
+#include "WString.h"
 
-
+typedef bool boolean;
+typedef uint8_t byte;
 
 #include "ArduinoDefines.h"
 #include "binary.h"
@@ -21,8 +18,8 @@ typedef unsigned char       uint8_t;
 // Math and Trig
 #include "AvrMath.h"
 
-typedef bool boolean;
-typedef uint8_t byte;
+
+
 
 
 
@@ -82,10 +79,6 @@ GodmodeState* GODMODE();
 #define attachInterrupt(...) _NOP()
 #define detachInterrupt(...) _NOP()
 
-
-
-// Character stuff
-#include "WCharacter.h"
 
 // TODO: correctly establish this per-board!
 #define F_CPU 1000000UL

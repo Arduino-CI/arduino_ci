@@ -39,6 +39,7 @@ RSpec.describe ArduinoCI::CppLibrary do
         "TestSomething/test/good-godmode.cpp",
         "TestSomething/test/good-defines.cpp",
         "TestSomething/test/good-wcharacter.cpp",
+        "TestSomething/test/good-wstring.cpp",
         "TestSomething/test/bad-null.cpp",
       ]
       relative_paths = cpp_library.test_files.map { |f| f.split("SampleProjects/", 2)[1] }

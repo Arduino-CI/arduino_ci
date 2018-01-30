@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Mocks for `random` functions with seed control
 - Many original Arduino `#define`s
 - Mocks for pinMode, analog/digital read/write
+- Support for WString
 
 ### Changed
 - Made `wget` have quieter output
