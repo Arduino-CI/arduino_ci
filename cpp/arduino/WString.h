@@ -148,11 +148,6 @@ public:
 
 };
 
-template <typename T> inline std::ostream& operator << ( std::ostream& out, const std::basic_string<T>& bs ) {
-  out << bs.c_str();
-  return out;
-}
-
 inline std::ostream& operator << ( std::ostream& out, const String& bs ) {
   out << bs.c_str();
   return out;

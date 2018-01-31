@@ -1,4 +1,9 @@
 #pragma once
+
+#ifndef typeof
+#define typeof __typeof__
+#endif
+
 #include "Compare.h"
 
 #define testBehaviorOp(die, desc, rel1, arg1, op, op_name, rel2, arg2) \
