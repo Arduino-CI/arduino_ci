@@ -49,6 +49,26 @@ unittest_main()
 This test defines one `unittest` (a macro provided by `ArduionUnitTests.h`), called `your_test_name`, which makes some assertions on the target library.  The `unittest_main()` is a macro for the `int main()` boilerplate required for unit testing.
 
 
+### Using `GODMODE`
+
+Complete control of the Arduino environment is available in your unit tests through a construct called `GODMODE()`.
+
+```C++
+unittest(example_godmode_stuff)
+{
+  GodmodeState* state = GODMODE();   // get access to the state
+  state->reset();                    // does a full reset of the state.
+  state->resetClock();               //  - you can reset just the clock (to zero)
+  state->resetPins();                //  - or just the pins
+  state->micros = 1;                 // manually set the clock such that micros() returns 1
+  state->digitalPin[4];              // stores the commanded state of digital pin 4
+  state->digitalPin[4] = HIGH;       // digitalRead(4) will now return HIGH
+  state->analogPin[3];               // stores the commanded state of analog pin 3
+  state->analogPin[3] = 99;          // analogRead(3) will now return 99
+}
+```
+
+
 ## More Documentation
 
 This software is in alpha.  But [SampleProjects/DoSomething](SampleProjects/DoSomething) has a decent writeup and is a good bare-bones example of all the features.
