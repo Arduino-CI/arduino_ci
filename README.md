@@ -61,9 +61,9 @@ unittest(example_godmode_stuff)
   state->resetClock();               //  - you can reset just the clock (to zero)
   state->resetPins();                //  - or just the pins
   state->micros = 1;                 // manually set the clock such that micros() returns 1
-  state->digitalPin[4];              // stores the commanded state of digital pin 4
+  state->digitalPin[4];              // tells you the commanded state of digital pin 4
   state->digitalPin[4] = HIGH;       // digitalRead(4) will now return HIGH
-  state->analogPin[3];               // stores the commanded state of analog pin 3
+  state->analogPin[3];               // tells you the commanded state of analog pin 3
   state->analogPin[3] = 99;          // analogRead(3) will now return 99
 }
 ```
@@ -133,7 +133,6 @@ This software is in alpha.  But [SampleProjects/DoSomething](SampleProjects/DoSo
 
 * The Arduino library is not fully mocked.
 * I don't have preprocessor defines for all the Arduino board flavors
-* Arduino Zero boards don't work in CI.  I'm confused.
 * https://github.com/ifreecarve/arduino_ci/issues
 
 
