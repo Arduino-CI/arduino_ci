@@ -1,4 +1,5 @@
 #pragma once
+#include "Godmode.h"
 #include "WString.h"
 #include "Print.h"
 

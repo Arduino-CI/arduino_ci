@@ -36,3 +36,15 @@ class GodmodeState {
 
 GodmodeState* GODMODE();
 
+// random
+void randomSeed(unsigned long seed);
+long random(long vmax);
+long random(long vmin, long vmax);
+
+
+// Time
+void delay(unsigned long millis);
+void delayMicroseconds(unsigned long micros);
+unsigned long millis();
+unsigned long micros();
+
