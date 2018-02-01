@@ -48,7 +48,10 @@ class Stream : public Print
     virtual int peek() { return available() ? (int)((*mGodmodeDataIn)[0]) : -1; }
     virtual int read() {
       int ret = peek();
-      if (ret != -1) fastforward(1);
+      if (ret != -1) {
+        fastforward(1);
+        if (mGodmodeMicrosDelay) delayMicroseconds(*mGodmodeMicrosDelay);
+      }
       return ret;
     }
 
@@ -152,6 +155,7 @@ class Stream : public Print
     // returns the number of characters placed in the buffer (0 means no valid data found)
     size_t readBytes(char *buffer, size_t length) {
       size_t ret = mGodmodeDataIn->copy(buffer, length);
+      if (mGodmodeMicrosDelay) delayMicroseconds(*mGodmodeMicrosDelay * ret);
       fastforward(ret);
       return ret;
     }

@@ -1,4 +1,6 @@
 # Note that ci_config_spec.rb has tests for this file's contents
+# some of the defines were guessed from
+#   https://en.wikipedia.org/wiki/List_of_Arduino_boards_and_compatible_systems
 
 packages:
   esp8266:esp8266:
@@ -13,6 +15,7 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR_ATmega328P__
       warnings:
       flags:
   due:
@@ -21,6 +24,7 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR_ATmega328__
       warnings:
       flags:
   zero:
@@ -29,6 +33,8 @@ platforms:
     gcc:
       features:
       defines:
+       - __SAMD21G18A__
+       - ARDUINO_SAMD_ZERO
       warnings:
       flags:
   esp8266:
@@ -45,6 +51,7 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR_ATmega32U4__
       warnings:
       flags:
   trinket:
