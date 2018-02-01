@@ -30,7 +30,7 @@ class Print
     virtual int availableForWrite() { return 0; }
 
     virtual size_t write(uint8_t) = 0;
-    size_t write(const char *str) { return str == NULL ? 0 : write((const uint8_t *)str, strlen(str)); }
+    size_t write(const char *str) { return str == NULL ? 0 : write((const uint8_t *)str, String(str).length()); }
     virtual size_t write(const uint8_t *buffer, size_t size)
     {
       size_t n;
