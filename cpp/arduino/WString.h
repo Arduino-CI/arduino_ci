@@ -41,9 +41,9 @@ class String: public string
 
     static string dtoas(double val, int decimalPlaces) {
       double r = 0.5 * pow(0.1, decimalPlaces); // make sure that integer truncation will properly round
+      if (::isnan(val)) return "nan";
+      if (::isinf(val)) return "inf";
       val += val > 0 ? r : -r;
-      if (isnan(val)) return "nan";
-      if (isinf(val)) return "inf";
       if (val > 4294967040.0) return "ovf";
       if (val <-4294967040.0) return "ovf";
       return mytoas(val, 10) + "." + mytoa(abs(val - (long)val) * pow(10, decimalPlaces), 10);
