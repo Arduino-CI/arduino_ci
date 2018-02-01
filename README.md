@@ -49,6 +49,82 @@ unittest_main()
 This test defines one `unittest` (a macro provided by `ArduionUnitTests.h`), called `your_test_name`, which makes some assertions on the target library.  The `unittest_main()` is a macro for the `int main()` boilerplate required for unit testing.
 
 
+### Using `GODMODE`
+
+Complete control of the Arduino environment is available in your unit tests through a construct called `GODMODE()`.
+
+```C++
+unittest(example_godmode_stuff)
+{
+  GodmodeState* state = GODMODE();   // get access to the state
+  state->reset();                    // does a full reset of the state.
+  state->resetClock();               //  - you can reset just the clock (to zero)
+  state->resetPins();                //  - or just the pins
+  state->micros = 1;                 // manually set the clock such that micros() returns 1
+  state->digitalPin[4];              // stores the commanded state of digital pin 4
+  state->digitalPin[4] = HIGH;       // digitalRead(4) will now return HIGH
+  state->analogPin[3];               // stores the commanded state of analog pin 3
+  state->analogPin[3] = 99;          // analogRead(3) will now return 99
+}
+```
+
+A more complicated example: working with serial port IO.  Let's say I have the following function:
+
+```C++
+void smartLightswitchSerialHandler(int pin) {
+  if (Serial.available() > 0) {
+    int incomingByte = Serial.read();
+    int val = incomingByte == '0' ? LOW : HIGH;
+    Serial.print("Ack ");
+    digitalWrite(pin, val);
+    Serial.print(String(pin));
+    Serial.print(" ");
+    Serial.print((char)incomingByte);
+  }
+}
+```
+
+This function has 3 side effects: it drains the serial port's receive buffer, affects a pin, and puts data in the serial port's send buffer.  Or, if the receive buffer is empty, it does nothing at all.
+
+```C++
+unittest(does_nothing_if_no_data)
+{
+    // configure initial state
+    GodmodeState* state = GODMODE();
+    int myPin = 3;
+    state->serialPort[0].dataIn = "";
+    state->serialPort[0].dataOut = "";
+    state->digitalPin[myPin] = LOW;
+
+    // execute action
+    smartLightswitchSerialHandler(myPin);
+
+    // assess final state
+    assertEqual(LOW, state->digitalPin[myPin]);
+    assertEqual("", state->serialPort[0].dataIn);
+    assertEqual("", state->serialPort[0].dataOut);
+}
+
+unittest(two_flips)
+{
+    GodmodeState* state = GODMODE();
+    int myPin = 3;
+    state->serialPort[0].dataIn = "10junk";
+    state->serialPort[0].dataOut = "";
+    state->digitalPin[myPin] = LOW;
+    smartLightswitchSerialHandler(myPin);
+    assertEqual(HIGH, state->digitalPin[myPin]);
+    assertEqual("0junk", state->serialPort[0].dataIn);
+    assertEqual("Ack 3 1", state->serialPort[0].dataOut);
+
+    state->serialPort[0].dataOut = "";
+    smartLightswitchSerialHandler(myPin);
+    assertEqual(LOW, state->digitalPin[myPin]);
+    assertEqual("junk", state->serialPort[0].dataIn);
+    assertEqual("Ack 3 0", state->serialPort[0].dataOut);
+}
+```
+
 ## More Documentation
 
 This software is in alpha.  But [SampleProjects/DoSomething](SampleProjects/DoSomething) has a decent writeup and is a good bare-bones example of all the features.

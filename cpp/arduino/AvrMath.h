@@ -1,37 +1,27 @@
-//#include <math.h>
 #pragma once
+#include <math.h>
 
-template <typename A> inline A abs(A x) { return x > 0 ? x : -x; }
+#define constrain(x,l,h) ((x)<(l)?(l):((x)>(h)?(h):(x)))
+#define map(x,inMin,inMax,outMin,outMax) (((x)-(inMin))*((outMax)-(outMin))/((inMax)-(inMin))+outMin)
 
-//max
-template <typename A> inline float max(A a, float b) { return a > b ? a : b; }
-template <typename A> inline float max(float a, A b) { return a > b ? a : b; }
-template <typename A, typename B> inline long max(A a, B b) { return a > b ? a : b; }
+#ifdef abs
+#undef abs
+#endif
+#define abs(x) ((x)>0?(x):-(x))
 
-//min
-template <typename A> inline float min(A a, float b) { return a < b ? a : b; }
-template <typename A> inline float min(float a, A b) { return a < b ? a : b; }
-template <typename A, typename B> inline long min(A a, B b) { return a < b ? a : b; }
+#ifdef max
+#undef max
+#endif
+#define max(a,b) ((a)>(b)?(a):(b))
 
-//constrain
-template <typename A> inline A constrain(A x, A a, A b)         { return max(a, min(b, x)); }
+#ifdef min
+#undef min
+#endif
+#define min(a,b) ((a)<(b)?(a):(b))
 
-//map
-template <typename A> inline A map(A x, A in_min, A in_max, A out_min, A out_max)
-{
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
+#define sq(x) ((x)*(x))
 
-//sq
-template <typename A> A inline sq(A x) { return x * x; }
+#define radians(deg) ((deg)*DEG_TO_RAD)
+#define degrees(rad) ((rad)*RAD_TO_DEG)
 
-// ??? too lazy to sort these now
-//pow
-//sqrt
-
-// http://www.ganssle.com/approx.htm
-// http://www.ganssle.com/approx/sincos.cpp
-//cos
-//sin
-//tan
 

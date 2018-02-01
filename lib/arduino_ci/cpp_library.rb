@@ -189,7 +189,7 @@ module ArduinoCI
       base = File.basename(test_file)
       executable = File.expand_path("unittest_#{base}.bin")
       File.delete(executable) if File.exist?(executable)
-      args = ["-o", executable] + test_args(aux_libraries, ci_gcc_config) + [test_file]
+      args = ["-std=c++11", "-o", executable] + test_args(aux_libraries, ci_gcc_config) + [test_file]
       return nil unless run_gcc(*args)
       artifacts << executable
       executable
@@ -199,6 +199,9 @@ module ArduinoCI
     # @param [String] the path to the test file
     # @return [bool] whether all tests were successful
     def run_test_file(executable)
+      @last_cmd = executable
+      @last_out = ""
+      @last_err = ""
       Host.run(executable)
     end
 

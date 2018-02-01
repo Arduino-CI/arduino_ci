@@ -1,13 +1,23 @@
 #include "Arduino.h"
+#include "Godmode.h"
 
-struct unit_test_state godmode = {
-  0, // micros
-};
 
-unsigned long millis() {
-  return godmode.micros / 1000;
+void digitalWrite(unsigned char pin, unsigned char val) {
+  GodmodeState* godmode = GODMODE();
+  godmode->digitalPin[pin] = val;
 }
 
-unsigned long micros() {
-  return godmode.micros;
+int digitalRead(unsigned char pin) {
+  GodmodeState* godmode = GODMODE();
+  return godmode->digitalPin[pin];
+}
+
+int analogRead(unsigned char pin) {
+  GodmodeState* godmode = GODMODE();
+  return godmode->analogPin[pin];
+}
+
+void analogWrite(unsigned char pin, int val) {
+  GodmodeState* godmode = GODMODE();
+  godmode->analogPin[pin] = val;
 }

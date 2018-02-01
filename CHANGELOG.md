@@ -6,8 +6,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Support for all builtin Math functions https://www.arduino.cc/reference/en/
+- Support for all builtin Bits and Bytes functions https://www.arduino.cc/reference/en/
+- Support for GODMODE and time functions
+- Support for Character functions https://www.arduino.cc/reference/en/
+- Mocks for `random` functions with seed control
+- Many original Arduino `#define`s
+- Mocks for pinMode, analog/digital read/write
+- Support for WString
+- Support for Print
+- Support for Stream (backed by a String implementation)
+- All the IO stuff (pins, serial port support flags, etc) from the Arduino library
+- Support for Serial (backed by GODMODE)
 
 ### Changed
+- Made `wget` have quieter output
 
 ### Deprecated
 

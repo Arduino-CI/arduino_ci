@@ -33,8 +33,16 @@ RSpec.describe ArduinoCI::CppLibrary do
     it "finds cpp files in directory" do
       testsomething_test_files = [
         "TestSomething/test/good-null.cpp",
+        "TestSomething/test/good-math.cpp",
+        "TestSomething/test/good-trig.cpp",
         "TestSomething/test/good-library.cpp",
-        "TestSomething/test/bad-null.cpp"
+        "TestSomething/test/good-godmode.cpp",
+        "TestSomething/test/good-defines.cpp",
+        "TestSomething/test/good-wcharacter.cpp",
+        "TestSomething/test/good-wstring.cpp",
+        "TestSomething/test/good-stream.cpp",
+        "TestSomething/test/good-serial.cpp",
+        "TestSomething/test/bad-null.cpp",
       ]
       relative_paths = cpp_library.test_files.map { |f| f.split("SampleProjects/", 2)[1] }
       expect(relative_paths).to match_array(testsomething_test_files)
@@ -42,6 +50,8 @@ RSpec.describe ArduinoCI::CppLibrary do
   end
 
   context "test" do
+    config = ArduinoCI::CIConfig.default
+
     after(:each) do |example|
       if example.exception
         puts "Last command: #{cpp_library.last_cmd}"
@@ -61,7 +71,7 @@ RSpec.describe ArduinoCI::CppLibrary do
     test_files.each do |path|
       expected = path.include?("good")
       it "tests #{File.basename(path)} expecting #{expected}" do
-        exe = cpp_library.build_for_test_with_configuration(path, [], nil)
+        exe = cpp_library.build_for_test_with_configuration(path, [], config.gcc_config("uno"))
         expect(exe).not_to be nil
         expect(cpp_library.run_test_file(exe)).to eq(expected)
       end

@@ -112,7 +112,7 @@ module ArduinoCI
             puts "Arduino tarfile seems to have been downloaded already"
           else
             puts "Downloading Arduino binary with wget"
-            system("wget", "https://downloads.arduino.cc/#{tarfile}")
+            system("wget", "--quiet", "--progress=dot:giga", "https://downloads.arduino.cc/#{tarfile}")
           end
 
           if File.exist? pkgname
