@@ -36,8 +36,8 @@
 #define assertMore(arg1,arg2)        assertOp("assertMore","upperBound",arg1,compareMore,">","lowerBound",arg2)
 #define assertLessOrEqual(arg1,arg2) assertOp("assertLessOrEqual","lowerBound",arg1,compareLessOrEqual,"<=","upperBound",arg2)
 #define assertMoreOrEqual(arg1,arg2) assertOp("assertMoreOrEqual","upperBound",arg1,compareMoreOrEqual,">=","lowerBound",arg2)
-#define assertTrue(arg) assertEqual(arg,true)
-#define assertFalse(arg) assertEqual(arg,false)
+#define assertTrue(arg) assertEqual(true, arg)
+#define assertFalse(arg) assertEqual(false, arg)
 
 /** macro generates optional output and calls fail() followed by a return if false. */
 #define assureEqual(arg1,arg2)       assureOp("assureEqual","expected",arg1,compareEqual,"==","actual",arg2)
@@ -46,6 +46,6 @@
 #define assureMore(arg1,arg2)        assureOp("assureMore","upperBound",arg1,compareMore,">","lowerBound",arg2)
 #define assureLessOrEqual(arg1,arg2) assureOp("assureLessOrEqual","lowerBound",arg1,compareLessOrEqual,"<=","upperBound",arg2)
 #define assureMoreOrEqual(arg1,arg2) assureOp("assureMoreOrEqual","upperBound",arg1,compareMoreOrEqual,">=","lowerBound",arg2)
-#define assureTrue(arg) assertEqual(arg,true)
-#define assureFalse(arg) assertEqual(arg,false)
+#define assureTrue(arg) assertEqual(true, arg)
+#define assureFalse(arg) assertEqual(false, arg)
 
