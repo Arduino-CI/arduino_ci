@@ -1,4 +1,5 @@
 #include "Godmode.h"
+#include "HardwareSerial.h"
 
 GodmodeState godmode = GodmodeState();
 
@@ -44,3 +45,18 @@ long random(long vmin, long vmax)
 {
   return vmin < vmax ? (random(vmax - vmin) + vmin) : vmin;
 }
+
+// Serial ports
+#if defined(HAVE_HWSERIAL0)
+  HardwareSerial Serial(&godmode.serialPort[0].dataIn, &godmode.serialPort[0].dataOut, &godmode.serialPort[0].readDelayMicros);
+#endif
+#if defined(HAVE_HWSERIAL1)
+  HardwareSerial Serial1(&godmode.serialPort[1].dataIn, &godmode.serialPort[1].dataOut, &godmode.serialPort[1].readDelayMicros);
+#endif
+#if defined(HAVE_HWSERIAL2)
+  HardwareSerial Serial2(&godmode.serialPort[2].dataIn, &godmode.serialPort[2].dataOut, &godmode.serialPort[2].readDelayMicros);
+#endif
+#if defined(HAVE_HWSERIAL3)
+  HardwareSerial Serial3(&godmode.serialPort[3].dataIn, &godmode.serialPort[3].dataOut, &godmode.serialPort[3].readDelayMicros);
+#endif
+

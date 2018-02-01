@@ -8,12 +8,12 @@ Where possible, variable names from the Arduino library are used to avoid confli
 // Chars and strings
 
 #include "ArduinoDefines.h"
-#include "Godmode.h"
 
 #include "WCharacter.h"
 #include "WString.h"
 #include "Print.h"
 #include "Stream.h"
+#include "HardwareSerial.h"
 
 typedef bool boolean;
 typedef uint8_t byte;
@@ -22,6 +22,9 @@ typedef uint8_t byte;
 
 // Math and Trig
 #include "AvrMath.h"
+
+#include "Godmode.h"
+
 
 // Bits and Bytes
 #define bit(b) (1UL << (b))

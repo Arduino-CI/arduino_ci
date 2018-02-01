@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for WString
 - Support for Print
 - Support for Stream (backed by a String implementation)
+- All the IO stuff (pins, serial port support flags, etc) from the Arduino library
+- Support for Serial (backed by GODMODE)
 
 ### Changed
 - Made `wget` have quieter output
