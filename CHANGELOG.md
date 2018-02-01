@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.4] - 2018-02-01
+### Added
 - Support for all builtin Math functions https://www.arduino.cc/reference/en/
 - Support for all builtin Bits and Bytes functions https://www.arduino.cc/reference/en/
 - Support for GODMODE and time functions
@@ -21,14 +35,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Made `wget` have quieter output
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 
 ## [0.1.3] - 2018-01-25
@@ -88,7 +94,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.4...HEAD
+[0.1.3]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.0...v0.1.1
