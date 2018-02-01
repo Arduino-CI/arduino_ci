@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include "AvrMath.h"
+#include "WCharacter.h"
 
 typedef std::string string;
 

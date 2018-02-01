@@ -1,3 +1,5 @@
+#pragma once
+
 inline bool isAlpha(int c) {
   unsigned int data[16] = {
     0x0000, 0x0000, 0x0000, 0x0000,
