@@ -1,37 +1,38 @@
 #include "Arduino.h"
-
-GodmodeState godmode = GodmodeState();
-
-GodmodeState* GODMODE() {
-  return &godmode;
-}
+#include "Godmode.h"
 
 unsigned long millis() {
-  return godmode.micros / 1000;
+  GodmodeState* godmode = GODMODE();
+  return godmode->micros / 1000;
 }
 
 unsigned long micros() {
-  return godmode.micros;
+  GodmodeState* godmode = GODMODE();
+  return godmode->micros;
 }
 
 void delay(unsigned long millis) {
-  godmode.micros += millis * 1000;
+  GodmodeState* godmode = GODMODE();
+  godmode->micros += millis * 1000;
 }
 
 void delayMicroseconds(unsigned long micros) {
-  godmode.micros += micros;
+  GodmodeState* godmode = GODMODE();
+  godmode->micros += micros;
 }
 
 
 void randomSeed(unsigned long seed)
 {
-  godmode.seed = seed;
+  GodmodeState* godmode = GODMODE();
+  godmode->seed = seed;
 }
 
 long random(long vmax)
 {
-  godmode.seed += 4294967291;  // it's a prime that fits in 32 bits
-  return godmode.seed % vmax;
+  GodmodeState* godmode = GODMODE();
+  godmode->seed += 4294967291;  // it's a prime that fits in 32 bits
+  return godmode->seed % vmax;
 }
 
 long random(long vmin, long vmax)
@@ -39,18 +40,22 @@ long random(long vmin, long vmax)
   return vmin < vmax ? (random(vmax - vmin) + vmin) : vmin;
 }
 
-void digitalWrite(uint8_t pin, uint8_t val) {
-  godmode.digitalPin[pin] = val;
+void digitalWrite(unsigned char pin, unsigned char val) {
+  GodmodeState* godmode = GODMODE();
+  godmode->digitalPin[pin] = val;
 }
 
-int digitalRead(uint8_t pin) {
-  return godmode.digitalPin[pin];
+int digitalRead(unsigned char pin) {
+  GodmodeState* godmode = GODMODE();
+  return godmode->digitalPin[pin];
 }
 
-int analogRead(uint8_t pin) {
-  return godmode.analogPin[pin];
+int analogRead(unsigned char pin) {
+  GodmodeState* godmode = GODMODE();
+  return godmode->analogPin[pin];
 }
 
-void analogWrite(uint8_t pin, int val) {
-  godmode.analogPin[pin] = val;
+void analogWrite(unsigned char pin, int val) {
+  GodmodeState* godmode = GODMODE();
+  godmode->analogPin[pin] = val;
 }
