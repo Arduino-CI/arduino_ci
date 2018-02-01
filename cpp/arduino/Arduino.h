@@ -12,6 +12,8 @@ Where possible, variable names from the Arduino library are used to avoid confli
 
 #include "WCharacter.h"
 #include "WString.h"
+#include "Print.h"
+#include "Stream.h"
 
 typedef bool boolean;
 typedef uint8_t byte;

@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Many original Arduino `#define`s
 - Mocks for pinMode, analog/digital read/write
 - Support for WString
+- Support for Print
+- Support for Stream (backed by a String implementation)
 
 ### Changed
 - Made `wget` have quieter output
