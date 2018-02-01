@@ -68,6 +68,62 @@ unittest(example_godmode_stuff)
 }
 ```
 
+A more complicated example: working with serial port IO.  Let's say I have the following function:
+
+```C++
+void smartLightswitchSerialHandler(int pin) {
+  if (Serial.available() > 0) {
+    int incomingByte = Serial.read();
+    int val = incomingByte == '0' ? LOW : HIGH;
+    Serial.print("Ack ");
+    digitalWrite(pin, val);
+    Serial.print(String(pin));
+    Serial.print(" ");
+    Serial.print((char)incomingByte);
+  }
+}
+```
+
+This function has 3 side effects: it drains the serial port's receive buffer, affects a pin, and puts data in the serial port's send buffer.  Or, if the receive buffer is empty, it does nothing at all.
+
+```C++
+unittest(does_nothing_if_no_data)
+{
+    // configure initial state
+    GodmodeState* state = GODMODE();
+    int myPin = 3;
+    state->serialPort[0].dataIn = "";
+    state->serialPort[0].dataOut = "";
+    state->digitalPin[myPin] = LOW;
+
+    // execute action
+    smartLightswitchSerialHandler(myPin);
+
+    // assess final state
+    assertEqual(LOW, state->digitalPin[myPin]);
+    assertEqual("", state->serialPort[0].dataIn);
+    assertEqual("", state->serialPort[0].dataOut);
+}
+
+unittest(two_flips)
+{
+    GodmodeState* state = GODMODE();
+    int myPin = 3;
+    state->serialPort[0].dataIn = "10junk";
+    state->serialPort[0].dataOut = "";
+    state->digitalPin[myPin] = LOW;
+    smartLightswitchSerialHandler(myPin);
+    assertEqual(HIGH, state->digitalPin[myPin]);
+    assertEqual("0junk", state->serialPort[0].dataIn);
+    assertEqual("Ack 3 1", state->serialPort[0].dataOut);
+
+    state->serialPort[0].dataOut = "";
+    smartLightswitchSerialHandler(myPin);
+    assertEqual(LOW, state->digitalPin[myPin]);
+    assertEqual("junk", state->serialPort[0].dataIn);
+    assertEqual("Ack 3 0", state->serialPort[0].dataOut);
+}
+```
 
 ## More Documentation
 
