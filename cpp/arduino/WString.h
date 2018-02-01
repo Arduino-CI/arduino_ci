@@ -38,6 +38,16 @@ class String: public string
       return 0 <= val ? ret : string("-") + ret;
     }
 
+    static string dtoas(double val, int decimalPlaces) {
+      double r = 0.5 * pow(0.1, decimalPlaces); // make sure that integer truncation will properly round
+      val += val > 0 ? r : -r;
+      if (isnan(val)) return "nan";
+      if (isinf(val)) return "inf";
+      if (val > 4294967040.0) return "ovf";
+      if (val <-4294967040.0) return "ovf";
+      return mytoas(val, 10) + "." + mytoa(abs(val - (long)val) * pow(10, decimalPlaces), 10);
+    }
+
 public:
   ~String(void) {}
   String(const char *cstr = ""): string(cstr) {}
@@ -51,10 +61,8 @@ public:
   explicit String(long val,          unsigned char base=10): string(mytoas(val, base)) {}
   explicit String(unsigned long val, unsigned char base=10): string(mytoa(val, base)) {}
 
-  explicit String(float val,  unsigned char decimalPlaces=2):
-    string(mytoas(val, 10) + "." + mytoa(abs(val - (long)val) * pow(10, decimalPlaces), 10)) {}
-  explicit String(double val, unsigned char decimalPlaces=2):
-    string(mytoas(val, 10) + "." + mytoa(abs(val - (long)val) * pow(10, decimalPlaces), 10)) {}
+  explicit String(float val,  unsigned char decimalPlaces=2): string(dtoas(val, decimalPlaces)) {}
+  explicit String(double val, unsigned char decimalPlaces=2): string(dtoas(val, decimalPlaces)) {}
 
   String & operator = (const String &rhs) { assign(rhs); return *this; }
   String & operator = (const char *cstr) { assign(cstr); return *this; }
