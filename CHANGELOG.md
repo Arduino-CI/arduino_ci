@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - OSX no longer experiences `javax.net.ssl.SSLKeyException: RSA premaster secret error` messages when downloading board package files
 - `arduino_ci_remote.rb` no longer makes unnecessary changes to the board being tested
 - Scripts no longer crash if there is no `test/` directory
+- Scripts no longer crash if there is no `examples/` directory
 
 ### Security
 

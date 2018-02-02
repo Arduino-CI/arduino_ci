@@ -281,6 +281,7 @@ module ArduinoCI
     # @return [Array<String>] Example sketch files
     def library_examples(installed_library_path)
       example_path = File.join(installed_library_path, "examples")
+      return [] unless File.exist?(example_path)
       examples = Pathname.new(example_path).children.select(&:directory?).map(&:to_path).map(&File.method(:basename))
       files = examples.map do |e|
         proj_file = File.join(example_path, e, "#{e}.ino")
