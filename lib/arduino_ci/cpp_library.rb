@@ -53,6 +53,7 @@ module ArduinoCI
     # @param some_dir [String] The directory in which to begin the search
     # @return [Array<String>] The paths of the found files
     def cpp_files_in(some_dir)
+      return [] unless File.exist?(some_dir)
       real = File.realpath(some_dir)
       files = Find.find(real).reject { |path| File.directory?(path) }
       ret = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
