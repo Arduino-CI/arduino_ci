@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Yaml files can have either `.yml` or `.yaml` extensions
 
 ### Changed
 

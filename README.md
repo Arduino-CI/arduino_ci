@@ -28,6 +28,8 @@ script:
 
 That's literally all there is to it on the repository side.  You'll need to go to https://travis-ci.org/profile/ and enable testing for your Arduino project.  Once that happens, you should be all set.  The script will test all example projects of the library and all unit tests.
 
+> **Note:** `arduino_ci_remote.rb` expects to be run from the root directory of your Arduino project library.
+
 ### Unit tests in `test/`
 
 All `.cpp` files in the `test/` directory of your Arduino library are assumed to contain unit tests.  Each and every one will be compiled and executed on its own.

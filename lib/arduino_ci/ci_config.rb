@@ -32,7 +32,10 @@ module ArduinoCI
 
   # The filename controlling (overriding) the defaults for testing.
   # Files with this name can be used in the root directory of the Arduino library and in any/all of the example directories
-  CONFIG_FILENAME = ".arduino-ci.yaml".freeze
+  CONFIG_FILENAMES = [
+    ".arduino-ci.yml",
+    ".arduino-ci.yaml",
+  ].freeze
 
   # Provide the configuration and CI plan
   # - Read from a base config with default platforms defined
@@ -46,7 +49,7 @@ module ArduinoCI
       # @return [ArudinoCI::CIConfig] The configuration with defaults filled in
       def default
         ret = new
-        ret.load_yaml(File.expand_path("../../../misc/default.yaml", __FILE__))
+        ret.load_yaml(File.expand_path("../../../misc/default.yml", __FILE__))
         ret
       end
     end
@@ -143,14 +146,30 @@ module ArduinoCI
     # @param path [String] the path to the settings yaml file
     # @return [ArduinoCI::CIConfig] the new settings object
     def attempt_override(config_path)
-      return self unless File.exist? config_path
+      #return self unless File.exist? config_path
       with_override(config_path)
+    end
+
+    # Get the config file at a given path, if it exists, and pass that to a block.
+    # Many config files may exist, but only the first match is used
+    # @param base_dir [String] The directory in which to search for a config file
+    # @param val_when_no_match [Object] The value to return if no config files are found
+    # @yield [path] Process the configuration file at the given path
+    # @yieldparam [String] The path of an existing config file
+    # @yieldreturn [ArduinoCI::CIConfig] a settings object
+    # @return [ArduinoCI::CIConfig]
+    def with_config(base_dir, val_when_no_match)
+      CONFIG_FILENAMES.each do |f|
+        path = base_dir.nil? ? f : File.join(base_dir, f)
+        return (yield path) if File.exist?(path)
+      end
+      val_when_no_match
     end
 
     # Produce a configuration, assuming the CI script runs from the working directory of the base project
     # @return [ArduinoCI::CIConfig] the new settings object
     def from_project_library
-      attempt_override(CONFIG_FILENAME)
+      with_config(nil, self) { |path| attempt_override(path) }
     end
 
     # Produce a configuration override taken from an Arduino library example path
@@ -159,7 +178,7 @@ module ArduinoCI
     # @return [ArduinoCI::CIConfig] the new settings object
     def from_example(example_path)
       base_dir = File.directory?(example_path) ? example_path : File.dirname(example_path)
-      attempt_override(File.join(base_dir, CONFIG_FILENAME))
+      with_config(base_dir, self) { |path| attempt_override(path) }
     end
 
     # get information about a given platform: board name, package name, compiler stuff, etc
