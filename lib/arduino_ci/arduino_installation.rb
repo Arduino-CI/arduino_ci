@@ -38,12 +38,10 @@ module ArduinoCI
         if old_way
           ret.base_cmd = [File.join(osx_place, "Arduino")]
         else
-          jvm_runtime = `/usr/libexec/java_home`
           ret.base_cmd = [
             "java",
             "-cp", "#{osx_root}/Java/*",
             "-DAPP_DIR=#{osx_root}/Java",
-            "-Djava.ext.dirs=$JVM_RUNTIME/Contents/Home/lib/ext/:#{jvm_runtime}/Contents/Home/jre/lib/ext/",
             "-Dfile.encoding=UTF-8",
             "-Dapple.awt.UIElement=true",
             "-Xms128M",
