@@ -52,7 +52,9 @@ class GodmodeState {
     GodmodeState() {
       reset();
       for (int i = 0; i < NUM_SERIAL_PORTS; ++i) {
-        serialPort[i] = {"", "", 0};
+        serialPort[i].dataIn          = "";
+        serialPort[i].dataOut         = "";
+        serialPort[i].readDelayMicros = 0;
       }
     }
 
