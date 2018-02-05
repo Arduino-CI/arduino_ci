@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Yaml files support select/reject critera for paths of unit tests for targeted testing
 
 ### Changed
+- Unit test executables print to STDERR just in case there are segfaults.  Uh, just in case I ever write any.
 
 ### Deprecated
 
