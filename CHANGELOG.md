@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Yaml files can have either `.yml` or `.yaml` extensions
+- Yaml files support select/reject critera for paths of unit tests for targeted testing
 
 ### Changed
 

@@ -66,5 +66,26 @@ RSpec.describe ArduinoCI::CIConfig do
     end
   end
 
+  context "allowable_unittest_files" do
+    cpp_lib_path = File.join(File.dirname(__FILE__), "fake_library")
+    cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path)
+
+    it "starts with a known set of files" do
+      expect(cpp_library.test_files.map { |f| File.basename(f) }).to match_array([
+        "sam-squamsh.cpp",
+        "yes-good.cpp",
+        "mars.cpp"
+      ])
+    end
+
+    it "filters that set of files" do
+      override_file = File.join(File.dirname(__FILE__), "yaml", "o1.yaml")
+      combined_config = ArduinoCI::CIConfig.default.with_override(override_file)
+      expect(combined_config.allowable_unittest_files(cpp_library.test_files).map { |f| File.basename(f) }).to match_array([
+        "yes-good.cpp",
+      ])
+    end
+  end
+
 end
 

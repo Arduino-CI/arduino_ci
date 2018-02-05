@@ -32,6 +32,11 @@ compile:
     - esp8266
 
 unittest:
+  testfiles:
+    select:
+      - "*-*.*"
+    reject:
+      - "sam-squamsh.*"
   libraries:
     - "abc123"
     - "def456"
