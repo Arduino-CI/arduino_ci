@@ -52,9 +52,9 @@ class String: public string
 public:
   ~String(void) {}
   String(const char *cstr = ""): string(cstr) {}
-  String(const string &str): string(str.c_str()) {}
-  String(const String &str): string(str.c_str()) {}
-  explicit String(char c): string(&c, 1) {}
+  String(const string &str): string(str) {}
+  String(const String &str): string(str) {}
+  explicit String(char c): string(1, c) {}
 
   explicit String(unsigned char val, unsigned char base=10): string(mytoa(val, base)) {}
   explicit String(int val,           unsigned char base=10): string(mytoas(val, base)) {}
@@ -66,14 +66,14 @@ public:
   explicit String(double val, unsigned char decimalPlaces=2): string(dtoas(val, decimalPlaces)) {}
 
   String & operator = (const String &rhs) { assign(rhs); return *this; }
-  String & operator = (const char *cstr) { assign(cstr); return *this; }
-
-	unsigned char reserve(unsigned int size) { return true; } // calling reserve(size) segfaults, no idea why
+  String & operator = (const string &rhs) { assign(rhs); return *this; }
+  String & operator = (const char *cstr)  { assign(cstr); return *this; }
+  String & operator = (const char c)      { assign(1, c); return *this; }
 
   unsigned char concat(const String &str) { append(str); return 1; }
   unsigned char concat(const char *cstr)  { append(cstr); return 1; }
-  unsigned char concat(char c)            { append((const char*)&c, 1); return 1; }
-  unsigned char concat(unsigned char c)   { append((const char*)&c, 1); return 1; }
+  unsigned char concat(char c)            { append(1, c); return 1; }
+  unsigned char concat(unsigned char c)   { append(1, c); return 1; }
   unsigned char concat(int num)           { append(String(num)); return 1; }
   unsigned char concat(unsigned int num)  { append(String(num)); return 1; }
   unsigned char concat(long num)          { append(String(num)); return 1; }
