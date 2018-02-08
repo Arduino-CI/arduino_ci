@@ -106,6 +106,8 @@ module ArduinoCI
     # @return [ArduinoCI::CIConfig] a reference to self
     def load_yaml(path)
       yml = YAML.load_file(path)
+      raise "The YAML file at #{path} failed to load" unless yml
+
       if yml.include?("packages")
         yml["packages"].each do |k, v|
           valid_data = validate_data("packages", v, PACKAGE_SCHEMA)
