@@ -1,7 +1,6 @@
 #pragma once
 #include "string.h"
 
-
 template  < typename A, typename B > struct Compare
 {
   inline static int between(const A &a,const B &b)
@@ -418,6 +417,7 @@ template  <typename T> struct Compare<T, bool>
     return between(a,b) >= 0;
   } // moreOrEqual
 };
+
 template <typename A, typename B> int compareBetween(const A &a, const B &b) { return Compare<A,B>::between(a,b); }
 template <typename A, typename B> bool compareEqual(const A &a, const B &b) { return Compare<A,B>::equal(a,b); }
 template <typename A, typename B> bool compareNotEqual(const A &a, const B &b) { return Compare<A,B>::notEqual(a,b); }
