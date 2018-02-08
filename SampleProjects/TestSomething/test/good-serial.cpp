@@ -24,20 +24,24 @@ unittest(serial_ports)
     assertEqual(-1, Serial.peek());
     assertEqual("", state->serialPort[0].dataIn);
     assertEqual("", state->serialPort[0].dataOut);
+
     state->serialPort[0].dataIn = "a";
     assertEqual('a', Serial.peek());
     assertEqual("a", state->serialPort[0].dataIn);
     assertEqual("", state->serialPort[0].dataOut);
+
     assertEqual('a', Serial.read());
     assertEqual("", state->serialPort[0].dataIn);
     assertEqual("", state->serialPort[0].dataOut);
+
     Serial.write('b');
     assertEqual("", state->serialPort[0].dataIn);
     assertEqual("b", state->serialPort[0].dataOut);
+
     Serial.print("cdefg");
     assertEqual("", state->serialPort[0].dataIn);
     assertEqual("bcdefg", state->serialPort[0].dataOut);
-  }
+}
 
 #endif
 

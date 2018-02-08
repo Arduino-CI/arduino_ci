@@ -65,4 +65,77 @@ unittest(pins)
   assertEqual(56, analogRead(1));
 }
 
+#ifdef HAVE_HWSERIAL0
+
+  void smartLightswitchSerialHandler(int pin) {
+    if (Serial.available() > 0) {
+      int incomingByte = Serial.read();
+      int val = incomingByte == '0' ? LOW : HIGH;
+      Serial.print("Ack ");
+      digitalWrite(pin, val);
+      Serial.print(String(pin));
+      Serial.print(" ");
+      Serial.print((char)incomingByte);
+    }
+  }
+
+  unittest(does_nothing_if_no_data)
+  {
+      GodmodeState* state = GODMODE();
+      int myPin = 3;
+      state->serialPort[0].dataIn = "";
+      state->serialPort[0].dataOut = "";
+      state->digitalPin[myPin] = LOW;
+      smartLightswitchSerialHandler(myPin);
+      assertEqual(LOW, state->digitalPin[myPin]);
+      assertEqual("", state->serialPort[0].dataOut);
+  }
+
+  unittest(keeps_pin_low_and_acks)
+  {
+      GodmodeState* state = GODMODE();
+      int myPin = 3;
+      state->serialPort[0].dataIn = "0";
+      state->serialPort[0].dataOut = "";
+      state->digitalPin[myPin] = LOW;
+      smartLightswitchSerialHandler(myPin);
+      assertEqual(LOW, state->digitalPin[myPin]);
+      assertEqual("", state->serialPort[0].dataIn);
+      assertEqual("Ack 3 0", state->serialPort[0].dataOut);
+  }
+
+  unittest(flips_pin_high_and_acks)
+  {
+      GodmodeState* state = GODMODE();
+      int myPin = 3;
+      state->serialPort[0].dataIn = "1";
+      state->serialPort[0].dataOut = "";
+      state->digitalPin[myPin] = LOW;
+      smartLightswitchSerialHandler(myPin);
+      assertEqual(HIGH, state->digitalPin[myPin]);
+      assertEqual("", state->serialPort[0].dataIn);
+      assertEqual("Ack 3 1", state->serialPort[0].dataOut);
+  }
+
+  unittest(two_flips)
+  {
+      GodmodeState* state = GODMODE();
+      int myPin = 3;
+      state->serialPort[0].dataIn = "10junk";
+      state->serialPort[0].dataOut = "";
+      state->digitalPin[myPin] = LOW;
+      smartLightswitchSerialHandler(myPin);
+      assertEqual(HIGH, state->digitalPin[myPin]);
+      assertEqual("0junk", state->serialPort[0].dataIn);
+      assertEqual("Ack 3 1", state->serialPort[0].dataOut);
+      state->serialPort[0].dataOut = "";
+      smartLightswitchSerialHandler(myPin);
+      assertEqual(LOW, state->digitalPin[myPin]);
+      assertEqual("junk", state->serialPort[0].dataIn);
+      assertEqual("Ack 3 0", state->serialPort[0].dataOut);
+  }
+#endif
+
+
+
 unittest_main()
