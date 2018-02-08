@@ -23,7 +23,7 @@ class String: public string
 
   private:
     static const char* digit(int val) {
-      const char* bank = "0123456789ABCDEF";
+      static const char* bank = "0123456789ABCDEF";
       return bank + val;
     }
 

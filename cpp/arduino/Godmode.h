@@ -1,5 +1,6 @@
 #pragma once
 #include "ArduinoDefines.h"
+#include <avr/io.h>
 #include "WString.h"
 
 #define MOCK_PINS_COUNT 256
@@ -49,14 +50,21 @@ class GodmodeState {
       seed = 1;
     }
 
-    GodmodeState() {
+    int serialPorts() {
+      return NUM_SERIAL_PORTS;
+    }
+
+
+    GodmodeState()
+    {
       reset();
-      for (int i = 0; i < NUM_SERIAL_PORTS; ++i) {
-        serialPort[i].dataIn          = "";
-        serialPort[i].dataOut         = "";
+      for (int i = 0; i < serialPorts(); ++i)
+      {
+        serialPort[i].dataIn = "";
+        serialPort[i].dataOut = "";
         serialPort[i].readDelayMicros = 0;
       }
-    }
+  }
 
 };
 
