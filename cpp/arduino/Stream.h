@@ -56,6 +56,8 @@ class Stream : public Print
       return ret;
     }
 
+    using Print::write;
+
     virtual size_t write(uint8_t aChar) { mGodmodeDataIn->append(String((char)aChar)); return 1; }
 
 
