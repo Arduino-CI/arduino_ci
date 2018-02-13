@@ -82,15 +82,6 @@ inline unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8)
 
 #define word(...) makeWord(__VA_ARGS__)
 
-// random
-void randomSeed(unsigned long seed);
-long random(long vmax);
-long random(long vmin, long vmax);
 
 
-// Time
-void delay(unsigned long millis);
-void delayMicroseconds(unsigned long micros);
-unsigned long millis();
-unsigned long micros();
 

@@ -18,7 +18,6 @@
   #define NUM_SERIAL_PORTS 0
 #endif
 
-
 class GodmodeState {
   struct PortDef {
     String dataIn;
