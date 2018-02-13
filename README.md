@@ -127,6 +127,61 @@ unittest(two_flips)
 }
 ```
 
+Of course, it's possible that your code might flip the bit more than once in a function.  For that scenario, you may want to examine the history of a pin's commanded outputs:
+
+```C++
+unittest(pin_history)
+{
+  GodmodeState* state = GODMODE();
+  int myPin = 3;
+  state->reset();            // pin will start LOW
+  digitalWrite(myPin, HIGH);
+  digitalWrite(myPin, LOW);
+  digitalWrite(myPin, LOW);
+  digitalWrite(myPin, HIGH);
+  digitalWrite(myPin, HIGH);
+
+  assertEqual(6, state->digitalPin[1].size());
+  bool expected[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
+  bool actual[6];
+
+  // move history queue into an array because at the moment, reading
+  // the history is destructive -- it's a linked-list queue.  this
+  // means that if toArray or hasElements fails, the queue will be in
+  // an unknown state and you should reset it before continuing with
+  // other tests
+  int numMoved = state->digitalPin[myPin].toArray(actual, 6);
+  assertEqual(6, numMoved);
+
+  // verify each element
+  for (int i = 0; i < 6; ++i) {
+    assertEqual(expected[i], actual[i]);
+  }
+```
+
+Finally, there are some cases where you want to use a pin as a serial port.  There are history functions for that too.
+
+```C++
+  int myPin = 3;
+
+  // digitial history as serial data, big-endian
+  bool bigEndian = true;
+  bool binaryAscii[24] = {
+    0, 1, 0, 1, 1, 0, 0, 1,  // Y
+    0, 1, 1, 0, 0, 1, 0, 1,  // e
+    0, 1, 1, 1, 0, 0, 1, 1   // s
+  };
+
+  // "send" these bits
+  for (int i = 0; i < 24; digitalWrite(myPin, binaryAscii[i++]));
+
+  // The first bit in the history is the initial value, which we will ignore
+  int offset = 1;
+
+  // We should be able to parse the bits as ascii
+  assertEqual("Yes", state->digitalPin[myPin].toAscii(offset, bigEndian));
+```
+
 ## More Documentation
 
 This software is in alpha.  But [SampleProjects/DoSomething](SampleProjects/DoSomething) has a decent writeup and is a good bare-bones example of all the features.

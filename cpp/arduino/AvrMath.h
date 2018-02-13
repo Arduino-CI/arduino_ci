@@ -4,20 +4,7 @@
 #define constrain(x,l,h) ((x)<(l)?(l):((x)>(h)?(h):(x)))
 #define map(x,inMin,inMax,outMin,outMax) (((x)-(inMin))*((outMax)-(outMin))/((inMax)-(inMin))+outMin)
 
-#ifdef abs
-#undef abs
-#endif
-#define abs(x) ((x)>0?(x):-(x))
-
-#ifdef max
-#undef max
-#endif
-#define max(a,b) ((a)>(b)?(a):(b))
-
-#ifdef min
-#undef min
-#endif
-#define min(a,b) ((a)<(b)?(a):(b))
+#include "Forced.h"
 
 #define sq(x) ((x)*(x))
 

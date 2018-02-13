@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Yaml files can have either `.yml` or `.yaml` extensions
 - Yaml files support select/reject critera for paths of unit tests for targeted testing
+- Pins now track history and can report it in Ascii (big- or little-endian) for digital sequences
 
 ### Changed
 - Unit test executables print to STDERR just in case there are segfaults.  Uh, just in case I ever write any.

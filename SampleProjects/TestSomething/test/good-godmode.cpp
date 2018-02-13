@@ -65,6 +65,68 @@ unittest(pins)
   assertEqual(56, analogRead(1));
 }
 
+unittest(pin_history)
+{
+  GodmodeState* state = GODMODE();
+  state->reset();
+
+  // history for digital pin
+  digitalWrite(1, HIGH);
+  digitalWrite(1, LOW);
+  digitalWrite(1, LOW);
+  digitalWrite(1, HIGH);
+  digitalWrite(1, HIGH);
+
+  assertEqual(6, state->digitalPin[1].size());
+  bool expectedD[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
+  bool actualD[6];
+  int numMoved = state->digitalPin[1].toArray(actualD, 6);
+  assertEqual(6, numMoved);
+
+  for (int i = 0; i < 6; ++i) {
+    assertEqual(expectedD[i], actualD[i]);
+  }
+
+  // history for analog pin
+  analogWrite(1, 11);
+  analogWrite(1, 22);
+  analogWrite(1, 33);
+  analogWrite(1, 44);
+  analogWrite(1, 55);
+
+  assertEqual(6, state->analogPin[1].size());
+  int expectedA[6] = {0, 11, 22, 33, 44, 55};
+  int actualA[6];
+  numMoved = state->analogPin[1].toArray(actualA, 6);
+  assertEqual(6, numMoved);
+
+  for (int i = 0; i < 6; ++i) {
+    assertEqual(expectedA[i], actualA[i]);
+  }
+
+  // digitial history as serial data, big-endian
+  bool binaryAscii[24] = {
+    0, 1, 0, 1, 1, 0, 0, 1,
+    0, 1, 1, 0, 0, 1, 0, 1,
+    0, 1, 1, 1, 0, 0, 1, 1
+  };
+
+  for (int i = 0; i < 24; digitalWrite(2, binaryAscii[i++]));
+
+  assertEqual("Yes", state->digitalPin[2].toAscii(1, true));
+
+  // digitial history as serial data, little-endian
+  bool binaryAscii2[16] = {
+    0, 1, 1, 1, 0, 0, 1, 0,
+    1, 1, 1, 1, 0, 1, 1, 0
+  };
+
+  for (int i = 0; i < 16; digitalWrite(3, binaryAscii2[i++]));
+
+  assertEqual("No", state->digitalPin[3].toAscii(1, false));
+
+}
+
 #ifdef HAVE_HWSERIAL0
 
   void smartLightswitchSerialHandler(int pin) {

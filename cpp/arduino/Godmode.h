@@ -2,6 +2,7 @@
 #include "ArduinoDefines.h"
 #include <avr/io.h>
 #include "WString.h"
+#include "PinHistory.h"
 
 #define MOCK_PINS_COUNT 256
 
@@ -29,14 +30,14 @@ class GodmodeState {
     unsigned long micros;
     unsigned long seed;
     // not going to put pinmode here unless its really needed. can't think of why it would be
-    bool digitalPin[MOCK_PINS_COUNT];
-    int analogPin[MOCK_PINS_COUNT];
+    PinHistory<bool> digitalPin[MOCK_PINS_COUNT];
+    PinHistory<int> analogPin[MOCK_PINS_COUNT];
     struct PortDef serialPort[NUM_SERIAL_PORTS];
 
     void resetPins() {
       for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
-        digitalPin[i] = LOW;
-        analogPin[i] = 0;
+        digitalPin[i].reset(LOW);
+        analogPin[i].reset(0);
       }
     }
 
@@ -53,7 +54,6 @@ class GodmodeState {
     int serialPorts() {
       return NUM_SERIAL_PORTS;
     }
-
 
     GodmodeState()
     {
