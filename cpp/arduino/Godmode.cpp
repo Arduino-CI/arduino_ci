@@ -60,3 +60,8 @@ long random(long vmin, long vmax)
   HardwareSerial Serial3(&godmode.serialPort[3].dataIn, &godmode.serialPort[3].dataOut, &godmode.serialPort[3].readDelayMicros);
 #endif
 
+template <typename T>
+inline std::ostream& operator << ( std::ostream& out, const PinHistory<T>& ph ) {
+  out << ph;
+  return out;
+}

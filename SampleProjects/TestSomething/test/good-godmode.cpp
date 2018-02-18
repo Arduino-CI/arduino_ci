@@ -45,8 +45,10 @@ unittest(pins)
   pinMode(1, OUTPUT);  // this is a no-op in unit tests.  it's just here to prove compilation
   digitalWrite(1, HIGH);
   assertEqual(HIGH, state->digitalPin[1]);
+  assertEqual(HIGH, digitalRead(1));
   digitalWrite(1, LOW);
   assertEqual(LOW, state->digitalPin[1]);
+  assertEqual(LOW, digitalRead(1));
 
   pinMode(1, INPUT);
   state->digitalPin[1] = HIGH;
@@ -65,10 +67,44 @@ unittest(pins)
   assertEqual(56, analogRead(1));
 }
 
-unittest(pin_history)
+unittest(pin_read_history)
 {
   GodmodeState* state = GODMODE();
   state->reset();
+
+  int future[6] = {33, 22, 55, 11, 44, 66};
+  state->analogPin[1].fromArray(future, 6);
+  delay(1); // swallow first entry
+  for (int i = 0; i < 6; ++i)
+  {
+    assertEqual(future[i], analogRead(1));
+    assertEqual(future[i], analogRead(1));  // test same-instant read
+    delay(1);
+  }
+
+  // assert end of history works
+  delay(1);
+  assertEqual(future[5], analogRead(1));
+
+  state->digitalPin[1].fromAscii("Yo", true);
+  // digitial history as serial data, big-endian
+  bool binaryAscii[16] = {
+    0, 1, 0, 1, 1, 0, 0, 1,
+    0, 1, 1, 0, 1, 1, 1, 1
+  };
+
+  for (int i = 0; i < 16; ++i) {
+    assertEqual(binaryAscii[i], digitalRead(1));
+    assertEqual(binaryAscii[i], digitalRead(1)); // test same-instant read
+    delay(1);
+  }
+}
+
+unittest(pin_write_history)
+{
+  GodmodeState *state = GODMODE();
+  state->reset();
+  int numMoved;
 
   // history for digital pin
   digitalWrite(1, HIGH);
@@ -77,13 +113,17 @@ unittest(pin_history)
   digitalWrite(1, HIGH);
   digitalWrite(1, HIGH);
 
-  assertEqual(6, state->digitalPin[1].size());
+  assertEqual(6, state->digitalPin[1].historySize());
   bool expectedD[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
   bool actualD[6];
-  int numMoved = state->digitalPin[1].toArray(actualD, 6);
+  numMoved = state->digitalPin[1].toArray(actualD, 6);
+  assertEqual(6, numMoved);
+  // assert non-destructive
+  numMoved = state->digitalPin[1].toArray(actualD, 6);
   assertEqual(6, numMoved);
 
-  for (int i = 0; i < 6; ++i) {
+  for (int i = 0; i < 6; ++i)
+  {
     assertEqual(expectedD[i], actualD[i]);
   }
 
@@ -94,34 +134,38 @@ unittest(pin_history)
   analogWrite(1, 44);
   analogWrite(1, 55);
 
-  assertEqual(6, state->analogPin[1].size());
+  assertEqual(6, state->analogPin[1].historySize());
   int expectedA[6] = {0, 11, 22, 33, 44, 55};
   int actualA[6];
   numMoved = state->analogPin[1].toArray(actualA, 6);
   assertEqual(6, numMoved);
+  // assert non-destructive
+  numMoved = state->analogPin[1].toArray(actualA, 6);
+  assertEqual(6, numMoved);
 
-  for (int i = 0; i < 6; ++i) {
+  for (int i = 0; i < 6; ++i)
+  {
     assertEqual(expectedA[i], actualA[i]);
   }
 
   // digitial history as serial data, big-endian
   bool binaryAscii[24] = {
-    0, 1, 0, 1, 1, 0, 0, 1,
-    0, 1, 1, 0, 0, 1, 0, 1,
-    0, 1, 1, 1, 0, 0, 1, 1
-  };
+      0, 1, 0, 1, 1, 0, 0, 1,
+      0, 1, 1, 0, 0, 1, 0, 1,
+      0, 1, 1, 1, 0, 0, 1, 1};
 
-  for (int i = 0; i < 24; digitalWrite(2, binaryAscii[i++]));
+  for (int i = 0; i < 24; digitalWrite(2, binaryAscii[i++]))
+    ;
 
   assertEqual("Yes", state->digitalPin[2].toAscii(1, true));
 
   // digitial history as serial data, little-endian
   bool binaryAscii2[16] = {
-    0, 1, 1, 1, 0, 0, 1, 0,
-    1, 1, 1, 1, 0, 1, 1, 0
-  };
+      0, 1, 1, 1, 0, 0, 1, 0,
+      1, 1, 1, 1, 0, 1, 1, 0};
 
-  for (int i = 0; i < 16; digitalWrite(3, binaryAscii2[i++]));
+  for (int i = 0; i < 16; digitalWrite(3, binaryAscii2[i++]))
+    ;
 
   assertEqual("No", state->digitalPin[3].toAscii(1, false));
 

@@ -70,6 +70,74 @@ unittest(example_godmode_stuff)
 }
 ```
 
+Of course, it's possible that your code might flip the bit more than once in a function.  For that scenario, you may want to examine the history of a pin's commanded outputs:
+
+```C++
+unittest(pin_history)
+{
+  GodmodeState* state = GODMODE();
+  int myPin = 3;
+  state->reset();            // pin will start LOW
+  digitalWrite(myPin, HIGH);
+  digitalWrite(myPin, LOW);
+  digitalWrite(myPin, LOW);
+  digitalWrite(myPin, HIGH);
+  digitalWrite(myPin, HIGH);
+
+  assertEqual(6, state->digitalPin[1].size());
+  bool expected[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
+  bool actual[6];
+
+  // move history queue into an array because at the moment, reading
+  // the history is destructive -- it's a linked-list queue.  this
+  // means that if toArray or hasElements fails, the queue will be in
+  // an unknown state and you should reset it before continuing with
+  // other tests
+  int numMoved = state->digitalPin[myPin].toArray(actual, 6);
+  assertEqual(6, numMoved);
+
+  // verify each element
+  for (int i = 0; i < 6; ++i) {
+    assertEqual(expected[i], actual[i]);
+  }
+```
+
+Reading the pin more than once per function is also a possibility.  In that case, we want to queue up a few values for the `digitalRead` or `analogRead` to find.
+
+```C++
+unittest(pin_read_history)
+{
+  GodmodeState* state = GODMODE();
+  state->reset();
+
+  int future[6] = {33, 22, 55, 11, 44, 66};
+  state->analogPin[1].fromArray(future, 6);
+  delay(1); // swallow first entry
+  for (int i = 0; i < 6; ++i)
+  {
+    assertEqual(future[i], analogRead(1));
+    assertEqual(future[i], analogRead(1));  // reading twice in the same instant produces the same value
+    delay(1);                               // advancing the instant produces the next value
+  }
+
+  // for digital pins, we have the added possibility of specifying
+  // a stream of input bytes encoded as ASCII
+  bool bigEndian = true;
+  state->digitalPin[1].fromAscii("Yo", bigEndian);
+
+  // digitial history as serial data, big-endian
+  bool expectedBits[16] = {
+    0, 1, 0, 1, 1, 0, 0, 1,  // Y
+    0, 1, 1, 0, 1, 1, 1, 1   // o
+  };
+
+  for (int i = 0; i < 16; ++i) {
+    assertEqual(expectedBits[i], digitalRead(1));
+    delay(1);
+  }
+}
+```
+
 A more complicated example: working with serial port IO.  Let's say I have the following function:
 
 ```C++
@@ -127,37 +195,8 @@ unittest(two_flips)
 }
 ```
 
-Of course, it's possible that your code might flip the bit more than once in a function.  For that scenario, you may want to examine the history of a pin's commanded outputs:
 
-```C++
-unittest(pin_history)
-{
-  GodmodeState* state = GODMODE();
-  int myPin = 3;
-  state->reset();            // pin will start LOW
-  digitalWrite(myPin, HIGH);
-  digitalWrite(myPin, LOW);
-  digitalWrite(myPin, LOW);
-  digitalWrite(myPin, HIGH);
-  digitalWrite(myPin, HIGH);
 
-  assertEqual(6, state->digitalPin[1].size());
-  bool expected[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
-  bool actual[6];
-
-  // move history queue into an array because at the moment, reading
-  // the history is destructive -- it's a linked-list queue.  this
-  // means that if toArray or hasElements fails, the queue will be in
-  // an unknown state and you should reset it before continuing with
-  // other tests
-  int numMoved = state->digitalPin[myPin].toArray(actual, 6);
-  assertEqual(6, numMoved);
-
-  // verify each element
-  for (int i = 0; i < 6; ++i) {
-    assertEqual(expected[i], actual[i]);
-  }
-```
 
 Finally, there are some cases where you want to use a pin as a serial port.  There are history functions for that too.
 
