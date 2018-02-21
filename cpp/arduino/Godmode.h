@@ -3,8 +3,7 @@
 #include <avr/io.h>
 #include "WString.h"
 
-#include <queue>
-#include "Forced.h"
+#include "queue.h"
 
 // random
 void randomSeed(unsigned long seed);
@@ -22,12 +21,12 @@ unsigned long micros();
 template <typename T>
 class PinHistory {
 private:
-  std::queue<T> qIn;
-  std::queue<T> qOut;
+  queue<T> qIn;
+  queue<T> qOut;
 
   unsigned long mLastRead = 0;
 
-  void clear(std::queue<T>* q) {
+  void clear(queue<T>* q) {
     while (!q->empty()) q->pop();
   }
 
@@ -53,9 +52,9 @@ public:
   }
 
   // this sets the value of the pin authoritatively
-  // so if there was a queue dump it.
+  // so if there was a queue, dump it.
   // the actual "set" operation doesn't happen until the next read
-  T &operator=(T const i) {
+  const T &operator=(const T& i) {
     qOut.push(i);
     return qOut.back();
   }
@@ -96,7 +95,7 @@ public:
   // copy elements to an array, up to a given length
   // return the number of elements moved
   int toArray(T* arr, unsigned int length) {
-    std::queue<T> q2(qOut);
+    queue<T> q2(qOut);
 
     int ret = 0;
     for (int i = 0; i < length && q2.size(); ++i) {
@@ -110,7 +109,7 @@ public:
   // see if the array matches the elements in the queue
   bool hasElements(T* arr, unsigned int length) {
     int i;
-    std::queue<T> q2(qOut);
+    queue<T> q2(qOut);
     for (i = 0; i < length && q2.size(); ++i) {
       if (q2.front() != arr[i]) return false;
       q2.pop();
@@ -123,7 +122,7 @@ public:
   String toAscii(unsigned int offset, bool bigEndian) {
     String ret = "";
 
-    std::queue<T> q2(qOut);
+    queue<T> q2(qOut);
 
     while (offset) {
       q2.pop();
