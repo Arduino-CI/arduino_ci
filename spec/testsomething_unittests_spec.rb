@@ -16,16 +16,6 @@ RSpec.describe "TestSomething C++ unit tests" do
 
   context "test" do
 
-    after(:each) do |example|
-      if example.exception
-        puts "Last command: #{cpp_library.last_cmd}"
-        puts "========== Stdout:"
-        puts cpp_library.last_out
-        puts "========== Stderr:"
-        puts cpp_library.last_err
-      end
-    end
-
     it "is going to test more than one library" do
       test_files = cpp_library.test_files
       expect(test_files.empty?).to be false
@@ -36,18 +26,31 @@ RSpec.describe "TestSomething C++ unit tests" do
       expect(allowed_files.empty?).to be false
     end
 
-
-    # well this override is clunky as hell.
-    # @todo smooth this out for external purposes
     test_files = config.allowable_unittest_files(cpp_library.test_files)
     test_files.each do |path|
-      exe = cpp_library.build_for_test_with_configuration(path, [], config.gcc_config("uno"))
-      it "builds #{File.basename(path)} successfully" do
-        expect(exe).not_to be nil
-      end
-      unless exe.nil?
-        it "tests #{File.basename(path)} successfully" do
-          expect(cpp_library.run_test_file(exe)).to_not be_falsey
+      tfn = File.basename(path)
+      context "unit test #{tfn}" do
+
+        # extra debug for c++ failures
+        after(:each) do |example|
+          if example.exception
+            puts "Last command: #{cpp_library.last_cmd}"
+            puts "========== Stdout:"
+            puts cpp_library.last_out
+            puts "========== Stderr:"
+            puts cpp_library.last_err
+          end
+        end
+
+        exe = nil
+        it "builds #{tfn} successfully" do
+          exe = cpp_library.build_for_test_with_configuration(path, [], config.gcc_config("uno"))
+          expect(exe).not_to be nil
+        end
+        unless exe.nil?
+          it "tests #{tfn} successfully" do
+            expect(cpp_library.run_test_file(exe)).to_not be_falsey
+          end
         end
       end
     end
