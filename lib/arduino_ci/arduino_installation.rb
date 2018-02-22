@@ -29,26 +29,22 @@ module ArduinoCI
       # @return [ArduinoCI::ArduinoCmdOSX] an instance of a command
       def autolocate_osx
         osx_root = "/Applications/Arduino.app/Contents"
-        old_way = false
         return nil unless File.exist? osx_root
 
         ret = ArduinoCmdOSX.new
-        osx_place = "#{osx_root}/MacOS"
 
-        if old_way
-          ret.base_cmd = [File.join(osx_place, "Arduino")]
-        else
-          ret.base_cmd = [
-            "java",
-            "-cp", "#{osx_root}/Java/*",
-            "-DAPP_DIR=#{osx_root}/Java",
-            "-Dfile.encoding=UTF-8",
-            "-Dapple.awt.UIElement=true",
-            "-Xms128M",
-            "-Xmx512M",
-            "processing.app.Base",
-          ]
-        end
+        # old_way
+        # ret.base_cmd = [File.join("#{osx_root}/MacOS", "Arduino")]
+        ret.base_cmd = [
+          "java",
+          "-cp", "#{osx_root}/Java/*",
+          "-DAPP_DIR=#{osx_root}/Java",
+          "-Dfile.encoding=UTF-8",
+          "-Dapple.awt.UIElement=true",
+          "-Xms128M",
+          "-Xmx512M",
+          "processing.app.Base",
+        ]
         ret
       end
 
