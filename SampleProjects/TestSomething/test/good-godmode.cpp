@@ -74,16 +74,12 @@ unittest(pin_read_history)
 
   int future[6] = {33, 22, 55, 11, 44, 66};
   state->analogPin[1].fromArray(future, 6);
-  delay(1); // swallow first entry
   for (int i = 0; i < 6; ++i)
   {
     assertEqual(future[i], analogRead(1));
-    assertEqual(future[i], analogRead(1));  // test same-instant read
-    delay(1);
   }
 
   // assert end of history works
-  delay(1);
   assertEqual(future[5], analogRead(1));
 
   state->digitalPin[1].fromAscii("Yo", true);
@@ -95,8 +91,6 @@ unittest(pin_read_history)
 
   for (int i = 0; i < 16; ++i) {
     assertEqual(binaryAscii[i], digitalRead(1));
-    assertEqual(binaryAscii[i], digitalRead(1)); // test same-instant read
-    delay(1);
   }
 }
 

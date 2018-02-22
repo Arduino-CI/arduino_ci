@@ -112,12 +112,9 @@ unittest(pin_read_history)
 
   int future[6] = {33, 22, 55, 11, 44, 66};
   state->analogPin[1].fromArray(future, 6);
-  delay(1); // swallow first entry
   for (int i = 0; i < 6; ++i)
   {
     assertEqual(future[i], analogRead(1));
-    assertEqual(future[i], analogRead(1));  // reading twice in the same instant produces the same value
-    delay(1);                               // advancing the instant produces the next value
   }
 
   // for digital pins, we have the added possibility of specifying
@@ -133,7 +130,6 @@ unittest(pin_read_history)
 
   for (int i = 0; i < 16; ++i) {
     assertEqual(expectedBits[i], digitalRead(1));
-    delay(1);
   }
 }
 ```
