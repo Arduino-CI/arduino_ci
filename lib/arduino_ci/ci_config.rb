@@ -148,14 +148,6 @@ module ArduinoCI
       overridden_config
     end
 
-    # Try to override config with a file at a given location (if it exists)
-    # @param path [String] the path to the settings yaml file
-    # @return [ArduinoCI::CIConfig] the new settings object
-    def attempt_override(config_path)
-      #return self unless File.exist? config_path
-      with_override(config_path)
-    end
-
     # Get the config file at a given path, if it exists, and pass that to a block.
     # Many config files may exist, but only the first match is used
     # @param base_dir [String] The directory in which to search for a config file
@@ -175,7 +167,7 @@ module ArduinoCI
     # Produce a configuration, assuming the CI script runs from the working directory of the base project
     # @return [ArduinoCI::CIConfig] the new settings object
     def from_project_library
-      with_config(nil, self) { |path| attempt_override(path) }
+      with_config(nil, self) { |path| with_override(path) }
     end
 
     # Produce a configuration override taken from an Arduino library example path
@@ -184,7 +176,7 @@ module ArduinoCI
     # @return [ArduinoCI::CIConfig] the new settings object
     def from_example(example_path)
       base_dir = File.directory?(example_path) ? example_path : File.dirname(example_path)
-      with_config(base_dir, self) { |path| attempt_override(path) }
+      with_config(base_dir, self) { |path| with_override(path) }
     end
 
     # get information about a given platform: board name, package name, compiler stuff, etc

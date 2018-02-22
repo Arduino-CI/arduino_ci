@@ -66,6 +66,43 @@ RSpec.describe ArduinoCI::CIConfig do
     end
   end
 
+  context "with_config" do
+    it "loads from yaml" do
+      override_dir = File.join(File.dirname(__FILE__), "yaml", "override1")
+      base_config = ArduinoCI::CIConfig.default
+      combined_config = base_config.from_example(override_dir)
+
+      expect(combined_config).not_to be nil
+      uno = combined_config.platform_definition("uno")
+      expect(uno.class).to eq(Hash)
+      expect(uno[:board]).to eq("arduino:avr:uno")
+      expect(uno[:package]).to be nil
+      expect(uno[:gcc].class).to eq(Hash)
+
+      zero = combined_config.platform_definition("zero")
+      expect(zero).to be nil
+
+      esp = combined_config.platform_definition("esp8266")
+      expect(esp[:board]).to eq("esp8266:esp8266:booo")
+      expect(esp[:package]).to eq("esp8266:esp8266")
+
+      bogo = combined_config.platform_definition("bogo")
+      expect(bogo.class).to eq(Hash)
+      expect(bogo[:package]).to eq("potato:salad")
+      expect(bogo[:gcc].class).to eq(Hash)
+      expect(bogo[:gcc][:features]).to match(["a", "b"])
+      expect(bogo[:gcc][:defines]).to match(["c", "d"])
+      expect(bogo[:gcc][:warnings]).to match(["e", "f"])
+      expect(bogo[:gcc][:flags]).to match(["g", "h"])
+
+      expect(combined_config.package_url("adafruit:avr")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
+      expect(combined_config.platforms_to_build).to match(["esp8266"])
+      expect(combined_config.platforms_to_unittest).to match(["bogo"])
+      expect(combined_config.aux_libraries_for_build).to match(["Adafruit FONA Library"])
+      expect(combined_config.aux_libraries_for_unittest).to match(["abc123", "def456"])
+    end
+  end
+
   context "allowable_unittest_files" do
     cpp_lib_path = File.join(File.dirname(__FILE__), "fake_library")
     cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path)
