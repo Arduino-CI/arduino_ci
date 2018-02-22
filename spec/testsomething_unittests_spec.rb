@@ -41,10 +41,14 @@ RSpec.describe "TestSomething C++ unit tests" do
     # @todo smooth this out for external purposes
     test_files = config.allowable_unittest_files(cpp_library.test_files)
     test_files.each do |path|
-      it "tests #{File.basename(path)} successfully" do
-        exe = cpp_library.build_for_test_with_configuration(path, [], config.gcc_config("uno"))
+      exe = cpp_library.build_for_test_with_configuration(path, [], config.gcc_config("uno"))
+      it "builds #{File.basename(path)} successfully" do
         expect(exe).not_to be nil
-        expect(cpp_library.run_test_file(exe)).to_not be_falsey
+      end
+      unless exe.nil?
+        it "tests #{File.basename(path)} successfully" do
+          expect(cpp_library.run_test_file(exe)).to_not be_falsey
+        end
       end
     end
   end
