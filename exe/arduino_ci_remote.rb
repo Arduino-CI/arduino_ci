@@ -25,7 +25,7 @@ def perform_action(message, on_fail_msg, abort_on_fail)
   line = "#{message}..."
   print line
   result = yield
-  mark = result ? "✓" : "X"
+  mark = result ? "✓" : "✗"
   puts mark.rjust(WIDTH - line.length, " ")
   unless result
     puts on_fail_msg unless on_fail_msg.nil?
