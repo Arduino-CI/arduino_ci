@@ -120,7 +120,9 @@ else
   end
 end
 
-attempt("Setting compiler warning level") { @arduino_cmd.set_pref("compiler.warning_level", "all") }
+unless library_examples.empty?
+  attempt("Setting compiler warning level")  { @arduino_cmd.set_pref("compiler.warning_level", "all") }
+end
 
 # unlike previous, iterate examples / boards
 library_examples.each do |example_path|
