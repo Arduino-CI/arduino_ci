@@ -1,15 +1,13 @@
 #pragma once
-#include "queue.h"
+#include "Queue.h"
 #include "WString.h"
 
 // pins with history.
 template <typename T>
 class PinHistory {
   private:
-    queue<T> qIn;
-    queue<T> qOut;
-
-    unsigned long mLastRead = 0;
+    Queue<T> qIn;
+    Queue<T> qOut;
 
     void clear() {
       qOut.clear();
@@ -24,11 +22,13 @@ class PinHistory {
       qOut.push(val);
     }
 
-    unsigned int historySize() { return qOut.size(); }
+    unsigned int historySize() const { return qOut.size(); }
+
+    unsigned int queueSize() const { return qIn.size(); }
 
     // This returns the "value" of the pin in a raw sense
     operator T() const {
-      if (mLastRead == 0 && qIn.size()) return qIn.front();
+      if (!qIn.empty()) return qIn.front();
       return qOut.back();
     }
 
@@ -36,24 +36,25 @@ class PinHistory {
     // so if there was a queue, dump it.
     // the actual "set" operation doesn't happen until the next read
     const T &operator=(const T& i) {
+      qIn.clear();
       qOut.push(i);
       return qOut.back();
     }
 
     // This returns the "value" of the pin according to the queued values
-    // if now is the same as the last read time, return the same val and exit
     // if there is input, advance it to the output.
     // then take the latest output.
     T retrieve() {
-      if (qIn.size()) {
-        qOut.push(qIn.front());
+      if (!qIn.empty()) {
+        T hack_required_by_travis_ci = qIn.front();
         qIn.pop();
+        qOut.push(hack_required_by_travis_ci);
       }
       return qOut.back();
     }
 
     // enqueue a set of elements
-    void fromArray(T* arr, unsigned int length) {
+    void fromArray(T const * const arr, unsigned int length) {
       for (int i = 0; i < length; ++i) qIn.push(arr[i]);
     }
 
@@ -73,8 +74,8 @@ class PinHistory {
 
     // copy elements to an array, up to a given length
     // return the number of elements moved
-    int toArray(T* arr, unsigned int length) {
-      queue<T> q2(qOut);
+    int toArray (T* arr, unsigned int length) const {
+      Queue<T> q2(qOut);
 
       int ret = 0;
       for (int i = 0; i < length && q2.size(); ++i) {
@@ -86,9 +87,9 @@ class PinHistory {
     }
 
     // see if the array matches the elements in the queue
-    bool hasElements(T* arr, unsigned int length) {
+    bool hasElements (T const * const arr, unsigned int length) const {
       int i;
-      queue<T> q2(qOut);
+      Queue<T> q2(qOut);
       for (i = 0; i < length && q2.size(); ++i) {
         if (q2.front() != arr[i]) return false;
         q2.pop();
@@ -98,10 +99,10 @@ class PinHistory {
 
     // convert the pin history to a string as if it was Serial comms
     // start from offset, consider endianness
-    String toAscii(unsigned int offset, bool bigEndian) {
+    String toAscii (unsigned int offset, bool bigEndian) const {
       String ret = "";
 
-      queue<T> q2(qOut);
+      Queue<T> q2(qOut);
 
       while (offset) {
         q2.pop();

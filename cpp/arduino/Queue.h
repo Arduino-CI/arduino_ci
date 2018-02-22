@@ -1,7 +1,7 @@
 #pragma once
 
 template <typename T>
-class queue {
+class Queue {
   private:
     struct Node {
       T data;
@@ -19,9 +19,9 @@ class queue {
     }
 
   public:
-    queue() { init(); }
+    Queue(): mNil() { init(); }
 
-    queue(const queue<T>& q) {
+    Queue(const Queue<T>& q) {
       init();
       for (Node* n = q.mFront; n; n = n->next) push(n->data);
     }
@@ -69,5 +69,5 @@ class queue {
 
     void clear() { while (!empty()) pop(); }
 
-    ~queue() { clear(); }
+    ~Queue() { clear(); }
 };

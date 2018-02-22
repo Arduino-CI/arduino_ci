@@ -2,7 +2,7 @@ require "spec_helper"
 
 sampleproj_path = File.join(File.dirname(File.dirname(__FILE__)), "SampleProjects")
 
-RSpec.describe "TestSomething C++ unit tests" do
+RSpec.describe "TestSomething C++" do
   cpp_lib_path = File.join(sampleproj_path, "TestSomething")
   cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path)
   context "cpp_files" do
@@ -14,7 +14,7 @@ RSpec.describe "TestSomething C++ unit tests" do
   end
   config = ArduinoCI::CIConfig.default.from_example(cpp_lib_path)
 
-  context "test" do
+  context "unit tests" do
 
     it "is going to test more than one library" do
       test_files = cpp_library.test_files
@@ -29,7 +29,11 @@ RSpec.describe "TestSomething C++ unit tests" do
     test_files = config.allowable_unittest_files(cpp_library.test_files)
     test_files.each do |path|
       tfn = File.basename(path)
-      context "unit test #{tfn}" do
+      context "file #{tfn}" do
+
+        before(:all) do
+          @exe = cpp_library.build_for_test_with_configuration(path, [], config.gcc_config("uno"))
+        end
 
         # extra debug for c++ failures
         after(:each) do |example|
@@ -42,15 +46,12 @@ RSpec.describe "TestSomething C++ unit tests" do
           end
         end
 
-        exe = nil
-        it "builds #{tfn} successfully" do
-          exe = cpp_library.build_for_test_with_configuration(path, [], config.gcc_config("uno"))
-          expect(exe).not_to be nil
+        it "#{tfn} builds successfully" do
+          expect(@exe).not_to be nil
         end
-        unless exe.nil?
-          it "tests #{tfn} successfully" do
-            expect(cpp_library.run_test_file(exe)).to_not be_falsey
-          end
+        it "#{tfn} passes tests" do
+          skip "Can't run the test program because it failed to build" if @exe.nil?
+          expect(cpp_library.run_test_file(@exe)).to_not be_falsey
         end
       end
     end
