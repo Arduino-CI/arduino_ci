@@ -1,0 +1,4 @@
+unittest:
+  platforms:
+    - uno
+    - due
