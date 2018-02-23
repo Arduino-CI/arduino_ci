@@ -217,6 +217,67 @@ Finally, there are some cases where you want to use a pin as a serial port.  The
   assertEqual("Yes", state->digitalPin[myPin].toAscii(offset, bigEndian));
 ```
 
+## Overriding default build behavior
+
+You can add `.arduino-ci.yml` files to the project directory (which will then apply to both `test/` and `examples/`), as well as to the `test/` directory and each example directory in `examples/`.  All defined fields can be overridden.
+
+You may define new platforms, or edit existing platform definitions:
+
+```yaml
+platforms:
+  bogo:
+    board: fakeduino:beep:bogo
+    package: potato:salad
+    gcc:
+      features:
+        - omit-frame-pointer  # becomes -fomit-frame-pointer flag
+      defines:
+        - HAVE_THING          # becomes -DHAVE_THING flag
+      warnings:
+        - no-implicit         # becomes -Wno-implicit flag
+      flags:
+        - -foobar             # becomes -foobar flag
+
+  zero: ~                     # undefines the `zero` board completely
+
+  esp8266:                    # redefines the existing esp8266
+    board: esp8266:esp8266:booo
+    package: esp8266:esp8266
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+```
+
+
+For your example programs, you may set external libraries to be installed and included.  You may also choose the platforms on which the compilation will be attempted:
+
+```yaml
+compile:
+  libraries:
+    - "Adafruit FONA Library"
+  platforms:
+    - esp8266
+```
+
+
+For your unit tests, in addition to setting specific libraries and platforms, you may filter the list of test files that are compiled and tested.  This may help speed up targeted testing.
+
+```yaml
+unittest:
+  testfiles:
+    select:
+      - "*-*.*"
+    reject:
+      - "sam-squamsh.*"
+  libraries:
+    - "abc123"
+    - "def456"
+  platforms:
+    - bogo
+```
+
 ## More Documentation
 
 This software is in alpha.  But [SampleProjects/DoSomething](SampleProjects/DoSomething) has a decent writeup and is a good bare-bones example of all the features.
