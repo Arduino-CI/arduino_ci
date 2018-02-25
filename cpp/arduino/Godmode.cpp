@@ -46,6 +46,27 @@ long random(long vmin, long vmax)
   return vmin < vmax ? (random(vmax - vmin) + vmin) : vmin;
 }
 
+void digitalWrite(unsigned char pin, unsigned char val) {
+  GodmodeState* godmode = GODMODE();
+  godmode->digitalPin[pin] = val;
+}
+
+int digitalRead(unsigned char pin) {
+  GodmodeState* godmode = GODMODE();
+  return godmode->digitalPin[pin].retrieve();
+}
+
+void analogWrite(unsigned char pin, int val) {
+  GodmodeState* godmode = GODMODE();
+  godmode->analogPin[pin] = val;
+}
+
+int analogRead(unsigned char pin) {
+  GodmodeState* godmode = GODMODE();
+  return godmode->analogPin[pin].retrieve();
+}
+
+
 // Serial ports
 #if defined(HAVE_HWSERIAL0)
   HardwareSerial Serial(&godmode.serialPort[0].dataIn, &godmode.serialPort[0].dataOut, &godmode.serialPort[0].readDelayMicros);

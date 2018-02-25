@@ -80,5 +80,17 @@ class GodmodeState {
 
 };
 
+// io pins
+#define pinMode(...) _NOP()
+#define analogReference(...) _NOP()
+
+void digitalWrite(uint8_t, uint8_t);
+int digitalRead(uint8_t);
+int analogRead(uint8_t);
+void analogWrite(uint8_t, int);
+#define analogReadResolution(...) _NOP()
+#define analogWriteResolution(...) _NOP()
+
+
 GodmodeState* GODMODE();
 

@@ -14,6 +14,49 @@ class PinHistory {
       qIn.clear();
     }
 
+    // enqueue ascii bits
+    void a2q(Queue<T> &q, String input, bool bigEndian) {
+      // 8 chars at a time, form up
+      for (int j = 0; j < input.length(); ++j) {
+        for (int i = 0; i < 8; ++i) {
+          int shift = bigEndian ? 7 - i : i;
+          unsigned char mask = (0x01 << shift);
+          q.push(mask & input[j]);
+        }
+      }
+    }
+
+
+    // convert a queue to a string as if it was serial bits
+    // start from offset, consider endianness
+    String q2a(const Queue<T> &q, unsigned int offset, bool bigEndian) const {
+      String ret = "";
+
+      Queue<T> q2(q);
+
+      while (offset) {
+        q2.pop();
+        --offset;
+      }
+
+      if (offset) return ret;
+
+      // 8 chars at a time, form up
+      while (q2.size() >= 8) {
+        unsigned char acc = 0x00;
+        for (int i = 0; i < 8; ++i) {
+          int shift = bigEndian ? 7 - i : i;
+          T val = q2.front();
+          unsigned char bit = val ? 0x1 : 0x0;
+          acc |= (bit << shift);
+          q2.pop();
+        }
+        ret.append(String((char)acc));
+      }
+
+      return ret;
+    }
+
   public:
     PinHistory() {}
 
@@ -59,18 +102,17 @@ class PinHistory {
     }
 
     // enqueue ascii bits
-    void fromAscii(String input, bool bigEndian) {
-      String ret = "";
+    void fromAscii(String input, bool bigEndian) { a2q(qIn, input, bigEndian); }
 
-      // 8 chars at a time, form up
-      for (int j = 0; j < input.length(); ++j) {
-        for (int i = 0; i < 8; ++i) {
-          int shift = bigEndian ? 7 - i : i;
-          unsigned char mask = (0x01 << shift);
-          qIn.push(mask & input[j]);
-        }
-      }
-    }
+    void outgoingFromAscii(String input, bool bigEndian) { a2q(qOut, input, bigEndian); }
+
+    // convert the queue of incoming data to a string as if it was Serial comms
+    // start from offset, consider endianness
+    String incomingToAscii (unsigned int offset, bool bigEndian) const { return q2a(qIn, offset, bigEndian); }
+
+    // convert the pin history to a string as if it was Serial comms
+    // start from offset, consider endianness
+    String toAscii (unsigned int offset, bool bigEndian) const { return q2a(qOut, offset, bigEndian); }
 
     // copy elements to an array, up to a given length
     // return the number of elements moved
@@ -97,34 +139,5 @@ class PinHistory {
       return i == length;
     }
 
-    // convert the pin history to a string as if it was Serial comms
-    // start from offset, consider endianness
-    String toAscii (unsigned int offset, bool bigEndian) const {
-      String ret = "";
-
-      Queue<T> q2(qOut);
-
-      while (offset) {
-        q2.pop();
-        --offset;
-      }
-
-      if (offset) return ret;
-
-      // 8 chars at a time, form up
-      while (q2.size() >= 8) {
-        unsigned char acc = 0x00;
-        for (int i = 0; i < 8; ++i) {
-          int shift = bigEndian ? 7 - i : i;
-          T val = q2.front();
-          unsigned char bit = val ? 0x1 : 0x0;
-          acc |= (bit << shift);
-          q2.pop();
-        }
-        ret.append(String((char)acc));
-      }
-
-      return ret;
-    }
 };
 
