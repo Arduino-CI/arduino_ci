@@ -28,6 +28,8 @@ script:
 
 That's literally all there is to it on the repository side.  You'll need to go to https://travis-ci.org/profile/ and enable testing for your Arduino project.  Once that happens, you should be all set.  The script will test all example projects of the library and all unit tests.
 
+> **Note:** `arduino_ci_remote.rb` expects to be run from the root directory of your Arduino project library.
+
 ### Unit tests in `test/`
 
 All `.cpp` files in the `test/` directory of your Arduino library are assumed to contain unit tests.  Each and every one will be compiled and executed on its own.
@@ -61,10 +63,74 @@ unittest(example_godmode_stuff)
   state->resetClock();               //  - you can reset just the clock (to zero)
   state->resetPins();                //  - or just the pins
   state->micros = 1;                 // manually set the clock such that micros() returns 1
-  state->digitalPin[4];              // stores the commanded state of digital pin 4
+  state->digitalPin[4];              // tells you the commanded state of digital pin 4
   state->digitalPin[4] = HIGH;       // digitalRead(4) will now return HIGH
-  state->analogPin[3];               // stores the commanded state of analog pin 3
+  state->analogPin[3];               // tells you the commanded state of analog pin 3
   state->analogPin[3] = 99;          // analogRead(3) will now return 99
+}
+```
+
+Of course, it's possible that your code might flip the bit more than once in a function.  For that scenario, you may want to examine the history of a pin's commanded outputs:
+
+```C++
+unittest(pin_history)
+{
+  GodmodeState* state = GODMODE();
+  int myPin = 3;
+  state->reset();            // pin will start LOW
+  digitalWrite(myPin, HIGH);
+  digitalWrite(myPin, LOW);
+  digitalWrite(myPin, LOW);
+  digitalWrite(myPin, HIGH);
+  digitalWrite(myPin, HIGH);
+
+  assertEqual(6, state->digitalPin[1].size());
+  bool expected[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
+  bool actual[6];
+
+  // move history queue into an array because at the moment, reading
+  // the history is destructive -- it's a linked-list queue.  this
+  // means that if toArray or hasElements fails, the queue will be in
+  // an unknown state and you should reset it before continuing with
+  // other tests
+  int numMoved = state->digitalPin[myPin].toArray(actual, 6);
+  assertEqual(6, numMoved);
+
+  // verify each element
+  for (int i = 0; i < 6; ++i) {
+    assertEqual(expected[i], actual[i]);
+  }
+```
+
+Reading the pin more than once per function is also a possibility.  In that case, we want to queue up a few values for the `digitalRead` or `analogRead` to find.
+
+```C++
+unittest(pin_read_history)
+{
+  GodmodeState* state = GODMODE();
+  state->reset();
+
+  int future[6] = {33, 22, 55, 11, 44, 66};
+  state->analogPin[1].fromArray(future, 6);
+  for (int i = 0; i < 6; ++i)
+  {
+    assertEqual(future[i], analogRead(1));
+  }
+
+  // for digital pins, we have the added possibility of specifying
+  // a stream of input bytes encoded as ASCII
+  bool bigEndian = true;
+  state->digitalPin[1].fromAscii("Yo", bigEndian);
+
+  // digitial history as serial data, big-endian
+  bool expectedBits[16] = {
+    0, 1, 0, 1, 1, 0, 0, 1,  // Y
+    0, 1, 1, 0, 1, 1, 1, 1   // o
+  };
+
+  for (int i = 0; i < 16; ++i) {
+    assertEqual(expectedBits[i], digitalRead(1));
+  }
 }
 ```
 
@@ -125,6 +191,93 @@ unittest(two_flips)
 }
 ```
 
+
+
+
+Finally, there are some cases where you want to use a pin as a serial port.  There are history functions for that too.
+
+```C++
+  int myPin = 3;
+
+  // digitial history as serial data, big-endian
+  bool bigEndian = true;
+  bool binaryAscii[24] = {
+    0, 1, 0, 1, 1, 0, 0, 1,  // Y
+    0, 1, 1, 0, 0, 1, 0, 1,  // e
+    0, 1, 1, 1, 0, 0, 1, 1   // s
+  };
+
+  // "send" these bits
+  for (int i = 0; i < 24; digitalWrite(myPin, binaryAscii[i++]));
+
+  // The first bit in the history is the initial value, which we will ignore
+  int offset = 1;
+
+  // We should be able to parse the bits as ascii
+  assertEqual("Yes", state->digitalPin[myPin].toAscii(offset, bigEndian));
+```
+
+## Overriding default build behavior
+
+You can add `.arduino-ci.yml` files to the project directory (which will then apply to both `test/` and `examples/`), as well as to the `test/` directory and each example directory in `examples/`.  All defined fields can be overridden.
+
+You may define new platforms, or edit existing platform definitions:
+
+```yaml
+platforms:
+  bogo:
+    board: fakeduino:beep:bogo
+    package: potato:salad
+    gcc:
+      features:
+        - omit-frame-pointer  # becomes -fomit-frame-pointer flag
+      defines:
+        - HAVE_THING          # becomes -DHAVE_THING flag
+      warnings:
+        - no-implicit         # becomes -Wno-implicit flag
+      flags:
+        - -foobar             # becomes -foobar flag
+
+  zero: ~                     # undefines the `zero` board completely
+
+  esp8266:                    # redefines the existing esp8266
+    board: esp8266:esp8266:booo
+    package: esp8266:esp8266
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+```
+
+
+For your example programs, you may set external libraries to be installed and included.  You may also choose the platforms on which the compilation will be attempted:
+
+```yaml
+compile:
+  libraries:
+    - "Adafruit FONA Library"
+  platforms:
+    - esp8266
+```
+
+
+For your unit tests, in addition to setting specific libraries and platforms, you may filter the list of test files that are compiled and tested.  This may help speed up targeted testing.
+
+```yaml
+unittest:
+  testfiles:
+    select:
+      - "*-*.*"
+    reject:
+      - "sam-squamsh.*"
+  libraries:
+    - "abc123"
+    - "def456"
+  platforms:
+    - bogo
+```
+
 ## More Documentation
 
 This software is in alpha.  But [SampleProjects/DoSomething](SampleProjects/DoSomething) has a decent writeup and is a good bare-bones example of all the features.
@@ -133,7 +286,6 @@ This software is in alpha.  But [SampleProjects/DoSomething](SampleProjects/DoSo
 
 * The Arduino library is not fully mocked.
 * I don't have preprocessor defines for all the Arduino board flavors
-* Arduino Zero boards don't work in CI.  I'm confused.
 * https://github.com/ifreecarve/arduino_ci/issues
 
 

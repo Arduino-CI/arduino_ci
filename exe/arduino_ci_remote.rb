@@ -25,7 +25,7 @@ def perform_action(message, on_fail_msg, abort_on_fail)
   line = "#{message}..."
   print line
   result = yield
-  mark = result ? "✓" : "X"
+  mark = result ? "✓" : "✗"
   puts mark.rjust(WIDTH - line.length, " ")
   unless result
     puts on_fail_msg unless on_fail_msg.nil?
@@ -88,36 +88,49 @@ aux_libraries.each do |l|
   assure("Installing aux library '#{l}'") { @arduino_cmd.install_library(l) }
 end
 
-config.platforms_to_unittest.each do |p|
-  board = all_platforms[p][:board]
-  assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) }
-  cpp_library.test_files.each do |unittest_path|
-    unittest_name = File.basename(unittest_path)
-    attempt("Unit testing #{unittest_name}") do
-      exe = cpp_library.build_for_test_with_configuration(
-        unittest_path,
-        config.aux_libraries_for_unittest,
-        config.gcc_config(p)
-      )
-      puts
-      unless exe
-        puts "Last command: #{cpp_library.last_cmd}"
-        puts cpp_library.last_out
-        puts cpp_library.last_err
-        next false
+# iterate boards / tests
+last_board = nil
+if cpp_library.test_files.empty?
+  attempt("Skipping unit tests; no test files were found") { true }
+elsif config.platforms_to_unittest.empty?
+  attempt("Skipping unit tests; no platforms were requestsed") { true }
+else
+  config.platforms_to_unittest.each do |p|
+    board = all_platforms[p][:board]
+    assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
+    last_board = board
+    cpp_library.test_files.each do |unittest_path|
+      unittest_name = File.basename(unittest_path)
+      attempt("Unit testing #{unittest_name}") do
+        exe = cpp_library.build_for_test_with_configuration(
+          unittest_path,
+          config.aux_libraries_for_unittest,
+          config.gcc_config(p)
+        )
+        puts
+        unless exe
+          puts "Last command: #{cpp_library.last_cmd}"
+          puts cpp_library.last_out
+          puts cpp_library.last_err
+          next false
+        end
+        cpp_library.run_test_file(exe)
       end
-      cpp_library.run_test_file(exe)
     end
   end
 end
 
-attempt("Setting compiler warning level") { @arduino_cmd.set_pref("compiler.warning_level", "all") }
+unless library_examples.empty?
+  attempt("Setting compiler warning level")  { @arduino_cmd.set_pref("compiler.warning_level", "all") }
+end
 
+# unlike previous, iterate examples / boards
 library_examples.each do |example_path|
   ovr_config = config.from_example(example_path)
   ovr_config.platforms_to_build.each do |p|
     board = all_platforms[p][:board]
-    assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) }
+    assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
+    last_board = board
     example_name = File.basename(example_path)
     attempt("Verifying #{example_name}") do
       ret = @arduino_cmd.verify_sketch(example_path)

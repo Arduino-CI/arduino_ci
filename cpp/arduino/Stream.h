@@ -3,7 +3,6 @@
 #include "WString.h"
 #include "Print.h"
 
-
 // This enumeration provides the lookahead options for parseInt(), parseFloat()
 // The rules set out here are used until either the first valid character is found
 // or a time out occurs due to lack of input.
@@ -45,7 +44,9 @@ class Stream : public Print
 
   public:
     virtual int available() { return mGodmodeDataIn->length(); }
+
     virtual int peek() { return available() ? (int)((*mGodmodeDataIn)[0]) : -1; }
+
     virtual int read() {
       int ret = peek();
       if (ret != -1) {
@@ -54,6 +55,8 @@ class Stream : public Print
       }
       return ret;
     }
+
+    using Print::write;
 
     virtual size_t write(uint8_t aChar) { mGodmodeDataIn->append(String((char)aChar)); return 1; }
 

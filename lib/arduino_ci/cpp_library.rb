@@ -53,6 +53,7 @@ module ArduinoCI
     # @param some_dir [String] The directory in which to begin the search
     # @return [Array<String>] The paths of the found files
     def cpp_files_in(some_dir)
+      return [] unless File.exist?(some_dir)
       real = File.realpath(some_dir)
       files = Find.find(real).reject { |path| File.directory?(path) }
       ret = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
@@ -189,7 +190,11 @@ module ArduinoCI
       base = File.basename(test_file)
       executable = File.expand_path("unittest_#{base}.bin")
       File.delete(executable) if File.exist?(executable)
-      args = ["-std=c++11", "-o", executable] + test_args(aux_libraries, ci_gcc_config) + [test_file]
+      args = [
+        ["-std=c++0x", "-o", executable, "-DARDUINO=100"],
+        test_args(aux_libraries, ci_gcc_config),
+        [test_file],
+      ].flatten(1)
       return nil unless run_gcc(*args)
       artifacts << executable
       executable

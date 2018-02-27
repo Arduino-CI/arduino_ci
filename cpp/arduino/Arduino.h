@@ -57,16 +57,7 @@ typedef unsigned int word;
 
 #define bit(b) (1UL << (b))
 
-// io pins
-#define pinMode(...) _NOP()
-#define analogReference(...) _NOP()
 
-void digitalWrite(uint8_t, uint8_t);
-int digitalRead(uint8_t);
-int analogRead(uint8_t);
-void analogWrite(uint8_t, int);
-#define analogReadResolution(...) _NOP()
-#define analogWriteResolution(...) _NOP()
 
 
 // Get the bit location within the hardware port of the given virtual pin.
@@ -82,15 +73,6 @@ inline unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8)
 
 #define word(...) makeWord(__VA_ARGS__)
 
-// random
-void randomSeed(unsigned long seed);
-long random(long vmax);
-long random(long vmin, long vmax);
 
 
-// Time
-void delay(unsigned long millis);
-void delayMicroseconds(unsigned long micros);
-unsigned long millis();
-unsigned long micros();
 

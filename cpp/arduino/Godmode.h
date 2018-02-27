@@ -1,6 +1,21 @@
 #pragma once
 #include "ArduinoDefines.h"
+#include <avr/io.h>
 #include "WString.h"
+#include "PinHistory.h"
+
+// random
+void randomSeed(unsigned long seed);
+long random(long vmax);
+long random(long vmin, long vmax);
+
+
+// Time
+void delay(unsigned long millis);
+void delayMicroseconds(unsigned long micros);
+unsigned long millis();
+unsigned long micros();
+
 
 #define MOCK_PINS_COUNT 256
 
@@ -16,7 +31,6 @@
   #define NUM_SERIAL_PORTS 0
 #endif
 
-
 class GodmodeState {
   struct PortDef {
     String dataIn;
@@ -28,14 +42,14 @@ class GodmodeState {
     unsigned long micros;
     unsigned long seed;
     // not going to put pinmode here unless its really needed. can't think of why it would be
-    bool digitalPin[MOCK_PINS_COUNT];
-    int analogPin[MOCK_PINS_COUNT];
+    PinHistory<bool> digitalPin[MOCK_PINS_COUNT];
+    PinHistory<int> analogPin[MOCK_PINS_COUNT];
     struct PortDef serialPort[NUM_SERIAL_PORTS];
 
     void resetPins() {
       for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
-        digitalPin[i] = LOW;
-        analogPin[i] = 0;
+        digitalPin[i].reset(LOW);
+        analogPin[i].reset(0);
       }
     }
 
@@ -49,26 +63,34 @@ class GodmodeState {
       seed = 1;
     }
 
-    GodmodeState() {
-      reset();
-      for (int i = 0; i < NUM_SERIAL_PORTS; ++i) {
-        serialPort[i] = {"", "", 0};
-      }
+    int serialPorts() {
+      return NUM_SERIAL_PORTS;
     }
+
+    GodmodeState()
+    {
+      reset();
+      for (int i = 0; i < serialPorts(); ++i)
+      {
+        serialPort[i].dataIn = "";
+        serialPort[i].dataOut = "";
+        serialPort[i].readDelayMicros = 0;
+      }
+  }
 
 };
 
+// io pins
+#define pinMode(...) _NOP()
+#define analogReference(...) _NOP()
+
+void digitalWrite(uint8_t, uint8_t);
+int digitalRead(uint8_t);
+int analogRead(uint8_t);
+void analogWrite(uint8_t, int);
+#define analogReadResolution(...) _NOP()
+#define analogWriteResolution(...) _NOP()
+
+
 GodmodeState* GODMODE();
-
-// random
-void randomSeed(unsigned long seed);
-long random(long vmax);
-long random(long vmin, long vmax);
-
-
-// Time
-void delay(unsigned long millis);
-void delayMicroseconds(unsigned long micros);
-unsigned long millis();
-unsigned long micros();
 

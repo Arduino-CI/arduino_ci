@@ -28,23 +28,23 @@ class Test
         ~ReporterTAP() {}
 
         void onTestRunInit(int numTests) {
-          cout << "TAP version 13" << endl;
-          cout << 1 << ".." << numTests << endl; // we know how many tests, in advance
+          cerr << "TAP version 13" << endl;
+          cerr << 1 << ".." << numTests << endl; // we know how many tests, in advance
           mTestCounter = 0;
         }
 
         void onTestStart(TestData td) {
           mAssertCounter = 0;
           ++mTestCounter;
-          cout << "# Subtest: " << td.name << endl;
+          cerr << "# Subtest: " << td.name << endl;
         }
 
         void onTestEnd(TestData td) {
-          cout << "    1.." << mAssertCounter << endl;
+          cerr << "    1.." << mAssertCounter << endl;
           if (td.result == RESULT_PASS) {
-            cout << "ok " << mTestCounter << " - " << td.name << endl;
+            cerr << "ok " << mTestCounter << " - " << td.name << endl;
           } else {
-            cout << "not ok " << mTestCounter << " - " << td.name << endl;
+            cerr << "not ok " << mTestCounter << " - " << td.name << endl;
           }
         }
 
@@ -61,17 +61,17 @@ class Test
               const char* rhsLabel,
               const B &rhs
           ) {
-            cout << "    " << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - ";
-            cout << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl;
+            cerr << "    " << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - ";
+            cerr << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl;
             if (!pass) {
-              cout << "      ---" << endl;
-              cout << "      operator: " << opLabel << endl;
-              cout << "      " << lhsRelevance << ": " << lhs << endl;
-              cout << "      " << rhsRelevance << ": " << rhs << endl;
-              cout << "      at:" << endl;
-              cout << "        file: " << file << endl;
-              cout << "        line: " << line << endl;
-              cout << "      ..." << endl;
+              cerr << "      ---" << endl;
+              cerr << "      operator: " << opLabel << endl;
+              cerr << "      " << lhsRelevance << ": " << lhs << endl;
+              cerr << "      " << rhsRelevance << ": " << rhs << endl;
+              cerr << "      at:" << endl;
+              cerr << "        file: " << file << endl;
+              cerr << "        line: " << line << endl;
+              cerr << "      ..." << endl;
           }
         }
     };

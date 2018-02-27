@@ -1,3 +1,4 @@
+#pragma once
 /* ruby
 (1..8).each do |b|
   (0..(2**b - 1)).each do |v|

@@ -6,14 +6,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Yaml files can have either `.yml` or `.yaml` extensions
+- Yaml files support select/reject critera for paths of unit tests for targeted testing
+- Pins now track history and can report it in Ascii (big- or little-endian) for digital sequences
+- Pins now accept an array (or string) of input bits for providing pin values across multiple reads
+- SoftwareSerial.  That took a while.
 
 ### Changed
+- Unit test executables print to STDERR just in case there are segfaults.  Uh, just in case I ever write any.
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- OSX no longer experiences `javax.net.ssl.SSLKeyException: RSA premaster secret error` messages when downloading board package files
+- `arduino_ci_remote.rb` no longer makes unnecessary changes to the board being tested
+- Scripts no longer crash if there is no `test/` directory
+- Scripts no longer crash if there is no `examples/` directory
 
 ### Security
 

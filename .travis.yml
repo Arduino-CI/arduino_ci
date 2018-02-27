@@ -14,6 +14,6 @@ script:
    - bundle exec rubocop --version
    - bundle exec rubocop -D .
    - bundle exec rspec
-   - cd SampleProjects/DoSomething
+   - cd SampleProjects/TestSomething
    - bundle install
    - bundle exec arduino_ci_remote.rb

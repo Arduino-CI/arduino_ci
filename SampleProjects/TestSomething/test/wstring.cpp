@@ -35,6 +35,10 @@ unittest(string_assignment_and_misc)
   s += " ";
   s += -3.141;
   assertEqual("hi there -10 -3.14", s);
+
+  s.reserve(100);
+  s.reserve(200);
+  s.reserve(100);
 }
 
 unittest(string_comparison)
