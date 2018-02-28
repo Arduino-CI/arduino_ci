@@ -1,5 +1,5 @@
 #include <ArduinoUnitTests.h>
-#include <Queue.h>
+#include <ci/Queue.h>
 
 unittest(basic_queue_dequeue_and_size)
 {
