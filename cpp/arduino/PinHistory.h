@@ -58,7 +58,13 @@ class PinHistory {
     }
 
   public:
-    PinHistory() {}
+    unsigned int asciiEncodingOffsetIn;
+    unsigned int asciiEncodingOffsetOut;
+
+    PinHistory() {
+      asciiEncodingOffsetIn = 0;  // default is sensible
+      asciiEncodingOffsetOut = 1; // default is sensible
+    }
 
     void reset(T val) {
       clear();
@@ -108,11 +114,19 @@ class PinHistory {
 
     // convert the queue of incoming data to a string as if it was Serial comms
     // start from offset, consider endianness
-    String incomingToAscii (unsigned int offset, bool bigEndian) const { return q2a(qIn, offset, bigEndian); }
+    String incomingToAscii(unsigned int offset, bool bigEndian) const { return q2a(qIn, offset, bigEndian); }
+
+    // convert the queue of incoming data to a string as if it was Serial comms
+    // start from offset, consider endianness
+    String incomingToAscii(bool bigEndian) const { return incomingToAscii(asciiEncodingOffsetIn, bigEndian); }
 
     // convert the pin history to a string as if it was Serial comms
     // start from offset, consider endianness
-    String toAscii (unsigned int offset, bool bigEndian) const { return q2a(qOut, offset, bigEndian); }
+    String toAscii(unsigned int offset, bool bigEndian) const { return q2a(qOut, offset, bigEndian); }
+
+    // convert the pin history to a string as if it was Serial comms
+    // start from offset, consider endianness
+    String toAscii(bool bigEndian) const { return toAscii(asciiEncodingOffsetOut, bigEndian); }
 
     // copy elements to an array, up to a given length
     // return the number of elements moved
