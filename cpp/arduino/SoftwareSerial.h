@@ -14,6 +14,7 @@ class SoftwareSerial : public Stream
     bool mIsListening;
     GodmodeState* mState;
     unsigned long mOffset; // bits to offset stream
+    bool bigEndian;
 
   public:
     SoftwareSerial(uint8_t receivePin, uint8_t transmitPin, bool inverse_logic = false) {
@@ -22,6 +23,7 @@ class SoftwareSerial : public Stream
       mIsListening = false;
       mOffset = 0; // godmode starts with 1 bit in the queue
       mState = GODMODE();
+      bigEndian = false;  // this is how serial works
     }
 
     ~SoftwareSerial() {};
@@ -43,14 +45,14 @@ class SoftwareSerial : public Stream
 
     int peek() {
       if (!isListening()) return -1;
-      String input = mState->digitalPin[mPinIn].incomingToAscii(mOffset, true);
+      String input = mState->digitalPin[mPinIn].incomingToAscii(mOffset, bigEndian);
       if (input.empty()) return -1;
       return input[0];
     }
 
     virtual int read() {
       if (!isListening()) return -1;
-      String input = mState->digitalPin[mPinIn].incomingToAscii(mOffset, true);
+      String input = mState->digitalPin[mPinIn].incomingToAscii(mOffset, bigEndian);
       if (input.empty()) return -1;
       int ret = input[0];
       for (int i = 0; i < 8; ++i) digitalRead(mPinIn);
@@ -60,11 +62,11 @@ class SoftwareSerial : public Stream
     //using Print::write;
 
     virtual size_t write(uint8_t byte) {
-      mState->digitalPin[mPinOut].outgoingFromAscii(String((char)byte), true);
+      mState->digitalPin[mPinOut].outgoingFromAscii(String((char)byte), bigEndian);
       return 1;
     }
 
-    virtual int available() { return mState->digitalPin[mPinIn].incomingToAscii(mOffset, true).length();  }
+    virtual int available() { return mState->digitalPin[mPinIn].incomingToAscii(mOffset, bigEndian).length();  }
     virtual void flush() {}
     operator bool() { return true; }
 

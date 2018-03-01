@@ -1,17 +1,20 @@
 #include <ArduinoUnitTests.h>
 #include <SoftwareSerial.h>
 
+bool bigEndian = false;
+bool flipLogic = false;
+
 unittest(software_input_output)
 {
   GodmodeState* state = GODMODE();
   state->reset();
 
-  SoftwareSerial ss(1, 2, false);
+  SoftwareSerial ss(1, 2, flipLogic);
 
   assertEqual(-1, ss.peek());
 
-  state->digitalPin[1].fromAscii("Holy crap ", true);
-  state->digitalPin[1].fromAscii("this took a lot of prep work", true);
+  state->digitalPin[1].fromAscii("Holy crap ", bigEndian);
+  state->digitalPin[1].fromAscii("this took a lot of prep work", bigEndian);
 
   assertFalse(ss.isListening());
   assertEqual(-1, ss.peek());
@@ -28,17 +31,17 @@ unittest(software_input_output)
   ss.write('b');
   ss.write('A');
   ss.write('r');
-  assertEqual("bAr", state->digitalPin[2].toAscii(1, true));
+  assertEqual("bAr", state->digitalPin[2].toAscii(1, bigEndian));
 }
 
 unittest(print) {
   GodmodeState* state = GODMODE();
   state->reset();
 
-  SoftwareSerial ss(1, 2, false);
+  SoftwareSerial ss(1, 2, flipLogic);
   ss.listen();
   ss.print(1.3, 2);
-  assertEqual("1.30", state->digitalPin[2].toAscii(1, true));
+  assertEqual("1.30", state->digitalPin[2].toAscii(1, bigEndian));
 }
 
 unittest_main()
