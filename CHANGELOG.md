@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `arduino_ci_remote.rb` no longer makes unnecessary changes to the board being tested
 - Scripts no longer crash if there is no `test/` directory
 - Scripts no longer crash if there is no `examples/` directory
+- `assureTrue` and `assureFalse` now `assure` instead of just `assert`ing.
 
 ### Security
 
