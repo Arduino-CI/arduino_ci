@@ -1,10 +1,11 @@
 #pragma once
 #include "ci/Queue.h"
+#include "ci/ObservableDataStream.h"
 #include "WString.h"
 
 // pins with history.
 template <typename T>
-class PinHistory {
+class PinHistory : public ObservableDataStream {
   private:
     Queue<T> qIn;
     Queue<T> qOut;
@@ -15,13 +16,14 @@ class PinHistory {
     }
 
     // enqueue ascii bits
-    void a2q(Queue<T> &q, String input, bool bigEndian) {
+    void a2q(Queue<T> &q, String input, bool bigEndian, bool advertise) {
       // 8 chars at a time, form up
       for (int j = 0; j < input.length(); ++j) {
         for (int i = 0; i < 8; ++i) {
           int shift = bigEndian ? 7 - i : i;
           unsigned char mask = (0x01 << shift);
           q.push(mask & input[j]);
+          if (advertise) advertiseBit(q.back()); // not valid for all possible types but whatever
         }
       }
     }
@@ -61,7 +63,7 @@ class PinHistory {
     unsigned int asciiEncodingOffsetIn;
     unsigned int asciiEncodingOffsetOut;
 
-    PinHistory() {
+    PinHistory() : ObservableDataStream() {
       asciiEncodingOffsetIn = 0;  // default is sensible
       asciiEncodingOffsetOut = 1; // default is sensible
     }
@@ -87,6 +89,7 @@ class PinHistory {
     const T &operator=(const T& i) {
       qIn.clear();
       qOut.push(i);
+      advertiseBit(qOut.back()); // not valid for all possible types but whatever
       return qOut.back();
     }
 
@@ -107,10 +110,11 @@ class PinHistory {
       for (int i = 0; i < length; ++i) qIn.push(arr[i]);
     }
 
-    // enqueue ascii bits
-    void fromAscii(String input, bool bigEndian) { a2q(qIn, input, bigEndian); }
+    // enqueue ascii bits for future use by the retrieve() function
+    void fromAscii(String input, bool bigEndian) { a2q(qIn, input, bigEndian, false); }
 
-    void outgoingFromAscii(String input, bool bigEndian) { a2q(qOut, input, bigEndian); }
+    // send a stream of ascii bits immediately
+    void outgoingFromAscii(String input, bool bigEndian) { a2q(qOut, input, bigEndian, true); }
 
     // convert the queue of incoming data to a string as if it was Serial comms
     // start from offset, consider endianness
@@ -154,4 +158,3 @@ class PinHistory {
     }
 
 };
-

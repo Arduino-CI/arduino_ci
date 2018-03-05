@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Queue template implementation
 - Table template implementation
 - ObservableDataStream and DataStreamObserver pattern implementation
+- DeviceUsingBytes and implementation of mocked serial device
 
 ### Changed
 - Unit test executables print to STDERR just in case there are segfaults.  Uh, just in case I ever write any.
