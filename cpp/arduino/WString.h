@@ -9,6 +9,9 @@
 
 typedef std::string string;
 
+//typedef const char __FlashStringHelper;
+class __FlashStringHelper;
+#define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(PSTR(string_literal)))
 
 // Compatibility with string class
 class String: public string
@@ -51,6 +54,7 @@ class String: public string
 
 public:
   ~String(void) {}
+  String(const __FlashStringHelper *str): string((const char *)str) {}
   String(const char *cstr = ""): string(cstr) {}
   String(const string &str): string(str) {}
   String(const String &str): string(str) {}
@@ -70,6 +74,7 @@ public:
   String & operator = (const char *cstr)  { assign(cstr); return *this; }
   String & operator = (const char c)      { assign(1, c); return *this; }
 
+  unsigned char concat(const __FlashStringHelper *str) { append((const char *)str); return 1; }
   unsigned char concat(const String &str) { append(str); return 1; }
   unsigned char concat(const char *cstr)  { append(cstr); return 1; }
   unsigned char concat(char c)            { append(1, c); return 1; }
@@ -81,6 +86,7 @@ public:
   unsigned char concat(float num)         { append(String(num)); return 1; }
   unsigned char concat(double num)        { append(String(num)); return 1; }
 
+  String & operator += (const __FlashStringHelper *rhs) { concat(rhs);  return *this; }
   String & operator += (const String &rhs) { concat(rhs);  return *this; }
   String & operator += (const char *cstr)  { concat(cstr); return *this; }
   String & operator += (char c)            { concat(c);    return *this; }
