@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.5] - 2018-03-05
+### Added
 - Yaml files can have either `.yml` or `.yaml` extensions
 - Yaml files support select/reject critera for paths of unit tests for targeted testing
 - Pins now track history and can report it in Ascii (big- or little-endian) for digital sequences
@@ -110,8 +124,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.4...HEAD
-[0.1.3]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.3...v0.1.4
+[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.4...v0.1.5
+[0.1.4]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.0...v0.1.1
