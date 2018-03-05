@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
-#include <string>
+#include <string.h>
 #include <algorithm>
 #include <iostream>
 #include "AvrMath.h"
@@ -9,7 +9,6 @@
 
 typedef std::string string;
 
-//typedef const char __FlashStringHelper;
 class __FlashStringHelper;
 #define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(PSTR(string_literal)))
 
@@ -44,8 +43,8 @@ class String: public string
 
     static string dtoas(double val, int decimalPlaces) {
       double r = 0.5 * pow(0.1, decimalPlaces); // make sure that integer truncation will properly round
-      if (::isnan(val)) return "nan";
-      if (::isinf(val)) return "inf";
+      if (std::isnan(val)) return "nan";
+      if (std::isinf(val)) return "inf";
       val += val > 0 ? r : -r;
       if (val > 4294967040.0) return "ovf";
       if (val <-4294967040.0) return "ovf";

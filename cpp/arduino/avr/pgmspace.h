@@ -1,10 +1,9 @@
 #pragma once
 
-
 /*
 def d(var_raw)
    var = var_raw.split("_")[0]
-   out = "#define #{var}_P(...) #{var}(__VA_ARGS__)\n"
+   out = "#define #{var}_P(...) ::#{var}(__VA_ARGS__)\n"
    IO.popen('pbcopy', 'w') { |f| f << out }
    out
  end
@@ -16,7 +15,7 @@ out.each { |l| puts d(l) }
 */
 
 #include <avr/io.h>
-#include <string>
+#include <string.h>
 
 #define PROGMEM
 
@@ -50,46 +49,46 @@ out.each { |l| puts d(l) }
 #define pgm_read_ptr(x) (x)
 #define pgm_get_far_address(x) (x)
 
-#define memchr_P(...) memchr(__VA_ARGS__)
-#define memcmp_P(...) memcmp(__VA_ARGS__)
-#define memccpy_P(...) memccpy(__VA_ARGS__)
-#define memcpy_P(...) memcpy(__VA_ARGS__)
-#define memmem_P(...) memmem(__VA_ARGS__)
-#define memrchr_P(...) memrchr(__VA_ARGS__)
-#define strcat_P(...) strcat(__VA_ARGS__)
-#define strchr_P(...) strchr(__VA_ARGS__)
-#define strchrnul_P(...) strchrnul(__VA_ARGS__)
-#define strcmp_P(...) strcmp(__VA_ARGS__)
-#define strcpy_P(...) strcpy(__VA_ARGS__)
-#define strcasecmp_P(...) strcasecmp(__VA_ARGS__)
-#define strcasestr_P(...) strcasestr(__VA_ARGS__)
-#define strcspn_P(...) strcspn(__VA_ARGS__)
-#define strlcat_P(...) strlcat(__VA_ARGS__)
-#define strlcpy_P(...) strlcpy(__VA_ARGS__)
-#define strnlen_P(...) strnlen(__VA_ARGS__)
-#define strncmp_P(...) strncmp(__VA_ARGS__)
-#define strncasecmp_P(...) strncasecmp(__VA_ARGS__)
-#define strncat_P(...) strncat(__VA_ARGS__)
-#define strncpy_P(...) strncpy(__VA_ARGS__)
-#define strpbrk_P(...) strpbrk(__VA_ARGS__)
-#define strrchr_P(...) strrchr(__VA_ARGS__)
-#define strsep_P(...) strsep(__VA_ARGS__)
-#define strspn_P(...) strspn(__VA_ARGS__)
-#define strstr_P(...) strstr(__VA_ARGS__)
-#define strtok_P(...) strtok(__VA_ARGS__)
-#define strtok_P(...) strtok(__VA_ARGS__)
-#define strlen_P(...) strlen(__VA_ARGS__)
-#define strnlen_P(...) strnlen(__VA_ARGS__)
-#define memcpy_P(...) memcpy(__VA_ARGS__)
-#define strcpy_P(...) strcpy(__VA_ARGS__)
-#define strncpy_P(...) strncpy(__VA_ARGS__)
-#define strcat_P(...) strcat(__VA_ARGS__)
-#define strlcat_P(...) strlcat(__VA_ARGS__)
-#define strncat_P(...) strncat(__VA_ARGS__)
-#define strcmp_P(...) strcmp(__VA_ARGS__)
-#define strncmp_P(...) strncmp(__VA_ARGS__)
-#define strcasecmp_P(...) strcasecmp(__VA_ARGS__)
-#define strncasecmp_P(...) strncasecmp(__VA_ARGS__)
-#define strstr_P(...) strstr(__VA_ARGS__)
-#define strlcpy_P(...) strlcpy(__VA_ARGS__)
-#define memcmp_P(...) memcmp(__VA_ARGS__)
+#define memchr_P(...) ::memchr(__VA_ARGS__)
+#define memcmp_P(...) ::memcmp(__VA_ARGS__)
+#define memccpy_P(...) ::memccpy(__VA_ARGS__)
+#define memcpy_P(...) ::memcpy(__VA_ARGS__)
+#define memmem_P(...) ::memmem(__VA_ARGS__)
+#define memrchr_P(...) ::memrchr(__VA_ARGS__)
+#define strcat_P(...) ::strcat(__VA_ARGS__)
+#define strchr_P(...) ::strchr(__VA_ARGS__)
+#define strchrnul_P(...) ::strchrnul(__VA_ARGS__)
+#define strcmp_P(...) ::strcmp(__VA_ARGS__)
+#define strcpy_P(...) ::strcpy(__VA_ARGS__)
+#define strcasecmp_P(...) ::strcasecmp(__VA_ARGS__)
+#define strcasestr_P(...) ::strcasestr(__VA_ARGS__)
+#define strcspn_P(...) ::strcspn(__VA_ARGS__)
+#define strlcat_P(...) ::strlcat(__VA_ARGS__)
+#define strlcpy_P(...) ::strlcpy(__VA_ARGS__)
+#define strnlen_P(...) ::strnlen(__VA_ARGS__)
+#define strncmp_P(...) ::strncmp(__VA_ARGS__)
+#define strncasecmp_P(...) ::strncasecmp(__VA_ARGS__)
+#define strncat_P(...) ::strncat(__VA_ARGS__)
+#define strncpy_P(...) ::strncpy(__VA_ARGS__)
+#define strpbrk_P(...) ::strpbrk(__VA_ARGS__)
+#define strrchr_P(...) ::strrchr(__VA_ARGS__)
+#define strsep_P(...) ::strsep(__VA_ARGS__)
+#define strspn_P(...) ::strspn(__VA_ARGS__)
+#define strstr_P(...) ::strstr(__VA_ARGS__)
+#define strtok_P(...) ::strtok(__VA_ARGS__)
+#define strtok_P(...) ::strtok(__VA_ARGS__)
+#define strlen_P(...) ::strlen(__VA_ARGS__)
+#define strnlen_P(...) ::strnlen(__VA_ARGS__)
+#define memcpy_P(...) ::memcpy(__VA_ARGS__)
+#define strcpy_P(...) ::strcpy(__VA_ARGS__)
+#define strncpy_P(...) ::strncpy(__VA_ARGS__)
+#define strcat_P(...) ::strcat(__VA_ARGS__)
+#define strlcat_P(...) ::strlcat(__VA_ARGS__)
+#define strncat_P(...) ::strncat(__VA_ARGS__)
+#define strcmp_P(...) ::strcmp(__VA_ARGS__)
+#define strncmp_P(...) ::strncmp(__VA_ARGS__)
+#define strcasecmp_P(...) ::strcasecmp(__VA_ARGS__)
+#define strncasecmp_P(...) ::strncasecmp(__VA_ARGS__)
+#define strstr_P(...) ::strstr(__VA_ARGS__)
+#define strlcpy_P(...) ::strlcpy(__VA_ARGS__)
+#define memcmp_P(...) ::memcmp(__VA_ARGS__)
