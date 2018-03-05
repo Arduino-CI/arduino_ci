@@ -46,6 +46,6 @@
 #define assureMore(arg1,arg2)        assureOp("assureMore","upperBound",arg1,compareMore,">","lowerBound",arg2)
 #define assureLessOrEqual(arg1,arg2) assureOp("assureLessOrEqual","lowerBound",arg1,compareLessOrEqual,"<=","upperBound",arg2)
 #define assureMoreOrEqual(arg1,arg2) assureOp("assureMoreOrEqual","upperBound",arg1,compareMoreOrEqual,">=","lowerBound",arg2)
-#define assureTrue(arg) assertEqual(true, arg)
-#define assureFalse(arg) assertEqual(false, arg)
+#define assureTrue(arg) assureEqual(true, arg)
+#define assureFalse(arg) assureEqual(false, arg)
 

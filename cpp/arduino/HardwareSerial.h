@@ -29,13 +29,13 @@
 #define SERIAL_7O2 0x3C
 #define SERIAL_8O2 0x3E
 
-class HardwareSerial : public Stream
+class HardwareSerial : public Stream, public ObservableDataStream
 {
   protected:
     String* mGodmodeDataOut;
 
   public:
-    HardwareSerial(String* dataIn, String* dataOut, unsigned long* delay): Stream() {
+    HardwareSerial(String* dataIn, String* dataOut, unsigned long* delay): Stream(), ObservableDataStream() {
       mGodmodeDataIn      = dataIn;
       mGodmodeDataOut     = dataOut;
       mGodmodeMicrosDelay = delay;
@@ -51,7 +51,11 @@ class HardwareSerial : public Stream
     // virtual int read(void);
     // virtual int availableForWrite(void);
     // virtual void flush(void);
-    virtual size_t write(uint8_t aChar) { mGodmodeDataOut->append(String((char)aChar)); return 1; }
+    virtual size_t write(uint8_t aChar) {
+      mGodmodeDataOut->append(String((char)aChar));
+      advertiseByte((unsigned char)aChar);
+      return 1;
+    }
 
     inline size_t write(unsigned long n) { return write((uint8_t)n); }
     inline size_t write(long n) { return write((uint8_t)n); }

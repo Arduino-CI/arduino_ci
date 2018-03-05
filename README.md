@@ -70,6 +70,8 @@ unittest(example_godmode_stuff)
 }
 ```
 
+#### Pin Histories
+
 Of course, it's possible that your code might flip the bit more than once in a function.  For that scenario, you may want to examine the history of a pin's commanded outputs:
 
 ```C++
@@ -102,6 +104,9 @@ unittest(pin_history)
   }
 ```
 
+
+#### Pin Futures
+
 Reading the pin more than once per function is also a possibility.  In that case, we want to queue up a few values for the `digitalRead` or `analogRead` to find.
 
 ```C++
@@ -133,6 +138,9 @@ unittest(pin_read_history)
   }
 }
 ```
+
+#### Serial Data
+
 
 A more complicated example: working with serial port IO.  Let's say I have the following function:
 
@@ -191,10 +199,10 @@ unittest(two_flips)
 }
 ```
 
+#### Pin History as ASCII
 
 
-
-Finally, there are some cases where you want to use a pin as a serial port.  There are history functions for that too.
+For additional complexity, there are some cases where you want to use a pin as a serial port.  There are history functions for that too.
 
 ```C++
   int myPin = 3;
@@ -216,6 +224,45 @@ Finally, there are some cases where you want to use a pin as a serial port.  The
   // We should be able to parse the bits as ascii
   assertEqual("Yes", state->digitalPin[myPin].toAscii(offset, bigEndian));
 ```
+
+Instead of queueing bits as ASCII for future use with `toAscii`, you can send those bits directly (and immediately) to the output using `outgoingFromAscii`.  Likewise, you can reinterpret/examine (as ASCII) the bits you have previously queued up by calling `incomingToAscii` on the PinHistory object.
+
+
+#### Interactivity of "Devices" with Observers
+
+Even pin history and input/output buffers aren't capable of testing interactive code.  For example, queueing the canned responses from a serial device before the requests are even sent to it is not a sane test environment; the library under test will see the entire future waiting for it on the input pin instead of a buffer that fills and empties over time.  This calls for something more complicated.
+
+In this example, we create a simple class to emulate a Hayes modem.  (For more information, dig into the `DataStreamObserver` code on which `DeviceUsingBytes` is based.
+
+```c++
+class FakeHayesModem : public DeviceUsingBytes {
+  public:
+    String mLast;
+
+    FakeHayesModem() : DeviceUsingBytes() {
+      mLast = "";
+      addResponseLine("AT", "OK");
+      addResponseLine("ATV1", "NO CARRIER");
+    }
+    virtual ~FakeHayesModem() {}
+    virtual void onMatchInput(String output) { mLast = output; }
+};
+
+unittest(modem_hardware)
+{
+  GodmodeState* state = GODMODE();
+  state->reset();
+  FakeHayesModem m;
+  m.attach(&Serial);
+
+  Serial.write("AT\n");
+  assertEqual("AT\n", state->serialPort[0].dataOut);
+  assertEqual("OK\n", m.mLast);
+}
+```
+
+Note that instead of setting `mLast = output` in the `onMatchInput()` function for test purposes, we could just as easily queue some bytes to state->serialPort[0].dataIn for the library under test to find on its next `peek()` or `read()`.  Or we could execute some action on a digital or analog input pin; the possibilities are fairly endless in this regard, although you will have to define them yourself -- from scratch -- extending the `DataStreamObserver` class to emulate your physical device.
+
 
 ## Overriding default build behavior
 

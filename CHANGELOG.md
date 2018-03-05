@@ -10,7 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Yaml files support select/reject critera for paths of unit tests for targeted testing
 - Pins now track history and can report it in Ascii (big- or little-endian) for digital sequences
 - Pins now accept an array (or string) of input bits for providing pin values across multiple reads
+- FlashStringHelper (and related macros) compilation mocks
 - SoftwareSerial.  That took a while.
+- Queue template implementation
+- Table template implementation
+- ObservableDataStream and DataStreamObserver pattern implementation
+- DeviceUsingBytes and implementation of mocked serial device
 
 ### Changed
 - Unit test executables print to STDERR just in case there are segfaults.  Uh, just in case I ever write any.
@@ -24,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `arduino_ci_remote.rb` no longer makes unnecessary changes to the board being tested
 - Scripts no longer crash if there is no `test/` directory
 - Scripts no longer crash if there is no `examples/` directory
+- `assureTrue` and `assureFalse` now `assure` instead of just `assert`ing.
 
 ### Security
 

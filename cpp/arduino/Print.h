@@ -31,8 +31,10 @@ class Print
 
     virtual size_t write(uint8_t) = 0;
     size_t write(const char *str) { return str == NULL ? 0 : write((const uint8_t *)str, String(str).length()); }
-    virtual size_t write(const uint8_t *buffer, size_t size)
-    {
+
+    size_t write(const __FlashStringHelper *str) { return write((const char *)str); }
+
+    virtual size_t write(const uint8_t *buffer, size_t size) {
       size_t n;
       for (n = 0; size && write(*buffer++) && ++n; --size);
       return n;
