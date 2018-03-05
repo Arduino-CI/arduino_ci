@@ -16,6 +16,7 @@ out.each { |l| puts d(l) }
 */
 
 #include <avr/io.h>
+#include <string>
 
 #define PROGMEM
 

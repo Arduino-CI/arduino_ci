@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Replaced pipes with `Open3.capture3` to avoid deadlocks when commands have too much output
 - `ci_config.rb` now returns empty arrays (instead of nil) for undefined config keys
+- `pgmspace.h` explictly includes `<string.h>`
 
 ### Security
 
