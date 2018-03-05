@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Pins now accept an array (or string) of input bits for providing pin values across multiple reads
 - FlashStringHelper (and related macros) compilation mocks
 - SoftwareSerial.  That took a while.
+- Queue template implementation
+- Table template implementation
 
 ### Changed
 - Unit test executables print to STDERR just in case there are segfaults.  Uh, just in case I ever write any.
