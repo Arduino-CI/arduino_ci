@@ -127,6 +127,13 @@ module ArduinoCI
       success
     end
 
+    # Return the GCC version
+    # @return [String] the version reported by `gcc -v`
+    def gcc_version
+      return nil unless run_gcc("-v")
+      @last_err
+    end
+
     # GCC command line arguments for including aux libraries
     # @param aux_libraries [String] The external Arduino libraries required by this project
     # @return [Array<String>] The GCC command-line flags necessary to include those libraries

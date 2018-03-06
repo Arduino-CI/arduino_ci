@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- `CppLibrary` can now report `gcc_version`
 
 ### Changed
 
