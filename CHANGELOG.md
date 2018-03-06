@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `CppLibrary` can now report `gcc_version`
 
 ### Changed
+- `arduino_ci_remote.rb` now formats tasks with multiple output lines more nicely
 
 ### Deprecated
 
