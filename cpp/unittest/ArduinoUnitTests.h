@@ -113,8 +113,8 @@ class Test
     static const int RESULT_FAIL = 2;
     static const int RESULT_SKIP = 3;
 
-    const inline char *name() { return mName; }
-    const inline int result() { return mResult; }
+    inline const char *name() const { return mName; }
+    inline int result() const { return mResult; }
 
     Test(const char* _name) : mName(_name) {
       mResult = RESULT_NONE;
