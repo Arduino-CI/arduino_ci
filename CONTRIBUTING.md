@@ -18,6 +18,7 @@ Be prepared to write tests to accompany any code you would like to see merged.
 ## Packaging the Gem
 
 * Merge pull request with new features
+* `git pull --rebase`
 * Bump the version in lib/arduino_ci/version.rb and change it in README.md (since rubydoc.info doesn't always redirect to the latest version)
 * Update the sections of `CHANGELOG.md`
 * `git add README.md CHANGELOG.md lib/arduino_ci/version.rb`
