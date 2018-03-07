@@ -1,7 +1,7 @@
 #pragma once
 
 template <typename T>
-class Queue {
+class ArduinoCIQueue {
   private:
     struct Node {
       T data;
@@ -19,9 +19,9 @@ class Queue {
     }
 
   public:
-    Queue(): mNil() { init(); }
+    ArduinoCIQueue(): mNil() { init(); }
 
-    Queue(const Queue<T>& q) {
+    ArduinoCIQueue(const ArduinoCIQueue<T>& q) {
       init();
       for (Node* n = q.mFront; n; n = n->next) push(n->data);
     }
@@ -69,5 +69,5 @@ class Queue {
 
     void clear() { while (!empty()) pop(); }
 
-    ~Queue() { clear(); }
+    ~ArduinoCIQueue() { clear(); }
 };

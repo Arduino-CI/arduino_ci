@@ -20,7 +20,7 @@ void setResult3(long l, int k, int v) {
 
 unittest(basic_table)
 {
-  Table<String, int> t;
+  ArduinoCITable<String, int> t;
   assertTrue(t.empty());
 
   int data[5] = {11, 22, 33, 44, 55};
@@ -47,7 +47,7 @@ unittest(basic_table)
 }
 
 unittest(iteration_no_arg) {
-  Table<int, int> t;
+  ArduinoCITable<int, int> t;
   for (int i = 0; i < 5; ++i) {
     results[i] = 0;
     t.add(i, 11 * (i + 1));
@@ -59,7 +59,7 @@ unittest(iteration_no_arg) {
 }
 
 unittest(iteration_one_arg) {
-  Table<int, int> t;
+  ArduinoCITable<int, int> t;
   for (int i = 0; i < 5; ++i) {
     results[i] = 0;
     t.add(i, 11 * (i + 1));

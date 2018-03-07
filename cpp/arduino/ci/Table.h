@@ -5,7 +5,7 @@
 // this is this stupidest table implementation ever but it's
 // an MVP for unit testing. O(n).
 template <typename K, typename V>
-class Table {
+class ArduinoCITable {
   private:
     struct Node {
       K key;
@@ -25,7 +25,7 @@ class Table {
     }
 
   public:
-    Table() : mNilK(), mNilV() { init(); }
+    ArduinoCITable() : mNilK(), mNilV() { init(); }
 
     // number of things in the table
     inline unsigned long size() const { return mSize; }
@@ -121,5 +121,5 @@ class Table {
       }
     }
 
-    ~Table() { clear(); }
+    ~ArduinoCITable() { clear(); }
 };

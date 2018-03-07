@@ -25,7 +25,7 @@
 class DeviceUsingBytes : public DataStreamObserver {
   public:
     String mMessage;
-    Table<String, String> mResponses;
+    ArduinoCITable<String, String> mResponses;
     GodmodeState* state;
 
 
