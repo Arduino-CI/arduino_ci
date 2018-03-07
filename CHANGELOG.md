@@ -6,15 +6,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.6] - 2018-03-07
+### Added
 - `CppLibrary` can now report `gcc_version`
 
 ### Changed
 - `arduino_ci_remote.rb` now formats tasks with multiple output lines more nicely
 - Templates for CI classes are now pass-by-value (no const reference)
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 - Replaced pipes with `Open3.capture3` to avoid deadlocks when commands have too much output
@@ -42,18 +52,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Unit test executables print to STDERR just in case there are segfaults.  Uh, just in case I ever write any.
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - OSX no longer experiences `javax.net.ssl.SSLKeyException: RSA premaster secret error` messages when downloading board package files
 - `arduino_ci_remote.rb` no longer makes unnecessary changes to the board being tested
 - Scripts no longer crash if there is no `test/` directory
 - Scripts no longer crash if there is no `examples/` directory
 - `assureTrue` and `assureFalse` now `assure` instead of just `assert`ing.
-
-### Security
 
 
 ## [0.1.4] - 2018-02-01
@@ -132,7 +136,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.2...v0.1.3
