@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Queue and Table are now ArduinoCIQueue and ArduinoCITable to avoid name collisions
 
 ### Deprecated
 

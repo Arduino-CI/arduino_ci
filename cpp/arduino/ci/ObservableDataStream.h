@@ -72,7 +72,7 @@ class DataStreamObserver {
 class ObservableDataStream
 {
   private:
-    Table<String, DataStreamObserver*> mObservers;
+    ArduinoCITable<String, DataStreamObserver*> mObservers;
     bool          mAdvertisingBit;
     unsigned char mAdvertisingByte;
 

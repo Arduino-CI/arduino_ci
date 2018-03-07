@@ -3,7 +3,7 @@
 
 unittest(basic_queue_dequeue_and_size)
 {
-  Queue<int> q;
+  ArduinoCIQueue<int> q;
   int data[5] = {11, 22, 33, 44, 55};
 
   assertTrue(q.empty());
@@ -27,11 +27,11 @@ unittest(basic_queue_dequeue_and_size)
 
 unittest(copy_constructor)
 {
-  Queue<int> q;
+  ArduinoCIQueue<int> q;
   int data[5] = {11, 22, 33, 44, 55};
   for (int i = 0; i < 5; ++i) q.push(data[i]);
 
-  Queue<int> q2(q);
+  ArduinoCIQueue<int> q2(q);
 
   for (int i = 0; i < 5; ++i) {
     assertEqual(5 - i, q2.size());
