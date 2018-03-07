@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `ci_config.rb` now returns empty arrays (instead of nil) for undefined config keys
 - `pgmspace.h` explictly includes `<string.h>`
 - `__FlashStringHelper` should now be properly mocked for compilation
+- `WString.h` bool operator now works and is simpler
 
 ### Security
 
