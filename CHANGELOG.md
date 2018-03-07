@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - `arduino_ci_remote.rb` now formats tasks with multiple output lines more nicely
+- Templates for CI classes are now pass-by-value (no const reference)
 
 ### Deprecated
 
