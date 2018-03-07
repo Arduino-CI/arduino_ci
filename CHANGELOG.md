@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-- Queue and Table are now ArduinoCIQueue and ArduinoCITable to avoid name collisions
 
 ### Deprecated
 
@@ -17,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 ### Security
+
+
+## [0.1.7] - 2018-03-07
+### Changed
+- Queue and Table are now ArduinoCIQueue and ArduinoCITable to avoid name collisions
 
 
 ## [0.1.6] - 2018-03-07
@@ -137,7 +141,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.3...v0.1.4
