@@ -200,12 +200,14 @@ module ArduinoCI
     # platforms to build [the examples on]
     # @return [Array<String>] The platforms to build
     def platforms_to_build
+      return [] if @compile_info[:platforms].nil?
       @compile_info[:platforms]
     end
 
     # platforms to unit test [the tests on]
     # @return [Array<String>] The platforms to unit test on
     def platforms_to_unittest
+      return [] if @unittest_info[:platforms].nil?
       @unittest_info[:platforms]
     end
 

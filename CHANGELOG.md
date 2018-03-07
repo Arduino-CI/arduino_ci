@@ -6,14 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- `CppLibrary` can now report `gcc_version`
 
 ### Changed
+- `arduino_ci_remote.rb` now formats tasks with multiple output lines more nicely
+- Templates for CI classes are now pass-by-value (no const reference)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Replaced pipes with `Open3.capture3` to avoid deadlocks when commands have too much output
+- `ci_config.rb` now returns empty arrays (instead of nil) for undefined config keys
+- `pgmspace.h` explictly includes `<string.h>`
+- `__FlashStringHelper` should now be properly mocked for compilation
+- `WString.h` bool operator now works and is simpler
 
 ### Security
 

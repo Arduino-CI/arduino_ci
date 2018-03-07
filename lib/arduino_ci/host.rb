@@ -1,4 +1,5 @@
 require 'os'
+require 'open3'
 
 module ArduinoCI
 
@@ -20,8 +21,12 @@ module ArduinoCI
       nil
     end
 
-    # run a command in a display
-    def self.run(*args, **kwargs)
+    def self.run_and_capture(*args, **kwargs)
+      stdout, stderr, status = Open3.capture3(*args, **kwargs)
+      { out: stdout, err: stderr, success: status.exitstatus.zero? }
+    end
+
+    def self.run_and_output(*args, **kwargs)
       system(*args, **kwargs)
     end
 

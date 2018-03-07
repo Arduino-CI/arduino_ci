@@ -30,9 +30,9 @@ class Queue {
 
     inline bool empty() const { return 0 == mSize; }
 
-    const T& front() const { return empty() ? mNil : mFront->data; }
+    T front() const { return empty() ? mNil : mFront->data; }
 
-    const T& back() const { return empty() ? mNil : mBack->data; }
+    T back() const { return empty() ? mNil : mBack->data; }
 
     bool push(const T& v)
     {

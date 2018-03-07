@@ -39,8 +39,15 @@ module ArduinoCI
     end
 
     # run the arduino command
-    def _run(*args, **kwargs)
-      @display_mgr.run(*args, **kwargs)
+    # @return [bool] whether the command succeeded
+    def _run_and_output(*args, **kwargs)
+      @display_mgr.run_and_output(*args, **kwargs)
+    end
+
+    # run the arduino command
+    # @return [Hash] keys for :success, :out, and :err
+    def _run_and_capture(*args, **kwargs)
+      @display_mgr.run_and_capture(*args, **kwargs)
     end
 
     def run_with_gui_guess(message, *args, **kwargs)

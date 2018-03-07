@@ -10,16 +10,19 @@ class SoftwareSerial : public Stream
   private:
     int mPinIn;
     int mPinOut;
-    bool mInverse;
     bool mIsListening;
     GodmodeState* mState;
     unsigned long mOffset; // bits to offset stream
     bool bigEndian;
 
   public:
-    SoftwareSerial(uint8_t receivePin, uint8_t transmitPin, bool inverse_logic = false) {
+    // @TODO this is public for now to avoid a compiler warning
+    bool mInvertLogic; // @TODO not sure how to implement yet
+
+    SoftwareSerial(uint8_t receivePin, uint8_t transmitPin, bool invertLogic = false) {
       mPinIn = receivePin;
       mPinOut = transmitPin;
+      mIsListening = invertLogic;
       mIsListening = false;
       mOffset = 0; // godmode starts with 1 bit in the queue
       mState = GODMODE();

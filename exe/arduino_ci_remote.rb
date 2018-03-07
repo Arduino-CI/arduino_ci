@@ -21,11 +21,18 @@ def terminate(final = nil)
 end
 
 # make a nice status line for an action and react to the action
-def perform_action(message, on_fail_msg, abort_on_fail)
-  line = "#{message}..."
-  print line
+def perform_action(message, multiline, on_fail_msg, abort_on_fail)
+  line = "#{message}... "
+  endline = "...#{message} "
+  if multiline
+    puts line
+  else
+    print line
+  end
   result = yield
   mark = result ? "✓" : "✗"
+  # if multline, put checkmark at full width
+  print endline if multiline
   puts mark.rjust(WIDTH - line.length, " ")
   unless result
     puts on_fail_msg unless on_fail_msg.nil?
@@ -38,12 +45,17 @@ end
 
 # Make a nice status for something that defers any failure code until script exit
 def attempt(message, &block)
-  perform_action(message, nil, false, &block)
+  perform_action(message, false, nil, false, &block)
+end
+
+# Make a nice status for something that defers any failure code until script exit
+def attempt_multiline(message, &block)
+  perform_action(message, true, nil, false, &block)
 end
 
 # Make a nice status for something that kills the script immediately on failure
 def assure(message, &block)
-  perform_action(message, "This may indicate a problem with ArduinoCI!", true, &block)
+  perform_action(message, false, "This may indicate a problem with ArduinoCI!", true, &block)
 end
 
 # initialize command and config
@@ -55,6 +67,14 @@ installed_library_path = assure("Installing library under test") { @arduino_cmd.
 library_examples = @arduino_cmd.library_examples(installed_library_path)
 cpp_library = ArduinoCI::CppLibrary.new(installed_library_path)
 attempt("Library installed at #{installed_library_path}") { true }
+
+# check GCC
+attempt_multiline("Checking GCC version") do
+  version = cpp_library.gcc_version
+  next nil unless version
+  puts version.split("\n").map { |l| "    #{l}" }.join("\n")
+  version
+end
 
 # gather up all required boards so we can install them up front.
 # start with the "platforms to unittest" and add the examples
@@ -101,7 +121,7 @@ else
     last_board = board
     cpp_library.test_files.each do |unittest_path|
       unittest_name = File.basename(unittest_path)
-      attempt("Unit testing #{unittest_name}") do
+      attempt_multiline("Unit testing #{unittest_name}") do
         exe = cpp_library.build_for_test_with_configuration(
           unittest_path,
           config.aux_libraries_for_unittest,

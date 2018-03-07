@@ -150,10 +150,8 @@ module ArduinoCI
       end
     end
 
-    # run a command in a display
-    # @return [bool]
-    def run(*args, **kwargs)
-      ret = false
+    def wrap_run(work_fn, *args, **kwargs)
+      ret = nil
       # do some work to extract & merge environment variables if they exist
       has_env = !args.empty? && args[0].class == Hash
       with_display do |env_vars|
@@ -161,15 +159,21 @@ module ArduinoCI
         env_vars.merge!(args[0]) if has_env
         actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
         full_cmd = env_vars.empty? ? actual_args : [env_vars] + actual_args
-        ret = Host.run(*full_cmd, **kwargs)
+        ret = work_fn.call(*full_cmd, **kwargs)
       end
       ret
     end
 
-    # run a command in a display with no output
+    # run a command in a display, outputting to stdout
     # @return [bool]
-    def run_silent(*args)
-      run(*args, out: File::NULL, err: File::NULL)
+    def run_and_output(*args, **kwargs)
+      wrap_run((proc { |*a, **k| Host.run_and_output(*a, **k) }), *args, **kwargs)
+    end
+
+    # run a command in a display, capturing output
+    # @return [bool]
+    def run_and_capture(*args, **kwargs)
+      wrap_run((proc { |*a, **k| Host.run_and_capture(*a, **k) }), *args, **kwargs)
     end
 
     # @return [Hash] the environment variables for the display

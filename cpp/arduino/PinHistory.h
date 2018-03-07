@@ -86,7 +86,7 @@ class PinHistory : public ObservableDataStream {
     // this sets the value of the pin authoritatively
     // so if there was a queue, dump it.
     // the actual "set" operation doesn't happen until the next read
-    const T &operator=(const T& i) {
+    T operator=(const T& i) {
       qIn.clear();
       qOut.push(i);
       advertiseBit(qOut.back()); // not valid for all possible types but whatever
