@@ -24,7 +24,9 @@ Be prepared to write tests to accompany any code you would like to see merged.
 * `git add README.md CHANGELOG.md lib/arduino_ci/version.rb`
 * `git commit -m "vVERSION bump"`
 * `git tag -a vVERSION -m "Released version VERSION"`
+* `git stash save`
 * `gem build arduino_ci.gemspec`
+* `git stash pop`
 * `gem push arduino_ci-VERSION.gem`
 * `git push upstream`
 * `git push upstream --tags`
