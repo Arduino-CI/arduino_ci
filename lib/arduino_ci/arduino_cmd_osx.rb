@@ -14,8 +14,15 @@ module ArduinoCI
     flag :verify,          "--verify"
 
     # run the arduino command
-    def _run(*args, **kwargs)
-      Host.run(*args, **kwargs)
+    # @return [bool] whether the command succeeded
+    def _run_and_output(*args, **kwargs)
+      Host.run_and_output(*args, **kwargs)
+    end
+
+    # run the arduino command
+    # @return [Hash] keys for :success, :out, and :err
+    def _run_and_capture(*args, **kwargs)
+      Host.run_and_capture(*args, **kwargs)
     end
 
     def _lib_dir

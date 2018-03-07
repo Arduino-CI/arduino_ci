@@ -114,12 +114,18 @@ module ArduinoCI
     end
 
     # run the arduino command
-    def _run(*args, **kwargs)
+    # @return [bool] whether the command succeeded
+    def _run_and_output(*args, **kwargs)
       raise "Ian needs to implement this in a subclass #{args} #{kwargs}"
     end
 
-    # build and run the arduino command
-    def run(*args, **kwargs)
+    # run the arduino command
+    # @return [Hash] keys for :success, :out, and :err
+    def _run_and_capture(*args, **kwargs)
+      raise "Ian needs to implement this in a subclass #{args} #{kwargs}"
+    end
+
+    def _wrap_run(work_fn, *args, **kwargs)
       # do some work to extract & merge environment variables if they exist
       has_env = !args.empty? && args[0].class == Hash
       env_vars = has_env ? args[0] : {}
@@ -129,26 +135,21 @@ module ArduinoCI
 
       shell_vars = env_vars.map { |k, v| "#{k}=#{v}" }.join(" ")
       @last_msg = " $ #{shell_vars} #{full_args.join(' ')}"
-      _run(*full_cmd, **kwargs)
+      work_fn.call(*full_cmd, **kwargs)
+    end
+
+    # build and run the arduino command
+    def run_and_output(*args, **kwargs)
+      _wrap_run((proc { |*a, **k| _run_and_output(*a, **k) }), *args, **kwargs)
     end
 
     # run a command and capture its output
     # @return [Hash] {:out => String, :err => String, :success => bool}
     def run_and_capture(*args, **kwargs)
-      pipe_out, pipe_out_wr = IO.pipe
-      pipe_err, pipe_err_wr = IO.pipe
-      our_kwargs = { out: pipe_out_wr, err: pipe_err_wr }
-      eventual_kwargs = our_kwargs.merge(kwargs)
-      success = run(*args, **eventual_kwargs)
-      pipe_out_wr.close
-      pipe_err_wr.close
-      str_out = pipe_out.read
-      str_err = pipe_err.read
-      pipe_out.close
-      pipe_err.close
-      @last_err = str_err
-      @last_out = str_out
-      { out: str_out, err: str_err, success: success }
+      ret = _wrap_run((proc { |*a, **k| _run_and_capture(*a, **k) }), *args, **kwargs)
+      @last_err = ret[:err]
+      @last_out = ret[:out]
+      ret
     end
 
     # run a command and don't capture its output, but use the same signature

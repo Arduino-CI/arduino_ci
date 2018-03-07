@@ -108,23 +108,13 @@ module ArduinoCI
 
     # wrapper for the GCC command
     def run_gcc(*args, **kwargs)
-      pipe_out, pipe_out_wr = IO.pipe
-      pipe_err, pipe_err_wr = IO.pipe
       full_args = ["g++"] + args
       @last_cmd = " $ #{full_args.join(' ')}"
-      our_kwargs = { out: pipe_out_wr, err: pipe_err_wr }
-      eventual_kwargs = our_kwargs.merge(kwargs)
-      success = Host.run(*full_args, **eventual_kwargs)
 
-      pipe_out_wr.close
-      pipe_err_wr.close
-      str_out = pipe_out.read
-      str_err = pipe_err.read
-      pipe_out.close
-      pipe_err.close
-      @last_err = str_err
-      @last_out = str_out
-      success
+      ret = Host.run_and_capture(*full_args, **kwargs)
+      @last_err = ret[:err]
+      @last_out = ret[:out]
+      ret[:success]
     end
 
     # Return the GCC version
@@ -214,7 +204,7 @@ module ArduinoCI
       @last_cmd = executable
       @last_out = ""
       @last_err = ""
-      Host.run(executable)
+      Host.run_and_output(executable)
     end
 
   end

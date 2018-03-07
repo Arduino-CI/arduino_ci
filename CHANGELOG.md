@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Replaced pipes with `Open3.capture3` to avoid deadlocks when commands have too much output
 
 ### Security
 
