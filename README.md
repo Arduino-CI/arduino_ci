@@ -86,15 +86,13 @@ unittest(pin_history)
   digitalWrite(myPin, HIGH);
   digitalWrite(myPin, HIGH);
 
+  // pin history is queued in case we want to analyze it later.
+  // we expect 6 values in that queue.
   assertEqual(6, state->digitalPin[1].size());
   bool expected[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
   bool actual[6];
 
-  // move history queue into an array because at the moment, reading
-  // the history is destructive -- it's a linked-list queue.  this
-  // means that if toArray or hasElements fails, the queue will be in
-  // an unknown state and you should reset it before continuing with
-  // other tests
+  // convert history queue into an array so we can verify it
   int numMoved = state->digitalPin[myPin].toArray(actual, 6);
   assertEqual(6, numMoved);
 
@@ -102,6 +100,7 @@ unittest(pin_history)
   for (int i = 0; i < 6; ++i) {
     assertEqual(expected[i], actual[i]);
   }
+}
 ```
 
 
@@ -141,6 +140,43 @@ unittest(pin_read_history)
 
 #### Serial Data
 
+Basic input and output verification of serial port data can be done as follows:
+
+```c++
+unittest(reading_writing_serial)
+{
+  GodmodeState* state = GODMODE();
+  state->serialPort[0].dataIn = "";             // the queue of data waiting to be read
+  state->serialPort[0].dataOut = "";            // the history of data written
+
+  // When there is no data, nothing happens
+  assertEqual(-1, Serial.peek());
+  assertEqual("", state->serialPort[0].dataIn);
+  assertEqual("", state->serialPort[0].dataOut);
+
+  // if we put data on the input and peek at it, we see the value and it's not consumed
+  state->serialPort[0].dataIn = "a";
+  assertEqual('a', Serial.peek());
+  assertEqual("a", state->serialPort[0].dataIn);
+  assertEqual("", state->serialPort[0].dataOut);
+
+  // if we read the input, we see the value and it's consumed
+  assertEqual('a', Serial.read());
+  assertEqual("", state->serialPort[0].dataIn);
+  assertEqual("", state->serialPort[0].dataOut);
+
+  // when we write data, it shows up in the history -- the output buffer
+  Serial.write('b');
+  assertEqual("", state->serialPort[0].dataIn);
+  assertEqual("b", state->serialPort[0].dataOut);
+
+  // when we print more data, note that the history
+  // still contains the first thing we wrote
+  Serial.print("cdefg");
+  assertEqual("", state->serialPort[0].dataIn);
+  assertEqual("bcdefg", state->serialPort[0].dataOut);
+}
+```
 
 A more complicated example: working with serial port IO.  Let's say I have the following function:
 

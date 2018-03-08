@@ -41,7 +41,7 @@ unittest(serial_ports)
     Serial.print("cdefg");
     assertEqual("", state->serialPort[0].dataIn);
     assertEqual("bcdefg", state->serialPort[0].dataOut);
-}
+  }
 
 #endif
 
