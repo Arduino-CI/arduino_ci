@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <avr/pgmspace.h>
 #include "WString.h"
 
 #define DEC 10

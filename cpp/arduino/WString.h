@@ -4,6 +4,7 @@
 #include <string.h>
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 #include "AvrMath.h"
 #include "WCharacter.h"
 
