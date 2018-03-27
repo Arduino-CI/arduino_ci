@@ -73,6 +73,7 @@ inline unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8)
 
 #define word(...) makeWord(__VA_ARGS__)
 
-
-
-
+// audio 
+inline void tone(uint8_t _pin, unsigned int frequency, unsigned long duration) { }
+inline void tone(uint8_t _pin, unsigned int frequency) { }
+inline void noTone(uint8_t _pin) { }
