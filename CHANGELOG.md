@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Compile errors / portability issues in `WString.h` and `Print.h`, first reported by `dfrencham` on GitHub
 
 ### Security
 

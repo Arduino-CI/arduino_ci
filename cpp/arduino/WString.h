@@ -9,6 +9,22 @@
 
 typedef std::string string;
 
+// work around some portability issues
+#if defined(__clang__)
+  #define ARDUINOCI_ISNAN ::isnan
+  #define ARDUINOCI_ISINF ::isinf
+#elif defined(__GNUC__) || defined(__GNUG__)
+  #define ARDUINOCI_ISNAN std::isnan
+  #define ARDUINOCI_ISINF std::isinf
+#elif defined(_MSC_VER)
+  // TODO: no idea
+  #define ARDUINOCI_ISNAN ::isnan
+  #define ARDUINOCI_ISINF ::isinf
+#else
+  #define ARDUINOCI_ISNAN ::isnan
+  #define ARDUINOCI_ISINF ::isinf
+#endif
+
 class __FlashStringHelper;
 #define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(PSTR(string_literal)))
 
@@ -36,8 +52,8 @@ class String: public string
 
     static string dtoas(double val, int decimalPlaces) {
       double r = 0.5 * pow(0.1, decimalPlaces); // make sure that integer truncation will properly round
-      if (std::isnan(val)) return "nan";
-      if (std::isinf(val)) return "inf";
+      if (ARDUINOCI_ISNAN(val)) return "nan";
+      if (ARDUINOCI_ISINF(val)) return "inf";
       val += val > 0 ? r : -r;
       if (val > 4294967040.0) return "ovf";
       if (val <-4294967040.0) return "ovf";
