@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Definition of `LED_BUILTIN`, first reported by `dfrencham` on GitHub
+- Stubs for `tone` and `noTone`, first suggested by `dfrencham` on GitHub
 
 ### Changed
 
