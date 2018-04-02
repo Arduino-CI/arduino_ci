@@ -80,6 +80,8 @@ compile:
     - leonardo
 
 unittest:
+  compilers:
+    - g++
   libraries: ~
   platforms:
     - uno

@@ -25,6 +25,7 @@ COMPILE_SCHEMA = {
 }.freeze
 
 UNITTEST_SCHEMA = {
+  compilers: Array,
   platforms: Array,
   libraries: Array,
   testfiles: {
@@ -195,6 +196,13 @@ module ArduinoCI
     def package_url(package)
       return nil if @package_info[package].nil?
       @package_info[package][:url]
+    end
+
+    # compilers to build (unit tests) with
+    # @return [Array<String>] The compiler binary names (e.g. g++) to build with
+    def compilers_to_use
+      return [] if @unittest_info[:compilers].nil?
+      @unittest_info[:compilers]
     end
 
     # platforms to build [the examples on]

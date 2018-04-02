@@ -69,11 +69,15 @@ cpp_library = ArduinoCI::CppLibrary.new(installed_library_path)
 attempt("Library installed at #{installed_library_path}") { true }
 
 # check GCC
-attempt_multiline("Checking GCC version") do
-  version = cpp_library.gcc_version
-  next nil unless version
-  puts version.split("\n").map { |l| "    #{l}" }.join("\n")
-  version
+compilers = config.compilers_to_use
+assure("The set of compilers (#{compilers.length}) isn't empty") { !compilers.empty? }
+compilers.each do |gcc_binary|
+  attempt_multiline("Checking #{gcc_binary} version") do
+    version = cpp_library.gcc_version(gcc_binary)
+    next nil unless version
+    puts version.split("\n").map { |l| "    #{l}" }.join("\n")
+    version
+  end
 end
 
 # gather up all required boards so we can install them up front.
@@ -121,20 +125,22 @@ else
     last_board = board
     cpp_library.test_files.each do |unittest_path|
       unittest_name = File.basename(unittest_path)
-      attempt_multiline("Unit testing #{unittest_name}") do
-        exe = cpp_library.build_for_test_with_configuration(
-          unittest_path,
-          config.aux_libraries_for_unittest,
-          config.gcc_config(p)
-        )
-        puts
-        unless exe
-          puts "Last command: #{cpp_library.last_cmd}"
-          puts cpp_library.last_out
-          puts cpp_library.last_err
-          next false
+      compilers.each do |gcc_binary|
+        attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary}") do
+          exe = cpp_library.build_for_test_with_configuration(
+            unittest_path,
+            config.aux_libraries_for_unittest,
+            config.gcc_config(p)
+          )
+          puts
+          unless exe
+            puts "Last command: #{cpp_library.last_cmd}"
+            puts cpp_library.last_out
+            puts cpp_library.last_err
+            next false
+          end
+          cpp_library.run_test_file(exe)
         end
-        cpp_library.run_test_file(exe)
       end
     end
   end

@@ -32,6 +32,9 @@ compile:
     - esp8266
 
 unittest:
+  compilers:
+    - g++
+    - g++-7
   testfiles:
     select:
       - "*-*.*"

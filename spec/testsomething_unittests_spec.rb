@@ -26,32 +26,40 @@ RSpec.describe "TestSomething C++" do
       expect(allowed_files.empty?).to be false
     end
 
+    it "has at least one compiler defined" do
+      expect(config.compilers_to_use.length.zero?).to be(false)
+    end
+
     test_files = config.allowable_unittest_files(cpp_library.test_files)
     test_files.each do |path|
       tfn = File.basename(path)
-      context "file #{tfn}" do
 
-        before(:all) do
-          @exe = cpp_library.build_for_test_with_configuration(path, [], config.gcc_config("uno"))
-        end
+      config.compilers_to_use.each do |compiler|
 
-        # extra debug for c++ failures
-        after(:each) do |example|
-          if example.exception
-            puts "Last command: #{cpp_library.last_cmd}"
-            puts "========== Stdout:"
-            puts cpp_library.last_out
-            puts "========== Stderr:"
-            puts cpp_library.last_err
+        context "file #{tfn} (using #{compiler})" do
+
+          before(:all) do
+            @exe = cpp_library.build_for_test_with_configuration(path, [], compiler, config.gcc_config("uno"))
           end
-        end
 
-        it "#{tfn} builds successfully" do
-          expect(@exe).not_to be nil
-        end
-        it "#{tfn} passes tests" do
-          skip "Can't run the test program because it failed to build" if @exe.nil?
-          expect(cpp_library.run_test_file(@exe)).to_not be_falsey
+          # extra debug for c++ failures
+          after(:each) do |example|
+            if example.exception
+              puts "Last command: #{cpp_library.last_cmd}"
+              puts "========== Stdout:"
+              puts cpp_library.last_out
+              puts "========== Stderr:"
+              puts cpp_library.last_err
+            end
+          end
+
+          it "#{tfn} builds successfully" do
+            expect(@exe).not_to be nil
+          end
+          it "#{tfn} passes tests" do
+            skip "Can't run the test program because it failed to build" if @exe.nil?
+            expect(cpp_library.run_test_file(@exe)).to_not be_falsey
+          end
         end
       end
     end

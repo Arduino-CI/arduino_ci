@@ -107,10 +107,9 @@ module ArduinoCI
     end
 
     # wrapper for the GCC command
-    def run_gcc(*args, **kwargs)
-      full_args = ["g++"] + args
+    def run_gcc(gcc_binary, *args, **kwargs)
+      full_args = [gcc_binary] + args
       @last_cmd = " $ #{full_args.join(' ')}"
-
       ret = Host.run_and_capture(*full_args, **kwargs)
       @last_err = ret[:err]
       @last_out = ret[:out]
@@ -119,8 +118,8 @@ module ArduinoCI
 
     # Return the GCC version
     # @return [String] the version reported by `gcc -v`
-    def gcc_version
-      return nil unless run_gcc("-v")
+    def gcc_version(gcc_binary)
+      return nil unless run_gcc(gcc_binary, "-v")
       @last_err
     end
 
@@ -183,7 +182,7 @@ module ArduinoCI
     # @param aux_libraries [String] The external Arduino libraries required by this project
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [String] path to the compiled test executable
-    def build_for_test_with_configuration(test_file, aux_libraries, ci_gcc_config)
+    def build_for_test_with_configuration(test_file, aux_libraries, gcc_binary, ci_gcc_config)
       base = File.basename(test_file)
       executable = File.expand_path("unittest_#{base}.bin")
       File.delete(executable) if File.exist?(executable)
@@ -192,7 +191,7 @@ module ArduinoCI
         test_args(aux_libraries, ci_gcc_config),
         [test_file],
       ].flatten(1)
-      return nil unless run_gcc(*args)
+      return nil unless run_gcc(gcc_binary, *args)
       artifacts << executable
       executable
     end
