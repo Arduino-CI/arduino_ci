@@ -43,6 +43,21 @@ unittest(serial_ports)
     assertEqual("bcdefg", state->serialPort[0].dataOut);
   }
 
+  unittest(all_serial_writes)
+  {
+    GodmodeState* state = GODMODE();
+    state->serialPort[0].dataIn = "";
+    state->serialPort[0].dataOut = "";
+
+    char str[4] = "xyz";
+    Serial.write(reinterpret_cast<const uint8_t *>(str ), 3);
+    Serial.print((int)1);
+    Serial.print((long)2);
+    Serial.print((double)3.4);
+    Serial.print((char)'a');
+    Serial.print("b");
+  }
+
 #endif
 
 unittest_main()

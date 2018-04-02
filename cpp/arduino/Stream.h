@@ -56,10 +56,10 @@ class Stream : public Print
       return ret;
     }
 
+    // https://stackoverflow.com/a/4271276
     using Print::write;
 
     virtual size_t write(uint8_t aChar) { mGodmodeDataIn->append(String((char)aChar)); return 1; }
-
 
     Stream() {
       mTimeoutMillis = 1000;

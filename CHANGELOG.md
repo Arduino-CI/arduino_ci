@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Compile errors / portability issues in `WString.h` and `Print.h`, first reported by `dfrencham` on GitHub
+- Compile errors / inheritance issues in `Print.h` and `Stream.h`, first reported by `dfrencham` on GitHub
 
 ### Security
 
