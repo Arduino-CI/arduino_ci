@@ -56,6 +56,7 @@ unittest(serial_ports)
     Serial.print((double)3.4);
     Serial.print((char)'a');
     Serial.print("b");
+    assertEqual("xyz123.4000000000ab", state->serialPort[0].dataOut);
   }
 
 #endif
