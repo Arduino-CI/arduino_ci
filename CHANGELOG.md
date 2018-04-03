@@ -6,9 +6,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Definition of `LED_BUILTIN`, first reported by `dfrencham` on GitHub
-- Stubs for `tone` and `noTone`, first suggested by `dfrencham` on GitHub
-- Ability to specify multiple compilers for unit testing
 
 ### Changed
 
@@ -17,11 +14,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+### Security
+
+
+## [0.1.8] - 2018-04-03
+### Added
+- Definition of `LED_BUILTIN`, first reported by `dfrencham` on GitHub
+- Stubs for `tone` and `noTone`, first suggested by `dfrencham` on GitHub
+- Ability to specify multiple compilers for unit testing
+
+### Fixed
 - Compile errors / portability issues in `WString.h` and `Print.h`, first reported by `dfrencham` on GitHub
 - Compile errors / inheritance issues in `Print.h` and `Stream.h`, first reported by `dfrencham` on GitHub
 - Print functions for int, double, long, etc
-
-### Security
 
 
 ## [0.1.7] - 2018-03-07
@@ -147,7 +153,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.4...v0.1.5
