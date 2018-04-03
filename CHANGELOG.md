@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Definition of `LED_BUILTIN`, first reported by `dfrencham` on GitHub
+- Stubs for `tone` and `noTone`, first suggested by `dfrencham` on GitHub
+- Ability to specify multiple compilers for unit testing
 
 ### Changed
 
@@ -14,6 +17,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Compile errors / portability issues in `WString.h` and `Print.h`, first reported by `dfrencham` on GitHub
+- Compile errors / inheritance issues in `Print.h` and `Stream.h`, first reported by `dfrencham` on GitHub
+- Print functions for int, double, long, etc
 
 ### Security
 

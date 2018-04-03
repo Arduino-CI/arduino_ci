@@ -349,6 +349,10 @@ For your unit tests, in addition to setting specific libraries and platforms, yo
 
 ```yaml
 unittest:
+  compilers:
+    - g++      # default
+    - g++-4.9
+    - g++-7
   testfiles:
     select:
       - "*-*.*"

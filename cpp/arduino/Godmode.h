@@ -91,6 +91,11 @@ void analogWrite(uint8_t, int);
 #define analogReadResolution(...) _NOP()
 #define analogWriteResolution(...) _NOP()
 
+// TODO: issue #26 to track the commanded state here
+inline void tone(uint8_t _pin, unsigned int frequency, unsigned long duration = 0) {}
+inline void tone(uint8_t _pin, unsigned int frequency) {}
+inline void noTone(uint8_t _pin) {}
+
 
 GodmodeState* GODMODE();
 

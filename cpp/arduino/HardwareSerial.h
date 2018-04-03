@@ -57,11 +57,8 @@ class HardwareSerial : public Stream, public ObservableDataStream
       return 1;
     }
 
-    inline size_t write(unsigned long n) { return write((uint8_t)n); }
-    inline size_t write(long n) { return write((uint8_t)n); }
-    inline size_t write(unsigned int n) { return write((uint8_t)n); }
-    inline size_t write(int n) { return write((uint8_t)n); }
-    // using Print::write; // pull in write(str) and write(buf, size) from Print
+    // https://stackoverflow.com/a/4271276
+    using Print::write; // pull in write(str) and write(buf, size) from Print
     operator bool() { return true; }
 
 };

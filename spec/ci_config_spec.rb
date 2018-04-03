@@ -28,6 +28,8 @@ RSpec.describe ArduinoCI::CIConfig do
       expect(default_config.platforms_to_unittest).to match(["uno", "due", "zero", "leonardo"])
       expect(default_config.aux_libraries_for_build).to match([])
       expect(default_config.aux_libraries_for_unittest).to match([])
+
+      expect(default_config.compilers_to_use).to match(["g++"])
     end
   end
 
@@ -63,6 +65,9 @@ RSpec.describe ArduinoCI::CIConfig do
       expect(combined_config.platforms_to_unittest).to match(["bogo"])
       expect(combined_config.aux_libraries_for_build).to match(["Adafruit FONA Library"])
       expect(combined_config.aux_libraries_for_unittest).to match(["abc123", "def456"])
+
+      expect(combined_config.compilers_to_use).to match(["g++", "g++-7"])
+
     end
   end
 

@@ -4,7 +4,7 @@
  - `ruby -v`:
  - `bundle -v`:
  - `bundle info arduino_ci`:
- - `gcc -v`:
+ - `g++ -v`:
  - Arduino IDE version:
  - URL of failing Travis CI job:
  - URL of your Arduino project:

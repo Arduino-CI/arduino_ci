@@ -62,10 +62,12 @@ RSpec.describe ArduinoCI::CppLibrary do
     test_files = cpp_library.test_files
     test_files.each do |path|
       expected = path.include?("good")
-      it "tests #{File.basename(path)} expecting #{expected}" do
-        exe = cpp_library.build_for_test_with_configuration(path, [], config.gcc_config("uno"))
-        expect(exe).not_to be nil
-        expect(cpp_library.run_test_file(exe)).to eq(expected)
+      config.compilers_to_use.each do |compiler|
+        it "tests #{File.basename(path)} with #{compiler} expecting #{expected}" do
+          exe = cpp_library.build_for_test_with_configuration(path, [], compiler, config.gcc_config("uno"))
+          expect(exe).not_to be nil
+          expect(cpp_library.run_test_file(exe)).to eq(expected)
+        end
       end
     end
   end
