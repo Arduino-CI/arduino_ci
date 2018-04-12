@@ -18,15 +18,16 @@ Be prepared to write tests to accompany any code you would like to see merged.
 ## Packaging the Gem
 
 * Merge pull request with new features
+* `git stash save` (at least before the gem build step, but easiest here).
 * `git pull --rebase`
 * Bump the version in lib/arduino_ci/version.rb and change it in README.md (since rubydoc.info doesn't always redirect to the latest version)
 * Update the sections of `CHANGELOG.md`
 * `git add README.md CHANGELOG.md lib/arduino_ci/version.rb`
 * `git commit -m "vVERSION bump"`
 * `git tag -a vVERSION -m "Released version VERSION"`
-* `git stash save`
 * `gem build arduino_ci.gemspec`
 * `git stash pop`
 * `gem push arduino_ci-VERSION.gem`
 * `git push upstream`
 * `git push upstream --tags`
+* Visit http://www.rubydoc.info/gems/arduino_ci/VERSION to initiate the doc generation process
