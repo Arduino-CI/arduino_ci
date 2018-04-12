@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Explicit tests of `.arduino-ci.yml` in `TestSomething` example
 
 ### Changed
 
@@ -14,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Malformed YAML (duplicate unittests section) now has no duplicate section
+- arduino_ci_remote.rb script now has correct arguments in build_for_test_with_configuration
 
 ### Security
 
