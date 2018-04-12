@@ -30,6 +30,10 @@ RSpec.describe "TestSomething C++" do
       expect(config.compilers_to_use.length.zero?).to be(false)
     end
 
+    it "has at least one unit test platform defined" do
+      expect(config.platforms_to_unittest.length.zero?).to be(false)
+    end
+
     test_files = config.allowable_unittest_files(cpp_library.test_files)
     test_files.each do |path|
       tfn = File.basename(path)
