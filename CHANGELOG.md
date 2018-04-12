@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Explicit tests of `.arduino-ci.yml` in `TestSomething` example
 
 ### Changed
 
@@ -15,10 +14,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-- Malformed YAML (duplicate unittests section) now has no duplicate section
-- arduino_ci_remote.rb script now has correct arguments in build_for_test_with_configuration
+build_for_test_with_configuration
 
 ### Security
+
+
+## [0.1.9] - 2018-04-12
+### Added
+- Explicit tests of `.arduino-ci.yml` in `TestSomething` example
+
+### Fixed
+- Malformed YAML (duplicate unittests section) now has no duplicate section
+- arduino_ci_remote.rb script now has correct arguments in build_for_test_with_configuration
 
 
 ## [0.1.8] - 2018-04-03
@@ -156,7 +163,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/ifreecarve/arduino_ci/compare/v0.1.5...v0.1.6
