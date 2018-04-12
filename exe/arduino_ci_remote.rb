@@ -117,7 +117,7 @@ last_board = nil
 if cpp_library.test_files.empty?
   attempt("Skipping unit tests; no test files were found") { true }
 elsif config.platforms_to_unittest.empty?
-  attempt("Skipping unit tests; no platforms were requestsed") { true }
+  attempt("Skipping unit tests; no platforms were requested") { true }
 else
   config.platforms_to_unittest.each do |p|
     board = all_platforms[p][:board]
@@ -130,6 +130,7 @@ else
           exe = cpp_library.build_for_test_with_configuration(
             unittest_path,
             config.aux_libraries_for_unittest,
+            gcc_binary,
             config.gcc_config(p)
           )
           puts
