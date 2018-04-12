@@ -2,7 +2,5 @@ unittest:
   platforms:
     - uno
     - due
-
-unittest:
   compilers:
     - g++
