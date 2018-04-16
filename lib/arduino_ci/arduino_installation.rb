@@ -5,6 +5,7 @@ require "arduino_ci/arduino_cmd_linux_builder"
 
 DESIRED_ARDUINO_IDE_VERSION = "1.8.5".freeze
 USE_BUILDER = false
+DOWNLOAD_ATTEMPTS = 3
 
 module ArduinoCI
 
@@ -102,24 +103,35 @@ module ArduinoCI
         when :linux
           pkgname = "arduino-#{DESIRED_ARDUINO_IDE_VERSION}"
           tarfile = "#{pkgname}-linux64.tar.xz"
-          if File.exist? tarfile
-            puts "Arduino tarfile seems to have been downloaded already"
-          else
-            puts "Downloading Arduino binary with wget"
-            system("wget", "--quiet", "--progress=dot:giga", "https://downloads.arduino.cc/#{tarfile}")
+          url = "https://downloads.arduino.cc/#{tarfile}"
+          attempts = 0
+
+          loop do
+            if File.exist? tarfile
+              puts "Arduino tarfile seems to have been downloaded already" if attempts.zero?
+              break
+            elsif attempts >= DOWNLOAD_ATTEMPTS
+              break puts "After #{DOWNLOAD_ATTEMPTS} attempts, failed to download #{url}"
+            else
+              puts "Attempting to download Arduino binary with wget"
+              system("wget", "--quiet", "--progress=dot:giga", url)
+            end
+            attempts += 1
           end
 
           if File.exist? pkgname
             puts "Tarfile seems to have been extracted already"
-          else
+          elsif File.exist? tarfile
             puts "Extracting archive with tar"
             system("tar", "xf", tarfile)
           end
 
           if File.exist? force_install_location
             puts "Arduino binary seems to have already been force-installed"
-          else
+          elsif File.exist? pkgname
             system("mv", pkgname, force_install_location)
+          else
+            puts "Arduino force-install failed"
           end
         end
       end
