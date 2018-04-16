@@ -106,6 +106,11 @@ module ArduinoCI
           url = "https://downloads.arduino.cc/#{tarfile}"
           attempts = 0
 
+          unless Host.which("wget")
+            puts "Arduino force-install failed: wget does not appear to be installed!"
+            return
+          end
+
           loop do
             if File.exist? tarfile
               puts "Arduino tarfile seems to have been downloaded already" if attempts.zero?

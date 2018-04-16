@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Arduino `force_install` on Linux now attempts downloading 3 times and provides more information on failure
+- Explicit check for `wget`
 
 ### Changed
 
