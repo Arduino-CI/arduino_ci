@@ -30,7 +30,8 @@ def perform_action(message, multiline, on_fail_msg, abort_on_fail)
     print line
   end
   result = yield
-  mark = result ? "✓" : "✗"
+  # green color if passed, red if failed
+  mark = result ? "\033[32m ✓\033[0m" : "\033[31m ✗\033[0m"
   # if multline, put checkmark at full width
   print endline if multiline
   puts mark.rjust(WIDTH - line.length, " ")

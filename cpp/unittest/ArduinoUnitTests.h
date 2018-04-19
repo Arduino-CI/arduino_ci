@@ -4,6 +4,10 @@
 #include <iostream>
 using namespace std;
 
+#define COLOR_RESET   "\033[0m"
+#define COLOR_RED     "\033[31m"
+#define COLOR_GREEN   "\033[32m"
+
 struct Results {
   int passed;
   int failed;
@@ -42,9 +46,9 @@ class Test
         void onTestEnd(TestData td) {
           cerr << "    1.." << mAssertCounter << endl;
           if (td.result == RESULT_PASS) {
-            cerr << "ok " << mTestCounter << " - " << td.name << endl;
+            cerr << COLOR_GREEN << "ok " << COLOR_RESET << mTestCounter << " - " << td.name << endl;
           } else {
-            cerr << "not ok " << mTestCounter << " - " << td.name << endl;
+            cerr << COLOR_RED << "not ok " << COLOR_RESET << mTestCounter << " - " << td.name << endl;
           }
         }
 
@@ -61,7 +65,7 @@ class Test
               const char* rhsLabel,
               const B &rhs
           ) {
-            cerr << "    " << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - ";
+            cerr << "    " << (pass ? COLOR_GREEN : COLOR_RED) << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - ";
             cerr << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl;
             if (!pass) {
               cerr << "      ---" << endl;
