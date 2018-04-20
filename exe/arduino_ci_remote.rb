@@ -5,8 +5,16 @@ require 'set'
 WIDTH = 80
 
 @failure_count = 0
-def red(coltext); "\e[31m#{coltext}\e[0m"; end
-def green(coltext); "\e[32m#{coltext}\e[0m"; end
+
+# output green text
+def red(coltext)
+  "\e[31m#{coltext}\e[0m"
+end
+
+# output red text
+def green(coltext)
+  "\e[32m#{coltext}\e[0m"
+end
 
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate(final = nil)
