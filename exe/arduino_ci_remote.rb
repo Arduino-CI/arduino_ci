@@ -5,6 +5,8 @@ require 'set'
 WIDTH = 80
 
 @failure_count = 0
+def red(coltext); "\e[31m#{coltext}\e[0m"; end
+def green(coltext); "\e[32m#{coltext}\e[0m"; end
 
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate(final = nil)
@@ -30,8 +32,7 @@ def perform_action(message, multiline, on_fail_msg, abort_on_fail)
     print line
   end
   result = yield
-  # green color if passed, red if failed
-  mark = result ? "\033[32m ✓\033[0m" : "\033[31m ✗\033[0m"
+  mark = result ? green("✓") : red("✗")
   # if multline, put checkmark at full width
   print endline if multiline
   puts mark.rjust(WIDTH - line.length, " ")

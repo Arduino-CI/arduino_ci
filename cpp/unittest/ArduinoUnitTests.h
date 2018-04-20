@@ -65,7 +65,7 @@ class Test
               const char* rhsLabel,
               const B &rhs
           ) {
-            cerr << "    " << (pass ? COLOR_GREEN : COLOR_RED) << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - ";
+            cerr << "    " << (pass ? COLOR_GREEN : COLOR_RED) << (pass ? "" : "not ") << "ok " << COLOR_RESET << ++mAssertCounter << " - ";
             cerr << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl;
             if (!pass) {
               cerr << "      ---" << endl;
