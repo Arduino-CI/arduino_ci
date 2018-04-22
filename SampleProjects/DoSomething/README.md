@@ -106,4 +106,4 @@ This test defines one `unittest` (a macro provided by `ArduionUnitTests.h`), cal
 
 # Credits
 
-This Arduino example was created in January 2018 by Ian Katz <ifreecarve@gmail.com>.
+This Arduino example was created in January 2018 by Ian Katz <ianfixes@gmail.com>.
