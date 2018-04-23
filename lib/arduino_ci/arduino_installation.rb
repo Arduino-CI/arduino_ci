@@ -32,20 +32,35 @@ module ArduinoCI
         osx_root = "/Applications/Arduino.app/Contents"
         return nil unless File.exist? osx_root
 
-        ret = ArduinoCmdOSX.new
-
-        # old_way
-        # ret.base_cmd = [File.join("#{osx_root}/MacOS", "Arduino")]
-        ret.base_cmd = [
-          "java",
-          "-cp", "#{osx_root}/Java/*",
-          "-DAPP_DIR=#{osx_root}/Java",
-          "-Dfile.encoding=UTF-8",
-          "-Dapple.awt.UIElement=true",
-          "-Xms128M",
-          "-Xmx512M",
-          "processing.app.Base",
+        launchers = [
+          # try a hack that skips splash screen
+          # from https://github.com/arduino/Arduino/issues/1970#issuecomment-321975809
+          [
+            "java",
+            "-cp", "#{osx_root}/Java/*",
+            "-DAPP_DIR=#{osx_root}/Java",
+            "-Dfile.encoding=UTF-8",
+            "-Dapple.awt.UIElement=true",
+            "-Xms128M",
+            "-Xmx512M",
+            "processing.app.Base",
+          ],
+          # failsafe way
+          [File.join(osx_root, "MacOS", "Arduino")]
         ]
+
+        # create return and find a command launcher that works
+        ret = ArduinoCmdOSX.new
+        launchers.each do |launcher|
+          ret.base_cmd = launcher
+          # test whether this method successfully launches the IDE
+          # note that "successful launch" involves a command that will fail,
+          # because that's faster than any command which succeeds.  what we
+          # don't want to see is a java error.
+          args = ret.base_cmd + ["--bogus-option"]
+          result = Host.run_and_capture(*args)
+          break if result[:err].include? "Error: unknown option: --bogus-option"
+        end
         ret
       end
 
