@@ -8,11 +8,12 @@
 - `bundle info arduino_ci`:
 - `g++ -v`:
 - Arduino IDE version:
+- `java -version`:
 - URL of failing Travis CI job:
 - URL of your Arduino project:
 
 
-## Issue / Feature Request Summary
+## (Issue Summary / Feature Request)
 
 
 ## Arduino or Unit Test Code, Illustrating the Problem
