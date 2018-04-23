@@ -2,10 +2,10 @@ require "arduino_ci/host"
 require "arduino_ci/arduino_cmd_osx"
 require "arduino_ci/arduino_cmd_linux"
 require "arduino_ci/arduino_cmd_linux_builder"
+require "arduino_ci/arduino_downloader_linux"
+require "arduino_ci/arduino_downloader_osx"
 
 DESIRED_ARDUINO_IDE_VERSION = "1.8.5".freeze
-USE_BUILDER = false
-DOWNLOAD_ATTEMPTS = 3
 
 module ArduinoCI
 
@@ -13,23 +13,34 @@ module ArduinoCI
   class ArduinoInstallation
 
     class << self
-      # @return [String] The location where a forced install will go
-      def force_install_location
-        File.join(ENV['HOME'], 'arduino_ci_ide')
-      end
 
       # attempt to find a workable Arduino executable across platforms
-      # @return [ArduinoCI::ArduinoCmd] an instance of the command
+      #
+      # Autolocation assumed to be an expensive operation
+      # @return [ArduinoCI::ArduinoCmd] an instance of the command or nil if it can't be found
       def autolocate
+        ret = nil
         case Host.os
-        when :osx then autolocate_osx
-        when :linux then autolocate_linux
+        when :osx then
+          ret = autolocate_osx
+        when :linux then
+          loc = ArduinoDownloaderLinux.autolocated_executable
+          return nil if loc.nil?
+          ret = ArduinoCmdLinux.new
+          ret.base_cmd = [loc]
+          # when :windows then
+          #   ArduinoDownloaderWindows.autolocation
+          #   return nil if loc.nil?
+          #   ret = ArduinoCmdWindows.new
+          #   ret.base_cmd = [loc]
         end
+        ret
       end
 
-      # @return [ArduinoCI::ArduinoCmdOSX] an instance of a command
+      # @return [ArduinoCI::ArduinoCmdOSX] an instance of the command or nil if it can't be found
       def autolocate_osx
-        osx_root = "/Applications/Arduino.app/Contents"
+        osx_root = ArduinoDownloaderOSX.autolocated_installation
+        return nil if osx_root.nil?
         return nil unless File.exist? osx_root
 
         launchers = [
@@ -52,50 +63,16 @@ module ArduinoCI
         # create return and find a command launcher that works
         ret = ArduinoCmdOSX.new
         launchers.each do |launcher|
-          ret.base_cmd = launcher
           # test whether this method successfully launches the IDE
           # note that "successful launch" involves a command that will fail,
           # because that's faster than any command which succeeds.  what we
           # don't want to see is a java error.
-          args = ret.base_cmd + ["--bogus-option"]
+          args = launcher + ["--bogus-option"]
           result = Host.run_and_capture(*args)
-          break if result[:err].include? "Error: unknown option: --bogus-option"
-        end
-        ret
-      end
-
-      # @return [ArduinoCI::ArduinoCmdLinux] an instance of a command
-      def autolocate_linux
-        if USE_BUILDER
-          builder_name = "arduino-builder"
-          cli_place = Host.which(builder_name)
-          unless cli_place.nil?
-            ret = ArduinoCmdLinuxBuilder.new
-            ret.base_cmd = [cli_place]
+          if result[:err].include? "Error: unknown option: --bogus-option"
+            ret.base_cmd = launcher
             return ret
           end
-
-          forced_builder = File.join(force_install_location, builder_name)
-          if File.exist?(forced_builder)
-            ret = ArduinoCmdLinuxBuilder.new
-            ret.base_cmd = [forced_builder]
-            return ret
-          end
-        end
-
-        gui_name = "arduino"
-        gui_place = Host.which(gui_name)
-        unless gui_place.nil?
-          ret = ArduinoCmdLinux.new
-          ret.base_cmd = [gui_place]
-          return ret
-        end
-
-        forced_arduino = File.join(force_install_location, gui_name)
-        if File.exist?(forced_arduino)
-          ret = ArduinoCmdLinux.new
-          ret.base_cmd = [forced_arduino]
-          return ret
         end
         nil
       end
@@ -114,46 +91,13 @@ module ArduinoCI
       # Forcibly install Arduino from the web
       # @return [bool] Whether the command succeeded
       def force_install
-        case Host.os
-        when :linux
-          pkgname = "arduino-#{DESIRED_ARDUINO_IDE_VERSION}"
-          tarfile = "#{pkgname}-linux64.tar.xz"
-          url = "https://downloads.arduino.cc/#{tarfile}"
-          attempts = 0
-
-          unless Host.which("wget")
-            puts "Arduino force-install failed: wget does not appear to be installed!"
-            return
-          end
-
-          loop do
-            if File.exist? tarfile
-              puts "Arduino tarfile seems to have been downloaded already" if attempts.zero?
-              break
-            elsif attempts >= DOWNLOAD_ATTEMPTS
-              break puts "After #{DOWNLOAD_ATTEMPTS} attempts, failed to download #{url}"
-            else
-              puts "Attempting to download Arduino binary with wget"
-              system("wget", "--quiet", "--progress=dot:giga", url)
-            end
-            attempts += 1
-          end
-
-          if File.exist? pkgname
-            puts "Tarfile seems to have been extracted already"
-          elsif File.exist? tarfile
-            puts "Extracting archive with tar"
-            system("tar", "xf", tarfile)
-          end
-
-          if File.exist? force_install_location
-            puts "Arduino binary seems to have already been force-installed"
-          elsif File.exist? pkgname
-            system("mv", pkgname, force_install_location)
-          else
-            puts "Arduino force-install failed"
-          end
-        end
+        worker_class =  case Host.os
+                        when :osx then ArduinoDownloaderOSX
+                        # when :windows then force_install_windows
+                        when :linux then ArduinoDownloaderLinux
+                        end
+        worker = worker_class.new(DESIRED_ARDUINO_IDE_VERSION)
+        worker.execute
       end
 
     end
