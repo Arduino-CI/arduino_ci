@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Author
 - Splash-screen-skip hack on OSX now falls back on "official" launch method if the hack doesn't work
+- Refactored download/install code in prepration for windows CI
 
 ### Deprecated
 
