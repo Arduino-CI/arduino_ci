@@ -1,0 +1,25 @@
+install:
+  - set PATH=C:\Ruby22\bin;%PATH%
+  - bundle install
+  - '%CYG_ROOT%\setup-%CYG_ARCH%.exe -qnNdO -R %CYG_ROOT% -s http://cygwin.mirror.constant.com -l %CYG_ROOT%/var/cache/setup -P autoconf -P automake -P bison -P libgmp-devel -P gcc-core -P gcc-g++ -P mingw-runtime -P mingw-binutils -P mingw-gcc-core -P mingw-gcc-g++ -P mingw-pthreads -P mingw-w32api -P libtool -P make -P gettext-devel -P gettext -P intltool -P libiconv -P pkg-config -P git -P wget -P curl'
+
+environment:
+  matrix:
+    - CYG_ARCH: x86_64
+      CYG_ROOT: C:/cygwin64
+
+build: off
+
+before_test:
+  - ruby -v
+  - gem -v
+  - bundle -v
+  - g++ -v
+
+test_script:
+  - bundle exec rubocop --version
+  - bundle exec rubocop -D .
+  - bundle exec rspec
+  - cd SampleProjects\TestSomething
+  - bundle install
+  - bundle exec arduino_ci_remote.rb
