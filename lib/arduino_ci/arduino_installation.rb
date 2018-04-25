@@ -1,9 +1,12 @@
 require "arduino_ci/host"
 require "arduino_ci/arduino_cmd_osx"
 require "arduino_ci/arduino_cmd_linux"
+require "arduino_ci/arduino_cmd_windows"
 require "arduino_ci/arduino_cmd_linux_builder"
-require "arduino_ci/arduino_downloader_linux"
 require "arduino_ci/arduino_downloader_osx"
+require "arduino_ci/arduino_downloader_linux"
+
+require "arduino_ci/arduino_downloader_windows" if ArduinoCI::Host.os == :windows
 
 DESIRED_ARDUINO_IDE_VERSION = "1.8.5".freeze
 
@@ -28,11 +31,11 @@ module ArduinoCI
           return nil if loc.nil?
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [loc]
-          # when :windows then
-          #   ArduinoDownloaderWindows.autolocation
-          #   return nil if loc.nil?
-          #   ret = ArduinoCmdWindows.new
-          #   ret.base_cmd = [loc]
+        when :windows then
+          ArduinoDownloaderWindows.autolocation
+          return nil if loc.nil?
+          ret = ArduinoCmdWindows.new
+          ret.base_cmd = [loc]
         end
         ret
       end

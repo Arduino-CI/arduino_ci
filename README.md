@@ -1,5 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci)
-[![Build Status](https://travis-ci.org/ianfixes/arduino_ci.svg)](https://travis-ci.org/ianfixes/arduino_ci)
+[![Linux Build Status](https://travis-ci.org/ianfixes/arduino_ci.svg)](https://travis-ci.org/ianfixes/arduino_ci)
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/8f6e39dea319m83q?svg=true)](https://ci.appveyor.com/project/ianfixes/arduino-ci)
 [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.1.9)
 
 # ArduinoCI Ruby gem (`arduino_ci`)
