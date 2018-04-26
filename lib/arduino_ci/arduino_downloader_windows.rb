@@ -1,6 +1,6 @@
 require 'base64'
 require 'shellwords' # fingers crossed this works on win32
-require 'win32'
+require 'win32/registry'
 require "arduino_ci/arduino_downloader"
 
 module ArduinoCI
