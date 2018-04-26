@@ -32,7 +32,7 @@ module ArduinoCI
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [loc]
         when :windows then
-          ArduinoDownloaderWindows.autolocation
+          loc = ArduinoDownloaderWindows.autolocated_executable
           return nil if loc.nil?
           ret = ArduinoCmdWindows.new
           ret.base_cmd = [loc]
