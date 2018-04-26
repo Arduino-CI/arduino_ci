@@ -21,6 +21,9 @@ Layout/EmptyLinesAroundModuleBody:
 Layout/ExtraSpacing:
   Enabled: false
 
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
 Metrics/LineLength:
   Description: Limit lines to 80 characters.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#80-character-limits
