@@ -74,7 +74,7 @@ module ArduinoCI
       return nil if exe.nil?
       File.dirname(exe)
     end
-     
+
     # The executable Arduino file in an existing installation, or nil
     # @return [string]
     def self.existing_executable
