@@ -1,7 +1,7 @@
 PATH
-  remote: /Users/ikatz/Development/non-wayfair/arduino_ci
+  remote: ../..
   specs:
-    arduino_ci (0.1.7)
+    arduino_ci (0.1.9)
       os (~> 1.0)
 
 GEM
@@ -11,9 +11,10 @@ GEM
 
 PLATFORMS
   ruby
+  x64-mingw32
 
 DEPENDENCIES
   arduino_ci!
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
