@@ -85,7 +85,7 @@ module ArduinoCI
         exe = File.join(path, "arduino_debug.exe")
         return exe if File.exist? exe
       end
-      rescue
+    rescue
       nil
     end
 
