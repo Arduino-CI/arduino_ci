@@ -82,7 +82,7 @@ module ArduinoCI
       Win32::Registry::HKEY_LOCAL_MACHINE.open(arduino_reg) do |reg|
         path = reg.read_s('Install_Dir')
         puts 'Arduino Install Dir: ' + path
-        exe = File.join(path, "arduino.exe")
+        exe = File.join(path, "arduino_debug.exe")
         return exe if File.exist? exe
       end
       nil
