@@ -11,3 +11,5 @@ unittest:
     - uno
     - due
     - leonardo
+  compilers:
+    - g++
