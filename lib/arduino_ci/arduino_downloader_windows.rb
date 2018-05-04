@@ -78,7 +78,7 @@ module ArduinoCI
     # The executable Arduino file in an existing installation, or nil
     # @return [string]
     def self.existing_executable
-      arduino_reg = 'SOFTWARE\WOW6432Node\Arduino1'
+      arduino_reg = 'SOFTWARE\WOW6432Node\Arduino'
       Win32::Registry::HKEY_LOCAL_MACHINE.open(arduino_reg) do |reg|
         path = reg.read_s('Install_Dir')
         puts 'Arduino Install Dir: ' + path
