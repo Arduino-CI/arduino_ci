@@ -78,20 +78,23 @@ module ArduinoCI
     # The executable Arduino file in an existing installation, or nil
     # @return [string]
     def self.existing_executable
-      arduino_reg = 'SOFTWARE\WOW6432Node\Arduino'
-      Win32::Registry::HKEY_LOCAL_MACHINE.open(arduino_reg) do |reg|
-        path = reg.read_s('Install_Dir')
-        puts 'Arduino Install Dir: ' + path
-        exe = File.join(path, "arduino_debug.exe")
-        return exe if File.exist? exe
+      begin
+        arduino_reg = 'SOFTWARE\WOW6432Node\Arduino1'
+        Win32::Registry::HKEY_LOCAL_MACHINE.open(arduino_reg) do |reg|
+          path = reg.read_s('Install_Dir')
+          puts 'Arduino Install Dir: ' + path
+          exe = File.join(path, "arduino_debug.exe")
+          return exe if File.exist? exe
+        end
+      rescue
+        nil
       end
-      nil
     end
 
     # The executable Arduino file in a forced installation, or nil
     # @return [string]
     def self.force_installed_executable
-      exe = File.join(self.force_install_location, "arduino.exe")
+      exe = File.join(self.force_install_location, "arduino_debug.exe")
       return nil if exe.nil?
       exe
     end
