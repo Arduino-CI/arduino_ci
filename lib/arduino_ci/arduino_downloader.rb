@@ -87,7 +87,7 @@ module ArduinoCI
     # The URL of the desired IDE package (zip/tar/etc) for this platform
     # @return [string]
     def package_url
-      "http://downloads.arduino.cc/#{package_file}"
+      "https://downloads.arduino.cc/#{package_file}"
     end
 
     # The local file (dir) name of the desired IDE package (zip/tar/etc)
