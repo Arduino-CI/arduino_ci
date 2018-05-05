@@ -34,6 +34,7 @@ module ArduinoCI
     # @return [bool] whether there is already a GUI that can accept windows
     def existing_display?
       return true  if RUBY_PLATFORM.include? "darwin"
+      return true  if Host.os == :windows
       return false if ENV["DISPLAY"].nil?
       return true  if ENV["DISPLAY"].include? ":"
       false
