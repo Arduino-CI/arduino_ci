@@ -35,8 +35,8 @@ module ArduinoCI
     # @return [bool] whether successful
     def download
       puts 'Downloading from ' + package_url
-      # Turned off ssl verification 
-      open(URI.parse(package_url), {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}) do |url|
+      # Turned off ssl verification
+      open(URI.parse(package_url), ssl_verify_mode: 0) do |url|
         File.open(package_file, 'wb') { |file| file.write(url.read) }
       end
     end
