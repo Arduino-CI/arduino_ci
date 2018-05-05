@@ -10,7 +10,7 @@ module ArduinoCI
   class ArduinoDownloaderWindows < ArduinoDownloader
 
     def powershell(*args)
-      encoded_cmd = Base64.strict_encode64(args.shelljoin.encode('utf-16le'))
+      encoded_cmd = Base64.strict_encode64((args.shelljoin + " | Out-Null").encode('utf-16le') )
       system("powershell.exe", "-encodedCommand", encoded_cmd)
     end
 
