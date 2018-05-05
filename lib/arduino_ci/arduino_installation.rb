@@ -96,7 +96,7 @@ module ArduinoCI
       def force_install
         worker_class =  case Host.os
                         when :osx then ArduinoDownloaderOSX
-                        # when :windows then force_install_windows
+                        when :windows then ArduinoDownloaderWindows
                         when :linux then ArduinoDownloaderLinux
                         end
         worker = worker_class.new(DESIRED_ARDUINO_IDE_VERSION)
