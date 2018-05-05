@@ -10,7 +10,7 @@ module ArduinoCI
   class ArduinoDownloaderWindows < ArduinoDownloader
 
     def powershell(*args)
-      encoded_cmd = Base64.strict_encode64((args.shelljoin + " | Out-Null").encode('utf-16le') )
+      encoded_cmd = Base64.strict_encode64((args.shelljoin + " | Out-Null").encode('utf-16le'))
       system("powershell.exe", "-encodedCommand", encoded_cmd)
     end
 
@@ -34,8 +34,8 @@ module ArduinoCI
     # Download the package_url to package_file
     # @return [bool] whether successful
     def download
-      puts 'Downloading from ' + package_url
       # Turned off ssl verification
+      # This should be acceptable because it won't happen on a user's machine, just CI
       open(URI.parse(package_url), ssl_verify_mode: 0) do |url|
         File.open(package_file, 'wb') { |file| file.write(url.read) }
       end
@@ -44,11 +44,9 @@ module ArduinoCI
     # Move the extracted package file from extracted_file to the force_install_location
     # @return [bool] whether successful
     def install
-      puts 'Installing to ' + self.class.force_install_location
       # Move only the content of the directory
       powershell("Move-Item", extracted_file + "\*", self.class.force_install_location)
       # clean up the no longer required root extracted folder
-      puts 'Removing ' + package_file
       powershell("Remove-Item", extracted_file)
     end
 
@@ -68,10 +66,8 @@ module ArduinoCI
     # Extract the package_file to extracted_file
     # @return [bool] whether successful
     def extract
-      puts 'Extracting ' + package_file + " to " + extracted_file
       powershell("Expand-Archive", "-Path", package_file, "-DestinationPath", extracted_file)
       # clean up the no longer required zip
-      puts 'Removing ' + package_file
       powershell("Remove-Item", package_file)
     end
 
@@ -96,7 +92,6 @@ module ArduinoCI
       Win32::Registry::HKEY_LOCAL_MACHINE.open(arduino_reg) do |reg|
         path = reg.read_s('Install_Dir')
         exe = File.join(path, "arduino_debug.exe")
-        puts "Using existing exe located at " + exe
         return exe if File.exist? exe
       end
     rescue
@@ -107,7 +102,6 @@ module ArduinoCI
     # @return [string]
     def self.force_installed_executable
       exe = File.join(self.force_install_location, "arduino_debug.exe")
-      puts "Using force installed exe located at " + exe
       return nil if exe.nil?
       exe
     end
