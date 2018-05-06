@@ -1,5 +1,5 @@
 
-# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci)[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.1.9)
+# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.1.10)
 
 
 [Arduino CI](https://github.com/ianfixes/arduino_ci) is a cross-platform Ruby gem for executing Continuous Integration (CI) tests on an Arduino library -- both locally and as part of a service like Travis CI.

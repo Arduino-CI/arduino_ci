@@ -6,28 +6,43 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Arduino `force_install` on Linux now attempts downloading 3 times and provides more information on failure
-- Explicit check for `wget`
-- Windows / Appveyor support, enabled largely by contributions from @tomduff
-- `long long` support in `String`
-- Representative `.gitignore` files in sample projects
-- Cross-platform symlinking
 
 ### Changed
-- Author
-- Splash-screen-skip hack on OSX now falls back on "official" launch method if the hack doesn't work
-- Refactored download/install code in prepration for windows CI
-- Explicitly use 32-bit math for mocked Random()
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- `Gemfile.lock` files are properly ignored
-- Windows hosts won't try to open a display manager
 
 ### Security
+
+
+## [0.1.10] - 2018-05-06
+### Added
+- Arduino `force_install` on Linux now attempts downloading 3 times and provides more information on failure
+- Explicit check for `wget`
+- Windows / Appveyor support, enabled largely by contributions from @tomduff
+- `long long` support in `String`
+- Representative `.gitignore` files in sample projects
+- Cross-platform symlinking in `Host`
+- OSX CI via Travis, with separate badges
+
+### Changed
+- Author
+- Splash-screen-skip hack on OSX now falls back on "official" launch method if the hack doesn't work
+- Refactored download/install code in prepration for windows CI
+- Explicitly use 32-bit math for mocked Random()
+- Ruby-centric download and unzipping of Arduino IDE packages, now with progress dots
+
+### Removed
+- `ArduinoDownloaderPosix` became empty, so it was removed
+
+### Fixed
+- `Gemfile.lock` files are properly ignored
+- Windows hosts won't try to open a display manager
+- `isnan` portability
+- OSX force_install
 
 
 ## [0.1.9] - 2018-04-12
@@ -174,7 +189,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/ianfixes/arduino_ci/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/ianfixes/arduino_ci/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/ianfixes/arduino_ci/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/ianfixes/arduino_ci/compare/v0.1.6...v0.1.7
