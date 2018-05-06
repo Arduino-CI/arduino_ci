@@ -59,7 +59,7 @@ RSpec.describe ArduinoCI::ArduinoDownloaderOSX do
       # expect(ad.existing_executable).to be nil
       # expect(ad.force_installed_executable).to be nil
 
-      expect(ad.force_install_location).to eq(File.join(ENV['HOME'], 'arduino_ci_ide'))
+      expect(ad.force_install_location).to eq(File.join(ENV['HOME'], 'Arduino.app'))
     end
 
     it "has correct instance properties" do

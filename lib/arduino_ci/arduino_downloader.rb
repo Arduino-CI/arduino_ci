@@ -142,7 +142,8 @@ module ArduinoCI
         dots = 0
         zip.each do |file|
           print "." if (dots % batch_size).zero?
-          file.extract(file.name)
+          file.restore_permissions = true
+          file.extract { accept_all }
           dots += 1
         end
       end
