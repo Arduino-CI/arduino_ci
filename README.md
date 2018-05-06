@@ -1,11 +1,18 @@
-[![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci)
-[![Linux Build Status](https://travis-ci.org/ianfixes/arduino_ci.svg)](https://travis-ci.org/ianfixes/arduino_ci)
-[![Windows Build status](https://ci.appveyor.com/api/projects/status/8f6e39dea319m83q?svg=true)](https://ci.appveyor.com/project/ianfixes/arduino-ci)
-[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.1.9)
 
-# ArduinoCI Ruby gem (`arduino_ci`)
+# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci)[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.1.9)
 
-[Arduino CI](https://github.com/ianfixes/arduino_ci) is a Ruby gem for executing Continuous Integration (CI) tests on an Arduino library -- both locally and as part of a service like Travis CI.
+
+[Arduino CI](https://github.com/ianfixes/arduino_ci) is a cross-platform Ruby gem for executing Continuous Integration (CI) tests on an Arduino library -- both locally and as part of a service like Travis CI.
+
+It doesn't matter whether your contributors are using OSX, Linux, or Windows; everyone can run unit tests locally with `arduino_ci`, and be assured that the CI system used by the GitHub project maintainer will run the same tests and get the same results.
+
+You don't have to take my word for it; let the build logs speak for themselves:
+
+Platform | CI Status
+---------|:---------
+OSX      | [![OSX Build Status](http://badges.herokuapp.com/travis/ianfixes/arduino_ci?env=BADGE=osx&label=build&branch=master)](https://travis-ci.org/ianfixes/arduino_ci)
+Linux    | [![Linux Build Status](http://badges.herokuapp.com/travis/ianfixes/arduino_ci?env=BADGE=linux&label=build&branch=master)](https://travis-ci.org/ianfixes/arduino_ci)
+Windows  | [![Windows Build status](https://ci.appveyor.com/api/projects/status/8f6e39dea319m83q?svg=true)](https://ci.appveyor.com/project/ianfixes/arduino-ci)
 
 
 ## Installation In Your GitHub Project And Using Travis CI
