@@ -38,6 +38,7 @@ long random(long vmax)
 {
   GodmodeState* godmode = GODMODE();
   godmode->seed += 4294967291;  // it's a prime that fits in 32 bits
+  godmode->seed = godmode->seed % 4294967296; // explicitly wrap in case we're on a 64-bit impl
   return godmode->seed % vmax;
 }
 
