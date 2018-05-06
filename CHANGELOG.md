@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Windows / Appveyor support, enabled largely by contributions from @tomduff
 - `long long` support in `String`
 - Representative `.gitignore` files in sample projects
+- Cross-platform symlinking
 
 ### Changed
 - Author

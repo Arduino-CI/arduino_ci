@@ -274,7 +274,7 @@ module ArduinoCI
       end
 
       # install the library
-      FileUtils.ln_s(realpath, destination_path)
+      Host.symlink(realpath, destination_path)
       destination_path
     end
 
