@@ -8,17 +8,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Arduino `force_install` on Linux now attempts downloading 3 times and provides more information on failure
 - Explicit check for `wget`
+- Windows / Appveyor support, enabled largely by contributions from @tomduff
+- `long long` support in `String`
+- Representative `.gitignore` files in sample projects
 
 ### Changed
 - Author
 - Splash-screen-skip hack on OSX now falls back on "official" launch method if the hack doesn't work
 - Refactored download/install code in prepration for windows CI
+- Explicitly use 32-bit math for mocked Random()
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- `Gemfile.lock` files are properly ignored
+- Windows hosts won't try to open a display manager
 
 ### Security
 
