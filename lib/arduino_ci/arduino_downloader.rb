@@ -138,8 +138,12 @@ module ArduinoCI
     # @return [bool] whether successful
     def extract
       Zip::File.open(package_file) do |zip|
+        batch_size = [1, (zip.size / 100).to_i].max
+        dots = 0
         zip.each do |file|
+          print "." if (dots % batch_size).zero?
           file.extract(file.name)
+          dots += 1
         end
       end
     end
@@ -179,8 +183,9 @@ module ArduinoCI
       if File.exist? extracted_file
         puts "Arduino package seems to have been extracted already"
       elsif File.exist? package_file
-        puts "Extracting archive with #{extracter}"
+        print "Extracting archive with #{extracter}"
         extract
+        puts
       end
 
       if File.exist? self.class.force_install_location
