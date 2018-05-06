@@ -17,6 +17,8 @@ before_test:
   - g++ -v
 
 test_script:
+  # https://help.appveyor.com/discussions/problems/5170-progresspreference-not-works-always-shown-preparing-modules-for-first-use-in-stderr
+  - ps: $ProgressPreference = "SilentlyContinue"
   - bundle exec rubocop --version
   - bundle exec rubocop -D .
   - bundle exec rspec
