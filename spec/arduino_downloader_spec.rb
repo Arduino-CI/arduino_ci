@@ -17,8 +17,6 @@ RSpec.describe ArduinoCI::ArduinoDownloader do
     it "has correct instance properties" do
       ad = ArduinoCI::ArduinoDownloader.new(DESIRED_VERSION)
       expect(ad.prepare).to be nil
-      expect{ad.downloader}.to raise_error(NotImplementedError)
-      expect{ad.extracter}.to raise_error(NotImplementedError)
       expect{ad.package_url}.to raise_error(NotImplementedError)
       expect{ad.package_file}.to raise_error(NotImplementedError)
     end
@@ -42,7 +40,7 @@ RSpec.describe ArduinoCI::ArduinoDownloaderLinux do
     it "has correct instance properties" do
       ad = ArduinoCI::ArduinoDownloaderLinux.new(DESIRED_VERSION)
       expect(ad.prepare).to be nil
-      expect(ad.downloader).to eq("wget")
+      expect(ad.downloader).to eq("open-uri")
       expect(ad.extracter).to eq("tar")
       expect(ad.package_url).to eq("https://downloads.arduino.cc/arduino-rhubarb-linux64.tar.xz")
       expect(ad.package_file).to eq("arduino-rhubarb-linux64.tar.xz")
@@ -67,8 +65,8 @@ RSpec.describe ArduinoCI::ArduinoDownloaderOSX do
     it "has correct instance properties" do
       ad = ArduinoCI::ArduinoDownloaderOSX.new(DESIRED_VERSION)
       expect(ad.prepare).to be nil
-      expect(ad.downloader).to eq("wget")
-      expect(ad.extracter).to eq("unzip")
+      expect(ad.downloader).to eq("open-uri")
+      expect(ad.extracter).to eq("Zip")
       expect(ad.package_url).to eq("https://downloads.arduino.cc/arduino-rhubarb-macosx.zip")
       expect(ad.package_file).to eq("arduino-rhubarb-macosx.zip")
     end
