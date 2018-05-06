@@ -17,6 +17,12 @@ module ArduinoCI
       "Arduino.app"
     end
 
+    # @return [String] The location where a forced install will go
+    def self.force_install_location
+      # include the .app extension
+      File.join(ENV['HOME'], 'Arduino.app')
+    end
+
     # An existing Arduino directory in one of the given directories, or nil
     # @param Array<string> a list of places to look
     # @return [string]
