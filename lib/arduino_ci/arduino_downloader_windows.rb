@@ -3,20 +3,13 @@ require 'shellwords' # fingers crossed this works on win32
 require 'win32/registry'
 require "arduino_ci/arduino_downloader"
 require 'open-uri'
+require 'zip'
+require "fileutils"
 
 module ArduinoCI
 
   # Manage the POSIX download & install of Arduino
   class ArduinoDownloaderWindows < ArduinoDownloader
-
-    def powershell(*args)
-      encoded_cmd = Base64.strict_encode64(args.shelljoin.encode('utf-16le'))
-      system("powershell.exe", "-NoProfile", "-encodedCommand", encoded_cmd)
-    end
-
-    def cygwin(*args)
-      system("%CYG_ROOT%/bin/bash", "-lc", args.shelljoin)
-    end
 
     # Make any preparations or run any checks prior to making changes
     # @return [string] Error message, or nil if success
@@ -45,9 +38,9 @@ module ArduinoCI
     # @return [bool] whether successful
     def install
       # Move only the content of the directory
-      powershell("Move-Item", extracted_file + "\*", self.class.force_install_location)
+      FileUtils.mv extracted_file, self.class.force_install_location
       # clean up the no longer required root extracted folder
-      powershell("Remove-Item", extracted_file)
+      FileUtils.rm_rf extracted_file
     end
 
     # The local filename of the desired IDE package (zip/tar/etc)
@@ -66,9 +59,13 @@ module ArduinoCI
     # Extract the package_file to extracted_file
     # @return [bool] whether successful
     def extract
-      powershell("Expand-Archive", "-Path", package_file, "-DestinationPath", extracted_file)
+      Zip::File.open(package_file) do |zip|
+        zip.each do |file|
+          file.extract(file.name)
+        end
+      end
       # clean up the no longer required zip
-      powershell("Remove-Item", package_file)
+      FileUtils.rm_rf package_file
     end
 
     # The local file (dir) name of the extracted IDE package (zip/tar/etc)
