@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <stdexcept>
 #include <string.h>
 #include <algorithm>
 #include <iostream>
