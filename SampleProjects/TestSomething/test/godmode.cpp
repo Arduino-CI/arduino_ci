@@ -17,14 +17,21 @@ unittest(millis_micros_and_delay)
 
 unittest(random)
 {
+  GodmodeState* state = GODMODE();
+  state->reset();
   randomSeed(1);
+  assertEqual(state->seed, 1);
+
   unsigned long x;
   x = random(4294967293);
   assertEqual(4294967292, x);
+  assertEqual(state->seed, 4294967292);
   x = random(50, 100);
-  assertEqual(83, x);
+  assertEqual(87, x);
+  assertEqual(state->seed, 4294967287);
   x = random(100);
-  assertEqual(74, x);
+  assertEqual(82, x);
+  assertEqual(state->seed, 4294967282);
 }
 
 void myInterruptHandler() {
