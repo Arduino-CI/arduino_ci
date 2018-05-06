@@ -73,6 +73,8 @@ class String: public string
     explicit String(unsigned int val , unsigned char base=10): string(mytoa(val, base)) {}
     explicit String(long val,          unsigned char base=10): string(mytoas(val, base)) {}
     explicit String(unsigned long val, unsigned char base=10): string(mytoa(val, base)) {}
+    explicit String(long long val,     unsigned char base=10): string(mytoas(val, base)) {}
+    explicit String(unsigned long long val, unsigned char base=10): string(mytoa(val, base)) {}
 
     explicit String(float val,  unsigned char decimalPlaces=2): string(dtoas(val, decimalPlaces)) {}
     explicit String(double val, unsigned char decimalPlaces=2): string(dtoas(val, decimalPlaces)) {}
@@ -95,6 +97,8 @@ class String: public string
     unsigned char concat(unsigned int num)  { append(String(num)); return 1; }
     unsigned char concat(long num)          { append(String(num)); return 1; }
     unsigned char concat(unsigned long num) { append(String(num)); return 1; }
+    unsigned char concat(long long num)     { append(String(num)); return 1; }
+    unsigned char concat(unsigned long long num) { append(String(num)); return 1; }
     unsigned char concat(float num)         { append(String(num)); return 1; }
     unsigned char concat(double num)        { append(String(num)); return 1; }
 
@@ -107,6 +111,8 @@ class String: public string
     String & operator += (unsigned int num)  { concat(num);  return *this; }
     String & operator += (long num)          { concat(num);  return *this; }
     String & operator += (unsigned long num) { concat(num);  return *this; }
+    String & operator += (long long num)     { concat(num);  return *this; }
+    String & operator += (unsigned long long num) { concat(num);  return *this; }
     String & operator += (float num)         { concat(num);  return *this; }
     String & operator += (double num)        { concat(num);  return *this; }
 
