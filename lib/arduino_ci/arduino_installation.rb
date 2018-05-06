@@ -60,7 +60,7 @@ module ArduinoCI
             "processing.app.Base",
           ],
           # failsafe way
-          [File.join(osx_root, "MacOS", "Arduino")]
+          [File.join(osx_root, "Contents", "MacOS", "Arduino")]
         ]
 
         # create return and find a command launcher that works

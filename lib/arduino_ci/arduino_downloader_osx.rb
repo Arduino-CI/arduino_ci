@@ -41,19 +41,19 @@ module ArduinoCI
     # The path to the directory of an existing installation, or nil
     # @return [string]
     def self.existing_installation
-      self.find_existing_arduino_dir(["/Applications/Arduino.app/Contents"])
+      self.find_existing_arduino_dir(["/Applications/Arduino.app"])
     end
 
     # The executable Arduino file in an existing installation, or nil
     # @return [string]
     def self.existing_executable
-      self.find_existing_arduino_exe(["/Applications/Arduino.app/Contents"])
+      self.find_existing_arduino_exe(["/Applications/Arduino.app"])
     end
 
     # The executable Arduino file in a forced installation, or nil
     # @return [string]
     def self.force_installed_executable
-      self.find_existing_arduino_exe([File.join(self.force_install_location, "Contents")])
+      self.find_existing_arduino_exe([self.force_install_location])
     end
 
   end
