@@ -7,6 +7,7 @@ os:
 
 #before_install: gem install bundler -v 1.15.4
 script:
+   - g++ -v
    - bundle install
    - bundle exec rubocop --version
    - bundle exec rubocop -D .
