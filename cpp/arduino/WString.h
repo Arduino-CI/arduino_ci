@@ -12,8 +12,8 @@ typedef std::string string;
 
 // work around some portability issues
 #if defined(__clang__)
-  #define ARDUINOCI_ISNAN ::isnan
-  #define ARDUINOCI_ISINF ::isinf
+  #define ARDUINOCI_ISNAN isnan
+  #define ARDUINOCI_ISINF isinf
 #elif defined(__GNUC__) || defined(__GNUG__)
   #define ARDUINOCI_ISNAN std::isnan
   #define ARDUINOCI_ISINF std::isinf
