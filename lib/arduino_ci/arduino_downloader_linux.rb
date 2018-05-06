@@ -1,16 +1,26 @@
-require "arduino_ci/arduino_downloader_posix"
+require "arduino_ci/arduino_downloader"
 
 USE_BUILDER = false
 
 module ArduinoCI
 
   # Manage the linux download & install of Arduino
-  class ArduinoDownloaderLinux < ArduinoDownloaderPosix
+  class ArduinoDownloaderLinux < ArduinoDownloader
 
     # The local filename of the desired IDE package (zip/tar/etc)
     # @return [string]
     def package_file
       "#{extracted_file}-linux64.tar.xz"
+    end
+
+    # Make any preparations or run any checks prior to making changes
+    # @return [string] Error message, or nil if success
+    def prepare
+      reqs = [extracter]
+      reqs.each do |req|
+        return "#{req} does not appear to be installed!" unless Host.which(req)
+      end
+      nil
     end
 
     # The technology that will be used to extract the download

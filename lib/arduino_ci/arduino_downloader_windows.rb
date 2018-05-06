@@ -2,8 +2,6 @@ require 'base64'
 require 'shellwords' # fingers crossed this works on win32
 require 'win32/registry'
 require "arduino_ci/arduino_downloader"
-require 'open-uri'
-require 'zip'
 require "fileutils"
 
 module ArduinoCI
@@ -39,8 +37,6 @@ module ArduinoCI
     def install
       # Move only the content of the directory
       FileUtils.mv extracted_file, self.class.force_install_location
-      # clean up the no longer required root extracted folder
-      FileUtils.rm_rf extracted_file
     end
 
     # The local filename of the desired IDE package (zip/tar/etc)
@@ -64,8 +60,6 @@ module ArduinoCI
           file.extract(file.name)
         end
       end
-      # clean up the no longer required zip
-      FileUtils.rm_rf package_file
     end
 
     # The local file (dir) name of the extracted IDE package (zip/tar/etc)

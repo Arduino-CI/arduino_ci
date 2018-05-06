@@ -1,27 +1,14 @@
-require "arduino_ci/arduino_downloader_posix"
+require "arduino_ci/arduino_downloader"
 
 module ArduinoCI
 
   # Manage the OSX download & install of Arduino
-  class ArduinoDownloaderOSX < ArduinoDownloaderPosix
+  class ArduinoDownloaderOSX < ArduinoDownloader
 
     # The local filename of the desired IDE package (zip/tar/etc)
     # @return [string]
     def package_file
       "arduino-#{@desired_ide_version}-macosx.zip"
-    end
-
-    # The technology that will be used to extract the download
-    # (for logging purposes)
-    # @return [string]
-    def extracter
-      "unzip"
-    end
-
-    # Extract the package_file to extracted_file
-    # @return [bool] whether successful
-    def extract
-      system(extracter, package_file)
     end
 
     # The local file (dir) name of the extracted IDE package (zip/tar/etc)

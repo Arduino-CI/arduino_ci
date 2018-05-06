@@ -1,3 +1,7 @@
+require "fileutils"
+require 'open-uri'
+require 'zip'
+
 DOWNLOAD_ATTEMPTS = 3
 
 module ArduinoCI
@@ -74,14 +78,14 @@ module ArduinoCI
     # (for logging purposes)
     # @return [string]
     def downloader
-      self.class.must_implement(__method__)
+      "open-uri"
     end
 
     # The technology that will be used to extract the download
     # (for logging purposes)
     # @return [string]
     def extracter
-      self.class.must_implement(__method__)
+      "Zip"
     end
 
     # The URL of the desired IDE package (zip/tar/etc) for this platform
@@ -107,22 +111,44 @@ module ArduinoCI
       File.join(ENV['HOME'], 'arduino_ci_ide')
     end
 
-    # Download the package_url to package_file, and maybe print a line of dots......
+    # Download the package_url to package_file
     # @return [bool] whether successful
     def download
-      self.class.must_implement(__method__)
+      # Turned off ssl verification
+      # This should be acceptable because it won't happen on a user's machine, just CI
+
+      # define a progress-bar printer
+      chunk_size = 1024 * 1024 * 1024
+      total_size = 0
+      dots = 0
+      dot_printer = lambda do |size|
+        total_size += size
+        needed_dots = (total_size / chunk_size).to_i
+        unprinted_dots = needed_dots - dots
+        print("." * unprinted_dots) if unprinted_dots > 0
+        dots = needed_dots
+      end
+
+      open(package_url, ssl_verify_mode: 0, progress_proc: dot_printer) do |url|
+        File.open(package_file, 'wb') { |file| file.write(url.read) }
+      end
     end
 
     # Extract the package_file to extracted_file
     # @return [bool] whether successful
     def extract
-      self.class.must_implement(__method__)
+      Zip::File.open(package_file) do |zip|
+        zip.each do |file|
+          file.extract(file.name)
+        end
+      end
     end
 
     # Move the extracted package file from extracted_file to the force_install_location
     # @return [bool] whether successful
     def install
-      self.class.must_implement(__method__)
+      # Move only the content of the directory
+      FileUtils.mv extracted_file, self.class.force_install_location
     end
 
     # Forcibly install Arduino on linux from the web
@@ -143,8 +169,9 @@ module ArduinoCI
         elsif attempts >= DOWNLOAD_ATTEMPTS
           break puts "After #{DOWNLOAD_ATTEMPTS} attempts, failed to download #{package_url}"
         else
-          puts "Attempting to download Arduino package with #{downloader}"
+          print "Attempting to download Arduino package with #{downloader}"
           download
+          puts
         end
         attempts += 1
       end
