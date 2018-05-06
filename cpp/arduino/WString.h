@@ -175,9 +175,15 @@ class String: public string
       assign(substr(b, e - b + 1));
     }
 
-    long toInt(void) const      { return std::stol(*this); }
     float toFloat(void) const   { return std::stof(*this); }
     double toDouble(void) const { return std::stod(*this); }
+    long toInt(void) const      {
+      try {
+        return std::stol(*this);
+      } catch (std::out_of_range) {
+        return std::stoll(*this);
+      }
+    }
 
 };
 
