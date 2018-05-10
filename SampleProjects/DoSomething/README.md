@@ -101,7 +101,7 @@ unittest(your_test_name)
 unittest_main()
 ```
 
-This test defines one `unittest` (a macro provided by `ArduionUnitTests.h`), called `your_test_name`, which makes some assertions on the target library.  The `int main` section is boilerplate.
+This test defines one `unittest` (a macro provided by `ArduinoUnitTests.h`), called `your_test_name`, which makes some assertions on the target library.  The `int main` section is boilerplate.
 
 
 # Credits
