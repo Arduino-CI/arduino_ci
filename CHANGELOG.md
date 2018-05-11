@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+* Libraries installed in `$HOME/Arduino/libraries` and which has its content in a `src` directory are now properly
+included in the compiler command. This partially solves [issue 13](https://github.com/ianfixes/arduino_ci/issues/13).
+
 ### Security
 
 
