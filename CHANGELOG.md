@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-* Refactored documentation
+- Refactored documentation
+
 ### Deprecated
 
 ### Removed
+- Display Manager became no longer necessary with Arduino 1.8.X
 
 ### Fixed
 
