@@ -51,8 +51,9 @@ module ArduinoCI
           # from https://github.com/arduino/Arduino/issues/1970#issuecomment-321975809
           [
             "java",
-            "-cp", "#{osx_root}/Java/*",
-            "-DAPP_DIR=#{osx_root}/Java",
+            "-cp",
+            "#{osx_root}/Contents/Java/*",
+            "-DAPP_DIR=#{osx_root}/Contents/Java",
             "-Dfile.encoding=UTF-8",
             "-Dapple.awt.UIElement=true",
             "-Xms128M",
