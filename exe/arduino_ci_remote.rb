@@ -119,7 +119,11 @@ all_packages.each do |p|
 end
 
 aux_libraries.each do |l|
-  assure("Installing aux library '#{l}'") { @arduino_cmd.install_library(l) }
+  if @arduino_cmd.library_present?(l)
+    assure("Using pre-existing library '#{l}'") { true }
+  else
+    assure("Installing aux library '#{l}'") { @arduino_cmd.install_library(l) }
+  end
 end
 
 # iterate boards / tests

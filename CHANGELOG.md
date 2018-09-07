@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Explicit checks that the requested test platforms are defined in YML
+- Method to guess whether a library is installed
 
 ### Changed
 - Refactored documentation
+- External libraries aren't forcibly installed via the Arduino binary (in `arduino_cmd_remote.rb`) if they appear to exist on disk already
 
 ### Deprecated
 
