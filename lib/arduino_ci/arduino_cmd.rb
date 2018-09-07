@@ -193,6 +193,17 @@ module ArduinoCI
       File.join(_lib_dir, library_name)
     end
 
+    # Determine whether a library is present in the lib dir
+    #
+    # Note that `true` doesn't guarantee that the library is valid/installed
+    #  and `false` doesn't guarantee that the library isn't built-in
+    #
+    # @param library_name [String] The name of the library
+    # @return [bool]
+    def library_present?(library_name)
+      File.exist?(library_path(library_name))
+    end
+
     # update the library index
     # @return [bool] Whether the update succeeded
     def update_library_index
