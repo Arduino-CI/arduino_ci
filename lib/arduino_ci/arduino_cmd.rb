@@ -113,18 +113,6 @@ module ArduinoCI
       success
     end
 
-    # run the arduino command
-    # @return [bool] whether the command succeeded
-    def _run_and_output(*args, **kwargs)
-      raise "Ian needs to implement this in a subclass #{args} #{kwargs}"
-    end
-
-    # run the arduino command
-    # @return [Hash] keys for :success, :out, and :err
-    def _run_and_capture(*args, **kwargs)
-      raise "Ian needs to implement this in a subclass #{args} #{kwargs}"
-    end
-
     def _wrap_run(work_fn, *args, **kwargs)
       # do some work to extract & merge environment variables if they exist
       has_env = !args.empty? && args[0].class == Hash
@@ -140,13 +128,13 @@ module ArduinoCI
 
     # build and run the arduino command
     def run_and_output(*args, **kwargs)
-      _wrap_run((proc { |*a, **k| _run_and_output(*a, **k) }), *args, **kwargs)
+      _wrap_run((proc { |*a, **k| Host.run_and_output(*a, **k) }), *args, **kwargs)
     end
 
     # run a command and capture its output
     # @return [Hash] {:out => String, :err => String, :success => bool}
     def run_and_capture(*args, **kwargs)
-      ret = _wrap_run((proc { |*a, **k| _run_and_capture(*a, **k) }), *args, **kwargs)
+      ret = _wrap_run((proc { |*a, **k| Host.run_and_capture(*a, **k) }), *args, **kwargs)
       @last_err = ret[:err]
       @last_out = ret[:out]
       ret

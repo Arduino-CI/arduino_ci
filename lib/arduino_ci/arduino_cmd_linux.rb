@@ -1,5 +1,5 @@
 require 'arduino_ci/arduino_cmd'
-require 'arduino_ci/display_manager'
+require 'timeout'
 
 module ArduinoCI
 
@@ -19,7 +19,6 @@ module ArduinoCI
     def initialize
       super
       @prefs_response_time = nil
-      @display_mgr         = DisplayManager::instance
     end
 
     # fetch preferences in their raw form
@@ -36,18 +35,6 @@ module ArduinoCI
     # @return [String] the path to the Arduino libraries directory
     def _lib_dir
       File.join(get_pref("sketchbook.path"), "libraries")
-    end
-
-    # run the arduino command
-    # @return [bool] whether the command succeeded
-    def _run_and_output(*args, **kwargs)
-      @display_mgr.run_and_output(*args, **kwargs)
-    end
-
-    # run the arduino command
-    # @return [Hash] keys for :success, :out, and :err
-    def _run_and_capture(*args, **kwargs)
-      @display_mgr.run_and_capture(*args, **kwargs)
     end
 
     def run_with_gui_guess(message, *args, **kwargs)
