@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Display Manager became no longer necessary with Arduino 1.8.X
 
 ### Fixed
+- OSX splash screen re-disabled
 
 ### Security
 
