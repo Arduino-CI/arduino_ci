@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Explicit checks that the requested test platforms are defined in YML
 
 ### Changed
 - Refactored documentation
