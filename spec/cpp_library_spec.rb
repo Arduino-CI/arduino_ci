@@ -4,7 +4,7 @@ sampleproj_path = File.join(File.dirname(File.dirname(__FILE__)), "SampleProject
 
 RSpec.describe ArduinoCI::CppLibrary do
   cpp_lib_path = File.join(sampleproj_path, "DoSomething")
-  cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path)
+  cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, "my_fake_arduino_lib_dir")
   context "cpp_files" do
     it "finds cpp files in directory" do
       dosomething_cpp_files = ["DoSomething/do-something.cpp"]
