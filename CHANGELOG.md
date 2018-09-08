@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Explicit checks that the requested test platforms are defined in YML
-- Method to guess whether a library is installed
+- Arduino command wrapper can now guess whether a library is installed
+- CPP library class now reaches into included Arduino libraries for source files
 
 ### Changed
 - Refactored documentation

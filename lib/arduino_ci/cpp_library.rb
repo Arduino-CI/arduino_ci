@@ -14,6 +14,9 @@ module ArduinoCI
     # @return [String] The path to the library being tested
     attr_reader :base_dir
 
+    # @return [String] The path to the Arduino 3rd-party library directory
+    attr_reader :arduino_lib_dir
+
     # @return [Array<String>] The set of artifacts created by this class (note: incomplete!)
     attr_reader :artifacts
 
@@ -27,8 +30,9 @@ module ArduinoCI
     attr_reader :last_cmd
 
     # @param base_dir [String] The path to the library being tested
-    def initialize(base_dir)
+    def initialize(base_dir, arduino_lib_dir)
       @base_dir = File.expand_path(base_dir)
+      @arduino_lib_dir = File.expand_path(arduino_lib_dir)
       @artifacts = []
       @last_err = ""
       @last_out = ""
@@ -83,6 +87,12 @@ module ArduinoCI
       cpp_files_in(UNITTEST_HEADER_DIR)
     end
 
+    # CPP files that are part of the 3rd-party libraries we're including
+    # @return [Array<String>]
+    def cpp_files_libraries(aux_libraries)
+      arduino_library_src_dirs(aux_libraries).map { |d| cpp_files_in(d) }.flatten.uniq
+    end
+
     # The directory where we expect to find unit test defintions provided by the user
     # @return [String]
     def tests_dir
@@ -123,11 +133,24 @@ module ArduinoCI
       @last_err
     end
 
+    # Arduino library directories containing sources
+    def arduino_library_src_dirs(aux_libraries)
+      # Pull in all possible places that headers could live, according to the spec:
+      # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification
+      # TODO: be smart and implement library spec (library.properties, etc)?
+      subdirs = ["", "src", "utility"]
+      all_aux_include_dirs_nested = aux_libraries.map do |libdir|
+        subdirs.map { |subdir| File.join(@arduino_lib_dir, libdir, subdir) }
+      end
+      all_aux_include_dirs_nested.flatten.select { |d| File.exist?(d) }
+    end
+
     # GCC command line arguments for including aux libraries
     # @param aux_libraries [String] The external Arduino libraries required by this project
     # @return [Array<String>] The GCC command-line flags necessary to include those libraries
     def include_args(aux_libraries)
-      places = [ARDUINO_HEADER_DIR, UNITTEST_HEADER_DIR] + header_dirs + aux_libraries
+      all_aux_include_dirs = arduino_library_src_dirs(aux_libraries)
+      places = [ARDUINO_HEADER_DIR, UNITTEST_HEADER_DIR] + header_dirs + all_aux_include_dirs
       places.map { |d| "-I#{d}" }
     end
 
@@ -189,6 +212,7 @@ module ArduinoCI
       args = [
         ["-std=c++0x", "-o", executable, "-DARDUINO=100"],
         test_args(aux_libraries, ci_gcc_config),
+        cpp_files_libraries(aux_libraries),
         [test_file],
       ].flatten(1)
       return nil unless run_gcc(gcc_binary, *args)
