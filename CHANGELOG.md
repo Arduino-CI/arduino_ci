@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - OSX splash screen re-disabled
 
+* Libraries installed in `$HOME/Arduino/libraries` and which has its content in a `src` directory are now properly
+included in the compiler command. This partially solves [issue 13](https://github.com/ianfixes/arduino_ci/issues/13).
+
 ### Security
 
 
@@ -45,7 +48,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Gemfile.lock` files are properly ignored
 - Windows hosts won't try to open a display manager
 - `isnan` portability
-- OSX force_install
+- OSX `force_install`
 
 
 ## [0.1.9] - 2018-04-12
@@ -54,7 +57,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Malformed YAML (duplicate unittests section) now has no duplicate section
-- arduino_ci_remote.rb script now has correct arguments in build_for_test_with_configuration
+- `arduino_ci_remote.rb` script now has correct arguments in `build_for_test_with_configuration`
 
 
 ## [0.1.8] - 2018-04-03

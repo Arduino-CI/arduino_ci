@@ -127,7 +127,8 @@ module ArduinoCI
     # @param aux_libraries [String] The external Arduino libraries required by this project
     # @return [Array<String>] The GCC command-line flags necessary to include those libraries
     def include_args(aux_libraries)
-      places = [ARDUINO_HEADER_DIR, UNITTEST_HEADER_DIR] + header_dirs + aux_libraries
+      aux_dirs = aux_libraries.map { |l| ENV["HOME"] + '/Arduino/libraries/' + l + '/src' }
+      places = [ARDUINO_HEADER_DIR, UNITTEST_HEADER_DIR] + header_dirs + aux_dirs
       places.map { |d| "-I#{d}" }
     end
 
@@ -168,8 +169,12 @@ module ArduinoCI
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Array<String>] GCC command-line flags
     def test_args(aux_libraries, ci_gcc_config)
-      # TODO: something with libraries?
-      ret = include_args(aux_libraries) + cpp_files_arduino + cpp_files_unittest + cpp_files
+      # TODO: Handle libraries better. For now most libraries have a src directory (and all
+      # the ones I am currently using), and it works for them but it ought to be more robust.
+      # Hard coding of Arduino directly in the home directory is also not nice, possibly use
+      # sketchbook.path from $HOME/.arduino15/preferences.txt?
+      lib_files = aux_libraries.map { |l| Dir.glob(ENV["HOME"] + '/Arduino/libraries/' + l + '/src/*.cpp') }.flatten
+      ret = include_args(aux_libraries) + cpp_files_arduino + cpp_files_unittest + cpp_files + lib_files
       unless ci_gcc_config.nil?
         cgc = ci_gcc_config
         ret = feature_args(cgc) + warning_args(cgc) + define_args(cgc) + flag_args(cgc) + ret
