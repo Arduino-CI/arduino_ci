@@ -51,6 +51,7 @@ class GodmodeState {
     PinHistory<int> analogPin[MOCK_PINS_COUNT];
     struct PortDef serialPort[NUM_SERIAL_PORTS];
     struct InterruptDef interrupt[MOCK_PINS_COUNT]; // not sure how to get actual number
+    struct PortDef spi;
 
     void resetPins() {
       for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
@@ -69,10 +70,27 @@ class GodmodeState {
       }
     }
 
+    void resetPorts() {
+      for (int i = 0; i < serialPorts(); ++i)
+      {
+        serialPort[i].dataIn = "";
+        serialPort[i].dataOut = "";
+        serialPort[i].readDelayMicros = 0;
+      }
+    }
+
+    void resetSPI() {
+      spi.dataIn = "";
+      spi.dataOut = "";
+      spi.readDelayMicros = 0;
+    }
+
     void reset() {
       resetClock();
       resetPins();
       resetInterrupts();
+      resetPorts();
+      resetSPI();
       seed = 1;
     }
 
@@ -83,14 +101,7 @@ class GodmodeState {
     GodmodeState()
     {
       reset();
-      for (int i = 0; i < serialPorts(); ++i)
-      {
-        serialPort[i].dataIn = "";
-        serialPort[i].dataOut = "";
-        serialPort[i].readDelayMicros = 0;
-      }
-  }
-
+    }
 };
 
 // io pins
