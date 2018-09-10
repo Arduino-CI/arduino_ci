@@ -38,6 +38,11 @@ class GodmodeState {
     unsigned long readDelayMicros;
   };
 
+  struct InterruptDef {
+    bool attached;
+    uint8_t mode;
+  };
+
   public:
     unsigned long micros;
     unsigned long seed;
@@ -45,6 +50,7 @@ class GodmodeState {
     PinHistory<bool> digitalPin[MOCK_PINS_COUNT];
     PinHistory<int> analogPin[MOCK_PINS_COUNT];
     struct PortDef serialPort[NUM_SERIAL_PORTS];
+    struct InterruptDef interrupt[MOCK_PINS_COUNT]; // not sure how to get actual number
 
     void resetPins() {
       for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
@@ -57,9 +63,16 @@ class GodmodeState {
       micros = 0;
     }
 
+    void resetInterrupts() {
+      for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
+        interrupt[i].attached = false;
+      }
+    }
+
     void reset() {
       resetClock();
       resetPins();
+      resetInterrupts();
       seed = 1;
     }
 
@@ -90,6 +103,8 @@ int analogRead(uint8_t);
 void analogWrite(uint8_t, int);
 #define analogReadResolution(...) _NOP()
 #define analogWriteResolution(...) _NOP()
+void attachInterrupt(uint8_t interrupt, void ISR(void), uint8_t mode);
+void detachInterrupt(uint8_t interrupt);
 
 // TODO: issue #26 to track the commanded state here
 inline void tone(uint8_t _pin, unsigned int frequency, unsigned long duration = 0) {}
