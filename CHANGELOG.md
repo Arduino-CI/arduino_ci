@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Refactored documentation
 - External libraries aren't forcibly installed via the Arduino binary (in `arduino_cmd_remote.rb`) if they appear to exist on disk already
+- `attachInterrupt` and `detachInterrupt` are now mocked instead of `_NOP`
 
 ### Deprecated
 

@@ -43,9 +43,6 @@ typedef uint8_t byte;
 #define yield() _NOP()
 #define interrupts() _NOP()
 #define noInterrupts() _NOP()
-#define attachInterrupt(...) _NOP()
-#define detachInterrupt(...) _NOP()
-
 
 // TODO: correctly establish this per-board!
 #define F_CPU 1000000UL
