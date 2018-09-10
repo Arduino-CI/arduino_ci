@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Arduino command wrapper can now guess whether a library is installed
 - CPP library class now reaches into included Arduino libraries for source files
 - SPI mocks
+- `ensure_arduino_installation.rb` to allow custom libraries to be installed
 
 ### Changed
 - Refactored documentation
