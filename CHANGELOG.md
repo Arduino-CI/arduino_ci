@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Explicit checks that the requested test platforms are defined in YML
 - Arduino command wrapper can now guess whether a library is installed
 - CPP library class now reaches into included Arduino libraries for source files
+- SPI mocks
 
 ### Changed
 - Refactored documentation

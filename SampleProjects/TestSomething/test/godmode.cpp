@@ -183,6 +183,44 @@ unittest(interrupt_attachment) {
   assertFalse(state->interrupt[0].attached);
 }
 
+unittest(spi) {
+  GodmodeState *state = GODMODE();
+  state->reset();
+  assertEqual("", state->spi.dataIn);
+  assertEqual("", state->spi.dataOut);
+
+  // 8-bit
+  state->reset();
+  state->spi.dataIn = "LMNO";
+  uint8_t out8 = SPI.transfer('a');
+  assertEqual("a", state->spi.dataOut);
+  assertEqual('L', out8);
+  assertEqual("MNO", state->spi.dataIn);
+
+  // 16-bit
+  union { uint16_t val; struct { char lsb; char msb; }; } in16, out16;
+  state->reset();
+  state->spi.dataIn = "LMNO";
+  in16.lsb = 'a';
+  in16.msb = 'b';
+  out16.val = SPI.transfer16(in16.val);
+  assertEqual("NO", state->spi.dataIn);
+  assertEqual('L', out16.lsb);
+  assertEqual('M', out16.msb);
+  assertEqual("ab", state->spi.dataOut);
+
+  // buffer
+  state->reset();
+  state->spi.dataIn = "LMNOP";
+  char inBuf[6] = "abcde";
+  SPI.transfer(inBuf, 4);
+
+  assertEqual("abcd", state->spi.dataOut);
+  assertEqual("LMNOe", String(inBuf));
+}
+
+
+
 #ifdef HAVE_HWSERIAL0
 
   void smartLightswitchSerialHandler(int pin) {
