@@ -85,7 +85,7 @@ public:
     advertiseByte((char)data);
 
     // pop bus->memory data from its queue and return it
-    if (!dataIn->length()) return 0;
+    if (dataIn->empty()) return 0;
     char ret = (*dataIn)[0];
     *dataIn = dataIn->substr(1, dataIn->length());
     return ret;
