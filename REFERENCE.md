@@ -100,42 +100,6 @@ unittest_main()
 This test defines one `unittest` (a macro provided by `ArduinoUnitTests.h`), called `your_test_name`, which makes some assertions on the target library.  The `unittest_main()` is a macro for the `int main()` boilerplate required for unit testing.
 
 
-# Build Scripts
-
-For most build environments, the only script that need be executed by the CI system is
-
-```shell
-# simplest build script
-bundle install
-bundle exec arduino_ci_remote.rb
-```
-
-However, more flexible usage is available:
-
-### Custom Versions of external Arduino Libraries
-
-Sometimes you need a fork of an Arduino library instead of the version that will be installed via their GUI.  `arduino_ci_remote.rb` won't overwrite existing downloaded libraries with fresh downloads, but it won't fetch the custom versions for you either.
-
-If this is the behavior you need, `ensure_arduino_installation.rb` is for you.
-
-```shell
-# Example build script
-bundle install
-
-# ensure the Arduino installation -- creates the Library directory
-bundle exec ensure_arduino_installation.rb
-
-# manually install the custom version you need
-git clone https://repository.com/custom_library_repo.git
-mv custom_library_repo /path/to/Arduino/libraries
-
-# now run CI
-bundle exec arduino_ci_remote.rb
-```
-
-
-
-
 # Mocks
 
 ## Using `GODMODE`
