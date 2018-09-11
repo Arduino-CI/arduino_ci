@@ -132,6 +132,8 @@ module ArduinoCI
       open(package_url, ssl_verify_mode: 0, progress_proc: dot_printer) do |url|
         File.open(package_file, 'wb') { |file| file.write(url.read) }
       end
+    rescue Net::OpenTimeout, Net::ReadTimeout => e
+      puts "\nArduino force-install failed downloading #{package_url}: #{e}"
     end
 
     # Extract the package_file to extracted_file

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - SPI mocks
 - `ensure_arduino_installation.rb` to allow custom libraries to be installed
 - Copy constructor for `ArduinoCITable`
+- Some error information on failures to download the Arduino binary
 
 ### Changed
 - Refactored documentation
