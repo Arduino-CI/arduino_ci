@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - OSX splash screen re-disabled
 - ArduinoCITable didn't initialize its size on `clear()`
+- CPP file aggregation now ignores dotfiles
 
 ### Security
 

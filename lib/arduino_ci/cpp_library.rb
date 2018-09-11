@@ -60,8 +60,8 @@ module ArduinoCI
       return [] unless File.exist?(some_dir)
       real = File.realpath(some_dir)
       files = Find.find(real).reject { |path| File.directory?(path) }
-      ret = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
-      ret
+      cpp = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
+      cpp.reject { |path| File.basename(path).start_with?(".") } # ignore hidden
     end
 
     # CPP files that are part of the project library under test
