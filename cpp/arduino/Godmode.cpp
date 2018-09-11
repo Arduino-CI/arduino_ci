@@ -1,6 +1,5 @@
 #include "Godmode.h"
 #include "HardwareSerial.h"
-#include "SPI.h"
 
 GodmodeState godmode = GodmodeState();
 
@@ -98,6 +97,3 @@ inline std::ostream& operator << ( std::ostream& out, const PinHistory<T>& ph ) 
   out << ph;
   return out;
 }
-
-// defined in SPI.h
-SPIClass SPI = SPIClass(&godmode.spi.dataIn, &godmode.spi.dataOut);
