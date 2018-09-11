@@ -33,7 +33,7 @@ module ArduinoCI
 
     # implementation for Arduino library dir location
     # @return [String] the path to the Arduino libraries directory
-    def lib_dir
+    def _lib_dir
       File.join(get_pref("sketchbook.path"), "libraries")
     end
 

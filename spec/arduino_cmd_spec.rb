@@ -49,7 +49,7 @@ RSpec.describe ArduinoCI::ArduinoCmd do
   context "libraries" do
     it "knows where to find libraries" do
       fake_lib = "_____nope"
-      expected_dir = File.join(arduino_cmd.lib_dir, fake_lib)
+      expected_dir = File.join(arduino_cmd._lib_dir, fake_lib)
       expect(arduino_cmd.library_path(fake_lib)).to eq(expected_dir)
       expect(arduino_cmd.library_present?(fake_lib)).to be false
     end

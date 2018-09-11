@@ -74,7 +74,7 @@ config = ArduinoCI::CIConfig.default.from_project_library
 # initialize library under test
 installed_library_path = assure("Installing library under test") { @arduino_cmd.install_local_library(".") }
 library_examples = @arduino_cmd.library_examples(installed_library_path)
-cpp_library = ArduinoCI::CppLibrary.new(installed_library_path, @arduino_cmd.lib_dir)
+cpp_library = ArduinoCI::CppLibrary.new(installed_library_path)
 attempt("Library installed at #{installed_library_path}") { true }
 
 # check GCC

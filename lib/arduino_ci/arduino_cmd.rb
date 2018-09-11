@@ -66,8 +66,8 @@ module ArduinoCI
     end
 
     # @return [String] the path to the Arduino libraries directory
-    def lib_dir
-      "<lib_dir not defined>"
+    def _lib_dir
+      "<lib dir not defined>"
     end
 
     # fetch preferences in their raw form
@@ -190,7 +190,7 @@ module ArduinoCI
     # @param library_name [String] The name of the library
     # @return [String] The fully qualified library name
     def library_path(library_name)
-      File.join(lib_dir, library_name)
+      File.join(_lib_dir, library_name)
     end
 
     # Determine whether a library is present in the lib dir

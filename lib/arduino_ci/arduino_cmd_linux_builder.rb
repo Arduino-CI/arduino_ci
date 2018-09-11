@@ -16,7 +16,7 @@ module ArduinoCI
 
     # linux-specific implementation
     # @return [String] The path to the library dir
-    def lib_dir
+    def _lib_dir
       File.join(get_pref("sketchbook.path"), "libraries")
     end
 

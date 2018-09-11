@@ -13,7 +13,7 @@ module ArduinoCI
     flag :install_library, "--install-library"
     flag :verify,          "--verify"
 
-    def lib_dir
+    def _lib_dir
       File.join(ENV['userprofile'], "Documents", "Arduino", "libraries")
     end
 

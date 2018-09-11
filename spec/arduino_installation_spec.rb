@@ -11,7 +11,7 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
     arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
     it "doesn't fail" do
       expect(arduino_cmd.base_cmd).not_to be nil
-      expect(arduino_cmd.lib_dir).not_to be nil
+      expect(arduino_cmd._lib_dir).not_to be nil
     end
   end
 
