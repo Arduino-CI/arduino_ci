@@ -351,18 +351,3 @@ unittest(modem_hardware)
 Note that instead of setting `mLast = output` in the `onMatchInput()` function for test purposes, we could just as easily queue some bytes to state->serialPort[0].dataIn for the library under test to find on its next `peek()` or `read()`.  Or we could execute some action on a digital or analog input pin; the possibilities are fairly endless in this regard, although you will have to define them yourself -- from scratch -- extending the `DataStreamObserver` class to emulate your physical device.
 
 
-### Interrupts
-
-Although ISRs should be tested directly (as their asynchronous nature is not mocked), the act of attaching or detaching an interrupt can be measured.
-
-```C++
-unittest(interrupt_attachment) {
-  GodmodeState *state = GODMODE();
-  state->reset();
-  assertFalse(state->interrupt[7].attached);
-  attachInterrupt(7, (void (*)(void))0, 3);
-  assertTrue(state->interrupt[7].attached);
-  assertEqual(state->interrupt[7].mode, 3);
-  detachInterrupt(7);
-  assertFalse(state->interrupt[7].attached);
-}```

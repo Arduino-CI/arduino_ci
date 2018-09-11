@@ -67,16 +67,6 @@ int analogRead(unsigned char pin) {
   return godmode->analogPin[pin].retrieve();
 }
 
-void attachInterrupt(uint8_t interrupt, void ISR(void), uint8_t mode) {
-  GodmodeState* godmode = GODMODE();
-  godmode->interrupt[interrupt].attached = true;
-  godmode->interrupt[interrupt].mode = mode;
-}
-
-void detachInterrupt(uint8_t interrupt) {
-  GodmodeState* godmode = GODMODE();
-  godmode->interrupt[interrupt].attached = false;
-}
 
 // Serial ports
 #if defined(HAVE_HWSERIAL0)

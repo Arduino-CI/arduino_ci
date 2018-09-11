@@ -172,17 +172,6 @@ unittest(pin_write_history)
 
 }
 
-unittest(interrupt_attachment) {
-  GodmodeState *state = GODMODE();
-  state->reset();
-  assertFalse(state->interrupt[0].attached);
-  attachInterrupt(0, (void (*)(void))0, 3);
-  assertTrue(state->interrupt[0].attached);
-  assertEqual(state->interrupt[0].mode, 3);
-  detachInterrupt(0);
-  assertFalse(state->interrupt[0].attached);
-}
-
 #ifdef HAVE_HWSERIAL0
 
   void smartLightswitchSerialHandler(int pin) {
