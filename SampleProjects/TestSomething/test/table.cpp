@@ -18,8 +18,7 @@ void setResult3(long l, int k, int v) {
 }
 
 
-unittest(basic_table)
-{
+unittest(basic_table) {
   ArduinoCITable<String, int> t;
   assertTrue(t.empty());
 
@@ -44,6 +43,40 @@ unittest(basic_table)
     assertEqual(4 - i, t.size());
   }
 
+}
+
+unittest(clear) {
+  ArduinoCITable<String, int> t1;
+  int data[5] = {11, 22, 33, 44, 55};
+
+  for (int i = 0; i < 5; ++i) {
+    t1.add(String(data[i]), data[i]);
+  }
+
+  assertEqual(5, t1.size());
+  t1.clear();
+  assertEqual(0, t1.size());
+}
+
+unittest(copy_construction) {
+  ArduinoCITable<String, int> t1;
+  int data[5] = {11, 22, 33, 44, 55};
+
+  for (int i = 0; i < 5; ++i) {
+    t1.add(String(data[i]), data[i]);
+  }
+
+  ArduinoCITable<String, int> t2 = t1;
+  t1.clear();
+  assertEqual(0, t1.size());
+  assertEqual(5, t2.size());
+
+  for (int i = 0; i < 5; ++i) {
+    assertTrue(t2.has(String(data[i])));
+    assertTrue(t2.remove(String(data[i])));
+    assertFalse(t2.has(String(data[i])));
+  }
+  assertEqual(0, t2.size());
 }
 
 unittest(iteration_no_arg) {

@@ -27,6 +27,13 @@ class ArduinoCITable {
   public:
     ArduinoCITable() : mNilK(), mNilV() { init(); }
 
+    ArduinoCITable(const ArduinoCITable& obj) : mNilK(), mNilV() {
+      init();
+      for (Node* p = obj.mStart; p; p = p->next) {
+        add(p->key, p->val);
+      }
+    }
+
     // number of things in the table
     inline unsigned long size() const { return mSize; }
 
@@ -119,6 +126,7 @@ class ArduinoCITable {
         mStart = mStart->next;
         delete p;
       }
+      mSize = 0;
     }
 
     ~ArduinoCITable() { clear(); }

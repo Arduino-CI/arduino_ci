@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - CPP library class now reaches into included Arduino libraries for source files
 - SPI mocks
 - `ensure_arduino_installation.rb` to allow custom libraries to be installed
+- Copy constructor for `ArduinoCITable`
 
 ### Changed
 - Refactored documentation
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - OSX splash screen re-disabled
+- ArduinoCITable didn't initialize its size on `clear()`
 
 ### Security
 
