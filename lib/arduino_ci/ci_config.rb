@@ -54,7 +54,7 @@ module ArduinoCI
       # @return [ArudinoCI::CIConfig] The configuration with defaults filled in
       def default
         ret = new
-        ret.load_yaml(File.expand_path("../../../misc/default.yml", __FILE__))
+        ret.load_yaml(File.expand_path("../../misc/default.yml", __dir__))
         ret
       end
     end
@@ -85,6 +85,7 @@ module ArduinoCI
     # @return [Hash] a copy, containing only expected & valid data
     def validate_data(rootname, source, schema)
       return nil if source.nil?
+
       good_data = {}
       source.each do |key, value|
         ksym = key.to_sym
@@ -186,6 +187,7 @@ module ArduinoCI
     def platform_definition(platform_name)
       defn = @platform_info[platform_name]
       return nil if defn.nil?
+
       deep_clone(defn)
     end
 
@@ -195,6 +197,7 @@ module ArduinoCI
     # @return [String] the URL defined for this package
     def package_url(package)
       return nil if @package_info[package].nil?
+
       @package_info[package][:url]
     end
 
@@ -202,6 +205,7 @@ module ArduinoCI
     # @return [Array<String>] The compiler binary names (e.g. g++) to build with
     def compilers_to_use
       return [] if @unittest_info[:compilers].nil?
+
       @unittest_info[:compilers]
     end
 
@@ -209,6 +213,7 @@ module ArduinoCI
     # @return [Array<String>] The platforms to build
     def platforms_to_build
       return [] if @compile_info[:platforms].nil?
+
       @compile_info[:platforms]
     end
 
@@ -216,18 +221,21 @@ module ArduinoCI
     # @return [Array<String>] The platforms to unit test on
     def platforms_to_unittest
       return [] if @unittest_info[:platforms].nil?
+
       @unittest_info[:platforms]
     end
 
     # @return [Array<String>] The aux libraries required for building/verifying
     def aux_libraries_for_build
       return [] if @compile_info[:libraries].nil?
+
       @compile_info[:libraries]
     end
 
     # @return [Array<String>] The aux libraries required for unit testing
     def aux_libraries_for_unittest
       return [] if @unittest_info[:libraries].nil?
+
       @unittest_info[:libraries]
     end
 
@@ -236,6 +244,7 @@ module ArduinoCI
     # @return [Array<String>] files that match the select/reject criteria
     def allowable_unittest_files(paths)
       return paths if @unittest_info[:testfiles].nil?
+
       ret = paths
       unless @unittest_info[:testfiles][:select].nil? || @unittest_info[:testfiles][:select].empty?
         ret = ret.select { |p| unittest_info[:testfiles][:select].any? { |glob| File.fnmatch(glob, File.basename(p)) } }
@@ -253,6 +262,7 @@ module ArduinoCI
       plat = @platform_info[platform_name]
       return {} if plat.nil?
       return {} if plat[:gcc].nil?
+
       plat[:gcc]
     end
   end

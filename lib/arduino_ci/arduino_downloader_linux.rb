@@ -47,6 +47,7 @@ module ArduinoCI
     def self.existing_installation
       exe = self.existing_executable
       return nil if exe.nil?
+
       File.dirname(exe) # it's not really this
       # but for this platform it doesn't really matter
     end
@@ -79,6 +80,7 @@ module ArduinoCI
       end
       forced_arduino = File.join(self.force_install_location, "arduino")
       return forced_arduino if File.exist? forced_arduino
+
       nil
     end
 

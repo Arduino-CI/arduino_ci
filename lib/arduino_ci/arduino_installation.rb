@@ -29,11 +29,13 @@ module ArduinoCI
         when :linux then
           loc = ArduinoDownloaderLinux.autolocated_executable
           return nil if loc.nil?
+
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [loc]
         when :windows then
           loc = ArduinoDownloaderWindows.autolocated_executable
           return nil if loc.nil?
+
           ret = ArduinoCmdWindows.new
           ret.base_cmd = [loc]
         end

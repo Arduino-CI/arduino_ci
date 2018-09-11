@@ -35,6 +35,7 @@ module ArduinoCI
       locations.each do |loc|
         next if loc.nil?
         next unless File.exist? loc
+
         return loc
       end
       nil
@@ -51,6 +52,7 @@ module ArduinoCI
       locations.each do |loc|
         next if loc.nil?
         next unless File.exist? loc
+
         return loc
       end
       nil

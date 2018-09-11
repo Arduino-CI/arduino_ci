@@ -3,8 +3,8 @@ require "arduino_ci/host"
 
 HPP_EXTENSIONS = [".hpp", ".hh", ".h", ".hxx", ".h++"].freeze
 CPP_EXTENSIONS = [".cpp", ".cc", ".c", ".cxx", ".c++"].freeze
-ARDUINO_HEADER_DIR = File.expand_path("../../../cpp/arduino", __FILE__)
-UNITTEST_HEADER_DIR = File.expand_path("../../../cpp/unittest", __FILE__)
+ARDUINO_HEADER_DIR = File.expand_path("../../cpp/arduino", __dir__)
+UNITTEST_HEADER_DIR = File.expand_path("../../cpp/unittest", __dir__)
 
 module ArduinoCI
 
@@ -50,6 +50,7 @@ module ArduinoCI
       real = File.join(File.realpath(@base_dir), "vendor")
       return true if path.start_with?(base)
       return true if path.start_with?(real)
+
       false
     end
 
@@ -58,6 +59,7 @@ module ArduinoCI
     # @return [Array<String>] The paths of the found files
     def cpp_files_in(some_dir)
       return [] unless File.exist?(some_dir)
+
       real = File.realpath(some_dir)
       files = Find.find(real).reject { |path| File.directory?(path) }
       cpp = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
@@ -130,6 +132,7 @@ module ArduinoCI
     # @return [String] the version reported by `gcc -v`
     def gcc_version(gcc_binary)
       return nil unless run_gcc(gcc_binary, "-v")
+
       @last_err
     end
 
@@ -159,6 +162,7 @@ module ArduinoCI
     # @return [Array<String>] GCC command-line flags
     def feature_args(ci_gcc_config)
       return [] if ci_gcc_config[:features].nil?
+
       ci_gcc_config[:features].map { |f| "-f#{f}" }
     end
 
@@ -167,6 +171,7 @@ module ArduinoCI
     # @return [Array<String>] GCC command-line flags
     def warning_args(ci_gcc_config)
       return [] if ci_gcc_config[:warnings].nil?
+
       ci_gcc_config[:features].map { |w| "-W#{w}" }
     end
 
@@ -175,6 +180,7 @@ module ArduinoCI
     # @return [Array<String>] GCC command-line flags
     def define_args(ci_gcc_config)
       return [] if ci_gcc_config[:defines].nil?
+
       ci_gcc_config[:defines].map { |d| "-D#{d}" }
     end
 
@@ -183,6 +189,7 @@ module ArduinoCI
     # @return [Array<String>] GCC command-line flags
     def flag_args(ci_gcc_config)
       return [] if ci_gcc_config[:flags].nil?
+
       ci_gcc_config[:flags]
     end
 
@@ -222,6 +229,7 @@ module ArduinoCI
         [test_file],
       ].flatten(1)
       return nil unless run_gcc(gcc_binary, *args)
+
       artifacts << executable
       executable
     end

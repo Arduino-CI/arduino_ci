@@ -28,6 +28,7 @@ module ArduinoCI
       resp = run_and_capture(flag_get_pref)
       @prefs_response_time = Time.now - start
       return nil unless resp[:success]
+
       resp[:out]
     end
 
