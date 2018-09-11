@@ -211,6 +211,12 @@ module ArduinoCI
       File.delete(executable) if File.exist?(executable)
       args = [
         ["-std=c++0x", "-o", executable, "-DARDUINO=100"],
+        [ # Stuff to help with dynamic memory mishandling
+          "-g", "-O1",
+          "-fno-omit-frame-pointer",
+          "-fno-optimize-sibling-calls",
+          "-fsanitize=address"
+        ],
         test_args(aux_libraries, ci_gcc_config),
         cpp_files_libraries(aux_libraries),
         [test_file],
