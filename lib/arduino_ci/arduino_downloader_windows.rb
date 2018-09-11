@@ -73,6 +73,7 @@ module ArduinoCI
     def self.existing_installation
       exe = self.existing_executable
       return nil if exe.nil?
+
       File.dirname(exe)
     end
 
@@ -94,6 +95,7 @@ module ArduinoCI
     def self.force_installed_executable
       exe = File.join(self.force_install_location, "arduino_debug.exe")
       return nil if exe.nil?
+
       exe
     end
 

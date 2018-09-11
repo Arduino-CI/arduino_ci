@@ -84,6 +84,7 @@ compilers.each do |gcc_binary|
   attempt_multiline("Checking #{gcc_binary} version") do
     version = cpp_library.gcc_version(gcc_binary)
     next nil unless version
+
     puts version.split("\n").map { |l| "    #{l}" }.join("\n")
     version
   end

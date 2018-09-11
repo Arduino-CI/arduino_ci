@@ -14,7 +14,7 @@ module ArduinoCI
     #   @return [String] the text of the command line flag (`$2` in this case)
     def self.flag(name, text = nil)
       text = "(flag #{name} not defined)" if text.nil?
-      self.class_eval("def flag_#{name};\"#{text}\";end")
+      self.class_eval("def flag_#{name};\"#{text}\";end", __FILE__, __LINE__)
     end
 
     # the path to the Arduino executable
@@ -75,6 +75,7 @@ module ArduinoCI
     def _prefs_raw
       resp = run_and_capture(flag_get_pref)
       return nil unless resp[:success]
+
       resp[:out]
     end
 
@@ -83,6 +84,7 @@ module ArduinoCI
     def prefs
       prefs_raw = _prefs_raw unless @prefs_fetched
       return nil if prefs_raw.nil?
+
       @prefs_cache = parse_pref_string(prefs_raw)
       @prefs_cache.clone
     end
@@ -224,9 +226,11 @@ module ArduinoCI
     # @return [bool] whether the command succeeded
     def use_board!(boardname)
       return true if use_board(boardname)
+
       boardfamily = boardname.split(":")[0..1].join(":")
       puts "Board '#{boardname}' not found; attempting to install '#{boardfamily}'"
       return false unless install_boards(boardfamily) # guess board family from first 2 :-separated fields
+
       use_board(boardname)
     end
 
@@ -264,6 +268,7 @@ module ArduinoCI
         # maybe it's a symlink? that would be OK
         if File.symlink?(destination_path)
           return destination_path if File.readlink(destination_path) == realpath
+
           @last_msg = "#{uhoh} and it's not symlinked to #{realpath}"
           return nil
         end
@@ -282,6 +287,7 @@ module ArduinoCI
     def library_examples(installed_library_path)
       example_path = File.join(installed_library_path, "examples")
       return [] unless File.exist?(example_path)
+
       examples = Pathname.new(example_path).children.select(&:directory?).map(&:to_path).map(&File.method(:basename))
       files = examples.map do |e|
         proj_file = File.join(example_path, e, "#{e}.ino")

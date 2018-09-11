@@ -7,6 +7,14 @@ AllCops:
 
 # inherit_from: .rubocop_todo.yml
 
+# TODO: stuff I actually want to fix
+Style/RescueStandardError:
+  Enabled: false
+
+Security/Open:
+  Enabled: false
+
+
 # Extra lines for readability
 Layout/EmptyLinesAroundClassBody:
   Enabled: false
@@ -79,7 +87,10 @@ Style/RedundantSelf:
 Style/StringLiterals:
   Enabled: false
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false
 
 Style/SymbolArray:
