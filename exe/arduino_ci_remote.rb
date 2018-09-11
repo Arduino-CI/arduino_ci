@@ -55,16 +55,7 @@ end
 
 # Make a nice status for something that kills the script immediately on failure
 def assure(message, &block)
-  perform_action(message, false, "This may indicate a problem with ArduinoCI, or your configuration", true, &block)
-end
-
-# Assure that a platform exists and return its definition
-def assured_platform(purpose, name, config)
-  platform_definition = config.platform_definition(name)
-  assure("Requested #{purpose} platform '#{name}' is defined in 'platforms' YML") do
-    !platform_definition.nil?
-  end
-  platform_definition
+  perform_action(message, false, "This may indicate a problem with ArduinoCI!", true, &block)
 end
 
 # initialize command and config
@@ -94,11 +85,10 @@ end
 # while we're doing that, get the aux libraries as well
 all_platforms = {}
 aux_libraries = Set.new(config.aux_libraries_for_unittest + config.aux_libraries_for_build)
-# while collecting the platforms, ensure they're defined
-config.platforms_to_unittest.each { |p| all_platforms[p] = assured_platform("unittest", p, config) }
+config.platforms_to_unittest.each { |p| all_platforms[p] = config.platform_definition(p) }
 library_examples.each do |path|
   ovr_config = config.from_example(path)
-  ovr_config.platforms_to_build.each { |p| all_platforms[p] = assured_platform("library example", p, config) }
+  ovr_config.platforms_to_build.each { |p| all_platforms[p] = config.platform_definition(p) }
   aux_libraries.merge(ovr_config.aux_libraries_for_build)
 end
 
