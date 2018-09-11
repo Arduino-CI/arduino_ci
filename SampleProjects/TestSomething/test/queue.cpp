@@ -48,4 +48,20 @@ unittest(copy_constructor)
   }
 }
 
+unittest(boundaries)
+{
+  ArduinoCIQueue<int> q;
+  int data[2] = {11, 22};
+  for (int i = 0; i < 2; ++i) q.push(data[i]);
+
+  assertEqual(2, q.size());
+  q.pop();
+  assertEqual(1, q.size());
+  q.pop();
+  assertEqual(0, q.size());
+  q.pop();
+  assertEqual(0, q.size());
+
+}
+
 unittest_main()
