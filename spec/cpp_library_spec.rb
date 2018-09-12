@@ -1,31 +1,41 @@
 require "spec_helper"
+require "pathname"
 
-sampleproj_path = File.join(File.dirname(File.dirname(__FILE__)), "SampleProjects")
+sampleproj_path = Pathname.new(__dir__).parent + "SampleProjects"
+
+def get_relative_dir(sampleprojects_tests_dir)
+  base_dir = sampleprojects_tests_dir.ascend do |path|
+    break path if path.split[1].to_s == "SampleProjects"
+  end
+  sampleprojects_tests_dir.relative_path_from(base_dir)
+end
 
 RSpec.describe ArduinoCI::CppLibrary do
-  cpp_lib_path = File.join(sampleproj_path, "DoSomething")
-  cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, "my_fake_arduino_lib_dir")
+  cpp_lib_path = sampleproj_path + "DoSomething"
+  cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, Pathname.new("my_fake_arduino_lib_dir"))
   context "cpp_files" do
     it "finds cpp files in directory" do
-      dosomething_cpp_files = ["DoSomething/do-something.cpp"]
-      relative_paths = cpp_library.cpp_files.map { |f| f.split("SampleProjects/", 2)[1] }
+      dosomething_cpp_files = [Pathname.new("DoSomething") + "do-something.cpp"]
+      relative_paths = cpp_library.cpp_files.map { |f| get_relative_dir(f) }
       expect(relative_paths).to match_array(dosomething_cpp_files)
     end
   end
 
   context "header_dirs" do
     it "finds directories containing h files" do
-      dosomething_header_dirs = ["DoSomething"]
-      relative_paths = cpp_library.header_dirs.map { |f| f.split("SampleProjects/", 2)[1] }
+      dosomething_header_dirs = [Pathname.new("DoSomething")]
+      relative_paths = cpp_library.header_dirs.map { |f| get_relative_dir(f) }
       expect(relative_paths).to match_array(dosomething_header_dirs)
     end
   end
 
   context "tests_dir" do
-    it "locate the tests directory" do
-      dosomething_header_dirs = ["DoSomething"]
-      relative_path = cpp_library.tests_dir.split("SampleProjects/", 2)[1]
-      expect(relative_path).to eq("DoSomething/test")
+    it "locates the tests directory" do
+      # since we don't know where the CI system will install this stuff,
+      # we need to go looking for a relative path to the SampleProjects directory
+      # just to get our "expected" value
+      relative_path = get_relative_dir(cpp_library.tests_dir)
+      expect(relative_path.to_s).to eq("DoSomething/test")
     end
   end
 
@@ -35,8 +45,8 @@ RSpec.describe ArduinoCI::CppLibrary do
         "DoSomething/test/good-null.cpp",
         "DoSomething/test/good-library.cpp",
         "DoSomething/test/bad-null.cpp",
-      ]
-      relative_paths = cpp_library.test_files.map { |f| f.split("SampleProjects/", 2)[1] }
+      ].map { |f| Pathname.new(f) }
+      relative_paths = cpp_library.test_files.map { |f| get_relative_dir(f) }
       expect(relative_paths).to match_array(dosomething_test_files)
     end
   end
@@ -61,7 +71,7 @@ RSpec.describe ArduinoCI::CppLibrary do
 
     test_files = cpp_library.test_files
     test_files.each do |path|
-      expected = path.include?("good")
+      expected = path.basename.to_s.include?("good")
       config.compilers_to_use.each do |compiler|
         it "tests #{File.basename(path)} with #{compiler} expecting #{expected}" do
           exe = cpp_library.build_for_test_with_configuration(path, [], compiler, config.gcc_config("uno"))

@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - External libraries aren't forcibly installed via the Arduino binary (in `arduino_cmd_remote.rb`) if they appear to exist on disk already
 - `attachInterrupt` and `detachInterrupt` are now mocked instead of `_NOP`
 - Unit test binaries now run with debugging symbols and address sanitization (if available), to help isolate the causes of segfaults
+- `ArduinoCommand::libdir` logic is now centralized, using `sketchbook.path` from prefs instead of hard-coding
 
 ### Deprecated
 
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - CPP file aggregation now ignores dotfiles
 - Unit test `compilers` section of YAML configuration is now properly inherited from parent configuration files
 - Retrieving preferences is now properly cached
+- Paths on Windows should now work due to the use of `Pathname`
 
 ### Security
 

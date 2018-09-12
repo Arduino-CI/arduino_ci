@@ -12,11 +12,6 @@ module ArduinoCI
     flag :install_boards,  "--install-boards"
     flag :install_library, "--install-library"
     flag :verify,          "--verify"
-
-    def lib_dir
-      File.join(ENV['HOME'], "Documents", "Arduino", "libraries")
-    end
-
   end
 
 end

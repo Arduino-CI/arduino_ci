@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'pathname'
 
 module ArduinoCI
 
@@ -67,7 +68,7 @@ module ArduinoCI
 
     # @return [String] the path to the Arduino libraries directory
     def lib_dir
-      "<lib_dir not defined>"
+      Pathname.new(get_pref("sketchbook.path")) + "libraries"
     end
 
     # fetch preferences in their raw form
@@ -192,9 +193,9 @@ module ArduinoCI
 
     # generate the (very likely) path of a library given its name
     # @param library_name [String] The name of the library
-    # @return [String] The fully qualified library name
+    # @return [Pathname] The fully qualified library name
     def library_path(library_name)
-      File.join(lib_dir, library_name)
+      Pathname.new(lib_dir) + library_name
     end
 
     # Determine whether a library is present in the lib dir
@@ -205,7 +206,7 @@ module ArduinoCI
     # @param library_name [String] The name of the library
     # @return [bool]
     def library_present?(library_name)
-      File.exist?(library_path(library_name))
+      library_path(library_name).exist?
     end
 
     # update the library index
@@ -254,24 +255,24 @@ module ArduinoCI
 
     # ensure that the given library is installed, or symlinked as appropriate
     # return the path of the prepared library, or nil
-    # @param path [String] library to use
+    # @param path [Pathname] library to use
     # @return [String] the path of the installed library
     def install_local_library(path)
-      realpath = File.expand_path(path)
-      library_name = File.basename(realpath)
+      src_path = path.realpath
+      library_name = src_path.basename
       destination_path = library_path(library_name)
 
       # things get weird if the sketchbook contains the library.
       # check that first
-      if File.exist? destination_path
+      if destination_path.exist?
         uhoh = "There is already a library '#{library_name}' in the library directory"
-        return destination_path if destination_path == realpath
+        return destination_path if destination_path == src_path
 
         # maybe it's a symlink? that would be OK
-        if File.symlink?(destination_path)
-          return destination_path if File.readlink(destination_path) == realpath
+        if destination_path.symlink?
+          return destination_path if destination_path.readlink == src_path
 
-          @last_msg = "#{uhoh} and it's not symlinked to #{realpath}"
+          @last_msg = "#{uhoh} and it's not symlinked to #{src_path}"
           return nil
         end
 
@@ -280,20 +281,20 @@ module ArduinoCI
       end
 
       # install the library
-      Host.symlink(realpath, destination_path)
+      Host.symlink(src_path, destination_path)
       destination_path
     end
 
     # @param installed_library_path [String] The library to query
     # @return [Array<String>] Example sketch files
     def library_examples(installed_library_path)
-      example_path = File.join(installed_library_path, "examples")
+      example_path = Pathname.new(installed_library_path) + "examples"
       return [] unless File.exist?(example_path)
 
-      examples = Pathname.new(example_path).children.select(&:directory?).map(&:to_path).map(&File.method(:basename))
+      examples = example_path.children.select(&:directory?).map(&:to_path).map(&File.method(:basename))
       files = examples.map do |e|
-        proj_file = File.join(example_path, e, "#{e}.ino")
-        File.exist?(proj_file) ? proj_file : nil
+        proj_file = example_path + e + "#{e}.ino"
+        proj_file.exist? ? proj_file.to_s : nil
       end
       files.reject(&:nil?)
     end

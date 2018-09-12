@@ -1,23 +1,25 @@
 require 'find'
 require "arduino_ci/host"
+require 'pathname'
 
 HPP_EXTENSIONS = [".hpp", ".hh", ".h", ".hxx", ".h++"].freeze
 CPP_EXTENSIONS = [".cpp", ".cc", ".c", ".cxx", ".c++"].freeze
-ARDUINO_HEADER_DIR = File.expand_path("../../cpp/arduino", __dir__)
-UNITTEST_HEADER_DIR = File.expand_path("../../cpp/unittest", __dir__)
+CI_CPP_DIR = Pathname.new(__dir__).parent.parent + "cpp"
+ARDUINO_HEADER_DIR = CI_CPP_DIR + "arduino"
+UNITTEST_HEADER_DIR = CI_CPP_DIR + "unittest"
 
 module ArduinoCI
 
   # Information about an Arduino CPP library, specifically for compilation purposes
   class CppLibrary
 
-    # @return [String] The path to the library being tested
+    # @return [Pathname] The path to the library being tested
     attr_reader :base_dir
 
-    # @return [String] The path to the Arduino 3rd-party library directory
+    # @return [Pathname] The path to the Arduino 3rd-party library directory
     attr_reader :arduino_lib_dir
 
-    # @return [Array<String>] The set of artifacts created by this class (note: incomplete!)
+    # @return [Array<Pathname>] The set of artifacts created by this class (note: incomplete!)
     attr_reader :artifacts
 
     # @return [String] STDERR from the last command
@@ -29,10 +31,14 @@ module ArduinoCI
     # @return [String] the last command
     attr_reader :last_cmd
 
-    # @param base_dir [String] The path to the library being tested
+    # @param base_dir [Pathname] The path to the library being tested
+    # @param arduino_lib_dir [Pathname] The path to the libraries directory
     def initialize(base_dir, arduino_lib_dir)
-      @base_dir = File.expand_path(base_dir)
-      @arduino_lib_dir = File.expand_path(arduino_lib_dir)
+      raise ArgumentError, 'base_dir is not a Pathname' unless base_dir.is_a? Pathname
+      raise ArgumentError, 'arduino_lib_dir is not a Pathname' unless arduino_lib_dir.is_a? Pathname
+
+      @base_dir = base_dir
+      @arduino_lib_dir = arduino_lib_dir.expand_path
       @artifacts = []
       @last_err = ""
       @last_out = ""
@@ -43,22 +49,25 @@ module ArduinoCI
     # Guess whether a file is part of the vendor bundle (indicating we should ignore it).
     #
     # This assumes the vendor bundle will be at `vendor/bundle` and not some other location
-    # @param path [String] The path to check
-    # @return [Array<String>] The paths of the found files
+    # @param path [Pathname] The path to check
+    # @return [Array<Pathname>] The paths of the found files
     def vendor_bundle?(path)
       # TODO: look for Gemfile, look for .bundle/config and get BUNDLE_PATH from there?
-      base = File.join(@base_dir, "vendor")
-      real = File.join(File.realpath(@base_dir), "vendor")
-      return true if path.start_with?(base)
-      return true if path.start_with?(real)
+      base = @base_dir + "vendor"
+      return false unless base.exist?
 
+      real = base.realpath
+      path.ascend do |path_part|
+        return true if path_part == base
+        return true if path_part == real
+      end
       false
     end
 
     # Check whether libasan (and by extension -fsanitizer=address) is supported
     #
     # This requires compilation of a sample program, and will be cached
-    # @param gcc_binary
+    # @param gcc_binary [String]
     def libasan?(gcc_binary)
       unless @has_libasan_cache.key?(gcc_binary)
         file = Tempfile.new('arduino_ci_libasan_check')
@@ -74,67 +83,72 @@ module ArduinoCI
     end
 
     # Get a list of all CPP source files in a directory and its subdirectories
-    # @param some_dir [String] The directory in which to begin the search
-    # @return [Array<String>] The paths of the found files
+    # @param some_dir [Pathname] The directory in which to begin the search
+    # @return [Array<Pathname>] The paths of the found files
     def cpp_files_in(some_dir)
-      return [] unless File.exist?(some_dir)
+      raise ArgumentError, 'some_dir is not a Pathname' unless some_dir.is_a? Pathname
+      return [] unless some_dir.exist? && some_dir.directory?
 
-      real = File.realpath(some_dir)
-      files = Find.find(real).reject { |path| File.directory?(path) }
-      cpp = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path).downcase) }
-      cpp.reject { |path| File.basename(path).start_with?(".") } # ignore hidden
+      real = some_dir.realpath
+      files = Find.find(real).map { |p| Pathname.new(p) }.reject(&:directory?)
+      cpp = files.select { |path| CPP_EXTENSIONS.include?(path.extname.downcase) }
+      cpp.reject { |path| path.basename.to_s.start_with?(".") } # ignore hidden
     end
 
     # CPP files that are part of the project library under test
-    # @return [Array<String>]
+    # @return [Array<Pathname>]
     def cpp_files
-      real_tests_dir = File.realpath(tests_dir)
+      real_tests_dir = tests_dir.realpath
       cpp_files_in(@base_dir).reject do |p|
-        next true if File.dirname(p).include?(tests_dir)
-        next true if File.dirname(p).include?(real_tests_dir)
-        next true if vendor_bundle?(p)
+        next true if p.ascend do |path_part|
+          break true if path_part == tests_dir
+          break true if path_part == real_tests_dir
+          break true if vendor_bundle?(p)
+        end
+
+        false
       end
     end
 
     # CPP files that are part of the arduino mock library we're providing
-    # @return [Array<String>]
+    # @return [Array<Pathname>]
     def cpp_files_arduino
       cpp_files_in(ARDUINO_HEADER_DIR)
     end
 
     # CPP files that are part of the unit test library we're providing
-    # @return [Array<String>]
+    # @return [Array<Pathname>]
     def cpp_files_unittest
       cpp_files_in(UNITTEST_HEADER_DIR)
     end
 
     # CPP files that are part of the 3rd-party libraries we're including
-    # @return [Array<String>]
+    # @param [Array<String>] aux_libraries
+    # @return [Array<Pathname>]
     def cpp_files_libraries(aux_libraries)
       arduino_library_src_dirs(aux_libraries).map { |d| cpp_files_in(d) }.flatten.uniq
     end
 
     # The directory where we expect to find unit test defintions provided by the user
-    # @return [String]
+    # @return [Pathname]
     def tests_dir
-      File.join(@base_dir, "test")
+      Pathname.new(@base_dir) + "test"
     end
 
     # The files provided by the user that contain unit tests
-    # @return [Array<String>]
+    # @return [Array<Pathname>]
     def test_files
       cpp_files_in(tests_dir)
     end
 
     # Find all directories in the project library that include C++ header files
-    # @return [Array<String>]
+    # @return [Array<Pathname>]
     def header_dirs
-      real = File.realpath(@base_dir)
-      all_files = Find.find(real).reject { |path| File.directory?(path) }
+      real = @base_dir.realpath
+      all_files = Find.find(real).map { |f| Pathname.new(f) }.reject(&:directory?)
       unbundled = all_files.reject { |path| vendor_bundle?(path) }
-      files = unbundled.select { |path| HPP_EXTENSIONS.include?(File.extname(path).downcase) }
-      ret = files.map { |path| File.dirname(path) }.uniq
-      ret
+      files = unbundled.select { |path| HPP_EXTENSIONS.include?(path.extname.downcase) }
+      files.map(&:dirname).uniq
     end
 
     # wrapper for the GCC command
@@ -156,19 +170,20 @@ module ArduinoCI
     end
 
     # Arduino library directories containing sources
+    # @return [Array<Pathname>]
     def arduino_library_src_dirs(aux_libraries)
       # Pull in all possible places that headers could live, according to the spec:
       # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification
       # TODO: be smart and implement library spec (library.properties, etc)?
       subdirs = ["", "src", "utility"]
       all_aux_include_dirs_nested = aux_libraries.map do |libdir|
-        subdirs.map { |subdir| File.join(@arduino_lib_dir, libdir, subdir) }
+        subdirs.map { |subdir| Pathname.new(@arduino_lib_dir) + libdir + subdir }
       end
-      all_aux_include_dirs_nested.flatten.select { |d| File.exist?(d) }
+      all_aux_include_dirs_nested.flatten.select(&:exist?).select(&:directory?)
     end
 
     # GCC command line arguments for including aux libraries
-    # @param aux_libraries [String] The external Arduino libraries required by this project
+    # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @return [Array<String>] The GCC command-line flags necessary to include those libraries
     def include_args(aux_libraries)
       all_aux_include_dirs = arduino_library_src_dirs(aux_libraries)
@@ -213,12 +228,15 @@ module ArduinoCI
     end
 
     # All GCC command line args for building any unit test
-    # @param aux_libraries [String] The external Arduino libraries required by this project
+    # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Array<String>] GCC command-line flags
     def test_args(aux_libraries, ci_gcc_config)
       # TODO: something with libraries?
-      ret = include_args(aux_libraries) + cpp_files_arduino + cpp_files_unittest + cpp_files
+      ret = include_args(aux_libraries)
+      ret += cpp_files_arduino.map(&:to_s)
+      ret += cpp_files_unittest.map(&:to_s)
+      ret += cpp_files.map(&:to_s)
       unless ci_gcc_config.nil?
         cgc = ci_gcc_config
         ret = feature_args(cgc) + warning_args(cgc) + define_args(cgc) + flag_args(cgc) + ret
@@ -227,16 +245,16 @@ module ArduinoCI
     end
 
     # build a file for running a test of the given unit test file
-    # @param test_file [String] The path to the file containing the unit tests
-    # @param aux_libraries [String] The external Arduino libraries required by this project
+    # @param test_file [Pathname] The path to the file containing the unit tests
+    # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @param ci_gcc_config [Hash] The GCC config object
-    # @return [String] path to the compiled test executable
+    # @return [Pathname] path to the compiled test executable
     def build_for_test_with_configuration(test_file, aux_libraries, gcc_binary, ci_gcc_config)
-      base = File.basename(test_file)
-      executable = File.expand_path("unittest_#{base}.bin")
+      base = test_file.basename
+      executable = Pathname.new("unittest_#{base}.bin").expand_path
       File.delete(executable) if File.exist?(executable)
       arg_sets = []
-      arg_sets << ["-std=c++0x", "-o", executable, "-DARDUINO=100"]
+      arg_sets << ["-std=c++0x", "-o", executable.to_s, "-DARDUINO=100"]
       if libasan?(gcc_binary)
         arg_sets << [ # Stuff to help with dynamic memory mishandling
           "-g", "-O1",
@@ -246,8 +264,8 @@ module ArduinoCI
         ]
       end
       arg_sets << test_args(aux_libraries, ci_gcc_config)
-      arg_sets << cpp_files_libraries(aux_libraries)
-      arg_sets << [test_file]
+      arg_sets << cpp_files_libraries(aux_libraries).map(&:to_s)
+      arg_sets << [test_file.to_s]
       args = arg_sets.flatten(1)
       return nil unless run_gcc(gcc_binary, *args)
 
@@ -256,13 +274,13 @@ module ArduinoCI
     end
 
     # run a test file
-    # @param [String] the path to the test file
+    # @param [Pathname] the path to the test file
     # @return [bool] whether all tests were successful
     def run_test_file(executable)
       @last_cmd = executable
       @last_out = ""
       @last_err = ""
-      Host.run_and_output(executable)
+      Host.run_and_output(executable.to_s)
     end
 
   end

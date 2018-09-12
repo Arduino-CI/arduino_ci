@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'arduino_ci'
 require 'set'
+require 'pathname'
 
 WIDTH = 80
 
@@ -72,7 +73,9 @@ config = ArduinoCI::CIConfig.default.from_project_library
 @arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
 
 # initialize library under test
-installed_library_path = assure("Installing library under test") { @arduino_cmd.install_local_library(".") }
+installed_library_path = attempt("Installing library under test") do
+  @arduino_cmd.install_local_library(Pathname.new("."))
+end
 library_examples = @arduino_cmd.library_examples(installed_library_path)
 cpp_library = ArduinoCI::CppLibrary.new(installed_library_path, @arduino_cmd.lib_dir)
 attempt("Library installed at #{installed_library_path}") { true }
@@ -129,7 +132,7 @@ end
 
 # iterate boards / tests
 last_board = nil
-if !File.exist?(cpp_library.tests_dir)
+if !cpp_library.tests_dir.exist?
   attempt("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") { true }
 elsif cpp_library.test_files.empty?
   attempt("Skipping unit tests; no test files were found in #{cpp_library.tests_dir}") { true }
@@ -141,7 +144,7 @@ else
     assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
     last_board = board
     cpp_library.test_files.each do |unittest_path|
-      unittest_name = File.basename(unittest_path)
+      unittest_name = unittest_path.basename.to_s
       compilers.each do |gcc_binary|
         attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary}") do
           exe = cpp_library.build_for_test_with_configuration(
