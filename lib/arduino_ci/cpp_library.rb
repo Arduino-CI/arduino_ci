@@ -81,7 +81,7 @@ module ArduinoCI
 
       real = File.realpath(some_dir)
       files = Find.find(real).reject { |path| File.directory?(path) }
-      cpp = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path)) }
+      cpp = files.select { |path| CPP_EXTENSIONS.include?(File.extname(path).downcase) }
       cpp.reject { |path| File.basename(path).start_with?(".") } # ignore hidden
     end
 
@@ -132,7 +132,7 @@ module ArduinoCI
       real = File.realpath(@base_dir)
       all_files = Find.find(real).reject { |path| File.directory?(path) }
       unbundled = all_files.reject { |path| vendor_bundle?(path) }
-      files = unbundled.select { |path| HPP_EXTENSIONS.include?(File.extname(path)) }
+      files = unbundled.select { |path| HPP_EXTENSIONS.include?(File.extname(path).downcase) }
       ret = files.map { |path| File.dirname(path) }.uniq
       ret
     end
