@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Refactored documentation
 - External libraries aren't forcibly installed via the Arduino binary (in `arduino_cmd_remote.rb`) if they appear to exist on disk already
 - `attachInterrupt` and `detachInterrupt` are now mocked instead of `_NOP`
-- Unit test binaries now run with debugging symbols and address sanitization, to help isolate the causes of segfaults
+- Unit test binaries now run with debugging symbols and address sanitization (if available), to help isolate the causes of segfaults
 
 ### Deprecated
 
