@@ -1,14 +1,22 @@
 require "spec_helper"
+require "pathname"
 
-sampleproj_path = File.join(File.dirname(File.dirname(__FILE__)), "SampleProjects")
+sampleproj_path = Pathname.new(__dir__).parent + "SampleProjects"
+
+def get_relative_dir(sampleprojects_tests_dir)
+  base_dir = sampleprojects_tests_dir.ascend do |path|
+    break path if path.split[1].to_s == "SampleProjects"
+  end
+  sampleprojects_tests_dir.relative_path_from(base_dir)
+end
 
 RSpec.describe "TestSomething C++" do
-  cpp_lib_path = File.join(sampleproj_path, "TestSomething")
-  cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, "my_fake_arduino_lib_dir")
+  cpp_lib_path = sampleproj_path + "TestSomething"
+  cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, Pathname.new("my_fake_arduino_lib_dir"))
   context "cpp_files" do
     it "finds cpp files in directory" do
-      testsomething_cpp_files = ["TestSomething/test-something.cpp"]
-      relative_paths = cpp_library.cpp_files.map { |f| f.split("SampleProjects/", 2)[1] }
+      testsomething_cpp_files = [Pathname.new("TestSomething/test-something.cpp")]
+      relative_paths = cpp_library.cpp_files.map { |f| get_relative_dir(f) }
       expect(relative_paths).to match_array(testsomething_cpp_files)
     end
   end

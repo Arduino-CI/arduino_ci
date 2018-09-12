@@ -32,12 +32,6 @@ module ArduinoCI
       resp[:out]
     end
 
-    # implementation for Arduino library dir location
-    # @return [String] the path to the Arduino libraries directory
-    def lib_dir
-      File.join(get_pref("sketchbook.path"), "libraries")
-    end
-
     def run_with_gui_guess(message, *args, **kwargs)
       # On Travis CI, we get an error message in the GUI instead of on STDERR
       # so, assume that if we don't get a rapid reply that things are not installed

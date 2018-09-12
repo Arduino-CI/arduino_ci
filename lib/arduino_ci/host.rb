@@ -1,5 +1,6 @@
 require 'os'
 require 'open3'
+require 'pathname'
 
 module ArduinoCI
 

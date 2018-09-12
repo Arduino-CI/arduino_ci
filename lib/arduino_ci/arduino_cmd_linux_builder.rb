@@ -14,12 +14,6 @@ module ArduinoCI
     flag :install_library, "--install-library"   # apparently doesn't exist
     flag :verify,          "-compile"
 
-    # linux-specific implementation
-    # @return [String] The path to the library dir
-    def lib_dir
-      File.join(get_pref("sketchbook.path"), "libraries")
-    end
-
   end
 
 end

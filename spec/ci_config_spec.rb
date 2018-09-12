@@ -1,4 +1,5 @@
 require "spec_helper"
+require "pathname"
 
 RSpec.describe ArduinoCI::CIConfig do
   context "default" do
@@ -109,8 +110,8 @@ RSpec.describe ArduinoCI::CIConfig do
   end
 
   context "allowable_unittest_files" do
-    cpp_lib_path = File.join(File.dirname(__FILE__), "fake_library")
-    cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, "my_fake_arduino_lib_dir")
+    cpp_lib_path = Pathname.new(__dir__) + "fake_library"
+    cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, Pathname.new("my_fake_arduino_lib_dir"))
 
     it "starts with a known set of files" do
       expect(cpp_library.test_files.map { |f| File.basename(f) }).to match_array([
