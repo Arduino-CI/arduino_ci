@@ -129,8 +129,10 @@ end
 
 # iterate boards / tests
 last_board = nil
-if cpp_library.test_files.empty?
-  attempt("Skipping unit tests; no test files were found") { true }
+if !File.exist?(cpp_library.tests_dir)
+  attempt("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") { true }
+elsif cpp_library.test_files.empty?
+  attempt("Skipping unit tests; no test files were found in #{cpp_library.tests_dir}") { true }
 elsif config.platforms_to_unittest.empty?
   attempt("Skipping unit tests; no platforms were requested") { true }
 else
