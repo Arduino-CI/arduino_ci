@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - ArduinoCITable didn't initialize its size on `clear()`
 - CPP file aggregation now ignores dotfiles
 - Unit test `compilers` section of YAML configuration is now properly inherited from parent configuration files
+- Retrieving preferences is now properly cached
 
 ### Security
 

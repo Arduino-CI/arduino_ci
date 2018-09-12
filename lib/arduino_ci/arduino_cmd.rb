@@ -76,6 +76,7 @@ module ArduinoCI
       resp = run_and_capture(flag_get_pref)
       return nil unless resp[:success]
 
+      @prefs_fetched = true
       resp[:out]
     end
 
@@ -110,6 +111,7 @@ module ArduinoCI
     # @param value [String] the preference value
     # @return [bool] whether the command succeeded
     def set_pref(key, value)
+      prefs unless @prefs_fetched  # update cache first
       success = _set_pref(key, value)
       @prefs_cache[key] = value if success
       success
