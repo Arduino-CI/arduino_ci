@@ -60,17 +60,17 @@ module ArduinoCI
     # This requires compilation of a sample program, and will be cached
     # @param gcc_binary
     def libasan?(gcc_binary)
-      if @has_libasan_cache.nil?
+      unless @has_libasan_cache.key?(gcc_binary)
         file = Tempfile.new('arduino_ci_libasan_check')
         begin
           file.write "int main(){}"
           file.close
-          @has_libasan_cache = run_gcc(gcc_binary, "-o", "/dev/null", "-fsanitize=address", file.path)
+          @has_libasan_cache[gcc_binary] = run_gcc(gcc_binary, "-o", "/dev/null", "-fsanitize=address", file.path)
         ensure
           file.delete
         end
       end
-      @has_libasan_cache
+      @has_libasan_cache[gcc_binary]
     end
 
     # Get a list of all CPP source files in a directory and its subdirectories

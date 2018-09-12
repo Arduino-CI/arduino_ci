@@ -126,12 +126,12 @@ module ArduinoCI
 
       if yml.include?("compile")
         valid_data = validate_data("compile", yml["compile"], COMPILE_SCHEMA)
-        @compile_info = valid_data
+        valid_data.each { |k, v| @compile_info[k] = v }
       end
 
       if yml.include?("unittest")
         valid_data = validate_data("unittest", yml["unittest"], UNITTEST_SCHEMA)
-        @unittest_info = valid_data
+        valid_data.each { |k, v| @unittest_info[k] = v }
       end
 
       self
