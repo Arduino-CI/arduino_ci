@@ -37,6 +37,7 @@ module ArduinoCI
       @last_err = ""
       @last_out = ""
       @last_msg = ""
+      @has_libasan_cache = {}
     end
 
     # Guess whether a file is part of the vendor bundle (indicating we should ignore it).
@@ -52,6 +53,24 @@ module ArduinoCI
       return true if path.start_with?(real)
 
       false
+    end
+
+    # Check whether libasan (and by extension -fsanitizer=address) is supported
+    #
+    # This requires compilation of a sample program, and will be cached
+    # @param gcc_binary
+    def libasan?(gcc_binary)
+      if @has_libasan_cache.nil?
+        file = Tempfile.new('arduino_ci_libasan_check')
+        begin
+          file.write "int main(){}"
+          file.close
+          @has_libasan_cache = run_gcc(gcc_binary, "-o", "/dev/null", "-fsanitize=address", file.path)
+        ensure
+          file.delete
+        end
+      end
+      @has_libasan_cache
     end
 
     # Get a list of all CPP source files in a directory and its subdirectories
@@ -216,18 +235,20 @@ module ArduinoCI
       base = File.basename(test_file)
       executable = File.expand_path("unittest_#{base}.bin")
       File.delete(executable) if File.exist?(executable)
-      args = [
-        ["-std=c++0x", "-o", executable, "-DARDUINO=100"],
-        [ # Stuff to help with dynamic memory mishandling
+      arg_sets = []
+      arg_sets << ["-std=c++0x", "-o", executable, "-DARDUINO=100"]
+      if libasan?(gcc_binary)
+        arg_sets << [ # Stuff to help with dynamic memory mishandling
           "-g", "-O1",
           "-fno-omit-frame-pointer",
           "-fno-optimize-sibling-calls",
           "-fsanitize=address"
-        ],
-        test_args(aux_libraries, ci_gcc_config),
-        cpp_files_libraries(aux_libraries),
-        [test_file],
-      ].flatten(1)
+        ]
+      end
+      arg_sets << test_args(aux_libraries, ci_gcc_config)
+      arg_sets << cpp_files_libraries(aux_libraries)
+      arg_sets << [test_file]
+      args = arg_sets.flatten(1)
       return nil unless run_gcc(gcc_binary, *args)
 
       artifacts << executable
