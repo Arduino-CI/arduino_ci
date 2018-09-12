@@ -2,5 +2,3 @@ unittest:
   platforms:
     - uno
     - due
-  compilers:
-    - g++
