@@ -70,7 +70,7 @@ module ArduinoCI
     # @param gcc_binary [String]
     def libasan?(gcc_binary)
       unless @has_libasan_cache.key?(gcc_binary)
-        file = Tempfile.new('arduino_ci_libasan_check')
+        file = Tempfile.new(["arduino_ci_libasan_check", ".cpp"])
         begin
           file.write "int main(){}"
           file.close

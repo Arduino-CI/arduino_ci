@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Test file `int main(){}` needed a CPP extension in order to properly compile
 
 ### Security
 
