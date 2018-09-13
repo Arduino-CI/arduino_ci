@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Explicit `libasan` checking (reporting) in build script
 
 ### Changed
 
