@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Unit test `compilers` section of YAML configuration is now properly inherited from parent configuration files
 - Retrieving preferences is now properly cached
 - Paths on Windows should now work due to the use of `Pathname`
+- symlinking directories in Windows environments now properly uses `/D` switch to `mklink`
 
 ### Security
 
