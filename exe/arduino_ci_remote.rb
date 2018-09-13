@@ -6,6 +6,7 @@ require 'pathname'
 WIDTH = 80
 
 @failure_count = 0
+@passfail = proc { |result| result ? "✓" : "✗" }
 
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate(final = nil)
@@ -22,7 +23,7 @@ def terminate(final = nil)
 end
 
 # make a nice status line for an action and react to the action
-def perform_action(message, multiline, on_fail_msg, abort_on_fail)
+def perform_action(message, multiline, mark_fn, on_fail_msg, abort_on_fail)
   line = "#{message}... "
   endline = "...#{message} "
   if multiline
@@ -30,8 +31,9 @@ def perform_action(message, multiline, on_fail_msg, abort_on_fail)
   else
     print line
   end
+  STDOUT.flush
   result = yield
-  mark = result ? "✓" : "✗"
+  mark = mark_fn.nil? ? "" : mark_fn.call(result)
   # if multline, put checkmark at full width
   print endline if multiline
   puts mark.rjust(WIDTH - line.length, " ")
@@ -46,17 +48,29 @@ end
 
 # Make a nice status for something that defers any failure code until script exit
 def attempt(message, &block)
-  perform_action(message, false, nil, false, &block)
+  perform_action(message, false, @passfail, nil, false, &block)
 end
 
 # Make a nice status for something that defers any failure code until script exit
 def attempt_multiline(message, &block)
-  perform_action(message, true, nil, false, &block)
+  perform_action(message, true, @passfail, nil, false, &block)
 end
 
 # Make a nice status for something that kills the script immediately on failure
 def assure(message, &block)
-  perform_action(message, false, "This may indicate a problem with ArduinoCI, or your configuration", true, &block)
+  perform_action(message, false, @passfail, "This may indicate a problem with ArduinoCI, or your configuration", true, &block)
+end
+
+def assure_multiline(message, &block)
+  perform_action(message, true, @passfail, "This may indicate a problem with ArduinoCI, or your configuration", true, &block)
+end
+
+def inform(message, &block)
+  perform_action(message, false, proc { |x| x }, nil, false, &block)
+end
+
+def inform_multiline(message, &block)
+  perform_action(message, true, nil, nil, false, &block)
 end
 
 # Assure that a platform exists and return its definition
