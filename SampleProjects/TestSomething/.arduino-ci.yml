@@ -2,3 +2,8 @@ unittest:
   platforms:
     - uno
     - due
+
+compile:
+  platforms:
+    - uno
+    - due
