@@ -90,9 +90,20 @@ config = ArduinoCI::CIConfig.default.from_project_library
 installed_library_path = attempt("Installing library under test") do
   @arduino_cmd.install_local_library(Pathname.new("."))
 end
+if installed_library_path.exist?
+  inform("Library installed at") { installed_library_path.to_s }
+else
+  assure_multiline("Library installed successfully") do
+    @arduino_cmd.lib_dir.ascend do |path_part|
+      next unless path_part.exist?
+
+      break puts path_part.find.to_a.to_s
+    end
+    false
+  end
+end
 library_examples = @arduino_cmd.library_examples(installed_library_path)
 cpp_library = ArduinoCI::CppLibrary.new(installed_library_path, @arduino_cmd.lib_dir)
-attempt("Library installed at #{installed_library_path}") { true }
 
 # check GCC
 compilers = config.compilers_to_use
@@ -138,7 +149,7 @@ end
 
 aux_libraries.each do |l|
   if @arduino_cmd.library_present?(l)
-    assure("Using pre-existing library '#{l}'") { true }
+    inform("Using pre-existing library") { l.to_s }
   else
     assure("Installing aux library '#{l}'") { @arduino_cmd.install_library(l) }
   end
@@ -147,11 +158,17 @@ end
 # iterate boards / tests
 last_board = nil
 if !cpp_library.tests_dir.exist?
-  attempt("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") { true }
+  inform_multiline("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") do
+    puts cpp_library.tests_dir.find.to_a.to_s
+    true
+  end
 elsif cpp_library.test_files.empty?
-  attempt("Skipping unit tests; no test files were found in #{cpp_library.tests_dir}") { true }
+  inform_multiline("Skipping unit tests; no test files were found in #{cpp_library.tests_dir}") do
+    puts cpp_library.tests_dir.find.to_a.to_s
+    true
+  end
 elsif config.platforms_to_unittest.empty?
-  attempt("Skipping unit tests; no platforms were requested") { true }
+  inform("Skipping unit tests") { "no platforms were requested" }
 else
   config.platforms_to_unittest.each do |p|
     board = all_platforms[p][:board]
@@ -181,26 +198,30 @@ else
   end
 end
 
-unless library_examples.empty?
+if library_examples.empty?
+  inform_multiline("Skipping libraries; no examples found in #{installed_library_path}") do
+    puts installed_library_path.find.to_a.to_s
+  end
+else
   attempt("Setting compiler warning level")  { @arduino_cmd.set_pref("compiler.warning_level", "all") }
-end
 
-# unlike previous, iterate examples / boards
-library_examples.each do |example_path|
-  ovr_config = config.from_example(example_path)
-  ovr_config.platforms_to_build.each do |p|
-    board = all_platforms[p][:board]
-    assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
-    last_board = board
-    example_name = File.basename(example_path)
-    attempt("Verifying #{example_name}") do
-      ret = @arduino_cmd.verify_sketch(example_path)
-      unless ret
-        puts
-        puts "Last command: #{@arduino_cmd.last_msg}"
-        puts @arduino_cmd.last_err
+  # unlike previous, iterate examples / boards
+  library_examples.each do |example_path|
+    ovr_config = config.from_example(example_path)
+    ovr_config.platforms_to_build.each do |p|
+      board = all_platforms[p][:board]
+      assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
+      last_board = board
+      example_name = File.basename(example_path)
+      attempt("Verifying #{example_name}") do
+        ret = @arduino_cmd.verify_sketch(example_path)
+        unless ret
+          puts
+          puts "Last command: #{@arduino_cmd.last_msg}"
+          puts @arduino_cmd.last_err
+        end
+        ret
       end
-      ret
     end
   end
 end
