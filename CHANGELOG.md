@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Test file `int main(){}` needed a CPP extension in order to properly compile
+- Fixed build script reporting for `inform()` when it returns a non-string value from its block
 
 ### Security
 
