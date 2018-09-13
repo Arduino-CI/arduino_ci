@@ -116,6 +116,7 @@ compilers.each do |gcc_binary|
     puts version.split("\n").map { |l| "    #{l}" }.join("\n")
     version
   end
+  inform("libasan availability for #{gcc_binary}") { cpp_library.libasan?(gcc_binary) }
 end
 
 # gather up all required boards so we can install them up front.
