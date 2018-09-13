@@ -23,7 +23,7 @@ def terminate(final = nil)
 end
 
 # make a nice status line for an action and react to the action
-def perform_action(message, multiline, mark_fn, on_fail_msg, abort_on_fail)
+def perform_action(message, multiline, mark_fn, on_fail_msg, tally_on_fail, abort_on_fail)
   line = "#{message}... "
   endline = "...#{message} "
   if multiline
@@ -39,7 +39,7 @@ def perform_action(message, multiline, mark_fn, on_fail_msg, abort_on_fail)
   puts mark.to_s.rjust(WIDTH - line.length, " ")
   unless result
     puts on_fail_msg unless on_fail_msg.nil?
-    @failure_count += 1
+    @failure_count += 1 if tally_on_fail
     # print out error messaging here if we've captured it
     terminate if abort_on_fail
   end
@@ -48,29 +48,30 @@ end
 
 # Make a nice status for something that defers any failure code until script exit
 def attempt(message, &block)
-  perform_action(message, false, @passfail, nil, false, &block)
+  perform_action(message, false, @passfail, nil, true, false, &block)
 end
 
 # Make a nice status for something that defers any failure code until script exit
 def attempt_multiline(message, &block)
-  perform_action(message, true, @passfail, nil, false, &block)
+  perform_action(message, true, @passfail, nil, true, false, &block)
 end
 
 # Make a nice status for something that kills the script immediately on failure
+FAILED_ASSURANCE_MESSAGE = "This may indicate a problem with ArduinoCI, or your configuration".freeze
 def assure(message, &block)
-  perform_action(message, false, @passfail, "This may indicate a problem with ArduinoCI, or your configuration", true, &block)
+  perform_action(message, false, @passfail, FAILED_ASSURANCE_MESSAGE, true, true, &block)
 end
 
 def assure_multiline(message, &block)
-  perform_action(message, true, @passfail, "This may indicate a problem with ArduinoCI, or your configuration", true, &block)
+  perform_action(message, true, @passfail, FAILED_ASSURANCE_MESSAGE, true, true, &block)
 end
 
 def inform(message, &block)
-  perform_action(message, false, proc { |x| x }, nil, false, &block)
+  perform_action(message, false, proc { |x| x }, nil, false, false, &block)
 end
 
 def inform_multiline(message, &block)
-  perform_action(message, true, nil, nil, false, &block)
+  perform_action(message, true, nil, nil, false, false, &block)
 end
 
 # Assure that a platform exists and return its definition
