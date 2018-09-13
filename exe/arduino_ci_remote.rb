@@ -36,7 +36,7 @@ def perform_action(message, multiline, mark_fn, on_fail_msg, abort_on_fail)
   mark = mark_fn.nil? ? "" : mark_fn.call(result)
   # if multline, put checkmark at full width
   print endline if multiline
-  puts mark.rjust(WIDTH - line.length, " ")
+  puts mark.to_s.rjust(WIDTH - line.length, " ")
   unless result
     puts on_fail_msg unless on_fail_msg.nil?
     @failure_count += 1
