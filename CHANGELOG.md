@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.11] - 2018-09-13
+### Added
 - Explicit checks that the requested test platforms are defined in YML
 - Arduino command wrapper can now guess whether a library is installed
 - CPP library class now reaches into included Arduino libraries for source files
@@ -21,8 +35,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Unit test binaries now run with debugging symbols and address sanitization (if available), to help isolate the causes of segfaults
 - `ArduinoCommand::libdir` logic is now centralized, using `sketchbook.path` from prefs instead of hard-coding
 
-### Deprecated
-
 ### Removed
 - Display Manager became no longer necessary with Arduino 1.8.X
 
@@ -34,8 +46,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Retrieving preferences is now properly cached
 - Paths on Windows should now work due to the use of `Pathname`
 - symlinking directories in Windows environments now properly uses `/D` switch to `mklink`
-
-### Security
 
 
 ## [0.1.10] - 2018-05-06
@@ -209,7 +219,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.11...HEAD
+[0.1.11]: https://github.com/ianfixes/arduino_ci/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/ianfixes/arduino_ci/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/ianfixes/arduino_ci/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/ianfixes/arduino_ci/compare/v0.1.7...v0.1.8
