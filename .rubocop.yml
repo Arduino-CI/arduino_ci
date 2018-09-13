@@ -95,3 +95,8 @@ Style/TrailingCommaInHashLiteral:
 
 Style/SymbolArray:
   Enabled: false
+
+# because if the robot can comment better than me then
+# it might as well learn to write the code for me
+Style/CommentAnnotation:
+  Enabled: false
