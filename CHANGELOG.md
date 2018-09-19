@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Centralized file listing code in `arduino_ci_remote.rb`
 
 ### Deprecated
 

@@ -4,6 +4,7 @@ require 'set'
 require 'pathname'
 
 WIDTH = 80
+FIND_FILES_INDENT = 4
 
 @failure_count = 0
 @passfail = proc { |result| result ? "✓" : "✗" }
@@ -83,6 +84,22 @@ def assured_platform(purpose, name, config)
   platform_definition
 end
 
+# print out some files
+def display_files(pathname)
+  # `find` doesn't follow symlinks, so we should instead
+  realpath = pathname.symlink? ? pathname.readlink : pathname
+
+  # suppress directories and dotfile-based things
+  all_files = realpath.find.select(&:file?)
+  non_hidden = all_files.reject do |path|
+    path.ascend.any? { |part| part.basename.to_s.start_with? "." }
+  end
+
+  # print files with an indent
+  margin = " " * FIND_FILES_INDENT
+  non_hidden.each { |p| puts "#{margin}#{p}" }
+end
+
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library
 @arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
@@ -98,7 +115,7 @@ else
     @arduino_cmd.lib_dir.ascend do |path_part|
       next unless path_part.exist?
 
-      break puts path_part.find.to_a.to_s
+      break display_files(path_part)
     end
     false
   end
@@ -161,12 +178,14 @@ end
 last_board = nil
 if !cpp_library.tests_dir.exist?
   inform_multiline("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") do
-    puts cpp_library.tests_dir.parent.find.to_a.to_s
+    puts "  In case that's an error, this is what was found in the library:"
+    display_files(cpp_library.tests_dir.parent)
     true
   end
 elsif cpp_library.test_files.empty?
   inform_multiline("Skipping unit tests; no test files were found in #{cpp_library.tests_dir}") do
-    puts cpp_library.tests_dir.find.to_a.to_s
+    puts "  In case that's an error, this is what was found in the tests directory:"
+    display_files(cpp_library.tests_dir)
     true
   end
 elsif config.platforms_to_unittest.empty?
@@ -202,7 +221,7 @@ end
 
 if library_examples.empty?
   inform_multiline("Skipping libraries; no examples found in #{installed_library_path}") do
-    puts installed_library_path.find.to_a.to_s
+    display_files(installed_library_path)
   end
 else
   attempt("Setting compiler warning level")  { @arduino_cmd.set_pref("compiler.warning_level", "all") }
