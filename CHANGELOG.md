@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- `arduino_ci_remote.rb` no longer crashes if `test/` directory doesn't exist
 
 ### Security
 

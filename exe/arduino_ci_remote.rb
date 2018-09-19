@@ -161,7 +161,7 @@ end
 last_board = nil
 if !cpp_library.tests_dir.exist?
   inform_multiline("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") do
-    puts cpp_library.tests_dir.find.to_a.to_s
+    puts cpp_library.tests_dir.parent.find.to_a.to_s
     true
   end
 elsif cpp_library.test_files.empty?
