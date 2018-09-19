@@ -8,16 +8,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-- `arduino_ci_remote.rb` now iterates over example platforms before examples (saves time)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- `arduino_ci_remote.rb` no longer crashes if `test/` directory doesn't exist
 
 ### Security
+
+
+## [0.1.13] - 2018-09-19
+
+### Changed
+- `arduino_ci_remote.rb` now iterates over example platforms before examples (saves time)
+
+### Fixed
+- `arduino_ci_remote.rb` no longer crashes if `test/` directory doesn't exist
 
 
 ## [0.1.12] - 2018-09-13
@@ -232,7 +239,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.12...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.13...HEAD
+[0.1.13]: https://github.com/ianfixes/arduino_ci/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/ianfixes/arduino_ci/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/ianfixes/arduino_ci/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/ianfixes/arduino_ci/compare/v0.1.9...v0.1.10
