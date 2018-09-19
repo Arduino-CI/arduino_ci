@@ -207,13 +207,22 @@ if library_examples.empty?
 else
   attempt("Setting compiler warning level")  { @arduino_cmd.set_pref("compiler.warning_level", "all") }
 
-  # unlike previous, iterate examples / boards
-  library_examples.each do |example_path|
+  # switching boards takes time, so iterate board first
+  # _then_ whichever examples match it
+  examples_by_platform = library_examples.each_with_object({}) do |example_path, acc|
     ovr_config = config.from_example(example_path)
     ovr_config.platforms_to_build.each do |p|
-      board = all_platforms[p][:board]
-      assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
-      last_board = board
+      acc[p] = [] unless acc.key?(p)
+      acc[p] << example_path
+    end
+  end
+
+  examples_by_platform.each do |platform, example_paths|
+    board = all_platforms[platform][:board]
+    assure("Switching to board for #{platform} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
+    last_board = board
+
+    example_paths.each do |example_path|
       example_name = File.basename(example_path)
       attempt("Verifying #{example_name}") do
         ret = @arduino_cmd.verify_sketch(example_path)

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- `arduino_ci_remote.rb` now iterates over example platforms before examples (saves time)
 
 ### Deprecated
 
