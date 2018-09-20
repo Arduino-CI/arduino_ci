@@ -112,6 +112,7 @@ if installed_library_path.exist?
   inform("Library installed at") { installed_library_path.to_s }
 else
   assure_multiline("Library installed successfully") do
+    # print out the contents of the deepest directory we actually find
     @arduino_cmd.lib_dir.ascend do |path_part|
       next unless path_part.exist?
 
