@@ -145,13 +145,6 @@ module ArduinoCI
       ret
     end
 
-    # run a command and don't capture its output, but use the same signature
-    # @return [Hash] {:out => String, :err => String, :success => bool}
-    def run_wrap(*args, **kwargs)
-      success = run(*args, **kwargs)
-      { out: "NOPE, use run_and_capture", err: "NOPE, use run_and_capture", success: success }
-    end
-
     # check whether a board is installed
     # we do this by just selecting a board.
     #   the arduino binary will error if unrecognized and do a successful no-op if it's installed
