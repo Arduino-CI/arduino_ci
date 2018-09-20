@@ -144,9 +144,13 @@ all_platforms = {}
 aux_libraries = Set.new(config.aux_libraries_for_unittest + config.aux_libraries_for_build)
 # while collecting the platforms, ensure they're defined
 config.platforms_to_unittest.each { |p| all_platforms[p] = assured_platform("unittest", p, config) }
+example_platforms = {}
 library_examples.each do |path|
   ovr_config = config.from_example(path)
-  ovr_config.platforms_to_build.each { |p| all_platforms[p] = assured_platform("library example", p, config) }
+  ovr_config.platforms_to_build.each do |p|
+    # assure the platform if we haven't already
+    example_platforms[p] = all_platforms[p] = assured_platform("library example", p, config) unless example_platforms.key?(p)
+  end
   aux_libraries.merge(ovr_config.aux_libraries_for_build)
 end
 
