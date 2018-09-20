@@ -161,7 +161,7 @@ all_packages = all_platforms.values.map { |v| v[:package] }.uniq.reject(&:nil?)
 all_urls = all_packages.map { |p| config.package_url(p) }.uniq.reject(&:nil?)
 unless all_urls.empty?
   assure("Setting board manager URLs") do
-    @arduino_cmd.set_pref("boardsmanager.additional.urls", all_urls.join(","))
+    @arduino_cmd.board_manager_urls = all_urls
   end
 end
 

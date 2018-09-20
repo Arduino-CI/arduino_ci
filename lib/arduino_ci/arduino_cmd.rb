@@ -145,6 +145,21 @@ module ArduinoCI
       ret
     end
 
+    # Board manager URLs
+    # @return [Array<String>] The additional URLs used by the board manager
+    def board_manager_urls
+      url_list = get_pref("boardsmanager.additional.urls")
+      return [] if url_list.nil?
+
+      url_list.split(",")
+    end
+
+    # Set board manager URLs
+    # @return [Array<String>] The additional URLs used by the board manager
+    def board_manager_urls=(all_urls)
+      set_pref("boardsmanager.additional.urls", all_urls.join(","))
+    end
+
     # check whether a board is installed
     # we do this by just selecting a board.
     #   the arduino binary will error if unrecognized and do a successful no-op if it's installed

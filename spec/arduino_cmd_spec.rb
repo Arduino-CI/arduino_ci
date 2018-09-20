@@ -65,6 +65,23 @@ RSpec.describe ArduinoCI::ArduinoCmd do
     end
   end
 
+
+  context "board_manager" do
+    it "Reads and writes board_manager URLs" do
+      fake_urls = ["http://foo.bar", "http://arduino.ci"]
+      existing_urls = arduino_cmd.board_manager_urls
+
+      # try to ensure maxiumum variability in the test
+      test_url_sets = (existing_urls.empty? ? [fake_urls, []] : [[], fake_urls]) + [existing_urls]
+
+      test_url_sets.each do |urls|
+        arduino_cmd.board_manager_urls = urls
+        expect(arduino_cmd.board_manager_urls).to match_array(urls)
+      end
+    end
+  end
+
+
   context "verify_sketch" do
 
     sketch_path_ino = get_sketch("FakeSketch", "FakeSketch.ino")
