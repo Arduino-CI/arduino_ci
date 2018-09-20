@@ -57,11 +57,7 @@ module ArduinoCI
       return false unless base.exist?
 
       real = base.realpath
-      path.ascend do |path_part|
-        return true if path_part == base
-        return true if path_part == real
-      end
-      false
+      path.ascend.any? { |part| part == base || part == real }
     end
 
     # Check whether libasan (and by extension -fsanitizer=address) is supported
@@ -98,15 +94,10 @@ module ArduinoCI
     # CPP files that are part of the project library under test
     # @return [Array<Pathname>]
     def cpp_files
-      real_tests_dir = tests_dir.realpath
+      tests_dir_aliases = [tests_dir, tests_dir.realpath]
       cpp_files_in(@base_dir).reject do |p|
-        next true if p.ascend do |path_part|
-          break true if path_part == tests_dir
-          break true if path_part == real_tests_dir
-          break true if vendor_bundle?(p)
-        end
-
-        false
+        # ignore anything in the vendor bundle or tests dir
+        vendor_bundle?(p) || (p.ascend.any? { |part| tests_dir_aliases.include?(part) })
       end
     end
 
