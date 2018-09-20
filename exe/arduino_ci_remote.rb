@@ -142,6 +142,7 @@ end
 # start with the "platforms to unittest" and add the examples
 # while we're doing that, get the aux libraries as well
 all_platforms = {}
+board_platform_url = {}
 aux_libraries = Set.new(config.aux_libraries_for_unittest + config.aux_libraries_for_build)
 # while collecting the platforms, ensure they're defined
 config.platforms_to_unittest.each { |p| all_platforms[p] = assured_platform("unittest", p, config) }
@@ -151,6 +152,7 @@ library_examples.each do |path|
   ovr_config.platforms_to_build.each do |p|
     # assure the platform if we haven't already
     example_platforms[p] = all_platforms[p] = assured_platform("library example", p, config) unless example_platforms.key?(p)
+    board_platform_url[p] = ovr_config.package_url(p)
   end
   aux_libraries.merge(ovr_config.aux_libraries_for_build)
 end
@@ -158,7 +160,20 @@ end
 # with all platform info, we can extract unique packages and their urls
 # do that, set the URLs, and download the packages
 all_packages = all_platforms.values.map { |v| v[:package] }.uniq.reject(&:nil?)
-all_urls = all_packages.map { |p| config.package_url(p) }.uniq.reject(&:nil?)
+
+# inform about builtin packages
+all_packages.select { |p| config.package_builtin?(p) }.each do
+  inform("Using built-in board package") { p }
+end
+
+# make sure any non-builtin package has a URL defined
+all_packages.reject { |p| config.package_builtin?(p) }.each do
+  assure("Board package #{p} has a defined URL") { board_platform_url[p] }
+end
+
+# set up all the board manager URLs.
+# we can safely reject nils now, they would be for the builtins
+all_urls = all_packages.map { |p| board_platform_url(p) }.uniq.reject(&:nil?)
 unless all_urls.empty?
   assure("Setting board manager URLs") do
     @arduino_cmd.board_manager_urls = all_urls
