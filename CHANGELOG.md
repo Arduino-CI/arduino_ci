@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Deprecated
 
 ### Removed
+- Linux wrapper no longer bails out on long-running commands.  That behavior was possible in Arduino 1.6.x that might pop up a graphical error message, but with the display manager removed this is no longer a concern
 
 ### Fixed
 
