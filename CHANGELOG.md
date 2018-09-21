@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.14] - 2018-09-21
+### Added
 - Arduino command wrapper now natively supports board manager URLs
 - `arduino_ci_remote.rb` checks for proper board manager URLs for requested platforms
 - `arduino_ci_remote.rb` reports on Arduino executable location
@@ -15,14 +29,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Centralized file listing code in `arduino_ci_remote.rb`
 - `arduino_ci_remote.rb` is verbose about platforms, packages, and URLs
 
-### Deprecated
-
 ### Removed
 - Linux wrapper no longer bails out on long-running commands.  That behavior was possible in Arduino 1.6.x that might pop up a graphical error message, but with the display manager removed this is no longer a concern
-
-### Fixed
-
-### Security
 
 
 ## [0.1.13] - 2018-09-19
@@ -246,7 +254,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.13...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.14...HEAD
+[0.1.14]: https://github.com/ianfixes/arduino_ci/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/ianfixes/arduino_ci/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/ianfixes/arduino_ci/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/ianfixes/arduino_ci/compare/v0.1.10...v0.1.11

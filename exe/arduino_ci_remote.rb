@@ -90,6 +90,7 @@ end
 
 # Return true if the file (or one of the dirs containing it) is hidden
 def file_is_hidden_somewhere?(path)
+  # this is clunkly but pre-2.2-ish ruby doesn't return ascend as an enumerator
   path.ascend do |part|
     return true if part.basename.to_s.start_with? "."
   end
