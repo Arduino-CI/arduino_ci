@@ -1,6 +1,9 @@
 require 'fileutils'
 require 'pathname'
 
+# workaround for https://github.com/arduino/Arduino/issues/3535
+WORKAROUND_LIB = "USBHost".freeze
+
 module ArduinoCI
 
   # Wrap the Arduino executable.  This requires, in some cases, a faked display.
@@ -27,7 +30,7 @@ module ArduinoCI
     attr_accessor :binary_path
 
     # part of a workaround for https://github.com/arduino/Arduino/issues/3535
-    attr_reader   :library_is_indexed
+    attr_reader   :libraries_indexed
 
     # @return [String] STDOUT of the most recently-run command
     attr_reader   :last_out
@@ -51,7 +54,7 @@ module ArduinoCI
     def initialize
       @prefs_cache        = {}
       @prefs_fetched      = false
-      @library_is_indexed = false
+      @libraries_indexed  = false
       @last_out           = ""
       @last_err           = ""
       @last_msg           = ""
@@ -186,21 +189,29 @@ module ArduinoCI
     # install a library by name
     # @param name [String] the library name
     # @return [bool] whether the command succeeded
+    def _install_library(library_name)
+      success = run_and_capture(flag_install_library, library_name)[:success]
+
+      @libraries_indexed = (@libraries_indexed || success) if library_name == WORKAROUND_LIB
+      success
+    end
+
+    # index the set of libraries by installing a dummy library
+    # related to WORKAROUND_LIB and https://github.com/arduino/Arduino/issues/3535
+    # TODO: unclear if this is still necessary
+    def index_libraries
+      return true if @libraries_indexed
+
+      _install_library(WORKAROUND_LIB)
+      @libraries_indexed
+    end
+
+    # install a library by name
+    # @param name [String] the library name
+    # @return [bool] whether the command succeeded
     def install_library(library_name)
-      # workaround for https://github.com/arduino/Arduino/issues/3535
-      # use a dummy library name but keep open the possiblity that said library
-      # might be selected by choice for installation
-      workaround_lib = "USBHost"
-      unless @library_is_indexed || workaround_lib == library_name
-        @library_is_indexed = run_and_capture(flag_install_library, workaround_lib)
-      end
-
-      # actual installation
-      result = run_and_capture(flag_install_library, library_name)
-
-      # update flag if necessary
-      @library_is_indexed = (@library_is_indexed || result[:success]) if library_name == workaround_lib
-      result[:success]
+      index_libraries
+      _install_library(library_name)
     end
 
     # generate the (very likely) path of a library given its name
