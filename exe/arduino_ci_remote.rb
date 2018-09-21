@@ -143,42 +143,51 @@ compilers.each do |gcc_binary|
   inform("libasan availability for #{gcc_binary}") { cpp_library.libasan?(gcc_binary) }
 end
 
-# gather up all required boards so we can install them up front.
+# Ensure platforms exist for unit test, and save their info in all_platform_info keyed by name
+all_platform_info = {}
+config.platforms_to_unittest.each { |p| all_platform_info[p] = assured_platform("unittest", p, config) }
+
+# gather up all required boards for compilation so we can install them up front.
 # start with the "platforms to unittest" and add the examples
 # while we're doing that, get the aux libraries as well
-all_platforms = {}
-board_platform_url = {}
+example_platform_info = {}
+board_package_url = {}
 aux_libraries = Set.new(config.aux_libraries_for_unittest + config.aux_libraries_for_build)
 # while collecting the platforms, ensure they're defined
-config.platforms_to_unittest.each { |p| all_platforms[p] = assured_platform("unittest", p, config) }
-example_platforms = {}
 library_examples.each do |path|
   ovr_config = config.from_example(path)
-  ovr_config.platforms_to_build.each do |p|
+  ovr_config.platforms_to_build.each do |platform|
     # assure the platform if we haven't already
-    example_platforms[p] = all_platforms[p] = assured_platform("library example", p, config) unless example_platforms.key?(p)
-    board_platform_url[p] = ovr_config.package_url(p)
+    next if example_platform_info.key?(platform)
+
+    platform_info = assured_platform("library example", platform, config)
+    next if platform_info.nil?
+
+    example_platform_info[platform] = all_platform_info[platform] = platform_info
+    package = platform_info[:package]
+    board_package_url[package] = ovr_config.package_url(package)
   end
   aux_libraries.merge(ovr_config.aux_libraries_for_build)
 end
 
 # with all platform info, we can extract unique packages and their urls
 # do that, set the URLs, and download the packages
-all_packages = all_platforms.values.map { |v| v[:package] }.uniq.reject(&:nil?)
+all_packages = all_platform_info.values.map { |v| v[:package] }.uniq.reject(&:nil?)
 
 # inform about builtin packages
-all_packages.select { |p| config.package_builtin?(p) }.each do
+all_packages.select { |p| config.package_builtin?(p) }.each do |p|
   inform("Using built-in board package") { p }
 end
 
 # make sure any non-builtin package has a URL defined
-all_packages.reject { |p| config.package_builtin?(p) }.each do
-  assure("Board package #{p} has a defined URL") { board_platform_url[p] }
+all_packages.reject { |p| config.package_builtin?(p) }.each do |p|
+  assure("Board package #{p} has a defined URL") { board_package_url[p] }
 end
 
 # set up all the board manager URLs.
 # we can safely reject nils now, they would be for the builtins
-all_urls = all_packages.map { |p| board_platform_url(p) }.uniq.reject(&:nil?)
+all_urls = all_packages.map { |p| board_package_url[p] }.uniq.reject(&:nil?)
+
 unless all_urls.empty?
   assure("Setting board manager URLs") do
     @arduino_cmd.board_manager_urls = all_urls
@@ -217,7 +226,7 @@ elsif config.platforms_to_unittest.empty?
   inform("Skipping unit tests") { "no platforms were requested" }
 else
   config.platforms_to_unittest.each do |p|
-    board = all_platforms[p][:board]
+    board = all_platform_info[p][:board]
     assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
     last_board = board
     cpp_library.test_files.each do |unittest_path|
@@ -262,7 +271,7 @@ else
   end
 
   examples_by_platform.each do |platform, example_paths|
-    board = all_platforms[platform][:board]
+    board = all_platform_info[platform][:board]
     assure("Switching to board for #{platform} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
     last_board = board
 
