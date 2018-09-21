@@ -103,6 +103,7 @@ end
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library
 @arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
+inform("Located Arduino binary") { @arduino_cmd.binary_path.to_s }
 
 # initialize library under test
 installed_library_path = attempt("Installing library under test") do

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Arduino command wrapper now natively supports board manager URLs
 - CI checks for proper board manager URLs for requested platforms
+- CI reports on Arduino executable location
 
 ### Changed
 - Centralized file listing code in `arduino_ci_remote.rb`

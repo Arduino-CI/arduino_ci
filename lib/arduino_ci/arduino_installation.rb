@@ -1,3 +1,4 @@
+require 'pathname'
 require "arduino_ci/host"
 require "arduino_ci/arduino_cmd_osx"
 require "arduino_ci/arduino_cmd_linux"
@@ -32,12 +33,14 @@ module ArduinoCI
 
           ret = ArduinoCmdLinux.new
           ret.base_cmd = [loc]
+          ret.binary_path = Pathname.new(loc)
         when :windows then
           loc = ArduinoDownloaderWindows.autolocated_executable
           return nil if loc.nil?
 
           ret = ArduinoCmdWindows.new
           ret.base_cmd = [loc]
+          ret.binary_path = Pathname.new(loc)
         end
         ret
       end
@@ -77,6 +80,7 @@ module ArduinoCI
           result = Host.run_and_capture(*args)
           if result[:err].include? "Error: unknown option: --bogus-option"
             ret.base_cmd = launcher
+            ret.binary_path = Pathname.new(osx_root)
             return ret
           end
         end
