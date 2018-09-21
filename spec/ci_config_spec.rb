@@ -9,7 +9,7 @@ RSpec.describe ArduinoCI::CIConfig do
       uno = default_config.platform_definition("uno")
       expect(uno.class).to eq(Hash)
       expect(uno[:board]).to eq("arduino:avr:uno")
-      expect(uno[:package]).to be nil
+      expect(uno[:package]).to eq("arduino:avr")
       expect(uno[:gcc].class).to eq(Hash)
 
       due = default_config.platform_definition("due")
@@ -47,7 +47,7 @@ RSpec.describe ArduinoCI::CIConfig do
       uno = combined_config.platform_definition("uno")
       expect(uno.class).to eq(Hash)
       expect(uno[:board]).to eq("arduino:avr:uno")
-      expect(uno[:package]).to be nil
+      expect(uno[:package]).to eq("arduino:avr")
       expect(uno[:gcc].class).to eq(Hash)
 
       zero = combined_config.platform_definition("zero")
@@ -87,7 +87,7 @@ RSpec.describe ArduinoCI::CIConfig do
       uno = combined_config.platform_definition("uno")
       expect(uno.class).to eq(Hash)
       expect(uno[:board]).to eq("arduino:avr:uno")
-      expect(uno[:package]).to be nil
+      expect(uno[:package]).to eq("arduino:avr")
       expect(uno[:gcc].class).to eq(Hash)
 
       zero = combined_config.platform_definition("zero")

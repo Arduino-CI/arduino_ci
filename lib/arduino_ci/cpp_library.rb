@@ -50,14 +50,34 @@ module ArduinoCI
     #
     # This assumes the vendor bundle will be at `vendor/bundle` and not some other location
     # @param path [Pathname] The path to check
-    # @return [Array<Pathname>] The paths of the found files
+    # @return [bool]
     def vendor_bundle?(path)
       # TODO: look for Gemfile, look for .bundle/config and get BUNDLE_PATH from there?
       base = @base_dir + "vendor"
       return false unless base.exist?
 
-      real = base.realpath
-      path.ascend.any? { |part| part == base || part == real }
+      vendor_bundle_aliases = [base, base.realpath]
+
+      # we could do this but some rubies don't return an enumerator for ascend
+      # path.ascend.any? { |part| vendor_bundle_aliases.include?(part) }
+      path.ascend do |part|
+        return true if vendor_bundle_aliases.include?(part)
+      end
+      false
+    end
+
+    # Guess whether a file is part of the tests/ dir (indicating library compilation should ignore it).
+    #
+    # @param path [Pathname] The path to check
+    # @return [bool]
+    def in_tests_dir?(path)
+      tests_dir_aliases = [tests_dir, tests_dir.realpath]
+      # we could do this but some rubies don't return an enumerator for ascend
+      # path.ascend.any? { |part| tests_dir_aliases.include?(part) }
+      path.ascend do |part|
+        return true if tests_dir_aliases.include?(part)
+      end
+      false
     end
 
     # Check whether libasan (and by extension -fsanitizer=address) is supported
@@ -94,11 +114,7 @@ module ArduinoCI
     # CPP files that are part of the project library under test
     # @return [Array<Pathname>]
     def cpp_files
-      tests_dir_aliases = [tests_dir, tests_dir.realpath]
-      cpp_files_in(@base_dir).reject do |p|
-        # ignore anything in the vendor bundle or tests dir
-        vendor_bundle?(p) || (p.ascend.any? { |part| tests_dir_aliases.include?(part) })
-      end
+      cpp_files_in(@base_dir).reject { |p| vendor_bundle?(p) || in_tests_dir?(p) }
     end
 
     # CPP files that are part of the arduino mock library we're providing

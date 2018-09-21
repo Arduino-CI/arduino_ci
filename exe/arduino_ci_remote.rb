@@ -88,6 +88,14 @@ def assured_platform(purpose, name, config)
   platform_definition
 end
 
+# Return true if the file (or one of the dirs containing it) is hidden
+def file_is_hidden_somewhere?(path)
+  path.ascend do |part|
+    return true if part.basename.to_s.start_with? "."
+  end
+  false
+end
+
 # print out some files
 def display_files(pathname)
   # `find` doesn't follow symlinks, so we should instead
@@ -95,9 +103,7 @@ def display_files(pathname)
 
   # suppress directories and dotfile-based things
   all_files = realpath.find.select(&:file?)
-  non_hidden = all_files.reject do |path|
-    path.ascend.any? { |part| part.basename.to_s.start_with? "." }
-  end
+  non_hidden = all_files.reject { |path| file_is_hidden_somewhere?(path) }
 
   # print files with an indent
   margin = " " * FIND_FILES_INDENT
