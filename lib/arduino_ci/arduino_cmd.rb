@@ -18,9 +18,13 @@ module ArduinoCI
       self.class_eval("def flag_#{name};\"#{text}\";end", __FILE__, __LINE__)
     end
 
-    # the path to the Arduino executable
-    # @return [String]
+    # the array of command components to launch the Arduino executable
+    # @return [Array<String>]
     attr_accessor :base_cmd
+
+    # the actual path to the executable on this platform
+    # @return [Pathname]
+    attr_accessor :binary_path
 
     # part of a workaround for https://github.com/arduino/Arduino/issues/3535
     attr_reader   :library_is_indexed
