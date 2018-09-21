@@ -24,6 +24,10 @@ def terminate(final = nil)
 end
 
 # make a nice status line for an action and react to the action
+# TODO / note to self: inform_multline is tougher to write
+#   without altering the signature because it only leaves space
+#   for the checkmark _after_ the multiline, it doesn't know how
+#   to make that conditionally the body
 def perform_action(message, multiline, mark_fn, on_fail_msg, tally_on_fail, abort_on_fail)
   line = "#{message}... "
   endline = "...#{message} "
