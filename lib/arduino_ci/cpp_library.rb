@@ -248,7 +248,8 @@ module ArduinoCI
         cgc = ci_gcc_config
         ret = feature_args(cgc) + warning_args(cgc) + define_args(cgc) + flag_args(cgc) + ret
       end
-      ret
+      ret.uniq   # Using uniq to remove duplicate entries of files that might be picked up multiple
+                 # times above (e.g Arduino.cpp, Godmode.cpp, ArduinoUnitTests.cpp, etc).
     end
 
     # build a file for running a test of the given unit test file
