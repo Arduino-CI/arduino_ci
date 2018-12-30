@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Under some circumstances, some files were given multiple times as arguments to the compiler, causing compilation failure. This has been fixed.
+
 ### Security
 
 
