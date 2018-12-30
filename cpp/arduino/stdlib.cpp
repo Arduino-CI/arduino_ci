@@ -1,9 +1,9 @@
 
-#if 0 // This code is copied from https://people.cs.umu.se/isak/snippets/ltoa.c
+#if 1 // This code is copied from https://people.cs.umu.se/isak/snippets/ltoa.c and then converted from ltoa to itoa.
 /*
 **  LTOA.C
 **
-**  Converts a long integer to a string.
+**  Converts a integer to a string.
 **
 **  Copyright 1988-90 by Robert B. Stout dba MicroFirm
 **
@@ -21,12 +21,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define BUFSIZE (sizeof(long) * 8 + 1)
+#define BUFSIZE (sizeof(int) * 8 + 1)
 
-char *ltoa(long N, char *str, int base)
+char *itoa(int N, char *str, int base)
 {
-      register int i = 2;
-      long uarg;
+      int i = 2;
+      int uarg;
       char *tail, *head = str, buf[BUFSIZE];
 
       if (36 < base || 2 > base)
@@ -45,7 +45,7 @@ char *ltoa(long N, char *str, int base)
       {
             for (i = 1; uarg; ++i)
             {
-                  register ldiv_t r;
+                  ldiv_t r;
 
                   r       = ldiv(uarg, base);
                   *tail-- = (char)(r.rem + ((9L < r.rem) ?
