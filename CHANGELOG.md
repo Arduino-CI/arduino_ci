@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Spaces in the names of project directores no longer cause unit test binaries to fail execution
 
 ### Security
 

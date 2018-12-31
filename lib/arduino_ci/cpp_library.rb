@@ -1,6 +1,7 @@
 require 'find'
 require "arduino_ci/host"
 require 'pathname'
+require 'shellwords'
 
 HPP_EXTENSIONS = [".hpp", ".hh", ".h", ".hxx", ".h++"].freeze
 CPP_EXTENSIONS = [".cpp", ".cc", ".c", ".cxx", ".c++"].freeze
@@ -287,7 +288,7 @@ module ArduinoCI
       @last_cmd = executable
       @last_out = ""
       @last_err = ""
-      Host.run_and_output(executable.to_s)
+      Host.run_and_output(executable.to_s.shellescape)
     end
 
   end
