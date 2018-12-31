@@ -93,7 +93,7 @@ module ArduinoCI
         if !schema.include?(ksym)
           puts "Warning: unknown field '#{ksym}' under definition for #{rootname}"
         elsif value.nil?
-          # unspecificed, that's fine
+          good_data[ksym] = nil
         elsif value.class != expected_type
           puts "Warning: expected field '#{ksym}' of #{rootname} to be '#{expected_type}', got '#{value.class}'"
         else

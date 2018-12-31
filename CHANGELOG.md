@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Spaces in the names of project directores no longer cause unit test binaries to fail execution
+- Configuration file overrides with `nil`s (or empty arrays) now properly override their base configuration
 
 ### Security
 
