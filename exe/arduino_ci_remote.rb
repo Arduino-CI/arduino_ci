@@ -263,8 +263,11 @@ else
   end
 end
 
-if library_examples.empty?
-  inform_multiline("Skipping libraries; no examples found in #{installed_library_path}") do
+puts "config.platforms_to_build : #{config.platforms_to_build}"
+if config.platforms_to_build.empty?
+  inform("Skipping builds") { "no platforms were requested" }
+elsif library_examples.empty?
+  inform_multiline("Skipping builds; no examples found in #{installed_library_path}") do
     display_files(installed_library_path)
   end
 else
