@@ -263,7 +263,6 @@ else
   end
 end
 
-puts "config.platforms_to_build : #{config.platforms_to_build}"
 if config.platforms_to_build.empty?
   inform("Skipping builds") { "no platforms were requested" }
 elsif library_examples.empty?
