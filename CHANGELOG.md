@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Checking for (empty) set of platforms to build now precedes the check for examples to build; this avoids assuming that all libraries will have an example and dumping the file set when none are found
 
 ### Changed
 
@@ -15,10 +14,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-- Spaces in the names of project directores no longer cause unit test binaries to fail execution
-- Configuration file overrides with `nil`s (or empty arrays) now properly override their base configuration
 
 ### Security
+
+
+## [0.1.15] - 2019-01-04
+### Added
+- Checking for (empty) set of platforms to build now precedes the check for examples to build; this avoids assuming that all libraries will have an example and dumping the file set when none are found
+
+### Fixed
+- Spaces in the names of project directores no longer cause unit test binaries to fail execution
+- Configuration file overrides with `nil`s (or empty arrays) now properly override their base configuration
 
 
 ## [0.1.14] - 2018-09-21
@@ -257,7 +263,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.14...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.15...HEAD
+[0.1.15]: https://github.com/ianfixes/arduino_ci/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/ianfixes/arduino_ci/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/ianfixes/arduino_ci/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/ianfixes/arduino_ci/compare/v0.1.11...v0.1.12
