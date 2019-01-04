@@ -174,12 +174,16 @@ unittest(pin_history)
   digitalWrite(myPin, HIGH);
 
   // pin history is queued in case we want to analyze it later.
-  // we expect 6 values in that queue.
+  // we expect 6 values in that queue (5 that we set plus one
+  // initial value), which we'll hard-code here for convenience.
+  // (we'll actually assert those 6 values in the next block)
   assertEqual(6, state->digitalPin[1].size());
   bool expected[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
   bool actual[6];
 
-  // convert history queue into an array so we can verify it
+  // convert history queue into an array so we can verify it.
+  // while we're at it, check that we received the amount of
+  // elements that we expected.
   int numMoved = state->digitalPin[myPin].toArray(actual, 6);
   assertEqual(6, numMoved);
 
