@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Finally put some factorization into the `arduino_ci_remote.rb` script: testing unit and testing compilation are now standalone functions
 
 ### Deprecated
 
