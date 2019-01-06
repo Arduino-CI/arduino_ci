@@ -1,5 +1,5 @@
 
-# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.1.15)
+# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.1.16)
 
 You want your Arduino library to be automatically built and tested every time someone contributes code to your project on GitHub, but the Arduino IDE lacks the ability to run unit tests. [Arduino CI](https://github.com/ianfixes/arduino_ci) provides that ability.
 

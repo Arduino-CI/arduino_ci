@@ -8,17 +8,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-- Finally put some factorization into the `arduino_ci_remote.rb` script: testing unit and testing compilation are now standalone functions
 
 ### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.16] - 2019-01-06
+### Changed
+- Finally put some factorization into the `arduino_ci_remote.rb` script: testing unit and testing compilation are now standalone functions
 
 ### Removed
 - Unnecessary board changes during unit tests no longer happen
 
 ### Fixed
 - Proper casting for `pgm_read_byte`
-
-### Security
 
 
 ## [0.1.15] - 2019-01-04
@@ -266,7 +274,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.15...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.16...HEAD
+[0.1.16]: https://github.com/ianfixes/arduino_ci/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/ianfixes/arduino_ci/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/ianfixes/arduino_ci/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/ianfixes/arduino_ci/compare/v0.1.12...v0.1.13
