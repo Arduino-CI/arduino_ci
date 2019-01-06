@@ -12,9 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Deprecated
 
 ### Removed
-* Unnecessary board changes during unit tests no longer happen
+- Unnecessary board changes during unit tests no longer happen
 
 ### Fixed
+- Proper casting for `pgm_read_byte`
 
 ### Security
 

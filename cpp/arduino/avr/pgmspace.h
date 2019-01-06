@@ -42,7 +42,7 @@ out.each { |l| puts d(l) }
 #define pgm_read_ptr_far(x)   (x)
 
 
-#define pgm_read_byte(x) (x)
+#define pgm_read_byte(addr) (*(const uint8_t *)(addr))
 #define pgm_read_word(x) (x)
 #define pgm_read_dword(x) (x)
 #define pgm_read_float(x) (x)
