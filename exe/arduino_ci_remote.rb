@@ -236,9 +236,6 @@ elsif config.platforms_to_unittest.empty?
   inform("Skipping unit tests") { "no platforms were requested" }
 else
   config.platforms_to_unittest.each do |p|
-    board = all_platform_info[p][:board]
-    assure("Switching to board for #{p} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
-    last_board = board
     cpp_library.test_files.each do |unittest_path|
       unittest_name = unittest_path.basename.to_s
       compilers.each do |gcc_binary|
