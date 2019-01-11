@@ -32,13 +32,7 @@ module ArduinoCI
       # if it exists.  I'm not sure why we would have both, but if we did
       # a force install then let's make sure we actually use it.
       locations = [self.force_installed_executable, self.existing_executable]
-      locations.each do |loc|
-        next if loc.nil?
-        next unless File.exist? loc
-
-        return loc
-      end
-      nil
+      locations.find { |loc| !loc.nil? && File.exist?(loc) }
     end
 
     # The autolocated directory of the installation
@@ -49,13 +43,7 @@ module ArduinoCI
       # if it exists.  I'm not sure why we would have both, but if we did
       # a force install then let's make sure we actually use it.
       locations = [self.force_install_location, self.existing_installation]
-      locations.each do |loc|
-        next if loc.nil?
-        next unless File.exist? loc
-
-        return loc
-      end
-      nil
+      locations.find { |loc| !loc.nil? && File.exist?(loc) }
     end
 
     # The path to the directory of an existing installation, or nil

@@ -27,21 +27,17 @@ module ArduinoCI
     # @param Array<string> a list of places to look
     # @return [string]
     def self.find_existing_arduino_dir(paths)
-      paths.each do |path|
-        return path if File.exist? path
-      end
-      nil
+      paths.find(&File.method(:exist?))
     end
 
     # An existing Arduino file in one of the given directories, or nil
     # @param Array<string> a list of places to look for the executable
     # @return [string]
     def self.find_existing_arduino_exe(paths)
-      paths.each do |path|
+      paths.find do |path|
         exe = File.join(path, "MacOS", "Arduino")
-        return exe if File.exist? exe
+        File.exist? exe
       end
-      nil
     end
 
     # The path to the directory of an existing installation, or nil
