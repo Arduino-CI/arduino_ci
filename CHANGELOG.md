@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Determining a working OSX launch command no longer breaks on non-English installations
 
 ### Security
 

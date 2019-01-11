@@ -80,7 +80,13 @@ module ArduinoCI
           # don't want to see is a java error.
           args = launcher + ["--bogus-option"]
           result = Host.run_and_capture(*args)
-          next unless result[:err].include? "Error: unknown option: --bogus-option"
+
+          # NOTE: Was originally searching for "Error: unknown option: --bogus-option"
+          #           but also need to find "Erreur: option inconnue : --bogus-option"
+          #           and who knows how many other languages.
+          # For now, just search for the end of the error and hope that the java-style
+          #  launch of this won't include a similar string in it
+          next unless result[:err].include? ": --bogus-option"
 
           ret.base_cmd = launcher
           ret.binary_path = Pathname.new(osx_root)
