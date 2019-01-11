@@ -186,7 +186,7 @@ module ArduinoCI
       elsif File.exist? extracted_file
         install
       else
-        puts "Arduino force-install failed"
+        puts "Could not find extracted archive (tried #{extracted_file})"
       end
 
       File.exist? self.class.force_install_location

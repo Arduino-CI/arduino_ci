@@ -13,6 +13,8 @@ DESIRED_ARDUINO_IDE_VERSION = "1.8.6".freeze
 
 module ArduinoCI
 
+  class ArduinoInstallationError < StandardError; end
+
   # Manage the OS-specific install location of Arduino
   class ArduinoInstallation
 
@@ -94,7 +96,8 @@ module ArduinoCI
         return candidate unless candidate.nil?
 
         # force the install
-        force_install
+        raise ArduinoInstallationError, "Failed to force-install Arduino" unless force_install
+
         autolocate
       end
 

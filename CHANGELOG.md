@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Simplified the use of `Array.each` with a return statement; it's now simply `Array.find`
+- `autolocate!` for Arduino installations now raises `ArduinoInstallationError` if `force_install` fails
 
 ### Deprecated
 
