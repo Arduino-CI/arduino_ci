@@ -405,7 +405,8 @@ unittest(interrupt_attachment) {
   assertEqual(state->interrupt[7].mode, 3);
   detachInterrupt(7);
   assertFalse(state->interrupt[7].attached);
-}```
+}
+```
 
 
 ### SPI
