@@ -3,7 +3,7 @@
 
 You want your Arduino library to be automatically built and tested every time someone contributes code to your project on GitHub, but the Arduino IDE lacks the ability to run unit tests. [Arduino CI](https://github.com/ianfixes/arduino_ci) provides that ability.
 
-You want to run tests on your Arduino library without hardware present, but the IDE doesn't support that.  Arduino CI proivdes that ability.
+You want to run tests on your Arduino library without hardware present, but the IDE doesn't support that.  Arduino CI provides that ability.
 
 You want to precisely replicate certain software states in your library, but you don't have sub-millisecond reflexes for physically faking the inputs, outputs, and serial port.   Arduino CI fakes 100% of the physical input and output of an Arduino board, including the clock.
 
