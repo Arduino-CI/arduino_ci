@@ -6,16 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-
 - Provide an `itoa` function. It is present in Arduino's runtime environment but not on most (all?) host systems because itoa is not a portable standard function.
 
 ### Changed
+- Simplified the use of `Array.each` with a return statement; it's now simply `Array.find`
+- `autolocate!` for Arduino installations now raises `ArduinoInstallationError` if `force_install` fails
+- Errors due to missing YAML are now named `ConfigurationError`
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Determining a working OSX launch command no longer breaks on non-English installations
 
 ### Security
 

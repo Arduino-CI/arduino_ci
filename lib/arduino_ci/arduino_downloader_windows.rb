@@ -81,10 +81,10 @@ module ArduinoCI
     # @return [string]
     def self.existing_executable
       arduino_reg = 'SOFTWARE\WOW6432Node\Arduino'
-      Win32::Registry::HKEY_LOCAL_MACHINE.open(arduino_reg) do |reg|
+      Win32::Registry::HKEY_LOCAL_MACHINE.open(arduino_reg).find do |reg|
         path = reg.read_s('Install_Dir')
         exe = File.join(path, "arduino_debug.exe")
-        return exe if File.exist? exe
+        File.exist? exe
       end
     rescue
       nil
@@ -93,10 +93,7 @@ module ArduinoCI
     # The executable Arduino file in a forced installation, or nil
     # @return [string]
     def self.force_installed_executable
-      exe = File.join(self.force_install_location, "arduino_debug.exe")
-      return nil if exe.nil?
-
-      exe
+      File.join(self.force_install_location, "arduino_debug.exe")
     end
 
   end

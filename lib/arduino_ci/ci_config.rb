@@ -35,6 +35,8 @@ UNITTEST_SCHEMA = {
 }.freeze
 module ArduinoCI
 
+  class ConfigurationError < StandardError; end
+
   # The filename controlling (overriding) the defaults for testing.
   # Files with this name can be used in the root directory of the Arduino library and in any/all of the example directories
   CONFIG_FILENAMES = [
@@ -108,7 +110,7 @@ module ArduinoCI
     # @return [ArduinoCI::CIConfig] a reference to self
     def load_yaml(path)
       yml = YAML.load_file(path)
-      raise "The YAML file at #{path} failed to load" unless yml
+      raise ConfigurationError, "The YAML file at #{path} failed to load" unless yml
 
       if yml.include?("packages")
         yml["packages"].each do |k, v|
