@@ -28,6 +28,12 @@ end
 #   without altering the signature because it only leaves space
 #   for the checkmark _after_ the multiline, it doesn't know how
 #   to make that conditionally the body
+# @param message String the text of the progress indicator
+# @param multiline boolean whether multiline output is expected
+# @param mark_fn block (string) -> string that says how to describe the result
+# @param on_fail_msg String custom message for failure
+# @param tally_on_fail boolean whether to increment @failure_count
+# @param abort_on_fail boolean whether to abort immediately on failure (i.e. if this is a fatal error)
 def perform_action(message, multiline, mark_fn, on_fail_msg, tally_on_fail, abort_on_fail)
   line = "#{message}... "
   endline = "...#{message} "
