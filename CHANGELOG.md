@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `to_h` and `to_s` functions for `ci_config.rb`
 - `CIConfig::clone`
 - Ability to override `CIConfig` from a hash instead of just a file
+- `arduino_ci_remote.rb` now supports command line switches `--testfile-select=GLOB` and `--testfile-reject=GLOB` (which can both be repeated)
 
 ### Changed
 - Simplified the use of `Array.each` with a return statement; it's now simply `Array.find`
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Determining a working OSX launch command no longer breaks on non-English installations
+- `arduino_ci_remote.rb` now honors selected and rejected test files
 
 ### Security
 
