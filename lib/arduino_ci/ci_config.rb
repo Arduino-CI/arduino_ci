@@ -72,6 +72,21 @@ module ArduinoCI
       @unittest_info = {}
     end
 
+    # @return [Hash] config data as a hash
+    def to_h
+      {
+        packages: @package_info,
+        platforms: @platform_info,
+        compile: @compile_info,
+        unittest: @unittest_info
+      }
+    end
+
+    # @return [String] config data as a string
+    def to_s
+      to_h.to_s
+    end
+
     # Deep-clone a hash
     # @param hash [Hash] the source data
     # @return [Hash] a copy

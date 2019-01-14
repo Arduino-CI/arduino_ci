@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Provide an `itoa` function. It is present in Arduino's runtime environment but not on most (all?) host systems because itoa is not a portable standard function.
+- `to_h` and `to_s` functions for `ci_config.rb`
 
 ### Changed
 - Simplified the use of `Array.each` with a return statement; it's now simply `Array.find`
