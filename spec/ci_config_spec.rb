@@ -39,6 +39,46 @@ RSpec.describe ArduinoCI::CIConfig do
     end
   end
 
+  context "clone" do
+    it "creates a copy" do
+      base = ArduinoCI::CIConfig.new
+      base.load_yaml(File.join(File.dirname(__FILE__), "yaml", "o2.yaml"))
+
+      expect(base.to_h).to eq(
+        packages: {},
+        platforms: {
+          "bogo"=> {
+            board: "fakeduino:beep:bogo"
+          },
+        },
+        compile: {
+          libraries: ["zip"],
+          platforms: ["bogo"]
+        },
+        unittest: {
+          testfiles: {
+            select: ["*-*.*"],
+            reject: ["sam-squamsh.*"]
+          },
+          libraries: ["def456"],
+          platforms: ["bogo"]
+        }
+      )
+    end
+  end
+
+  context "clone" do
+    it "creates a copy" do
+      base = ArduinoCI::CIConfig.default
+      orig = base.to_h
+      clone1 = orig.clone.to_h
+      clone2 = orig.clone.to_h
+
+      expect(orig).to eq(clone1)
+      expect(clone1).to eq(clone2)
+    end
+  end
+
   context "with_override" do
     it "loads from yaml" do
       override_file = File.join(File.dirname(__FILE__), "yaml", "o1.yaml")
