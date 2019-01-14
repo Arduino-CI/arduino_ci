@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.17] - 2019-01-14
+### Added
 - Provide an `itoa` function. It is present in Arduino's runtime environment but not on most (all?) host systems because itoa is not a portable standard function.
 - `to_h` and `to_s` functions for `ci_config.rb`
 - `CIConfig::clone`
@@ -17,15 +31,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `autolocate!` for Arduino installations now raises `ArduinoInstallationError` if `force_install` fails
 - Errors due to missing YAML are now named `ConfigurationError`
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Determining a working OSX launch command no longer breaks on non-English installations
 - `arduino_ci_remote.rb` now honors selected and rejected test files
-
-### Security
 
 
 ## [0.1.16] - 2019-01-06
@@ -284,7 +292,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.16...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.17...HEAD
+[0.1.17]: https://github.com/ianfixes/arduino_ci/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/ianfixes/arduino_ci/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/ianfixes/arduino_ci/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/ianfixes/arduino_ci/compare/v0.1.13...v0.1.14
