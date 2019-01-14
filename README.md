@@ -34,6 +34,25 @@ source 'https://rubygems.org'
 gem 'arduino_ci'
 ```
 
+### Testing Locally
+
+First, pull in the `arduino_ci` library as a dependency.
+
+```
+$ bundle install
+```
+
+
+With that installed, just the following shell command each time you want the tests to execute:
+
+```
+$ bundle exec arduino_ci_remote.rb
+```
+
+
+
+### Testing with remote CI
+
 > **Note:** `arduino_ci_remote.rb` expects to be run from the root directory of your Arduino project library.
 
 

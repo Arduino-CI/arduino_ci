@@ -2,12 +2,48 @@
 require 'arduino_ci'
 require 'set'
 require 'pathname'
+require 'optparse'
 
 WIDTH = 80
 FIND_FILES_INDENT = 4
 
 @failure_count = 0
 @passfail = proc { |result| result ? "✓" : "✗" }
+
+# Use some basic parsing to allow command-line overrides of config
+class Parser
+  def self.parse(options)
+    parsed_config = {}
+    parsed_config["unittest"] = {}
+
+    opt_parser = OptionParser.new do |opts|
+      opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
+
+      opts.on("--testfile-select=GLOB", "Unit test file (or glob) to select") do |p|
+        parsed_config["unittest"]["testfiles"] ||= {}
+        parsed_config["unittest"]["testfiles"]["select"] ||= []
+        parsed_config["unittest"]["testfiles"]["select"] << p
+      end
+
+      opts.on("--testfile-reject=GLOB", "Unit test file (or glob) to reject") do |p|
+        parsed_config["unittest"]["testfiles"] ||= {}
+        parsed_config["unittest"]["testfiles"]["reject"] ||= []
+        parsed_config["unittest"]["testfiles"]["reject"] << p
+      end
+
+      opts.on("-h", "--help", "Prints this help") do
+        puts opts
+        exit
+      end
+    end
+
+    opt_parser.parse!(options)
+    parsed_config
+  end
+end
+
+# Read in command line options and make them read-only
+@cli_options = (Parser.parse ARGV).freeze
 
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate(final = nil)
@@ -28,6 +64,12 @@ end
 #   without altering the signature because it only leaves space
 #   for the checkmark _after_ the multiline, it doesn't know how
 #   to make that conditionally the body
+# @param message String the text of the progress indicator
+# @param multiline boolean whether multiline output is expected
+# @param mark_fn block (string) -> string that says how to describe the result
+# @param on_fail_msg String custom message for failure
+# @param tally_on_fail boolean whether to increment @failure_count
+# @param abort_on_fail boolean whether to abort immediately on failure (i.e. if this is a fatal error)
 def perform_action(message, multiline, mark_fn, on_fail_msg, tally_on_fail, abort_on_fail)
   line = "#{message}... "
   endline = "...#{message} "
@@ -111,7 +153,10 @@ def display_files(pathname)
   non_hidden.each { |p| puts "#{margin}#{p}" }
 end
 
-def perform_unit_tests(config)
+def perform_unit_tests(file_config)
+  puts file_config.to_h[:unittest].to_s
+  config = file_config.with_override_config(@cli_options)
+  puts config.to_h[:unittest].to_s
   cpp_library = ArduinoCI::CppLibrary.new(Pathname.new("."), @arduino_cmd.lib_dir)
 
   # check GCC
@@ -149,7 +194,7 @@ def perform_unit_tests(config)
     inform("Skipping unit tests") { "no platforms were requested" }
   else
     config.platforms_to_unittest.each do |p|
-      cpp_library.test_files.each do |unittest_path|
+      config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
         unittest_name = unittest_path.basename.to_s
         compilers.each do |gcc_binary|
           attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary}") do

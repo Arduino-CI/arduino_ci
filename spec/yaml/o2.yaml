@@ -1,0 +1,20 @@
+platforms:
+  bogo:
+    board: fakeduino:beep:bogo
+
+compile:
+  libraries:
+    - "zip"
+  platforms:
+    - bogo
+
+unittest:
+  testfiles:
+    select:
+      - "*-*.*"
+    reject:
+      - "sam-squamsh.*"
+  libraries:
+    - "def456"
+  platforms:
+    - bogo

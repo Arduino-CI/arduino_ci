@@ -72,6 +72,21 @@ module ArduinoCI
       @unittest_info = {}
     end
 
+    # @return [Hash] config data as a hash
+    def to_h
+      {
+        packages: @package_info,
+        platforms: @platform_info,
+        compile: @compile_info,
+        unittest: @unittest_info
+      }
+    end
+
+    # @return [String] config data as a string
+    def to_s
+      to_h.to_s
+    end
+
     # Deep-clone a hash
     # @param hash [Hash] the source data
     # @return [Hash] a copy
@@ -112,6 +127,13 @@ module ArduinoCI
       yml = YAML.load_file(path)
       raise ConfigurationError, "The YAML file at #{path} failed to load" unless yml
 
+      apply_configuration(yml)
+    end
+
+    # Load configuration from a hash
+    # @param yml [Hash] the source data
+    # @return [ArduinoCI::CIConfig] a reference to self
+    def apply_configuration(yml)
       if yml.include?("packages")
         yml["packages"].each do |k, v|
           valid_data = validate_data("packages", v, PACKAGE_SCHEMA)
@@ -139,16 +161,32 @@ module ArduinoCI
       self
     end
 
+    # Create a clone of this configuration and return it
+    # @return [ArduinoCI::CIConfig] the new settings object
+    def clone
+      cloned_config = self.class.new
+      cloned_config.package_info  = deep_clone(@package_info)
+      cloned_config.platform_info = deep_clone(@platform_info)
+      cloned_config.compile_info  = deep_clone(@compile_info)
+      cloned_config.unittest_info = deep_clone(@unittest_info)
+      cloned_config
+    end
+
     # Override these settings with settings from another file
     # @param path [String] the path to the settings yaml file
     # @return [ArduinoCI::CIConfig] the new settings object
     def with_override(path)
-      overridden_config = self.class.new
-      overridden_config.package_info  = deep_clone(@package_info)
-      overridden_config.platform_info = deep_clone(@platform_info)
-      overridden_config.compile_info  = deep_clone(@compile_info)
-      overridden_config.unittest_info = deep_clone(@unittest_info)
+      overridden_config = clone
       overridden_config.load_yaml(path)
+      overridden_config
+    end
+
+    # Override these settings with settings from a hash
+    # @param config_hash [Hash] A configuration hash
+    # @return [ArduinoCI::CIConfig] the new settings object
+    def with_override_config(config_hash)
+      overridden_config = clone
+      overridden_config.apply_configuration(config_hash)
       overridden_config
     end
 

@@ -9,6 +9,28 @@ These defaults are specified in [misc/default.yml](misc/default.yml).  You are f
 
 ## Overriding default build behavior
 
+### From the command line
+
+The following options are currently available in the `arduino_ci_remote.rb` test runner.
+
+```
+Usage: arduino_ci_remote.rb [options]
+        --testfile-select=GLOB       Unit test file (or glob) to select
+        --testfile-reject=GLOB       Unit test file (or glob) to reject
+    -h, --help                       Prints this help
+```
+
+#### `--testfile-select` option
+
+This allows a file (or glob) pattern to be executed in your tests directory, creating a whitelist of files to test.  E.g. `--testfile-select=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (testing only those) and not `test_plant_rose.cpp`.
+
+#### `--testfile-reject` option
+
+This allows a file (or glob) pattern to be executed in your tests directory, creating a blacklist of files to skip.  E.g. `--testfile-reject=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (skipping those) and test only `test_plant_rose.cpp`, `test_plant_daisy.cpp`, etc.
+
+
+### From configuration
+
 `.arduino-ci.yml` files will override the default behavior.  There are 3 places you can put them:
 
 1. the root of your library
