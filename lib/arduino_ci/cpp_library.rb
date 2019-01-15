@@ -109,7 +109,8 @@ module ArduinoCI
       real = some_dir.realpath
       files = Find.find(real).map { |p| Pathname.new(p) }.reject(&:directory?)
       cpp = files.select { |path| CPP_EXTENSIONS.include?(path.extname.downcase) }
-      cpp.reject { |path| path.basename.to_s.start_with?(".") } # ignore hidden
+      not_hidden = cpp.reject { |path| path.basename.to_s.start_with?(".") }
+      not_hidden.sort_by(&:to_s)
     end
 
     # CPP files that are part of the project library under test
