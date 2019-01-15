@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Library installation no longer "fails" if the library is already installed
 
 ### Security
 

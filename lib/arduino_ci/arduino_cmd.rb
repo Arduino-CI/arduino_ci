@@ -190,7 +190,10 @@ module ArduinoCI
     # @param name [String] the library name
     # @return [bool] whether the command succeeded
     def _install_library(library_name)
-      success = run_and_capture(flag_install_library, library_name)[:success]
+      result = run_and_capture(flag_install_library, library_name)
+
+      already_installed = result[:err].include?("Library is already installed: #{library_name}")
+      success = result[:success] || already_installed
 
       @libraries_indexed = (@libraries_indexed || success) if library_name == WORKAROUND_LIB
       success
@@ -237,7 +240,7 @@ module ArduinoCI
     def update_library_index
       # install random lib so the arduino IDE grabs a new library index
       # see: https://github.com/arduino/Arduino/issues/3535
-      install_library("USBHost")
+      install_library(WORKAROUND_LIB)
     end
 
     # use a particular board for compilation
