@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Unit tests and examples are now executed alphabetically by filename
 
 ### Deprecated
 

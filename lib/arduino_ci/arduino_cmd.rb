@@ -319,7 +319,7 @@ module ArduinoCI
         proj_file = example_path + e + "#{e}.ino"
         proj_file.exist? ? proj_file.to_s : nil
       end
-      files.reject(&:nil?)
+      files.reject(&:nil?).sort_by(&:to_s)
     end
   end
 end
