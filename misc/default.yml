@@ -98,6 +98,7 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR_ATmega2560__
       warnings:
       flags:
   cplayClassic:
