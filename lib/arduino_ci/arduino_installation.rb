@@ -97,25 +97,25 @@ module ArduinoCI
 
       # Attempt to find a workable Arduino executable across platforms, and install it if we don't
       # @return [ArduinoCI::ArduinoCmd] an instance of a command
-      def autolocate!
+      def autolocate!(output = $stdout)
         candidate = autolocate
         return candidate unless candidate.nil?
 
         # force the install
-        raise ArduinoInstallationError, "Failed to force-install Arduino" unless force_install
+        raise ArduinoInstallationError, "Failed to force-install Arduino" unless force_install(output)
 
         autolocate
       end
 
       # Forcibly install Arduino from the web
       # @return [bool] Whether the command succeeded
-      def force_install
+      def force_install(output = $stdout, version = DESIRED_ARDUINO_IDE_VERSION)
         worker_class =  case Host.os
                         when :osx then ArduinoDownloaderOSX
                         when :windows then ArduinoDownloaderWindows
                         when :linux then ArduinoDownloaderLinux
                         end
-        worker = worker_class.new(DESIRED_ARDUINO_IDE_VERSION)
+        worker = worker_class.new(version, output)
         worker.execute
       end
 

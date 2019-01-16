@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- `ArduinoInstallation` and `ArduinoDownloader` now allow console output to optionally be set to an `IO` object of choice during `force_install`
+- `ArduinoInstallation::force_install` now optionally accepts a version string
 
 ### Changed
 - Unit tests and examples are now executed alphabetically by filename
