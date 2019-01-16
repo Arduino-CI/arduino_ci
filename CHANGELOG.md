@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - `ArduinoInstallation` and `ArduinoDownloader` now allow console output to optionally be set to an `IO` object of choice during `force_install`
 - `ArduinoInstallation::force_install` now optionally accepts a version string
+- `arduino_library_location.rb` script to print Arduino library location to stdout
 
 ### Changed
 - Unit tests and examples are now executed alphabetically by filename
