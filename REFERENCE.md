@@ -138,7 +138,7 @@ However, more flexible usage is available:
 
 Sometimes you need a fork of an Arduino library instead of the version that will be installed via their GUI.  `arduino_ci_remote.rb` won't overwrite existing downloaded libraries with fresh downloads, but it won't fetch the custom versions for you either.
 
-If this is the behavior you need, `ensure_arduino_installation.rb` is for you.
+If this is the behavior you need, `ensure_arduino_installation.rb` is for you.  It ensures that an Arduino binary is available on the system.
 
 ```shell
 # Example build script
@@ -147,14 +147,20 @@ bundle install
 # ensure the Arduino installation -- creates the Library directory
 bundle exec ensure_arduino_installation.rb
 
-# manually install the custom version you need
+# manually install a custom library from a zip file
+wget https://hosting.com/custom_library.zip
+unzip -o custom_library.zip
+mv custom_library $(bundle exec arduino_library_location.rb)
+
+# manually install a custom library from a git repository
 git clone https://repository.com/custom_library_repo.git
-mv custom_library_repo /path/to/Arduino/libraries
+mv custom_library_repo $(bundle exec arduino_library_location.rb)
 
 # now run CI
 bundle exec arduino_ci_remote.rb
 ```
 
+Note the use of subshell to execute `bundle exec arduino_library_location.rb`.  This command simply returns the directory in which Arduino Libraries are (or should be) installed.
 
 
 

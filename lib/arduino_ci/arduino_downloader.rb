@@ -1,4 +1,5 @@
-require "fileutils"
+require 'fileutils'
+require 'net/http'
 require 'open-uri'
 require 'zip'
 
@@ -9,8 +10,11 @@ module ArduinoCI
   # Manage the OS-specific download & install of Arduino
   class ArduinoDownloader
 
-    def initialize(desired_ide_version)
+    # @param desired_ide_version [string] Version string e.g. 1.8.7
+    # @param output [IO] $stdout, $stderr, File.new(/dev/null, 'w'), etc. where console output will be sent
+    def initialize(desired_ide_version, output = $stdout)
       @desired_ide_version = desired_ide_version
+      @output = output
     end
 
     # Provide guidelines to the implementer of this class
@@ -115,15 +119,15 @@ module ArduinoCI
         total_size += size
         needed_dots = (total_size / chunk_size).to_i
         unprinted_dots = needed_dots - dots
-        print("." * unprinted_dots) if unprinted_dots > 0
+        @output.print("." * unprinted_dots) if unprinted_dots > 0
         dots = needed_dots
       end
 
       open(package_url, ssl_verify_mode: 0, progress_proc: dot_printer) do |url|
         File.open(package_file, 'wb') { |file| file.write(url.read) }
       end
-    rescue Net::OpenTimeout, Net::ReadTimeout => e
-      puts "\nArduino force-install failed downloading #{package_url}: #{e}"
+    rescue Net::OpenTimeout, Net::ReadTimeout, OpenURI::HTTPError, URI::InvalidURIError => e
+      @output.puts "\nArduino force-install failed downloading #{package_url}: #{e}"
     end
 
     # Extract the package_file to extracted_file
@@ -133,7 +137,7 @@ module ArduinoCI
         batch_size = [1, (zip.size / 100).to_i].max
         dots = 0
         zip.each do |file|
-          print "." if (dots % batch_size).zero?
+          @output.print "." if (dots % batch_size).zero?
           file.restore_permissions = true
           file.extract { accept_all }
           dots += 1
@@ -153,7 +157,7 @@ module ArduinoCI
     def execute
       error_preparing = prepare
       unless error_preparing.nil?
-        puts "Arduino force-install failed preparation: #{error_preparing}"
+        @output.puts "Arduino force-install failed preparation: #{error_preparing}"
         return false
       end
 
@@ -161,32 +165,32 @@ module ArduinoCI
 
       loop do
         if File.exist? package_file
-          puts "Arduino package seems to have been downloaded already" if attempts.zero?
+          @output.puts "Arduino package seems to have been downloaded already" if attempts.zero?
           break
         elsif attempts >= DOWNLOAD_ATTEMPTS
-          break puts "After #{DOWNLOAD_ATTEMPTS} attempts, failed to download #{package_url}"
+          break @output.puts "After #{DOWNLOAD_ATTEMPTS} attempts, failed to download #{package_url}"
         else
-          print "Attempting to download Arduino package with #{downloader}"
+          @output.print "Attempting to download Arduino package with #{downloader}"
           download
-          puts
+          @output.puts
         end
         attempts += 1
       end
 
       if File.exist? extracted_file
-        puts "Arduino package seems to have been extracted already"
+        @output.puts "Arduino package seems to have been extracted already"
       elsif File.exist? package_file
-        print "Extracting archive with #{extracter}"
+        @output.print "Extracting archive with #{extracter}"
         extract
-        puts
+        @output.puts
       end
 
       if File.exist? self.class.force_install_location
-        puts "Arduino package seems to have been installed already"
+        @output.puts "Arduino package seems to have been installed already"
       elsif File.exist? extracted_file
         install
       else
-        puts "Could not find extracted archive (tried #{extracted_file})"
+        @output.puts "Could not find extracted archive (tried #{extracted_file})"
       end
 
       File.exist? self.class.force_install_location

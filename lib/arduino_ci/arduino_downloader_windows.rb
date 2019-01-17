@@ -2,6 +2,7 @@ require 'base64'
 require 'shellwords' # fingers crossed this works on win32
 require 'win32/registry'
 require "arduino_ci/arduino_downloader"
+require 'net/http'
 require "fileutils"
 
 module ArduinoCI
@@ -30,6 +31,8 @@ module ArduinoCI
       open(URI.parse(package_url), ssl_verify_mode: 0) do |url|
         File.open(package_file, 'wb') { |file| file.write(url.read) }
       end
+    rescue Net::OpenTimeout, Net::ReadTimeout, OpenURI::HTTPError, URI::InvalidURIError => e
+      @output.puts "\nArduino force-install failed downloading #{package_url}: #{e}"
     end
 
     # Move the extracted package file from extracted_file to the force_install_location
