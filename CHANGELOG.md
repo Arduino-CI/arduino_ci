@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Unit tests and examples are now executed alphabetically by filename
+- The `pgm_read_...` preprocessor macros in cpp/arduino/avr/pgmspace.h now expands to an expression with applicable type.
 
 ### Deprecated
 
