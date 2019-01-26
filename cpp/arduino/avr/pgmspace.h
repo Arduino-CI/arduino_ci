@@ -29,25 +29,26 @@ out.each { |l| puts d(l) }
 
 // everything's a no-op
 #define PSTR(s) ((const char *)(s))
-#define pgm_read_byte_near(x)  (x)
-#define pgm_read_word_near(x)  (x)
-#define pgm_read_dword_near(x) (x)
-#define pgm_read_float_near(x) (x)
-#define pgm_read_ptr_near(x)   (x)
 
-#define pgm_read_byte_far(x)  (x)
-#define pgm_read_word_far(x)  (x)
-#define pgm_read_dword_far(x) (x)
-#define pgm_read_float_far(x) (x)
-#define pgm_read_ptr_far(x)   (x)
+#define pgm_read_byte_near(address_short)  (* (const uint8_t *)  (address_short) )
+#define pgm_read_word_near(address_short)  (* (const uint16_t *) (address_short) )
+#define pgm_read_dword_near(address_short) (* (const uint32_t *) (address_short) )
+#define pgm_read_float_near(address_short) (* (const float *)    (address_short) )
+#define pgm_read_ptr_near(address_short)   (* (const void *)     (address_short) )
 
+#define pgm_read_byte_far(address_long)    (* (const uint8_t *)  (address_long) )
+#define pgm_read_word_far(address_long)    (* (const uint16_t *) (address_long) )
+#define pgm_read_dword_far(address_long)   (* (const uint32_t *) (address_long) )
+#define pgm_read_float_far(address_long)   (* (const float *)    (address_long) )
+#define pgm_read_ptr_far(address_long)     (* (const void *)     (address_long) )
 
-#define pgm_read_byte(addr) (*(const uint8_t *)(addr))
-#define pgm_read_word(x) (x)
-#define pgm_read_dword(x) (x)
-#define pgm_read_float(x) (x)
-#define pgm_read_ptr(x) (x)
-#define pgm_get_far_address(x) (x)
+#define pgm_read_byte(address_short)   pgm_read_byte_near(address_short)
+#define pgm_read_word(address_short)   pgm_read_word_near(address_short)
+#define pgm_read_dword(address_short)  pgm_read_dword_near(address_short)
+#define pgm_read_float(address_short)  pgm_read_float_near(address_short)
+#define pgm_read_ptr(address_short)    pgm_read_ptr_near(address_short)
+
+#define pgm_get_far_address(var) ( (uint_farptr_t) (&(var)) )
 
 #define memchr_P(...) ::memchr(__VA_ARGS__)
 #define memcmp_P(...) ::memcmp(__VA_ARGS__)
