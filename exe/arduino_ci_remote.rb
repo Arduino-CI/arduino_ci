@@ -229,7 +229,8 @@ def perform_compilation_tests(config)
     @arduino_cmd.install_local_library(Pathname.new("."))
   end
   if !installed_library_path
-    inform("No libraries installed") { "This probably indicates problems. Do you have a different/old library with the same name installed?" }
+    warning = "This probably indicates problems. Do you have a different/old library with the same name installed?"
+    inform("No libraries installed") { warning }
   elsif installed_library_path.exist?
     inform("Library installed at") { installed_library_path.to_s }
   else
