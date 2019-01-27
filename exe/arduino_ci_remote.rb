@@ -244,11 +244,7 @@ def perform_compilation_tests(config)
       false
     end
   end
-  if installed_library_path
-    library_examples = @arduino_cmd.library_examples(installed_library_path)
-  else
-    library_examples = []
-  end
+  library_examples = installed_library_path ? @arduino_cmd.library_examples(installed_library_path) : []
 
   # gather up all required boards for compilation so we can install them up front.
   # start with the "platforms to unittest" and add the examples
