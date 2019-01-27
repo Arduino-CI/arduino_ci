@@ -228,7 +228,9 @@ def perform_compilation_tests(config)
   installed_library_path = attempt("Installing library under test") do
     @arduino_cmd.install_local_library(Pathname.new("."))
   end
-  if installed_library_path.exist?
+  if !installed_library_path
+    inform("No libraries installed") { "This probably indicates problems. Do you have a different/old library with the same name installed?" }
+  elsif installed_library_path.exist?
     inform("Library installed at") { installed_library_path.to_s }
   else
     assure_multiline("Library installed successfully") do
@@ -241,7 +243,11 @@ def perform_compilation_tests(config)
       false
     end
   end
-  library_examples = @arduino_cmd.library_examples(installed_library_path)
+  if installed_library_path
+    library_examples = @arduino_cmd.library_examples(installed_library_path)
+  else
+    library_examples = []
+  end
 
   # gather up all required boards for compilation so we can install them up front.
   # start with the "platforms to unittest" and add the examples
@@ -310,8 +316,12 @@ def perform_compilation_tests(config)
     inform("Skipping builds") { "no platforms were requested" }
     return
   elsif library_examples.empty?
-    inform_multiline("Skipping builds; no examples found in #{installed_library_path}") do
-      display_files(installed_library_path)
+    if !installed_library_path
+      inform("Skipping builds") { "no libraries installed" }
+    else
+      inform_multiline("Skipping builds; no examples found in #{installed_library_path}") do
+        display_files(installed_library_path)
+      end
     end
     return
   end
