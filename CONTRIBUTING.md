@@ -18,14 +18,10 @@ Pull requests will trigger a Travis CI job.  The following two commands will be 
 apt-get install ruby ruby-dev    # For Debian/Ubuntu
 dnf install ruby ruby-devel      # For Fedora
 yum install ruby ruby-devel      # For Centos/RHEL
-gem install bundler              # See note below about version
+gem install bundler
 gem install rubocop
 gem install rspec
 ```
-
-As of writing this you want install a version 1 of bundler, `gem install bundler -v '1.17.3'`,
-since there is some incompability with regards to the
-[latest version 2 release of bundler](https://bundler.io/blog/2019/01/04/an-update-on-the-bundler-2-release.html)
 
 Be prepared to write tests to accompany any code you would like to see merged.
 See `SampleProjects/TestSomething/test/*.cpp` for the existing tests (run by rspec).
