@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Library installation no longer "fails" if the library is already installed
 - Platform definition for `mega2560` now includes proper AVR compiler flag
+- `CppLibrary::vendor_bundle?` now asks where gems are, instead of assuming `vendor/bundle/`
 
 ### Security
 
