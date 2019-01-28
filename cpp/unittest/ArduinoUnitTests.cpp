@@ -1,5 +1,6 @@
 #include "ArduinoUnitTests.h"
 
-Test* Test::sSetup = 0;
-Test* Test::sTeardown = 0;
+TestSetup *TestSetup::sInstance;
+TestTeardown *TestTeardown::sInstance;
+
 Test* Test::sRoot = 0;
