@@ -13,22 +13,36 @@ FIND_FILES_INDENT = 4
 # Use some basic parsing to allow command-line overrides of config
 class Parser
   def self.parse(options)
-    parsed_config = {}
-    parsed_config["unittest"] = {}
+    unit_config = {}
+    output_options = {
+      skip_unittests: false,
+      skip_compilation: false,
+      ci_config: {
+        "unittest" => unit_config
+      },
+    }
 
     opt_parser = OptionParser.new do |opts|
       opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
 
+      opts.on("--skip-unittests", "Don't run unit tests") do |p|
+        output_options[:skip_unittests] = p
+      end
+
+      opts.on("--skip-compilation", "Don't compile example sketches") do |p|
+        output_options[:skip_compilation] = p
+      end
+
       opts.on("--testfile-select=GLOB", "Unit test file (or glob) to select") do |p|
-        parsed_config["unittest"]["testfiles"] ||= {}
-        parsed_config["unittest"]["testfiles"]["select"] ||= []
-        parsed_config["unittest"]["testfiles"]["select"] << p
+        unit_config["testfiles"] ||= {}
+        unit_config["testfiles"]["select"] ||= []
+        unit_config["testfiles"]["select"] << p
       end
 
       opts.on("--testfile-reject=GLOB", "Unit test file (or glob) to reject") do |p|
-        parsed_config["unittest"]["testfiles"] ||= {}
-        parsed_config["unittest"]["testfiles"]["reject"] ||= []
-        parsed_config["unittest"]["testfiles"]["reject"] << p
+        unit_config["testfiles"] ||= {}
+        unit_config["testfiles"]["reject"] ||= []
+        unit_config["testfiles"]["reject"] << p
       end
 
       opts.on("-h", "--help", "Prints this help") do
@@ -38,7 +52,7 @@ class Parser
     end
 
     opt_parser.parse!(options)
-    parsed_config
+    output_options
   end
 end
 
@@ -154,9 +168,11 @@ def display_files(pathname)
 end
 
 def perform_unit_tests(file_config)
-  puts file_config.to_h[:unittest].to_s
-  config = file_config.with_override_config(@cli_options)
-  puts config.to_h[:unittest].to_s
+  if @cli_options[:skip_unittests]
+    inform("Skipping unit tests") { "as requested via command line" }
+    return
+  end
+  config = file_config.with_override_config(@cli_options[:ci_config])
   cpp_library = ArduinoCI::CppLibrary.new(Pathname.new("."), @arduino_cmd.lib_dir)
 
   # check GCC
@@ -220,6 +236,10 @@ def perform_unit_tests(file_config)
 end
 
 def perform_compilation_tests(config)
+  if @cli_options[:skip_compilation]
+    inform("Skipping compilation of examples") { "as requested via command line" }
+    return
+  end
 
   # index the existing libraries
   attempt("Indexing libraries") { @arduino_cmd.index_libraries } unless @arduino_cmd.libraries_indexed
