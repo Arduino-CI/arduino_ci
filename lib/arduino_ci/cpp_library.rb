@@ -32,6 +32,9 @@ module ArduinoCI
     # @return [String] the last command
     attr_reader :last_cmd
 
+    # @return [Array<Pathname>] Directories suspected of being vendor-bundle
+    attr_reader :vendor_bundle_cache
+
     # @param base_dir [Pathname] The path to the library being tested
     # @param arduino_lib_dir [Pathname] The path to the libraries directory
     def initialize(base_dir, arduino_lib_dir)
@@ -45,26 +48,57 @@ module ArduinoCI
       @last_out = ""
       @last_msg = ""
       @has_libasan_cache = {}
+      @vendor_bundle_cache = nil
     end
 
     # Guess whether a file is part of the vendor bundle (indicating we should ignore it).
     #
-    # This assumes the vendor bundle will be at `vendor/bundle` and not some other location
+    # A safe way to do this seems to be to check whether any of the installed gems
+    #   appear to be a subdirectory of (but not equal to) the working directory.
+    #   That gets us the vendor directory (or multiple directories). We can check
+    #   if the given path is contained by any of those.
+    #
     # @param path [Pathname] The path to check
     # @return [bool]
     def vendor_bundle?(path)
-      # TODO: look for Gemfile, look for .bundle/config and get BUNDLE_PATH from there?
-      base = @base_dir + "vendor"
-      return false unless base.exist?
-
-      vendor_bundle_aliases = [base, base.realpath]
-
-      # we could do this but some rubies don't return an enumerator for ascend
-      # path.ascend.any? { |part| vendor_bundle_aliases.include?(part) }
-      path.ascend do |part|
-        return true if vendor_bundle_aliases.include?(part)
+      # Cache bundle information, as it is (1) time consuming to fetch and (2) not going to change while we run
+      if @vendor_bundle_cache.nil?
+        bundle_info = Host.run_and_capture("bundle show --paths")
+        if !bundle_info[:success]
+          # if the bundle show command fails, assume there isn't a bundle
+          @vendor_bundle_cache = false
+        else
+          # Get all the places where gems are stored.  We combine a few things here:
+          # by preemptively switching to the parent directory, we can both ensure that
+          # we skip any gems that are equal to the working directory AND exploit some
+          # commonality in the paths to cut down our search locations
+          #
+          # NOT CONFUSING THE WORKING DIRECTORY WITH VENDOR BUNDLE IS SUPER IMPORTANT
+          # because if we do, we won't be able to run CI on this library itself.
+          bundle_paths = bundle_info[:out].lines
+                                          .map { |l| Pathname.new(l.chomp) }
+                                          .select(&:exist?)
+                                          .map(&:realpath)
+                                          .map(&:parent)
+                                          .uniq
+          wd = Pathname.new(".").realpath
+          @vendor_bundle_cache = bundle_paths.select do |gem_path|
+            gem_path.ascend do |part|
+              break true if wd == part
+            end
+          end
+        end
       end
-      false
+
+      # no bundle existed
+      return false if @vendor_bundle_cache == false
+
+      # With vendor bundles located, check this file against those
+      @vendor_bundle_cache.any? do |gem_path|
+        path.ascend do |part|
+          break true if gem_path == part
+        end
+      end
     end
 
     # Guess whether a file is part of the tests/ dir (indicating library compilation should ignore it).
