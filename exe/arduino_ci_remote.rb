@@ -248,17 +248,22 @@ def perform_compilation_tests(config)
   installed_library_path = attempt("Installing library under test") do
     @arduino_cmd.install_local_library(Pathname.new("."))
   end
-  if installed_library_path.exist?
+
+  if !installed_library_path.nil? && installed_library_path.exist?
     inform("Library installed at") { installed_library_path.to_s }
   else
     assure_multiline("Library installed successfully") do
-      # print out the contents of the deepest directory we actually find
-      @arduino_cmd.lib_dir.ascend do |path_part|
-        next unless path_part.exist?
+      if installed_library_path.nil?
+        puts @arduino_cmd.last_msg
+      else
+        # print out the contents of the deepest directory we actually find
+        @arduino_cmd.lib_dir.ascend do |path_part|
+          next unless path_part.exist?
 
-        break display_files(path_part)
+          break display_files(path_part)
+        end
+        false
       end
-      false
     end
   end
   library_examples = @arduino_cmd.library_examples(installed_library_path)
