@@ -7,6 +7,8 @@ end
 
 
 RSpec.describe ArduinoCI::ArduinoCmd do
+  next if skip_splash_screen_tests
+
   arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
 
   after(:each) do |example|
