@@ -15,6 +15,26 @@ struct TestData {
   int result;
 };
 
+class TestSetup
+{
+  public:
+  TestSetup() {
+    sInstance = this;
+  }
+  virtual void run() {}
+  static TestSetup *sInstance;
+};
+
+class TestTeardown
+{
+  public:
+  TestTeardown() {
+    sInstance = this;
+  }
+  virtual void run() {}
+  static TestTeardown *sInstance;
+};
+
 class Test
 {
   public:
@@ -152,7 +172,9 @@ class Test
     static int run_and_report(int argc, char *argv[]) {
       // TODO: pick a reporter based on args
       ReporterTAP rep;
+      if (TestSetup::sInstance) TestSetup::sInstance->run();
       Results results = run(&rep);
+      if (TestTeardown::sInstance) TestTeardown::sInstance->run();
       return results.failed + results.skipped;
     }
 
@@ -217,6 +239,24 @@ class Test
   } test_##name##_instance;        \
   void test_##name ::task()
 
+/**
+ * The unittest_setup and unittest_teardown functions are intended to be used
+ * to set up "external" dependencies that needs to present but are not directly
+ * related to the functionality that you are testing, for instance a LCD.
+ */
+#define unittest_setup()                          \
+  class unittest_setup_class : public TestSetup { \
+    public:                                       \
+    virtual void run() override;                  \
+  } unittest_setup_instance;                      \
+  void unittest_setup_class::run()
+
+#define unittest_teardown()                             \
+  class unittest_teardown_class : public TestTeardown { \
+    public:                                             \
+    virtual void run() override;                        \
+  } unittest_teardown_instance;                         \
+  void unittest_teardown_class::run()
 
 #define unittest_main()                      \
   int main(int argc, char *argv[]) {         \
