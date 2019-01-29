@@ -32,8 +32,8 @@ See `SampleProjects/TestSomething/test/*.cpp` for the existing tests (run by rsp
 * Merge pull request with new features
 * `git stash save` (at least before the gem build step, but easiest here).
 * `git pull --rebase`
+* Update the sections of `CHANGELOG.md` by running `bundle exec keepachangelog_release.md --increment-patch`
 * Bump the version in lib/arduino_ci/version.rb and change it in README.md (since rubydoc.info doesn't always redirect to the latest version)
-* Update the sections of `CHANGELOG.md`
 * `git add README.md CHANGELOG.md lib/arduino_ci/version.rb`
 * `git commit -m "vVERSION bump"`
 * `git tag -a vVERSION -m "Released version VERSION"`

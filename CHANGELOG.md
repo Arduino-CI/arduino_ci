@@ -10,10 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `ArduinoInstallation::force_install` now optionally accepts a version string
 - `arduino_library_location.rb` script to print Arduino library location to stdout
 - `arduino_ci_remote.rb` now supports `--skip-unittests` and `--skip-compilation`.  If you skip both, only the `autolocate!` of the Arduino binary will be performed.
+- `keepachangelog_manager` gem to begin streamlining the release process
+- `unittest_setup()` and `unittest_teardown()` macros, my thanks to @hlovdal for contributing this code
+- Added rspec sensitivity to the environment variable `$ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS` (for `arduino_ci` gem hackers)
+- Added rspec sensitivity to the environment variable `$ARDUINO_CI_SKIP_RUBY_RSPEC_TESTS` (for `arduino_ci` gem hackers)
+- Added rspec sensitivity to the environment variable `$ARDUINO_CI_SKIP_CPP_RSPEC_TESTS` (for `arduino_ci` gem hackers)
+- `nullptr` definition in C++
+- `assertNull()` for unit tests
 
 ### Changed
 - Unit tests and examples are now executed alphabetically by filename
 - The `pgm_read_...` preprocessor macros in cpp/arduino/avr/pgmspace.h now expands to an expression with applicable type.
+- Unit tests for interrupts (`attachInterrupt` and `detachInterrupt`) get their own file
 
 ### Deprecated
 

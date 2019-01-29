@@ -2,6 +2,7 @@ require "spec_helper"
 require "pathname"
 
 RSpec.describe ArduinoCI::CIConfig do
+  next if skip_ruby_tests
   context "default" do
     it "loads from yaml" do
       default_config = ArduinoCI::CIConfig.default

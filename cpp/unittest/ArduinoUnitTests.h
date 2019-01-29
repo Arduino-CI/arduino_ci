@@ -69,29 +69,29 @@ class Test
         }
 
         template <typename A, typename B> void onAssert(
-              const char* file,
-              int line,
-              const char* description,
-              bool pass,
-              const char* lhsRelevance,
-              const char* lhsLabel,
-              const A &lhs,
-              const char* opLabel,
-              const char* rhsRelevance,
-              const char* rhsLabel,
-              const B &rhs
-          ) {
-            cerr << "    " << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - ";
-            cerr << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl;
-            if (!pass) {
-              cerr << "      ---" << endl;
-              cerr << "      operator: " << opLabel << endl;
-              cerr << "      " << lhsRelevance << ": " << lhs << endl;
-              cerr << "      " << rhsRelevance << ": " << rhs << endl;
-              cerr << "      at:" << endl;
-              cerr << "        file: " << file << endl;
-              cerr << "        line: " << line << endl;
-              cerr << "      ..." << endl;
+          const char* file,
+          int line,
+          const char* description,
+          bool pass,
+          const char* lhsRelevance,
+          const char* lhsLabel,
+          const A &lhs,
+          const char* opLabel,
+          const char* rhsRelevance,
+          const char* rhsLabel,
+          const B &rhs
+        ) {
+          cerr << "    " << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - ";
+          cerr << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl;
+          if (!pass) {
+            cerr << "      ---" << endl;
+            cerr << "      operator: " << opLabel << endl;
+            cerr << "      " << lhsRelevance << ": " << lhs << endl;
+            cerr << "      " << rhsRelevance << ": " << rhs << endl;
+            cerr << "      at:" << endl;
+            cerr << "        file: " << file << endl;
+            cerr << "        line: " << line << endl;
+            cerr << "      ..." << endl;
           }
         }
     };

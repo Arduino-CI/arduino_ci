@@ -12,3 +12,15 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+def skip_splash_screen_tests
+  !ENV["ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS"].nil?
+end
+
+def skip_ruby_tests
+  !ENV["ARDUINO_CI_SKIP_RUBY_RSPEC_TESTS"].nil?
+end
+
+def skip_cpp_tests
+  !ENV["ARDUINO_CI_SKIP_CPP_RSPEC_TESTS"].nil?
+end

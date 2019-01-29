@@ -1,6 +1,9 @@
 require "spec_helper"
 
 RSpec.describe ArduinoCI::ArduinoInstallation do
+  next if skip_ruby_tests
+  next if skip_splash_screen_tests
+
   context "autolocate" do
     it "doesn't fail" do
       ArduinoCI::ArduinoInstallation.autolocate

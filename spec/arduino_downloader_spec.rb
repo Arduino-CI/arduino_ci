@@ -2,6 +2,7 @@ require "spec_helper"
 
 DESIRED_VERSION = "rhubarb"
 RSpec.describe ArduinoCI::ArduinoDownloader do
+  next if skip_ruby_tests
   context "Basics" do
     it "has correct class properties" do
       ad = ArduinoCI::ArduinoDownloader
@@ -24,6 +25,7 @@ RSpec.describe ArduinoCI::ArduinoDownloader do
 end
 
 RSpec.describe ArduinoCI::ArduinoDownloaderLinux do
+  next if skip_ruby_tests
   context "Basics" do
     it "has correct class properties" do
       ad = ArduinoCI::ArduinoDownloaderLinux
@@ -49,6 +51,7 @@ RSpec.describe ArduinoCI::ArduinoDownloaderLinux do
 end
 
 RSpec.describe ArduinoCI::ArduinoDownloaderOSX do
+  next if skip_ruby_tests
   context "Basics" do
     it "has correct class properties" do
       ad = ArduinoCI::ArduinoDownloaderOSX
