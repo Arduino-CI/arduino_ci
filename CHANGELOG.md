@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `ArduinoInstallation::force_install` now optionally accepts a version string
 - `arduino_library_location.rb` script to print Arduino library location to stdout
 - `arduino_ci_remote.rb` now supports `--skip-unittests` and `--skip-compilation`.  If you skip both, only the `autolocate!` of the Arduino binary will be performed.
+- `keepachangelog_manager` gem to begin streamlining the release process
 
 ### Changed
 - Unit tests and examples are now executed alphabetically by filename
