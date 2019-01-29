@@ -4,7 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## [Unreleased]
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.18] - 2019-01-29
 ### Added
 - `ArduinoInstallation` and `ArduinoDownloader` now allow console output to optionally be set to an `IO` object of choice during `force_install`
 - `ArduinoInstallation::force_install` now optionally accepts a version string
@@ -23,17 +38,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The `pgm_read_...` preprocessor macros in cpp/arduino/avr/pgmspace.h now expands to an expression with applicable type.
 - Unit tests for interrupts (`attachInterrupt` and `detachInterrupt`) get their own file
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Library installation no longer "fails" if the library is already installed
 - Platform definition for `mega2560` now includes proper AVR compiler flag
 - `CppLibrary::vendor_bundle?` now asks where gems are, instead of assuming `vendor/bundle/`
 - `install_local_library` step in `arduino_ci_remote.rb` now properly surfaces any error message
-
-### Security
 
 
 ## [0.1.17] - 2019-01-14
@@ -90,7 +99,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [0.1.13] - 2018-09-19
-
 ### Changed
 - `arduino_ci_remote.rb` now iterates over example platforms before examples (saves time)
 
@@ -106,7 +114,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Test file `int main(){}` needed a CPP extension in order to properly compile
 - Fixed build script reporting for `inform()` when it returns a non-string value from its block
 - Don't count false returns from `inform()` blocks as failures
-
 
 
 ## [0.1.11] - 2018-09-13
@@ -207,8 +214,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `__FlashStringHelper` should now be properly mocked for compilation
 - `WString.h` bool operator now works and is simpler
 
-### Security
-
 
 ## [0.1.5] - 2018-03-05
 ### Added
@@ -271,12 +276,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [0.1.2] - 2018-01-25
-
 ### Fixed
 - Actually package CPP and YAML files into the gem.  Whoops.
 
-## [0.1.1] - 2018-01-24
 
+## [0.1.1] - 2018-01-24
 ### Added
 - README documentation for the actual unit tests
 
@@ -310,7 +314,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.17...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.18...HEAD
+[0.1.18]: https://github.com/ianfixes/arduino_ci/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/ianfixes/arduino_ci/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/ianfixes/arduino_ci/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/ianfixes/arduino_ci/compare/v0.1.14...v0.1.15
