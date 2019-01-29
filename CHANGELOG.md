@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added rspec sensitivity to the environment variable `$ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS` (for `arduino_ci` gem hackers)
 - Added rspec sensitivity to the environment variable `$ARDUINO_CI_SKIP_RUBY_RSPEC_TESTS` (for `arduino_ci` gem hackers)
 - Added rspec sensitivity to the environment variable `$ARDUINO_CI_SKIP_CPP_RSPEC_TESTS` (for `arduino_ci` gem hackers)
+- `nullptr` definition in C++
+- `assertNull()` for unit tests
 
 ### Changed
 - Unit tests and examples are now executed alphabetically by filename

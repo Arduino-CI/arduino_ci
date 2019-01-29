@@ -19,4 +19,11 @@ unittest(nothing)
 {
 }
 
+unittest(nullpointer)
+{
+  int* myPointer = NULL;
+  assertNull(myPointer);
+  assertNull(nullptr);
+}
+
 unittest_main()

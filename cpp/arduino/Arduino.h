@@ -72,5 +72,7 @@ inline unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8)
 #define word(...) makeWord(__VA_ARGS__)
 
 
+// Define C++11 nullptr
+#define nullptr (std::nullptr_t)NULL
 
 
