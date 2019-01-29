@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `keepachangelog_manager` gem to begin streamlining the release process
 - `unittest_setup()` and `unittest_teardown()` macros, my thanks to @hlovdal for contributing this code
 - Added rspec sensitivity to the environment variable `$ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS` (for `arduino_ci` gem hackers)
+- Added rspec sensitivity to the environment variable `$ARDUINO_CI_SKIP_RUBY_RSPEC_TESTS` (for `arduino_ci` gem hackers)
+- Added rspec sensitivity to the environment variable `$ARDUINO_CI_SKIP_CPP_RSPEC_TESTS` (for `arduino_ci` gem hackers)
 
 ### Changed
 - Unit tests and examples are now executed alphabetically by filename
