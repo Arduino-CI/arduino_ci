@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Added rspec sensitivity to the environment variable `$ARDUINO_CI_SELECT_CPP_TESTS=<glob>` (for `arduino_ci` gem hackers)
 
 ### Changed
 - `CiConfig::allowable_unittest_files` now uses `Pathname` to full effect
