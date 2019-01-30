@@ -15,6 +15,7 @@ Where possible, variable names from the Arduino library are used to avoid confli
 #include "Stream.h"
 #include "HardwareSerial.h"
 #include "SPI.h"
+#include "Nullptr.h"
 
 typedef bool boolean;
 typedef uint8_t byte;
@@ -70,9 +71,5 @@ inline unsigned int makeWord(unsigned int w) { return w; }
 inline unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8) | l; }
 
 #define word(...) makeWord(__VA_ARGS__)
-
-
-// Define C++11 nullptr
-#define nullptr (std::nullptr_t)NULL
 
 

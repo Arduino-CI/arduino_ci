@@ -22,8 +22,30 @@ unittest(nothing)
 unittest(nullpointer)
 {
   int* myPointer = NULL;
+  int **notNullPointer = &myPointer;
+
   assertNull(myPointer);
   assertNull(nullptr);
+  assertEqual(myPointer, nullptr);
+  assertNotEqual(nullptr, notNullPointer);
+  assertNotNull(notNullPointer);
+}
+
+unittest(nullpointer_equal)
+{
+  int* myPointer = NULL;
+  int **notNullPointer = &myPointer;
+  assertEqual(nullptr, myPointer);
+  assertNotEqual(nullptr, notNullPointer);
+
+  assertLessOrEqual(nullptr, myPointer);
+  assertMoreOrEqual(myPointer, nullptr);
+  assertLessOrEqual(nullptr, notNullPointer);
+  assertMoreOrEqual(notNullPointer, nullptr);
+  assertLessOrEqual(myPointer, nullptr);
+  assertMoreOrEqual(notNullPointer, nullptr);
+  assertLess(nullptr, notNullPointer);
+  assertMore(notNullPointer, nullptr);
 }
 
 unittest_main()

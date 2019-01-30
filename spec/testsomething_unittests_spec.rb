@@ -44,6 +44,14 @@ RSpec.describe "TestSomething C++" do
     end
 
     test_files = config.allowable_unittest_files(cpp_library.test_files)
+
+    # filter the list based on a glob, if provided
+    unless ENV["ARDUINO_CI_SELECT_CPP_TESTS"].nil?
+      Dir.chdir(cpp_library.tests_dir) do
+        globbed = Pathname.glob(ENV["ARDUINO_CI_SELECT_CPP_TESTS"])
+        test_files.select! { |p| globbed.include?(p.basename) }
+      end
+    end
     test_files.each do |path|
       tfn = File.basename(path)
 
