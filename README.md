@@ -80,7 +80,7 @@ vendor
 ```
 
 
-### Installing the Dependnencies
+### Installing the Dependencies
 
 Fulfilling the `arduino_ci` library dependency is as easy as running this command:
 
