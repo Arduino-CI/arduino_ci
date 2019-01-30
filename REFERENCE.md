@@ -4,7 +4,7 @@ All tests are run via the same command: `bundle exec arduino_ci_remote.rb`.
 
 This script is responsible for detecting and runing all unit tests, on every combination of Arduino platform and C++ compiler.  This is followed by attempting to detect and build every example on every "default" Arduino platform.
 
-As a prerequisite, all Arduino "defuault" platforms are installed if they are not already available.
+As a prerequisite, all Arduino "default" platforms are installed if they are not already available.
 
 These defaults are specified in [misc/default.yml](misc/default.yml).  You are free to define new platforms and different compilers as you see fit, using your own project-specific overrides.
 
