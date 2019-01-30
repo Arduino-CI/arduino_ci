@@ -1,37 +1,41 @@
 # Build / Test Behavior of Arduino CI
 
-The behavior (defined in `exe/arduino_ci_remote.rb`) is to run all unit tests, on every combination of Arduino platform and C++ compiler.  This is followed by attempting to build every example on every Arduino platform.
+All tests are run via the same command: `bundle exec arduino_ci_remote.rb`.
 
-As a prerequisite, all Arduino platforms are installed if they are not already available.
+This script is responsible for detecting and runing all unit tests, on every combination of Arduino platform and C++ compiler.  This is followed by attempting to detect and build every example on every "default" Arduino platform.
+
+As a prerequisite, all Arduino "defuault" platforms are installed if they are not already available.
 
 These defaults are specified in [misc/default.yml](misc/default.yml).  You are free to define new platforms and different compilers as you see fit, using your own project-specific overrides.
 
 
-## Overriding default build behavior
+## Directly Overriding Build Behavior (short term use)
 
-### From the command line
+When testing locally, it's often advantageous to limit the number of tests that are performed to only those tests that relate to the work you're doing; you'll get a faster turnaround time in seeing the results.  For a full listing, see `bundle exec arduino_ci_remote.rb --help`.
 
-The following options are currently available in the `arduino_ci_remote.rb` test runner.
 
-```
-Usage: arduino_ci_remote.rb [options]
-        --testfile-select=GLOB       Unit test file (or glob) to select
-        --testfile-reject=GLOB       Unit test file (or glob) to reject
-    -h, --help                       Prints this help
-```
+### `--skip-unittests` option
 
-#### `--testfile-select` option
+This completely skips the unit testing portion of the CI script.
+
+
+### `--skip-compilation` option
+
+This completely skips the compilation tests (of library examples) portion of the CI script.
+
+
+### `--testfile-select` option
 
 This allows a file (or glob) pattern to be executed in your tests directory, creating a whitelist of files to test.  E.g. `--testfile-select=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (testing only those) and not `test_plant_rose.cpp`.
 
-#### `--testfile-reject` option
+### `--testfile-reject` option
 
 This allows a file (or glob) pattern to be executed in your tests directory, creating a blacklist of files to skip.  E.g. `--testfile-reject=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (skipping those) and test only `test_plant_rose.cpp`, `test_plant_daisy.cpp`, etc.
 
 
-### From configuration
+## Indirectly Overriding Build Behavior (medium term use), and Advanced Options
 
-`.arduino-ci.yml` files will override the default behavior.  There are 3 places you can put them:
+For build behavior that you'd like to persist across commits (e.g. defining the set of platforms to test against, disabling a test that you expect to re-enable at some future point), a special configuration file called `.arduino-ci.yml` can be used.  There are 3 places you can put them:
 
 1. the root of your library
 2. the `test/` directory
@@ -40,12 +44,25 @@ This allows a file (or glob) pattern to be executed in your tests directory, cre
 `.arduino-ci.yml` files in `test/` or an example sketch take section-by-section precedence over a file in the library root, which takes precedence over the default configuration.
 
 
-You may define new platforms, or edit existing platform definitions:
+### Defining New Arduino Platforms
+
+Arduino boards are typically named in the form `manufacturer:family:model`.  These definitions are not arbitrary -- they are defined in an Arduino _package_.  For all but the built-in packages, you will need a package URL.  Here is Adafruit's: https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
+
+Here is how you would declare a package that includes the `potato:salad` family of boards in your `.arduino-ci.yml`:
+
+```yaml
+packages:
+  potato:salad:
+    url: https://potato.github.io/arduino-board-index/package_salad_index.json
+```
+
+To define a platform called `bogo` that uses a board called `potato:salad:bogo` (based on the `potato:salad` family), set it up in the `plaforms:` section.  Note that this will override any default configuration of `bogo` if it had existed in `arduino_ci`'s `misc/default.yml` file.  If this board defines particular features in the compiler, you can set those here.
 
 ```yaml
 platforms:
+  # our custom definition of the "bogo" platform
   bogo:
-    board: fakeduino:beep:bogo
+    board: potato:salad:bogo
     package: potato:salad
     gcc:
       features:
@@ -57,9 +74,11 @@ platforms:
       flags:
         - -foobar             # becomes -foobar flag
 
-  zero: ~                     # undefines the `zero` board completely
+  # overriding the `zero` platform, to remove it completely
+  zero: ~
 
-  esp8266:                    # redefines the existing esp8266
+  # redefine the existing esp8266
+  esp8266:
     board: esp8266:esp8266:booo
     package: esp8266:esp8266
     gcc:
@@ -69,41 +88,70 @@ platforms:
       flags:
 ```
 
+### Control How Examples Are Compiled
 
-For your example programs, you may set external libraries to be installed and included.  You may also choose the platforms on which the compilation will be attempted:
+The `compile:` section controls the platforms on which the compilation will be attempted, as well as any external libraries that must be installed and included.
 
 ```yaml
 compile:
-  libraries:
-    - "Adafruit FONA Library"
+  # Choosing to run compilation tests on 2 different Arduino platforms
   platforms:
     - esp8266
+    - bogo
+
+  # Declaring Dependent Arduino Libraries (to be installed via the Arduino Library Manager)
+  libraries:
+    - "Adafruit FONA Library"
 ```
 
 
-For your unit tests, in addition to setting specific libraries and platforms, you may filter the list of test files that are compiled and tested.  This may help speed up targeted testing.
+### Control How Unit Tests Are Compiled and Run
+
+For your unit tests, in addition to setting specific libraries and platforms, you may filter the list of test files that are compiled and tested and choose additional compilers on which to run your tests.
+
+Filtering your unit tests may help speed up targeted testing locally, but it is intended primarily as a means to temporarily disable tests between individual commits.
 
 ```yaml
 unittest:
+  # Perform unit tests with these compilers (these are the binaries that will be called via the shell)
   compilers:
     - g++      # default
     - g++-4.9
     - g++-7
+
+  # Filter the list of test files in some way
   testfiles:
+    # files matching this glob (executed inside the `test/` directory) will be whitelisted for testing
     select:
       - "*-*.*"
+
+    # files matching this glob will be blacklisted from testing
     reject:
       - "sam-squamsh.*"
+
+  # These dependent libraries will be installed
   libraries:
     - "abc123"
     - "def456"
+
+  # each of these platforms will be used when compiling the unit tests
   platforms:
     - bogo
 ```
 
-## Unit tests in `test/`
+The expected number of tests will be the product of:
+
+* Number of compilers defined
+* Number of platforms defined
+* Number of matching test files
+
+
+## Writing Unit tests in `test/`
 
 All `.cpp` files in the `test/` directory of your Arduino library are assumed to contain unit tests.  Each and every one will be compiled and executed on its own.
+
+
+### Most Basic Unit Test
 
 The most basic unit test file is as follows:
 
@@ -120,6 +168,53 @@ unittest_main()
 ```
 
 This test defines one `unittest` (a macro provided by `ArduinoUnitTests.h`), called `your_test_name`, which makes some assertions on the target library.  The `unittest_main()` is a macro for the `int main()` boilerplate required for unit testing.
+
+### Assertions
+
+The following assertion functions are available in unit tests.
+
+* `assertEqual(arg1,arg2)`
+* `assertNotEqual(arg1,arg2)`
+* `assertLess(arg1,arg2)`
+* `assertMore(arg1,arg2)`
+* `assertLessOrEqual(arg1,arg2)`
+* `assertMoreOrEqual(arg1,arg2)`
+* `assertTrue(arg)`
+* `assertFalse(arg)`
+* `assertNull(arg)`
+
+These functions will report the result of the test to the console, and the testing will continue if they fail.
+
+**If a test failure indicates that all subsequent tests will also fail** then it might be wiser to use _assure_ instead of _assert_ (e.g. `assureEqual(1, myVal)`).  All of the above "assert" functions has a corresponding "assure" function; if the result is failure, the remaining tests in the unit test file are not run.
+
+
+### Test Setup and Teardown
+
+For steps that are common to all tests, setup and teardown functions may optionally be supplied.
+
+```C++
+#include <ArduinoUnitTests.h>
+
+int* myNumber;
+
+unittest_setup()
+{
+  myNumber = new int(4);
+}
+
+unittest_teardown()
+{
+  delete myNumber;
+  myNumber = NULL;
+}
+
+unittest(your_test_name)
+{
+  assertEqual(4, *myNumber);
+}
+
+unittest_main()
+```
 
 
 # Build Scripts
@@ -164,7 +259,9 @@ Note the use of subshell to execute `bundle exec arduino_library_location.rb`.  
 
 
 
-# Mocks
+# Mocks of Arduino Hardware Functions
+
+Unless your library peforms something general (e.g. a mathematical or string function, a data structure like Queue, etc), you may need to ensure that your code interacts properly with the Arduino hardware.  There are a series of mocks to assist in this.
 
 ## Using `GODMODE`
 

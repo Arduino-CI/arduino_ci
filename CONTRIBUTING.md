@@ -9,8 +9,8 @@ ArduinoCI uses a very standard GitHub workflow.
 
 Pull requests will trigger a Travis CI job.  The following two commands will be expected to pass (so you may want to run them locally before opening the pull request):
 
- * `rubocop -D` - code style tests
- * `rspec` - functional tests
+ * `bundle exec rubocop -D .` - code style tests
+ * `bundle exec rspec` - functional tests
 
  If you do not already have a working ruby development environment set up, run the following commands:
 
@@ -19,12 +19,25 @@ apt-get install ruby ruby-dev    # For Debian/Ubuntu
 dnf install ruby ruby-devel      # For Fedora
 yum install ruby ruby-devel      # For Centos/RHEL
 gem install bundler
-gem install rubocop
-gem install rspec
 ```
 
 Be prepared to write tests to accompany any code you would like to see merged.
 See `SampleProjects/TestSomething/test/*.cpp` for the existing tests (run by rspec).
+
+
+## Convenience Features
+
+To speed up testing by targeting only the files you're working on, you can set several environment variables that `bundle exec rspec` will respond to:
+
+* `ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS`: if set, this will avoid any rspec test that calls the arduino executable (and as such, causes the splash screen to pop up).
+* `ARDUINO_CI_SKIP_RUBY_RSPEC_TESTS`: if set, this will skip all tests against ruby code (useful if you are not changing Ruby code).
+* `ARDUINO_CI_SKIP_CPP_RSPEC_TESTS`: if set, this will skip all tests against the `TestSomething` sample project (useful if you are not changing C++ code).
+
+You can set them to any value, they just have to be set.  Example usage:
+
+```shell
+ARDUINO_CI_SKIP_RUBY_RSPEC_TESTS=1 bundle exec rspec
+```
 
 
 ## Packaging the Gem
