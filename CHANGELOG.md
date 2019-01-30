@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.19] - 2019-01-30
+### Added
 - Added rspec sensitivity to the environment variable `$ARDUINO_CI_SELECT_CPP_TESTS=<glob>` (for `arduino_ci` gem hackers)
 - `assertNotNull()` and `assureNotNull()` C++ comparisons
 
@@ -14,15 +28,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `CiConfig::allowable_unittest_files` now uses `Pathname` to full effect
 - `nullptr` now defined in its own class
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Assertions on `nullptr`
 - The defintion of `nullptr`
-
-### Security
 
 
 ## [0.1.18] - 2019-01-29
@@ -320,7 +328,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.18...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.19...HEAD
+[0.1.19]: https://github.com/ianfixes/arduino_ci/compare/v0.1.18...v0.1.19
 [0.1.18]: https://github.com/ianfixes/arduino_ci/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/ianfixes/arduino_ci/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/ianfixes/arduino_ci/compare/v0.1.15...v0.1.16
