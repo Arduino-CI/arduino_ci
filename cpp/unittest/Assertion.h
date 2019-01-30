@@ -39,6 +39,7 @@
 #define assertTrue(arg) assertEqual(true, arg)
 #define assertFalse(arg) assertEqual(false, arg)
 #define assertNull(arg) assertEqual((void*)NULL, (void*)arg)
+#define assertNotNull(arg) assertNotEqual((void*)NULL, (void*)arg)
 
 /** macro generates optional output and calls fail() followed by a return if false. */
 #define assureEqual(arg1,arg2)       assureOp("assureEqual","expected",arg1,compareEqual,"==","actual",arg2)
@@ -50,4 +51,5 @@
 #define assureTrue(arg) assureEqual(true, arg)
 #define assureFalse(arg) assureEqual(false, arg)
 #define assureNull(arg) assureEqual((void*)NULL, (void*)arg)
+#define assureNotNull(arg) assureNotEqual((void*)NULL, (void*)arg)
 
