@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- `CiConfig::allowable_unittest_files` now uses `Pathname` to full effect
 
 ### Deprecated
 

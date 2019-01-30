@@ -287,17 +287,17 @@ module ArduinoCI
     end
 
     # Config allows select / reject (aka whitelist / blacklist) criteria.  Enforce on a dir
-    # @param paths [Array<String>] the initial set of test files
-    # @return [Array<String>] files that match the select/reject criteria
+    # @param paths [Array<Pathname>] the initial set of test files
+    # @return [Array<Pathname>] files that match the select/reject criteria
     def allowable_unittest_files(paths)
       return paths if @unittest_info[:testfiles].nil?
 
       ret = paths
       unless @unittest_info[:testfiles][:select].nil? || @unittest_info[:testfiles][:select].empty?
-        ret = ret.select { |p| unittest_info[:testfiles][:select].any? { |glob| File.fnmatch(glob, File.basename(p)) } }
+        ret.select! { |p| unittest_info[:testfiles][:select].any? { |glob| p.basename.fnmatch(glob) } }
       end
       unless @unittest_info[:testfiles][:reject].nil?
-        ret = ret.reject { |p| unittest_info[:testfiles][:reject].any? { |glob| File.fnmatch(glob, File.basename(p)) } }
+        ret.reject! { |p| unittest_info[:testfiles][:reject].any? { |glob| p.basename.fnmatch(glob) } }
       end
       ret
     end
