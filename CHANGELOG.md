@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- `unittest_setup()` and `unittest_teardown()` were not being executed for each unit test, only for the set of all tests.  My bad.
 
 ### Security
 

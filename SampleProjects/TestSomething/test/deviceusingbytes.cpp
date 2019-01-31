@@ -28,11 +28,15 @@ class FakeHayesModem : public DeviceUsingBytes {
     }
 };
 
+GodmodeState* state = GODMODE();
+
+unittest_setup()
+{
+  state->reset();
+}
+
 unittest(modem_hardware)
 {
-  GodmodeState* state = GODMODE();
-  state->reset();
-
   String cmd = "AT\n";
 
   FakeHayesModem m;
@@ -57,9 +61,6 @@ unittest(modem_hardware)
 
 unittest(modem_software)
 {
-  GodmodeState* state = GODMODE();
-  state->reset();
-
   bool bigEndian = false;
   bool flipLogic = false;
   SoftwareSerial ss(1, 2, flipLogic);

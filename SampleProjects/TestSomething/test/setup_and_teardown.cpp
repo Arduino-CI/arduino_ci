@@ -70,4 +70,11 @@ unittest(add)
   assertEqual("11 + 22 = 33", lcd_p->s);
 }
 
+unittest(add_again)
+{
+  int result = c->add(33, 44);
+  assertEqual(77, result);
+  assertEqual("33 + 44 = 77", lcd_p->s);
+}
+
 unittest_main()
