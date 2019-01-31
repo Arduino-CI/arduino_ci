@@ -15,9 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-- `unittest_setup()` and `unittest_teardown()` were not being executed for each unit test, only for the set of all tests.  My bad.
 
 ### Security
+
+
+## [0.1.20] - 2019-01-31
+### Fixed
+- `unittest_setup()` and `unittest_teardown()` were not being executed for each unit test, only for the set of all tests.  My bad.
 
 
 ## [0.1.19] - 2019-01-30
@@ -329,7 +333,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.19...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.20...HEAD
+[0.1.20]: https://github.com/ianfixes/arduino_ci/compare/v0.1.19...v0.1.20
 [0.1.19]: https://github.com/ianfixes/arduino_ci/compare/v0.1.18...v0.1.19
 [0.1.18]: https://github.com/ianfixes/arduino_ci/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/ianfixes/arduino_ci/compare/v0.1.16...v0.1.17
