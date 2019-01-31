@@ -1,10 +1,15 @@
 #include <ArduinoUnitTests.h>
 #include <Arduino.h>
 
+GodmodeState* state = GODMODE();
+
+unittest_setup()
+{
+  state->reset();
+}
+
 unittest(millis_micros_and_delay)
 {
-  GodmodeState* state = GODMODE();
-  state->reset();
   assertEqual(0, millis());
   assertEqual(0, micros());
   delay(3);
@@ -17,8 +22,6 @@ unittest(millis_micros_and_delay)
 
 unittest(random)
 {
-  GodmodeState* state = GODMODE();
-  state->reset();
   randomSeed(1);
   assertEqual(state->seed, 1);
 
@@ -36,8 +39,6 @@ unittest(random)
 
 unittest(pins)
 {
-  GodmodeState* state = GODMODE();
-  state->reset();
   pinMode(1, OUTPUT);  // this is a no-op in unit tests.  it's just here to prove compilation
   digitalWrite(1, HIGH);
   assertEqual(HIGH, state->digitalPin[1]);
@@ -65,9 +66,6 @@ unittest(pins)
 
 unittest(pin_read_history)
 {
-  GodmodeState* state = GODMODE();
-  state->reset();
-
   int future[6] = {33, 22, 55, 11, 44, 66};
   state->analogPin[1].fromArray(future, 6);
   for (int i = 0; i < 6; ++i)
@@ -92,8 +90,6 @@ unittest(pin_read_history)
 
 unittest(pin_write_history)
 {
-  GodmodeState *state = GODMODE();
-  state->reset();
   int numMoved;
 
   // history for digital pin
@@ -162,8 +158,6 @@ unittest(pin_write_history)
 }
 
 unittest(spi) {
-  GodmodeState *state = GODMODE();
-  state->reset();
   assertEqual("", state->spi.dataIn);
   assertEqual("", state->spi.dataOut);
 
@@ -215,7 +209,6 @@ unittest(spi) {
 
   unittest(does_nothing_if_no_data)
   {
-      GodmodeState* state = GODMODE();
       int myPin = 3;
       state->serialPort[0].dataIn = "";
       state->serialPort[0].dataOut = "";
@@ -227,7 +220,6 @@ unittest(spi) {
 
   unittest(keeps_pin_low_and_acks)
   {
-      GodmodeState* state = GODMODE();
       int myPin = 3;
       state->serialPort[0].dataIn = "0";
       state->serialPort[0].dataOut = "";
@@ -240,7 +232,6 @@ unittest(spi) {
 
   unittest(flips_pin_high_and_acks)
   {
-      GodmodeState* state = GODMODE();
       int myPin = 3;
       state->serialPort[0].dataIn = "1";
       state->serialPort[0].dataOut = "";
@@ -253,7 +244,6 @@ unittest(spi) {
 
   unittest(two_flips)
   {
-      GodmodeState* state = GODMODE();
       int myPin = 3;
       state->serialPort[0].dataIn = "10junk";
       state->serialPort[0].dataOut = "";

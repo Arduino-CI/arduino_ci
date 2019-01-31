@@ -154,7 +154,9 @@ class Test
         p->mReporter = reporter;
         TestData t1 = {p->name(), p->result()};
         if (reporter) reporter->onTestStart(t1);
+        if (TestSetup::sInstance) TestSetup::sInstance->run();
         p->test();
+        if (TestTeardown::sInstance) TestTeardown::sInstance->run();
         if (p->mResult == RESULT_PASS) ++results.passed;
         if (p->mResult == RESULT_FAIL) ++results.failed;
         if (p->mResult == RESULT_SKIP) ++results.skipped;
@@ -172,9 +174,7 @@ class Test
     static int run_and_report(int argc, char *argv[]) {
       // TODO: pick a reporter based on args
       ReporterTAP rep;
-      if (TestSetup::sInstance) TestSetup::sInstance->run();
       Results results = run(&rep);
-      if (TestTeardown::sInstance) TestTeardown::sInstance->run();
       return results.failed + results.skipped;
     }
 
