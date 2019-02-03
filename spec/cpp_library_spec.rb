@@ -45,6 +45,7 @@ RSpec.describe ArduinoCI::CppLibrary do
       dosomething_test_files = [
         "DoSomething/test/good-null.cpp",
         "DoSomething/test/good-library.cpp",
+        "DoSomething/test/good-find-something.cpp",
         "DoSomething/test/bad-null.cpp",
       ].map { |f| Pathname.new(f) }
       relative_paths = cpp_library.test_files.map { |f| get_relative_dir(f) }
