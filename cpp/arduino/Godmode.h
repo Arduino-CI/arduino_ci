@@ -43,6 +43,16 @@ class GodmodeState {
     uint8_t mode;
   };
 
+  struct SleepDef {
+    bool sleep_enable = false;
+    unsigned int sleep_enable_count = 0;
+    unsigned int sleep_disable_count = 0;
+    unsigned char sleep_mode = 0;
+    unsigned int sleep_cpu_count = 0;
+    unsigned int sleep_mode_count = 0;
+    unsigned int sleep_bod_disable_count = 0;
+  };
+
   public:
     unsigned long micros;
     unsigned long seed;
@@ -52,6 +62,7 @@ class GodmodeState {
     struct PortDef serialPort[NUM_SERIAL_PORTS];
     struct InterruptDef interrupt[MOCK_PINS_COUNT]; // not sure how to get actual number
     struct PortDef spi;
+    struct SleepDef sleep;
 
     void resetPins() {
       for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
@@ -85,12 +96,23 @@ class GodmodeState {
       spi.readDelayMicros = 0;
     }
 
+    void resetSleep() {
+      sleep.sleep_enable = false;
+      sleep.sleep_enable_count = 0;
+      sleep.sleep_disable_count = 0;
+      sleep.sleep_mode = 0;
+      sleep.sleep_cpu_count = 0;
+      sleep.sleep_mode_count = 0;
+      sleep.sleep_bod_disable_count = 0;
+    }
+
     void reset() {
       resetClock();
       resetPins();
       resetInterrupts();
       resetPorts();
       resetSPI();
+      resetSleep();
       seed = 1;
     }
 
