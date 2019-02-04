@@ -90,7 +90,8 @@ platforms:
 
 ### Control How Examples Are Compiled
 
-The `compile:` section controls the platforms on which the compilation will be attempted, as well as any external libraries that must be installed and included.
+Put a file `.arduino-ci.yml` in each example directory where you require a different configuration than default.  
+The `compile:` section controls the platforms on which the compilation will be attempted, as well as any external libraries that must be installed and included.  
 
 ```yaml
 compile:
