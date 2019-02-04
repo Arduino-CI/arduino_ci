@@ -1,7 +1,6 @@
 #pragma once
 #include <avr/pgmspace.h>
 #include <WString.h>
-#include <Nullptr.h>
 
 template  < typename A, typename B > struct Compare
 {
@@ -899,14 +898,22 @@ template  < size_t N, size_t M > struct Compare<char [N],char [M]>
   } // moreOrEqual
 };
 
-// null pointer comparisons
-template <typename B> int  compareBetween(    const my_nullptr_t &a, const B &b) { return Compare<my_nullptr_t,B>::between(    a, b); }
-template <typename B> bool compareEqual(      const my_nullptr_t &a, const B &b) { return Compare<my_nullptr_t,B>::equal(      a, b); }
-template <typename B> bool compareNotEqual(   const my_nullptr_t &a, const B &b) { return Compare<my_nullptr_t,B>::notEqual(   a, b); }
-template <typename B> bool compareLess(       const my_nullptr_t &a, const B &b) { return Compare<my_nullptr_t,B>::less(       a, b); }
-template <typename B> bool compareMore(       const my_nullptr_t &a, const B &b) { return Compare<my_nullptr_t,B>::more(       a, b); }
-template <typename B> bool compareLessOrEqual(const my_nullptr_t &a, const B &b) { return Compare<my_nullptr_t,B>::lessOrEqual(a, b); }
-template <typename B> bool compareMoreOrEqual(const my_nullptr_t &a, const B &b) { return Compare<my_nullptr_t,B>::moreOrEqual(a, b); }
+// null pointer comparisons to other stuff
+template <typename A> int  compareBetween(    const A &a, const std::nullptr_t &b) { return a ? -1 : 0; }
+template <typename A> bool compareEqual(      const A &a, const std::nullptr_t &b) { return !a; }
+template <typename A> bool compareNotEqual(   const A &a, const std::nullptr_t &b) { return a; }
+template <typename A> bool compareLess(       const A &a, const std::nullptr_t &b) { return false; }
+template <typename A> bool compareMore(       const A &a, const std::nullptr_t &b) { return a; }
+template <typename A> bool compareLessOrEqual(const A &a, const std::nullptr_t &b) { return !a; }
+template <typename A> bool compareMoreOrEqual(const A &a, const std::nullptr_t &b) { return true; }
+
+template <typename B> int  compareBetween(    const std::nullptr_t &a, const B &b) { return b ? 1 : 0; }
+template <typename B> bool compareEqual(      const std::nullptr_t &a, const B &b) { return !b; }
+template <typename B> bool compareNotEqual(   const std::nullptr_t &a, const B &b) { return b; }
+template <typename B> bool compareLess(       const std::nullptr_t &a, const B &b) { return b; }
+template <typename B> bool compareMore(       const std::nullptr_t &a, const B &b) { return false; }
+template <typename B> bool compareLessOrEqual(const std::nullptr_t &a, const B &b) { return true; }
+template <typename B> bool compareMoreOrEqual(const std::nullptr_t &a, const B &b) { return !b; }
 
 // super general comparisons
 template <typename A, typename B> int  compareBetween(    const A &a, const B &b) { return Compare<A,B>::between(    a, b); }

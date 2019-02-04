@@ -7,14 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Proper `ostream operator <<` for `nullptr`
+- Proper comparison operations fro `nullptr`
 
 ### Changed
 
 ### Deprecated
 
 ### Removed
+- Homegrown implementation of `nullptr`
 
 ### Fixed
+- `nullptr` support (again)
 
 ### Security
 
