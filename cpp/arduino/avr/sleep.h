@@ -37,6 +37,7 @@ void sleep_mode() {
   sleep_disable();
 }
 
+// mock storage to allow access to ADCSRA
 unsigned char sfr_store;
 #define _SFR_MEM8(mem_addr) sfr_store
 
