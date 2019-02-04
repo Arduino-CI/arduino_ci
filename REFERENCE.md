@@ -90,7 +90,8 @@ platforms:
 
 ### Control How Examples Are Compiled
 
-The `compile:` section controls the platforms on which the compilation will be attempted, as well as any external libraries that must be installed and included.
+Put a file `.arduino-ci.yml` in each example directory where you require a different configuration than default.  
+The `compile:` section controls the platforms on which the compilation will be attempted, as well as any external libraries that must be installed and included.  
 
 ```yaml
 compile:
@@ -173,15 +174,15 @@ This test defines one `unittest` (a macro provided by `ArduinoUnitTests.h`), cal
 
 The following assertion functions are available in unit tests.
 
-* `assertEqual(arg1,arg2)`
-* `assertNotEqual(arg1,arg2)`
-* `assertLess(arg1,arg2)`
-* `assertMore(arg1,arg2)`
-* `assertLessOrEqual(arg1,arg2)`
-* `assertMoreOrEqual(arg1,arg2)`
-* `assertTrue(arg)`
-* `assertFalse(arg)`
-* `assertNull(arg)`
+* `assertEqual(expected, actual)`
+* `assertNotEqual(expected, actual)`
+* `assertLess(expected, actual)`
+* `assertMore(expected, actual)`
+* `assertLessOrEqual(expected, actual)`
+* `assertMoreOrEqual(expected, actual)`
+* `assertTrue(actual)`
+* `assertFalse(actual)`
+* `assertNull(actual)`
 
 These functions will report the result of the test to the console, and the testing will continue if they fail.
 
