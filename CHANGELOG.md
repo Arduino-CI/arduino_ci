@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Proper comparison operations fro `nullptr`
 
 ### Changed
+- `Compare.h` heavily refactored to use a smallish macro
 
 ### Deprecated
 

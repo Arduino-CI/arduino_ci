@@ -9,917 +9,104 @@ template  < typename A, typename B > struct Compare
     if (a<b) return -1;
     if (b<a) return  1;
     return 0;
-  } // between
-  inline static bool equal(const A &a,const B &b)
-  {
-    return (!(a<b)) && (!(b<a));
-  } // equal
-  inline static bool notEqual(const A &a,const B &b)
-  {
-    return (a<b) || (b<a);
-  } // notEqual
-  inline static bool less(const A &a,const B &b)
-  {
-    return a<b;
-  } // less
-  inline static bool more(const A &a,const B &b)
-  {
-    return b<a;
-  } // more
-  inline static bool lessOrEqual(const A &a,const B &b)
-  {
-    return !(b<a);
-  } // lessOrEqual
-  inline static bool moreOrEqual(const A &a,const B &b)
-  {
-    return !(a<b);
-  } // moreOrEqual
+  }
+  inline static bool equal(const A &a,const B &b)       { return (!(a < b)) && (!(b < a)); }
+  inline static bool notEqual(const A &a,const B &b)    { return (a<b) || (b<a); }
+  inline static bool less(const A &a,const B &b)        { return a<b; }
+  inline static bool more(const A &a,const B &b)        { return b<a; }
+  inline static bool lessOrEqual(const A &a,const B &b) { return !(b<a); }
+  inline static bool moreOrEqual(const A &a,const B &b) { return !(a<b); }
 };
-template  <  > struct Compare<String,String>;
-template  <  > struct Compare<String,const char *>;
-#if defined(F)
-template  <  > struct Compare<String,const __FlashStringHelper *>;
-#endif
-template  <  > struct Compare<String,char *>;
-template  < size_t M > struct Compare<String,char [M]>;
-template  <  > struct Compare<const char *,String>;
-template  <  > struct Compare<const char *,const char *>;
-#if defined(F)
-template  <  > struct Compare<const char *,const __FlashStringHelper *>;
-#endif
-template  <  > struct Compare<const char *,char *>;
-template  < size_t M > struct Compare<const char *,char [M]>;
-#if defined(F)
-template  <  > struct Compare<const __FlashStringHelper *,String>;
-#endif
-#if defined(F)
-template  <  > struct Compare<const __FlashStringHelper *,const char *>;
-#endif
-#if defined(F)
-template  <  > struct Compare<const __FlashStringHelper *,const __FlashStringHelper *>;
-#endif
-#if defined(F)
-template  <  > struct Compare<const __FlashStringHelper *,char *>;
-#endif
-#if defined(F)
-template  < size_t M > struct Compare<const __FlashStringHelper *,char [M]>;
-#endif
-template  <  > struct Compare<char *,String>;
-template  <  > struct Compare<char *,const char *>;
-#if defined(F)
-template  <  > struct Compare<char *,const __FlashStringHelper *>;
-#endif
-template  <  > struct Compare<char *,char *>;
-template  < size_t M > struct Compare<char *,char [M]>;
-template  < size_t N > struct Compare<char [N],String>;
-template  < size_t N > struct Compare<char [N],const char *>;
-#if defined(F)
-template  < size_t N > struct Compare<char [N],const __FlashStringHelper *>;
-#endif
-template  < size_t N > struct Compare<char [N],char *>;
-template  < size_t N, size_t M > struct Compare<char [N],char [M]>;
-template  <  > struct Compare<String,String>
-{
-  inline static int between(const String &a,const String &b)
-  {
-    return a.compareTo(b);
-  } // between
-  inline static bool equal(const String &a,const String &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const String &a,const String &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const String &a,const String &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const String &a,const String &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const String &a,const String &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const String &a,const String &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  <  > struct Compare<String,const char *>
-{
-  inline static int between(const String &a,const char * const &b)
-  {
-    return a.compareTo(b);
-  } // between
-  inline static bool equal(const String &a,const char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const String &a,const char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const String &a,const char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const String &a,const char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const String &a,const char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const String &a,const char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#if defined(F)
-template  <  > struct Compare<String,const __FlashStringHelper *>
-{
-  inline static int between(const String &a,const __FlashStringHelper * const &b)
-  {
-    uint8_t a_buf[4],b_buf[4];
-    uint16_t i=0;
 
-    for (;;) {
-      uint8_t j=(i%4);
-      if (j == 0) {
-         a.getBytes(a_buf,4,i);
-         memcpy_P(b_buf,((const char *)b)+i,4);
-      }
-      if (a_buf[j] < b_buf[j]) return -1;
-      if (a_buf[j] > b_buf[j]) return  1;
-      if (a_buf[j] == 0) return 0;
-      ++i;
+// helpers for macros
+inline static int arduinoCICompareBetween(const String &a,const __FlashStringHelper * const &b)
+{
+  uint8_t a_buf[4],b_buf[4];
+  uint16_t i=0;
+
+  for (;;) {
+    uint8_t j=(i%4);
+    if (j == 0) {
+        a.getBytes(a_buf,4,i);
+        memcpy_P(b_buf,((const char *)b)+i,4);
     }
-  } // between
-  inline static bool equal(const String &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const String &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const String &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const String &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const String &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const String &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#endif
-template  <  > struct Compare<String,char *>
-{
-  inline static int between(const String &a,char * const &b)
-  {
-    return a.compareTo(b);
-  } // between
-  inline static bool equal(const String &a,char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const String &a,char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const String &a,char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const String &a,char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const String &a,char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const String &a,char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  < size_t M > struct Compare<String,char [M]>
-{
-  inline static int between(const String &a,const char (&b)[M])
-  {
-    return a.compareTo(b);
-  } // between
-  inline static bool equal(const String &a,const char (&b)[M])
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const String &a,const char (&b)[M])
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const String &a,const char (&b)[M])
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const String &a,const char (&b)[M])
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const String &a,const char (&b)[M])
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const String &a,const char (&b)[M])
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  <  > struct Compare<const char *,String>
-{
-  inline static int between(const char * const &a,const String &b)
-  {
-    return -b.compareTo(a);
-  } // between
-  inline static bool equal(const char * const &a,const String &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char * const &a,const String &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char * const &a,const String &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char * const &a,const String &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char * const &a,const String &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char * const &a,const String &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  <  > struct Compare<const char *,const char *>
-{
-  inline static int between(const char * const &a,const char * const &b)
-  {
-    return strcmp(a,b);
-  } // between
-  inline static bool equal(const char * const &a,const char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char * const &a,const char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char * const &a,const char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char * const &a,const char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char * const &a,const char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char * const &a,const char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#if defined(F)
-template  <  > struct Compare<const char *,const __FlashStringHelper *>
-{
-  inline static int between(const char * const &a,const __FlashStringHelper * const &b)
-  {
-    return strcmp_P(a,(const char *)b);
-  } // between
-  inline static bool equal(const char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#endif
-template  <  > struct Compare<const char *,char *>
-{
-  inline static int between(const char * const &a,char * const &b)
-  {
-    return strcmp(a,b);
-  } // between
-  inline static bool equal(const char * const &a,char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char * const &a,char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char * const &a,char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char * const &a,char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char * const &a,char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char * const &a,char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  < size_t M > struct Compare<const char *,char [M]>
-{
-  inline static int between(const char * const &a,const char (&b)[M])
-  {
-    return strcmp(a,b);
-  } // between
-  inline static bool equal(const char * const &a,const char (&b)[M])
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char * const &a,const char (&b)[M])
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char * const &a,const char (&b)[M])
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char * const &a,const char (&b)[M])
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char * const &a,const char (&b)[M])
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char * const &a,const char (&b)[M])
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#if defined(F)
-template  <  > struct Compare<const __FlashStringHelper *,String>
-{
-  inline static int between(const __FlashStringHelper * const &a,const String &b)
-  {
-    return -Compare < String,const __FlashStringHelper * >::between(b,a);
-  } // between
-  inline static bool equal(const __FlashStringHelper * const &a,const String &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const __FlashStringHelper * const &a,const String &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const __FlashStringHelper * const &a,const String &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const __FlashStringHelper * const &a,const String &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const __FlashStringHelper * const &a,const String &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const __FlashStringHelper * const &a,const String &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#endif
-#if defined(F)
-template  <  > struct Compare<const __FlashStringHelper *,const char *>
-{
-  inline static int between(const __FlashStringHelper * const &a,const char * const &b)
-  {
-    return -strcmp_P(b,(const char *)a);
-  } // between
-  inline static bool equal(const __FlashStringHelper * const &a,const char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const __FlashStringHelper * const &a,const char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const __FlashStringHelper * const &a,const char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const __FlashStringHelper * const &a,const char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const __FlashStringHelper * const &a,const char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const __FlashStringHelper * const &a,const char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#endif
-#if defined(F)
-template  <  > struct Compare<const __FlashStringHelper *,const __FlashStringHelper *>
-{
-  inline static int between(const __FlashStringHelper * const &a,const __FlashStringHelper * const &b)
-  {
-    uint8_t a_buf[4],b_buf[4];
-    uint16_t i=0;
+    if (a_buf[j] < b_buf[j]) return -1;
+    if (a_buf[j] > b_buf[j]) return  1;
+    if (a_buf[j] == 0) return 0;
+    ++i;
+  }
+}
 
-    for (;;) {
-      uint8_t j=(i%4);
-      if (j == 0) {
-         memcpy_P(a_buf,((const char *)a)+i,4);
-         memcpy_P(b_buf,((const char *)b)+i,4);
-      }
-      if (a_buf[j] < b_buf[j]) return -1;
-      if (a_buf[j] > b_buf[j]) return  1;
-      if (a_buf[j] == 0) return 0;
-      ++i;
+inline static int arduinoCICompareBetween(const __FlashStringHelper * const &a,const __FlashStringHelper * const &b)
+{
+  uint8_t a_buf[4],b_buf[4];
+  uint16_t i=0;
+
+  for (;;) {
+    uint8_t j=(i%4);
+    if (j == 0) {
+        memcpy_P(a_buf,((const char *)a)+i,4);
+        memcpy_P(b_buf,((const char *)b)+i,4);
     }
-  } // between
-  inline static bool equal(const __FlashStringHelper * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const __FlashStringHelper * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const __FlashStringHelper * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const __FlashStringHelper * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const __FlashStringHelper * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const __FlashStringHelper * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#endif
-#if defined(F)
-template  <  > struct Compare<const __FlashStringHelper *,char *>
-{
-  inline static int between(const __FlashStringHelper * const &a,char * const &b)
-  {
-    return -strcmp_P(b,(const char *)a);
-  } // between
-  inline static bool equal(const __FlashStringHelper * const &a,char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const __FlashStringHelper * const &a,char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const __FlashStringHelper * const &a,char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const __FlashStringHelper * const &a,char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const __FlashStringHelper * const &a,char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const __FlashStringHelper * const &a,char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#endif
-#if defined(F)
-template  < size_t M > struct Compare<const __FlashStringHelper *,char [M]>
-{
-  inline static int between(const __FlashStringHelper * const &a,const char (&b)[M])
-  {
-    return -strcmp_P(b,(const char *)a);
-  } // between
-  inline static bool equal(const __FlashStringHelper * const &a,const char (&b)[M])
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const __FlashStringHelper * const &a,const char (&b)[M])
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const __FlashStringHelper * const &a,const char (&b)[M])
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const __FlashStringHelper * const &a,const char (&b)[M])
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const __FlashStringHelper * const &a,const char (&b)[M])
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const __FlashStringHelper * const &a,const char (&b)[M])
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#endif
-template  <  > struct Compare<char *,String>
-{
-  inline static int between(char * const &a,const String &b)
-  {
-    return -b.compareTo(a);
-  } // between
-  inline static bool equal(char * const &a,const String &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(char * const &a,const String &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(char * const &a,const String &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(char * const &a,const String &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(char * const &a,const String &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(char * const &a,const String &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  <  > struct Compare<char *,const char *>
-{
-  inline static int between(char * const &a,const char * const &b)
-  {
-    return strcmp(a,b);
-  } // between
-  inline static bool equal(char * const &a,const char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(char * const &a,const char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(char * const &a,const char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(char * const &a,const char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(char * const &a,const char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(char * const &a,const char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#if defined(F)
-template  <  > struct Compare<char *,const __FlashStringHelper *>
-{
-  inline static int between(char * const &a,const __FlashStringHelper * const &b)
-  {
-    return strcmp_P(a,(const char *)b);
-  } // between
-  inline static bool equal(char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(char * const &a,const __FlashStringHelper * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#endif
-template  <  > struct Compare<char *,char *>
-{
-  inline static int between(char * const &a,char * const &b)
-  {
-    return strcmp(a,b);
-  } // between
-  inline static bool equal(char * const &a,char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(char * const &a,char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(char * const &a,char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(char * const &a,char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(char * const &a,char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(char * const &a,char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  < size_t M > struct Compare<char *,char [M]>
-{
-  inline static int between(char * const &a,const char (&b)[M])
-  {
-    return strcmp(a,b);
-  } // between
-  inline static bool equal(char * const &a,const char (&b)[M])
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(char * const &a,const char (&b)[M])
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(char * const &a,const char (&b)[M])
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(char * const &a,const char (&b)[M])
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(char * const &a,const char (&b)[M])
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(char * const &a,const char (&b)[M])
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  < size_t N > struct Compare<char [N],String>
-{
-  inline static int between(const char (&a)[N],const String &b)
-  {
-    return -b.compareTo(a);
-  } // between
-  inline static bool equal(const char (&a)[N],const String &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char (&a)[N],const String &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char (&a)[N],const String &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char (&a)[N],const String &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char (&a)[N],const String &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char (&a)[N],const String &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  < size_t N > struct Compare<char [N],const char *>
-{
-  inline static int between(const char (&a)[N],const char * const &b)
-  {
-    return strcmp(a,b);
-  } // between
-  inline static bool equal(const char (&a)[N],const char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char (&a)[N],const char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char (&a)[N],const char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char (&a)[N],const char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char (&a)[N],const char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char (&a)[N],const char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#if defined(F)
-template  < size_t N > struct Compare<char [N],const __FlashStringHelper *>
-{
-  inline static int between(const char (&a)[N],const __FlashStringHelper * const &b)
-  {
-    return strcmp_P(a,(const char *)b);
-  } // between
-  inline static bool equal(const char (&a)[N],const __FlashStringHelper * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char (&a)[N],const __FlashStringHelper * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char (&a)[N],const __FlashStringHelper * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char (&a)[N],const __FlashStringHelper * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char (&a)[N],const __FlashStringHelper * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char (&a)[N],const __FlashStringHelper * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-#endif
-template  < size_t N > struct Compare<char [N],char *>
-{
-  inline static int between(const char (&a)[N],char * const &b)
-  {
-    return strcmp(a,b);
-  } // between
-  inline static bool equal(const char (&a)[N],char * const &b)
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char (&a)[N],char * const &b)
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char (&a)[N],char * const &b)
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char (&a)[N],char * const &b)
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char (&a)[N],char * const &b)
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char (&a)[N],char * const &b)
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
-template  < size_t N, size_t M > struct Compare<char [N],char [M]>
-{
-  inline static int between(const char (&a)[N],const char (&b)[M])
-  {
-    return strcmp(a,b);
-  } // between
-  inline static bool equal(const char (&a)[N],const char (&b)[M])
-  {
-    return between(a,b) == 0;
-  } // equal
-  inline static bool notEqual(const char (&a)[N],const char (&b)[M])
-  {
-    return between(a,b) != 0;
-  } // notEqual
-  inline static bool less(const char (&a)[N],const char (&b)[M])
-  {
-    return between(a,b) < 0;
-  } // less
-  inline static bool more(const char (&a)[N],const char (&b)[M])
-  {
-    return between(a,b) > 0;
-  } // more
-  inline static bool lessOrEqual(const char (&a)[N],const char (&b)[M])
-  {
-    return between(a,b) <= 0;
-  } // lessOrEqual
-  inline static bool moreOrEqual(const char (&a)[N],const char (&b)[M])
-  {
-    return between(a,b) >= 0;
-  } // moreOrEqual
-};
+    if (a_buf[j] < b_buf[j]) return -1;
+    if (a_buf[j] > b_buf[j]) return  1;
+    if (a_buf[j] == 0) return 0;
+    ++i;
+  }
+}
 
-// null pointer comparisons to other stuff
-template <typename A> int  compareBetween(    const A &a, const std::nullptr_t &b) { return a ? -1 : 0; }
-template <typename A> bool compareEqual(      const A &a, const std::nullptr_t &b) { return !a; }
-template <typename A> bool compareNotEqual(   const A &a, const std::nullptr_t &b) { return a; }
-template <typename A> bool compareLess(       const A &a, const std::nullptr_t &b) { return false; }
-template <typename A> bool compareMore(       const A &a, const std::nullptr_t &b) { return a; }
-template <typename A> bool compareLessOrEqual(const A &a, const std::nullptr_t &b) { return !a; }
-template <typename A> bool compareMoreOrEqual(const A &a, const std::nullptr_t &b) { return true; }
 
-template <typename B> int  compareBetween(    const std::nullptr_t &a, const B &b) { return b ? 1 : 0; }
-template <typename B> bool compareEqual(      const std::nullptr_t &a, const B &b) { return !b; }
-template <typename B> bool compareNotEqual(   const std::nullptr_t &a, const B &b) { return b; }
-template <typename B> bool compareLess(       const std::nullptr_t &a, const B &b) { return b; }
-template <typename B> bool compareMore(       const std::nullptr_t &a, const B &b) { return false; }
-template <typename B> bool compareLessOrEqual(const std::nullptr_t &a, const B &b) { return true; }
-template <typename B> bool compareMoreOrEqual(const std::nullptr_t &a, const B &b) { return !b; }
+// this macro works for all the string-based comparisons
+// but just in case, https://stackoverflow.com/a/13842784/2063546
+#define comparisonTemplateMacro(T1, T1m, T2, T2m, betweenImpl, ...)                                   \
+  template  < __VA_ARGS__ > struct Compare<T1 T1m, T2 T2m>;                                           \
+  template  < __VA_ARGS__ > struct Compare<T1 T1m, T2 T2m>                                            \
+  {                                                                                                   \
+    inline static int  between(    T1 const (&a)T1m, T2 const (&b)T2m) { return betweenImpl; }        \
+    inline static bool equal(      T1 const (&a)T1m, T2 const (&b)T2m) { return between(a, b) == 0; } \
+    inline static bool notEqual(   T1 const (&a)T1m, T2 const (&b)T2m) { return between(a, b) != 0; } \
+    inline static bool less(       T1 const (&a)T1m, T2 const (&b)T2m) { return between(a, b) < 0; }  \
+    inline static bool more(       T1 const (&a)T1m, T2 const (&b)T2m) { return between(a, b) > 0; }  \
+    inline static bool lessOrEqual(T1 const (&a)T1m, T2 const (&b)T2m) { return between(a, b) <= 0; } \
+    inline static bool moreOrEqual(T1 const (&a)T1m, T2 const (&b)T2m) { return between(a, b) >= 0; } \
+  };
+
+comparisonTemplateMacro(String, , String, ,                                            a.compareTo(b))
+comparisonTemplateMacro(String, , const char *, ,                                      a.compareTo(b))
+#if defined(F)
+comparisonTemplateMacro(String, , const __FlashStringHelper *,  ,                      arduinoCICompareBetween(a, b))
+comparisonTemplateMacro(const char *,,  const __FlashStringHelper *, ,                 strcmp_P(a,(const char *)b))
+comparisonTemplateMacro(const __FlashStringHelper *, , String, ,                       -arduinoCICompareBetween(b, a))
+comparisonTemplateMacro(const __FlashStringHelper *, , const char *, ,                 -strcmp_P(b,(const char *)a))
+comparisonTemplateMacro(const __FlashStringHelper *, , const __FlashStringHelper *, ,  arduinoCICompareBetween(a, b))
+comparisonTemplateMacro(const __FlashStringHelper *, , char *, ,                       -strcmp_P(b,(const char *)a))
+comparisonTemplateMacro(char *, , const __FlashStringHelper *, ,                       strcmp_P(a,(const char *)b))
+comparisonTemplateMacro(const __FlashStringHelper *, , char, [M],                      -strcmp_P(b,(const char *)a), size_t M)
+comparisonTemplateMacro(char, [N], const __FlashStringHelper *, ,                      strcmp_P(a,(const char *)b), size_t N)
+#endif
+comparisonTemplateMacro(String, , char *, ,                                            a.compareTo(b))
+comparisonTemplateMacro(const char *, , String, ,                                      -b.compareTo(a))
+comparisonTemplateMacro(const char *, , const char *, ,                                strcmp(a,b))
+comparisonTemplateMacro(const char *, , char *, ,                                      strcmp(a,b))
+comparisonTemplateMacro(char *, , String, ,                                            -b.compareTo(a))
+comparisonTemplateMacro(char *, , const char *, ,                                      strcmp(a,b))
+comparisonTemplateMacro(char *, , char *, ,                                            strcmp(a,b))
+comparisonTemplateMacro(String, , char, [M],                                           a.compareTo(b), size_t M)
+comparisonTemplateMacro(const char *, , char, [M],                                     strcmp(a,b), size_t M)
+comparisonTemplateMacro(char *, , char, [M],                                           strcmp(a,b), size_t M)
+comparisonTemplateMacro(char, [N], String, ,                                           -b.compareTo(a), size_t N)
+comparisonTemplateMacro(char, [N], const char *, ,                                     strcmp(a,b), size_t N)
+comparisonTemplateMacro(char, [N], char *, ,                                           strcmp(a,b), size_t N)
+comparisonTemplateMacro(char, [N], char, [M],                                          strcmp(a,b), size_t N, size_t M)
+
+comparisonTemplateMacro(A, , std::nullptr_t, ,                                         a ? 1 : 0, typename A)
+comparisonTemplateMacro(std::nullptr_t, , B, ,                                         b ? -1 : 0, typename B)
 
 // super general comparisons
-template <typename A, typename B> int  compareBetween(    const A &a, const B &b) { return Compare<A,B>::between(    a, b); }
-template <typename A, typename B> bool compareEqual(      const A &a, const B &b) { return Compare<A,B>::equal(      a, b); }
-template <typename A, typename B> bool compareNotEqual(   const A &a, const B &b) { return Compare<A,B>::notEqual(   a, b); }
-template <typename A, typename B> bool compareLess(       const A &a, const B &b) { return Compare<A,B>::less(       a, b); }
-template <typename A, typename B> bool compareMore(       const A &a, const B &b) { return Compare<A,B>::more(       a, b); }
-template <typename A, typename B> bool compareLessOrEqual(const A &a, const B &b) { return Compare<A,B>::lessOrEqual(a, b); }
-template <typename A, typename B> bool compareMoreOrEqual(const A &a, const B &b) { return Compare<A,B>::moreOrEqual(a, b); }
+template <typename A, typename B> int  compareBetween(    const A &a, const B &b) { return Compare<A, B>::between(    a, b); }
+template <typename A, typename B> bool compareEqual(      const A &a, const B &b) { return Compare<A, B>::equal(      a, b); }
+template <typename A, typename B> bool compareNotEqual(   const A &a, const B &b) { return Compare<A, B>::notEqual(   a, b); }
+template <typename A, typename B> bool compareLess(       const A &a, const B &b) { return Compare<A, B>::less(       a, b); }
+template <typename A, typename B> bool compareMore(       const A &a, const B &b) { return Compare<A, B>::more(       a, b); }
+template <typename A, typename B> bool compareLessOrEqual(const A &a, const B &b) { return Compare<A, B>::lessOrEqual(a, b); }
+template <typename A, typename B> bool compareMoreOrEqual(const A &a, const B &b) { return Compare<A, B>::moreOrEqual(a, b); }
