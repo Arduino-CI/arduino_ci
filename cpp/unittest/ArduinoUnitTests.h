@@ -1,5 +1,6 @@
 #pragma once
 
+#include "OstreamHelpers.h"
 #include "Assertion.h"
 #include <iostream>
 using namespace std;
