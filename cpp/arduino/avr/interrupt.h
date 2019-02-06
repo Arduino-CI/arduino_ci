@@ -7,4 +7,4 @@
      extern "C" void vector (void)  __VA_ARGS__; \
      void vector (void)
 
-#endif
+#endif // _AVR_INTERRUPT_H_

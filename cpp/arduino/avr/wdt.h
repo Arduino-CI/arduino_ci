@@ -1,7 +1,6 @@
 #ifndef _AVR_WDT_H_
 #define _AVR_WDT_H_
 
-#include <avr/interrupt.h>
 #include <Godmode.h>
 
 #define WDTO_15MS   0
