@@ -1,3 +1,8 @@
+/*
+   This header file defines the functionality to put AVR CPUs to sleep mode.
+   For details see
+   https://www.nongnu.org/avr-libc/user-manual/group__avr__sleep.html
+*/
 #pragma once
 
 #include <Godmode.h>

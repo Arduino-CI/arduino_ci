@@ -1,3 +1,9 @@
+/*
+   This header file defines the funtionality to use the watchdog timer on
+   AVR CPUs.
+   For details see
+   https://www.nongnu.org/avr-libc/user-manual/group__avr__watchdog.html
+*/
 #pragma once
 
 #include <Godmode.h>
