@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * `release-new-version.sh` script
 
 ### Changed
+* Shortened `ArduinoQueue` push and pop operations
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+* `ArduinoQueue` no longer leaks memory
 
 ### Security
 
