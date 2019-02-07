@@ -7,21 +7,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.1.21] - 2019-02-07
+### Added
 - Proper `ostream operator <<` for `nullptr`
 - Proper comparison operations fro `nullptr`
 
 ### Changed
 - `Compare.h` heavily refactored to use a smallish macro
 
-### Deprecated
-
 ### Removed
 - Homegrown implementation of `nullptr`
 
 ### Fixed
 - `nullptr` support (again)
-
-### Security
 
 
 ## [0.1.20] - 2019-01-31
@@ -338,7 +348,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.20...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.21...HEAD
+[0.1.21]: https://github.com/ianfixes/arduino_ci/compare/v0.1.20...v0.1.21
 [0.1.20]: https://github.com/ianfixes/arduino_ci/compare/v0.1.19...v0.1.20
 [0.1.19]: https://github.com/ianfixes/arduino_ci/compare/v0.1.18...v0.1.19
 [0.1.18]: https://github.com/ianfixes/arduino_ci/compare/v0.1.17...v0.1.18
