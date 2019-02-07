@@ -1,5 +1,4 @@
-#ifndef _AVR_SLEEP_H_
-#define _AVR_SLEEP_H_
+#pragma once
 
 #include <Godmode.h>
 
@@ -36,5 +35,3 @@ void sleep_mode() {
   godmode->sleep.sleep_mode_count++;
   sleep_disable();
 }
-
-#endif /* _AVR_SLEEP_H_ */

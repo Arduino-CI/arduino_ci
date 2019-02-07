@@ -1,5 +1,4 @@
-#ifndef _AVR_WDT_H_
-#define _AVR_WDT_H_
+#pragma once
 
 #include <Godmode.h>
 
@@ -31,5 +30,3 @@ void wdt_reset() {
   GodmodeState* godmode = GODMODE();
   godmode->wdt.wdt_reset_count++;
 }
-
-#endif /* _AVR_WDT_H_ */
