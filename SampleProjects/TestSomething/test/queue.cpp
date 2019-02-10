@@ -1,9 +1,9 @@
 #include <ArduinoUnitTests.h>
-#include <ci/Queue.h>
+#include <MockEventQueue.h>
 
 unittest(basic_queue_dequeue_and_size)
 {
-  ArduinoCIQueue<int> q;
+  MockEventQueue<int> q;
   int data[5] = {11, 22, 33, 44, 55};
 
   assertTrue(q.empty());
@@ -27,11 +27,11 @@ unittest(basic_queue_dequeue_and_size)
 
 unittest(copy_constructor)
 {
-  ArduinoCIQueue<int> q;
+  MockEventQueue<int> q;
   int data[5] = {11, 22, 33, 44, 55};
   for (int i = 0; i < 5; ++i) q.push(data[i]);
 
-  ArduinoCIQueue<int> q2(q);
+  MockEventQueue<int> q2(q);
 
   for (int i = 0; i < 5; ++i) {
     assertEqual(5 - i, q2.size());
@@ -50,7 +50,7 @@ unittest(copy_constructor)
 
 unittest(boundaries)
 {
-  ArduinoCIQueue<int> q;
+  MockEventQueue<int> q;
   int data[2] = {11, 22};
   for (int i = 0; i < 2; ++i) q.push(data[i]);
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "ci/Queue.h"
+#include "MockEventQueue.h"
 #include "ci/ObservableDataStream.h"
 #include "WString.h"
 
@@ -7,8 +7,8 @@
 template <typename T>
 class PinHistory : public ObservableDataStream {
   private:
-    ArduinoCIQueue<T> qIn;
-    ArduinoCIQueue<T> qOut;
+    MockEventQueue<T> qIn;
+    MockEventQueue<T> qOut;
 
     void clear() {
       qOut.clear();
@@ -16,7 +16,7 @@ class PinHistory : public ObservableDataStream {
     }
 
     // enqueue ascii bits
-    void a2q(ArduinoCIQueue<T> &q, String input, bool bigEndian, bool advertise) {
+    void a2q(MockEventQueue<T> &q, String input, bool bigEndian, bool advertise) {
       // 8 chars at a time, form up
       for (int j = 0; j < input.length(); ++j) {
         for (int i = 0; i < 8; ++i) {
@@ -31,10 +31,10 @@ class PinHistory : public ObservableDataStream {
 
     // convert a queue to a string as if it was serial bits
     // start from offset, consider endianness
-    String q2a(const ArduinoCIQueue<T> &q, unsigned int offset, bool bigEndian) const {
+    String q2a(const MockEventQueue<T> &q, unsigned int offset, bool bigEndian) const {
       String ret = "";
 
-      ArduinoCIQueue<T> q2(q);
+      MockEventQueue<T> q2(q);
 
       while (offset) {
         q2.pop();
@@ -135,7 +135,7 @@ class PinHistory : public ObservableDataStream {
     // copy elements to an array, up to a given length
     // return the number of elements moved
     int toArray (T* arr, unsigned int length) const {
-      ArduinoCIQueue<T> q2(qOut);
+      MockEventQueue<T> q2(qOut);
 
       int ret = 0;
       for (int i = 0; i < length && q2.size(); ++i) {
@@ -149,7 +149,7 @@ class PinHistory : public ObservableDataStream {
     // see if the array matches the elements in the queue
     bool hasElements (T const * const arr, unsigned int length) const {
       int i;
-      ArduinoCIQueue<T> q2(qOut);
+      MockEventQueue<T> q2(qOut);
       for (i = 0; i < length && q2.size(); ++i) {
         if (q2.front() != arr[i]) return false;
         q2.pop();

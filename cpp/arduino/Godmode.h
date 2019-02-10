@@ -124,3 +124,9 @@ inline void noTone(uint8_t _pin) {}
 
 GodmodeState* GODMODE();
 
+// defined here to break a circular dependency on GODMODE
+// reasons: https://stackoverflow.com/a/1639821/2063546
+template <typename T>
+bool MockEventQueue<T>::push(const T& v) {
+  return pushEvent(v, GODMODE()->micros);
+}

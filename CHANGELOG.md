@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 * Shortened `ArduinoQueue` push and pop operations
+* `ci/Queue.h` is now `MockEventQueue.h`, with timing data
 
 ### Deprecated
 
