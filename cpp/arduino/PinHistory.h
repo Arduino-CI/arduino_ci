@@ -23,7 +23,7 @@ class PinHistory : public ObservableDataStream {
           int shift = bigEndian ? 7 - i : i;
           unsigned char mask = (0x01 << shift);
           q.push(mask & input[j]);
-          if (advertise) advertiseBit(q.back()); // not valid for all possible types but whatever
+          if (advertise) advertiseBit(q.backData()); // not valid for all possible types but whatever
         }
       }
     }
@@ -48,7 +48,7 @@ class PinHistory : public ObservableDataStream {
         unsigned char acc = 0x00;
         for (int i = 0; i < 8; ++i) {
           int shift = bigEndian ? 7 - i : i;
-          T val = q2.front();
+          T val = q2.frontData();
           unsigned char bit = val ? 0x1 : 0x0;
           acc |= (bit << shift);
           q2.pop();
@@ -79,8 +79,8 @@ class PinHistory : public ObservableDataStream {
 
     // This returns the "value" of the pin in a raw sense
     operator T() const {
-      if (!qIn.empty()) return qIn.front();
-      return qOut.back();
+      if (!qIn.empty()) return qIn.frontData();
+      return qOut.backData();
     }
 
     // this sets the value of the pin authoritatively
@@ -89,8 +89,8 @@ class PinHistory : public ObservableDataStream {
     T operator=(const T& i) {
       qIn.clear();
       qOut.push(i);
-      advertiseBit(qOut.back()); // not valid for all possible types but whatever
-      return qOut.back();
+      advertiseBit(qOut.backData()); // not valid for all possible types but whatever
+      return qOut.backData();
     }
 
     // This returns the "value" of the pin according to the queued values
@@ -98,14 +98,14 @@ class PinHistory : public ObservableDataStream {
     // then take the latest output.
     T retrieve() {
       if (!qIn.empty()) {
-        T hack_required_by_travis_ci = qIn.front();
+        T hack_required_by_travis_ci = qIn.frontData();
         qIn.pop();
         qOut.push(hack_required_by_travis_ci);
       }
-      return qOut.back();
+      return qOut.backData();
     }
 
-    // enqueue a set of elements
+    // enqueue a set of data elements
     void fromArray(T const * const arr, unsigned int length) {
       for (int i = 0; i < length; ++i) qIn.push(arr[i]);
     }
@@ -124,34 +124,34 @@ class PinHistory : public ObservableDataStream {
     // start from offset, consider endianness
     String incomingToAscii(bool bigEndian) const { return incomingToAscii(asciiEncodingOffsetIn, bigEndian); }
 
-    // convert the pin history to a string as if it was Serial comms
+    // convert the pin history data to a string as if it was Serial comms
     // start from offset, consider endianness
     String toAscii(unsigned int offset, bool bigEndian) const { return q2a(qOut, offset, bigEndian); }
 
-    // convert the pin history to a string as if it was Serial comms
+    // convert the pin history data to a string as if it was Serial comms
     // start from offset, consider endianness
     String toAscii(bool bigEndian) const { return toAscii(asciiEncodingOffsetOut, bigEndian); }
 
-    // copy elements to an array, up to a given length
+    // copy data elements to an array, up to a given length
     // return the number of elements moved
     int toArray (T* arr, unsigned int length) const {
       MockEventQueue<T> q2(qOut);
 
       int ret = 0;
       for (int i = 0; i < length && q2.size(); ++i) {
-        arr[i] = q2.front();
+        arr[i] = q2.frontData();
         q2.pop();
         ++ret;
       }
       return ret;
     }
 
-    // see if the array matches the elements in the queue
+    // see if the array matches the data of the elements in the queue
     bool hasElements (T const * const arr, unsigned int length) const {
       int i;
       MockEventQueue<T> q2(qOut);
       for (i = 0; i < length && q2.size(); ++i) {
-        if (q2.front() != arr[i]) return false;
+        if (q2.frontData() != arr[i]) return false;
         q2.pop();
       }
       return i == length;

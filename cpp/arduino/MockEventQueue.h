@@ -2,55 +2,81 @@
 
 template <typename T>
 class MockEventQueue {
-  private:
+  public:
     struct Event {
       T data;
       unsigned long micros;
-      Event* next;
+
+      Event(const T &d, unsigned long const t) : data(d), micros(t) { }
     };
 
-    Event* mFront;
-    Event* mBack;
+  private:
+    struct Node {
+      Event event;
+      Node* next;
+
+      Node(const Event &e, Node* n) : event(e), next(n) { }
+    };
+
+    Node* mFront;
+    Node* mBack;
     unsigned long mSize;
     T mNil;
+    unsigned long (*mGetMicros)(void);
 
-    void init() {
+    void init(unsigned long (*getMicros)(void)) {
       mFront = mBack = nullptr;
       mSize = 0;
+      mGetMicros = getMicros;
     }
 
   public:
-    MockEventQueue(): mNil() { init(); }
+    MockEventQueue(unsigned long (*getMicros)(void)): mNil() { init(getMicros); }
+    MockEventQueue(): mNil() { init(nullptr); }
 
     MockEventQueue(const MockEventQueue<T>& q) {
-      init();
-      for (Event* n = q.mFront; n; n = n->next) push(n->data);
+      init(q.mGetMicros);
+      for (Node* n = q.mFront; n; n = n->next) push(n->event);
     }
+
+    void setMicrosRetriever(unsigned long (*getMicros)(void)) { mGetMicros = getMicros; }
 
     inline unsigned long size() const { return mSize; }
     inline bool empty() const { return 0 == mSize; }
-    T front() const { return empty() ? mNil : mFront->data; }
-    T back() const { return empty() ? mNil : mBack->data; }
+    inline Event front() const { return empty() ? Event(mNil, 0) : mFront->event; }
+    inline Event back() const { return empty() ?  Event(mNil, 0) : mBack->event; }
+    inline T frontData() const { return front().data; }
+    inline T backData() const { return back().data; }
+    inline unsigned long frontTime() const { return front().micros; }
+    inline unsigned long backTime() const { return back().micros; }
 
-    bool pushEvent(const T& v, unsigned long const time)
-    {
-      Event *n = new Event;
+
+    // fully formed event
+    bool push(const Event& e) {
+      Node *n = new Node(e, nullptr);
       if (n == nullptr) return false;
-      n->data = v;
-      n->micros = time;
-      n->next = nullptr;
       mBack = (mFront == nullptr ? mFront : mBack->next) = n;
       return ++mSize;
     }
 
-    bool push(const T& v); // need to use GODMODE here, so defined in Godmode.h
+    // fully specfied event
+    bool push(const T& v, unsigned long const time) {
+      Event e = {v, time};
+      return push(e);
+    }
+
+    // event needing timestamp
+    bool push(const T& v) {
+      unsigned long micros = mGetMicros == nullptr ? 0 : mGetMicros();
+      return push(v, micros);
+    }
 
     void pop() {
       if (empty()) return;
-      Event* n = mFront;
+      Node* n = mFront;
       mFront = mFront->next;
       delete n;
-      if (--mSize) mBack = nullptr;
+      if (--mSize == 0) mBack = nullptr;
     }
 
     void clear() { while (!empty()) pop(); }

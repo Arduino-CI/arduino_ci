@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 * Shortened `ArduinoQueue` push and pop operations
 * `ci/Queue.h` is now `MockEventQueue.h`, with timing data
+* `MockEventQueue::Node` now contains struct `MockEvenntQueue::Event`, which contains both the templated type `T` and a field for a timestamp.
+* Construction of `MockEventQueue` now includes a constructor argument for the time-fetching function
 
 ### Deprecated
 
