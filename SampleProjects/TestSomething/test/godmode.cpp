@@ -1,15 +1,15 @@
 #include <ArduinoUnitTests.h>
 #include <Arduino.h>
+#include "fibonacciClock.h"
 
 GodmodeState* state = GODMODE();
 
-unittest_setup()
-{
+unittest_setup() {
+  resetFibClock();
   state->reset();
 }
 
-unittest(millis_micros_and_delay)
-{
+unittest(millis_micros_and_delay) {
   assertEqual(0, millis());
   assertEqual(0, micros());
   delay(3);
@@ -20,8 +20,7 @@ unittest(millis_micros_and_delay)
   assertEqual(14000, micros());
 }
 
-unittest(random)
-{
+unittest(random) {
   randomSeed(1);
   assertEqual(state->seed, 1);
 
@@ -37,8 +36,7 @@ unittest(random)
   assertEqual(state->seed, 4294967282);
 }
 
-unittest(pins)
-{
+unittest(pins) {
   pinMode(1, OUTPUT);  // this is a no-op in unit tests.  it's just here to prove compilation
   digitalWrite(1, HIGH);
   assertEqual(HIGH, state->digitalPin[1]);
@@ -64,8 +62,7 @@ unittest(pins)
   assertEqual(56, analogRead(1));
 }
 
-unittest(pin_read_history)
-{
+unittest(pin_read_history) {
   int future[6] = {33, 22, 55, 11, 44, 66};
   state->analogPin[1].fromArray(future, 6);
   for (int i = 0; i < 6; ++i)
@@ -88,20 +85,20 @@ unittest(pin_read_history)
   }
 }
 
-unittest(pin_write_history)
-{
+unittest(digital_pin_write_history_with_timing) {
   int numMoved;
-
-  // history for digital pin
-  digitalWrite(1, HIGH);
-  digitalWrite(1, LOW);
-  digitalWrite(1, LOW);
-  digitalWrite(1, HIGH);
-  digitalWrite(1, HIGH);
-
-  assertEqual(6, state->digitalPin[1].historySize());
   bool expectedD[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
   bool actualD[6];
+  unsigned long expectedT[6] = {0, 1, 1, 2, 3, 5};
+  unsigned long actualT[6];
+
+  // history for digital pin. start from 1 since LOW is the initial value
+  for (int i = 1; i < 6; ++i) {
+    state->micros = fibMicros();
+    digitalWrite(1, expectedD[i]);
+  }
+
+  assertEqual(6, state->digitalPin[1].historySize());
   numMoved = state->digitalPin[1].toArray(actualD, 6);
   assertEqual(6, numMoved);
   // assert non-destructive
@@ -113,6 +110,19 @@ unittest(pin_write_history)
     assertEqual(expectedD[i], actualD[i]);
   }
 
+  numMoved = state->digitalPin[1].toTimestampArray(actualT, 6);
+  assertEqual(6, numMoved);
+  for (int i = 0; i < numMoved; ++i)
+  {
+    assertEqual(expectedT[i], actualT[i]);
+  }
+}
+
+unittest(analog_pin_write_history) {
+  int numMoved;
+  int expectedA[6] = {0, 11, 22, 33, 44, 55};
+  int actualA[6];
+
   // history for analog pin
   analogWrite(1, 11);
   analogWrite(1, 22);
@@ -121,8 +131,7 @@ unittest(pin_write_history)
   analogWrite(1, 55);
 
   assertEqual(6, state->analogPin[1].historySize());
-  int expectedA[6] = {0, 11, 22, 33, 44, 55};
-  int actualA[6];
+
   numMoved = state->analogPin[1].toArray(actualA, 6);
   assertEqual(6, numMoved);
   // assert non-destructive
@@ -133,7 +142,9 @@ unittest(pin_write_history)
   {
     assertEqual(expectedA[i], actualA[i]);
   }
+}
 
+unittest(ascii_pin_write_history) {
   // digitial history as serial data, big-endian
   bool binaryAscii[24] = {
       0, 1, 0, 1, 1, 0, 0, 1,
@@ -207,8 +218,7 @@ unittest(spi) {
     }
   }
 
-  unittest(does_nothing_if_no_data)
-  {
+  unittest(does_nothing_if_no_data) {
       int myPin = 3;
       state->serialPort[0].dataIn = "";
       state->serialPort[0].dataOut = "";
@@ -218,8 +228,7 @@ unittest(spi) {
       assertEqual("", state->serialPort[0].dataOut);
   }
 
-  unittest(keeps_pin_low_and_acks)
-  {
+  unittest(keeps_pin_low_and_acks) {
       int myPin = 3;
       state->serialPort[0].dataIn = "0";
       state->serialPort[0].dataOut = "";
@@ -230,8 +239,7 @@ unittest(spi) {
       assertEqual("Ack 3 0", state->serialPort[0].dataOut);
   }
 
-  unittest(flips_pin_high_and_acks)
-  {
+  unittest(flips_pin_high_and_acks) {
       int myPin = 3;
       state->serialPort[0].dataIn = "1";
       state->serialPort[0].dataOut = "";
@@ -242,8 +250,7 @@ unittest(spi) {
       assertEqual("Ack 3 1", state->serialPort[0].dataOut);
   }
 
-  unittest(two_flips)
-  {
+  unittest(two_flips) {
       int myPin = 3;
       state->serialPort[0].dataIn = "10junk";
       state->serialPort[0].dataOut = "";

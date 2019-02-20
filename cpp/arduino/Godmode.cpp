@@ -2,37 +2,45 @@
 #include "HardwareSerial.h"
 #include "SPI.h"
 
-GodmodeState godmode = GodmodeState();
-
 GodmodeState* GODMODE() {
-  return &godmode;
+  return GodmodeState::getInstance();
+}
+
+GodmodeState* GodmodeState::instance = nullptr;
+
+GodmodeState* GodmodeState::getInstance()
+{
+    if (instance == nullptr)
+    {
+        instance = new GodmodeState();
+        for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
+          instance->digitalPin[i].setMicrosRetriever(&GodmodeState::getMicros);
+          instance->analogPin[i].setMicrosRetriever(&GodmodeState::getMicros);
+        }
+    }
+
+    return instance;
 }
 
 unsigned long millis() {
-  GodmodeState* godmode = GODMODE();
-  return godmode->micros / 1000;
+  return GODMODE()->micros / 1000;
 }
 
 unsigned long micros() {
-  GodmodeState* godmode = GODMODE();
-  return godmode->micros;
+  return GODMODE()->micros;
 }
 
 void delay(unsigned long millis) {
-  GodmodeState* godmode = GODMODE();
-  godmode->micros += millis * 1000;
+  GODMODE()->micros += millis * 1000;
 }
 
 void delayMicroseconds(unsigned long micros) {
-  GodmodeState* godmode = GODMODE();
-  godmode->micros += micros;
+  GODMODE()->micros += micros;
 }
-
 
 void randomSeed(unsigned long seed)
 {
-  GodmodeState* godmode = GODMODE();
-  godmode->seed = seed;
+  GODMODE()->seed = seed;
 }
 
 long random(long vmax)
@@ -81,16 +89,16 @@ void detachInterrupt(uint8_t interrupt) {
 
 // Serial ports
 #if defined(HAVE_HWSERIAL0)
-  HardwareSerial Serial(&godmode.serialPort[0].dataIn, &godmode.serialPort[0].dataOut, &godmode.serialPort[0].readDelayMicros);
+  HardwareSerial Serial(&GODMODE()->serialPort[0].dataIn, &GODMODE()->serialPort[0].dataOut, &GODMODE()->serialPort[0].readDelayMicros);
 #endif
 #if defined(HAVE_HWSERIAL1)
-  HardwareSerial Serial1(&godmode.serialPort[1].dataIn, &godmode.serialPort[1].dataOut, &godmode.serialPort[1].readDelayMicros);
+  HardwareSerial Serial1(&GODMODE()->serialPort[1].dataIn, &GODMODE()->serialPort[1].dataOut, &GODMODE()->serialPort[1].readDelayMicros);
 #endif
 #if defined(HAVE_HWSERIAL2)
-  HardwareSerial Serial2(&godmode.serialPort[2].dataIn, &godmode.serialPort[2].dataOut, &godmode.serialPort[2].readDelayMicros);
+  HardwareSerial Serial2(&GODMODE()->serialPort[2].dataIn, &GODMODE()->serialPort[2].dataOut, &GODMODE()->serialPort[2].readDelayMicros);
 #endif
 #if defined(HAVE_HWSERIAL3)
-  HardwareSerial Serial3(&godmode.serialPort[3].dataIn, &godmode.serialPort[3].dataOut, &godmode.serialPort[3].readDelayMicros);
+  HardwareSerial Serial3(&GODMODE()->serialPort[3].dataIn, &GODMODE()->serialPort[3].dataOut, &GODMODE()->serialPort[3].readDelayMicros);
 #endif
 
 template <typename T>
@@ -100,4 +108,4 @@ inline std::ostream& operator << ( std::ostream& out, const PinHistory<T>& ph ) 
 }
 
 // defined in SPI.h
-SPIClass SPI = SPIClass(&godmode.spi.dataIn, &godmode.spi.dataOut);
+SPIClass SPI = SPIClass(&GODMODE()->spi.dataIn, &GODMODE()->spi.dataOut);
