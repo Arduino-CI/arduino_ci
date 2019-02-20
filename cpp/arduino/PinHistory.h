@@ -59,14 +59,24 @@ class PinHistory : public ObservableDataStream {
       return ret;
     }
 
+    void init() {
+      asciiEncodingOffsetIn = 0;  // default is sensible
+      asciiEncodingOffsetOut = 1; // default is sensible
+    }
+
   public:
     unsigned int asciiEncodingOffsetIn;
     unsigned int asciiEncodingOffsetOut;
 
-    PinHistory() : ObservableDataStream() {
-      asciiEncodingOffsetIn = 0;  // default is sensible
-      asciiEncodingOffsetOut = 1; // default is sensible
+    PinHistory(unsigned long (*getMicros)(void)) : ObservableDataStream(), qOut(getMicros) {
+      init();
     }
+
+    PinHistory() : ObservableDataStream() {
+      init();
+    }
+
+    void setMicrosRetriever(unsigned long (*getMicros)(void)) { qOut.setMicrosRetriever(getMicros); }
 
     void reset(T val) {
       clear();
@@ -135,7 +145,7 @@ class PinHistory : public ObservableDataStream {
     // copy data elements to an array, up to a given length
     // return the number of elements moved
     int toArray (T* arr, unsigned int length) const {
-      MockEventQueue<T> q2(qOut);
+      MockEventQueue<T> q2(qOut);  // preserve const by copying
 
       int ret = 0;
       for (int i = 0; i < length && q2.size(); ++i) {
@@ -146,10 +156,40 @@ class PinHistory : public ObservableDataStream {
       return ret;
     }
 
+    // copy pin history timing to an array, up to a given length.
+    // note that this records times between calls to the pin, not between transitions
+    // return the number of elements moved
+    int toTimestampArray(unsigned long* arr, unsigned int length) const {
+      MockEventQueue<T> q2(qOut);  // preserve const by copying
+
+      int ret = 0;
+      for (int i = 0; i < length && q2.size(); ++i) {
+        arr[i] = q2.frontTime();
+        q2.pop();
+        ++ret;
+      }
+      return ret;
+    }
+
+    // copy pin history timing to an array, up to a given length.
+    // note that this records times between calls to the pin, not between transitions
+    // return the number of elements moved
+    int toEventArray(typename MockEventQueue<T>::Event* arr, unsigned int length) const {
+      MockEventQueue<T> q2(qOut);  // preserve const by copying
+
+      int ret = 0;
+      for (int i = 0; i < length && q2.size(); ++i) {
+        arr[i] = q2.front();
+        q2.pop();
+        ++ret;
+      }
+      return ret;
+    }
+
     // see if the array matches the data of the elements in the queue
     bool hasElements (T const * const arr, unsigned int length) const {
       int i;
-      MockEventQueue<T> q2(qOut);
+      MockEventQueue<T> q2(qOut);  // preserve const by copying
       for (i = 0; i < length && q2.size(); ++i) {
         if (q2.frontData() != arr[i]) return false;
         q2.pop();

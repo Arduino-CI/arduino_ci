@@ -7,6 +7,7 @@ class MockEventQueue {
       T data;
       unsigned long micros;
 
+      Event() : data(T()), micros(0) {}
       Event(const T &d, unsigned long const t) : data(d), micros(t) { }
     };
 

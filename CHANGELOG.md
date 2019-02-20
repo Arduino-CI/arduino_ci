@@ -8,12 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 * `release-new-version.sh` script
+* outputs for `PinHistory` can now report timestamps
 
 ### Changed
 * Shortened `ArduinoQueue` push and pop operations
 * `ci/Queue.h` is now `MockEventQueue.h`, with timing data
-* `MockEventQueue::Node` now contains struct `MockEvenntQueue::Event`, which contains both the templated type `T` and a field for a timestamp.
+* `MockEventQueue::Node` now contains struct `MockEventQueue::Event`, which contains both the templated type `T` and a field for a timestamp.
 * Construction of `MockEventQueue` now includes a constructor argument for the time-fetching function
+* Construction of `PinHistory` now includes a constructor argument for the time-fetching function
+* `PinHistory` can now return an array of timestamps for its events
 
 ### Deprecated
 
