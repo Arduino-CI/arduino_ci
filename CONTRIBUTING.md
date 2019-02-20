@@ -46,16 +46,17 @@ ARDUINO_CI_SKIP_RUBY_RSPEC_TESTS=1 bundle exec rspec
 ## Packaging the Gem
 
 * Merge pull request with new features
-* `git stash save` (at least before the gem build step, but easiest here).
-* `git pull --rebase`
-* Update the sections of `CHANGELOG.md` by running `bundle exec keepachangelog_manager.rb --increment-patch`
-* Bump the version in lib/arduino_ci/version.rb and change it in README.md (since rubydoc.info doesn't always redirect to the latest version)
-* `git add README.md CHANGELOG.md lib/arduino_ci/version.rb`
-* `git commit -m "vVERSION bump"`
-* `git tag -a vVERSION -m "Released version VERSION"`
-* `gem build arduino_ci.gemspec`
-* `git stash pop`
-* `gem push arduino_ci-VERSION.gem`
-* `git push upstream`
-* `git push upstream --tags`
+* Execute `release-new-version.sh` with the appropriate argument (e.g. `--increment-patch`), which does the following:
+    * `git stash save` (at least before the gem build step, but easiest here).
+    * `git pull --rebase`
+    * Update the sections of `CHANGELOG.md` by running `bundle exec keepachangelog_manager.rb --increment-patch`
+    * Bump the version in lib/arduino_ci/version.rb and change it in README.md (since rubydoc.info doesn't always redirect to the latest version)
+    * `git add README.md CHANGELOG.md lib/arduino_ci/version.rb`
+    * `git commit -m "vVERSION bump"`
+    * `git tag -a vVERSION -m "Released version VERSION"`
+    * `gem build arduino_ci.gemspec`
+    * `git stash pop`
+    * `gem push arduino_ci-VERSION.gem`
+    * `git push upstream`
+    * `git push upstream --tags`
 * Visit http://www.rubydoc.info/gems/arduino_ci/VERSION to initiate the doc generation process

@@ -7,14 +7,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+* `release-new-version.sh` script
+* outputs for `PinHistory` can now report timestamps
+* Fibonacci Clock for clock testing purposes (internal to this library)
 
 ### Changed
+* Shortened `ArduinoQueue` push and pop operations
+* `ci/Queue.h` is now `MockEventQueue.h`, with timing data
+* `MockEventQueue::Node` now contains struct `MockEventQueue::Event`, which contains both the templated type `T` and a field for a timestamp.
+* Construction of `MockEventQueue` now includes a constructor argument for the time-fetching function
+* Construction of `PinHistory` now includes a constructor argument for the time-fetching function
+* `PinHistory` can now return an array of timestamps for its events
+* `GodmodeState` is now a singleton pattern, which is necessary to support the globality of Arduino functions
+* `GodmodeState` now uses timestamped PinHistory for Analog and Digital
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+* `ArduinoQueue` no longer leaks memory
 
 ### Security
 

@@ -16,7 +16,6 @@ void delayMicroseconds(unsigned long micros);
 unsigned long millis();
 unsigned long micros();
 
-
 #define MOCK_PINS_COUNT 256
 
 #if defined(UBRR3H)
@@ -32,16 +31,19 @@ unsigned long micros();
 #endif
 
 class GodmodeState {
-  struct PortDef {
-    String dataIn;
-    String dataOut;
-    unsigned long readDelayMicros;
-  };
+  private:
+    struct PortDef {
+      String dataIn;
+      String dataOut;
+      unsigned long readDelayMicros;
+    };
 
-  struct InterruptDef {
-    bool attached;
-    uint8_t mode;
-  };
+    struct InterruptDef {
+      bool attached;
+      uint8_t mode;
+    };
+
+    static GodmodeState* instance;
 
   public:
     unsigned long micros;
@@ -98,8 +100,24 @@ class GodmodeState {
       return NUM_SERIAL_PORTS;
     }
 
-    GodmodeState()
-    {
+    // Using this for anything other than unit testing arduino_ci itself
+    // is unsupported at the moment
+    void overrideClockTruth(unsigned long (*getMicros)(void)) {
+    }
+
+    // singleton pattern
+    static GodmodeState* getInstance();
+
+    static unsigned long getMicros() {
+      return instance->micros;
+    }
+
+    // C++ 11, declare as public for better compiler error messages
+    GodmodeState(GodmodeState const&) = delete;
+    void operator=(GodmodeState const&) = delete;
+
+  private:
+    GodmodeState() {
       reset();
     }
 };
@@ -123,4 +141,3 @@ inline void noTone(uint8_t _pin) {}
 
 
 GodmodeState* GODMODE();
-
