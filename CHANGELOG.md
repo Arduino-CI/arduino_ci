@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.2.0] - 2019-02-20
+### Added
 * `release-new-version.sh` script
 * outputs for `PinHistory` can now report timestamps
 * Fibonacci Clock for clock testing purposes (internal to this library)
@@ -21,14 +35,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * `GodmodeState` is now a singleton pattern, which is necessary to support the globality of Arduino functions
 * `GodmodeState` now uses timestamped PinHistory for Analog and Digital
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 * `ArduinoQueue` no longer leaks memory
-
-### Security
 
 
 ## [0.1.21] - 2019-02-07
@@ -360,7 +368,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.1.21...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/ianfixes/arduino_ci/compare/v0.1.21...v0.2.0
 [0.1.21]: https://github.com/ianfixes/arduino_ci/compare/v0.1.20...v0.1.21
 [0.1.20]: https://github.com/ianfixes/arduino_ci/compare/v0.1.19...v0.1.20
 [0.1.19]: https://github.com/ianfixes/arduino_ci/compare/v0.1.18...v0.1.19

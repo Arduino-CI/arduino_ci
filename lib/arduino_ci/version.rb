@@ -1,3 +1,3 @@
 module ArduinoCI
-  VERSION = "0.1.21".freeze
+  VERSION = "0.2.0".freeze
 end
