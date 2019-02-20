@@ -84,19 +84,6 @@ unittest(timed_events)
 
 }
 
-unittest(my_fib)
-{
-  resetFibClock();
-  assertEqual(1, fibMicros());
-  assertEqual(1, fibMicros());
-  assertEqual(2, fibMicros());
-  assertEqual(3, fibMicros());
-  assertEqual(5, fibMicros());
-  assertEqual(8, fibMicros());
-  assertEqual(13, fibMicros());
-  assertEqual(21, fibMicros());
-}
-
 unittest(clocked_events)
 {
   resetFibClock();

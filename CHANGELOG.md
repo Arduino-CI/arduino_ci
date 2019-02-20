@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * `release-new-version.sh` script
 * outputs for `PinHistory` can now report timestamps
+* Fibonacci Clock for clock testing purposes (internal to this library)
 
 ### Changed
 * Shortened `ArduinoQueue` push and pop operations
