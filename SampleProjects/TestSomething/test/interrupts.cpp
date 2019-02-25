@@ -23,6 +23,11 @@ unittest(interrupt_attachment) {
   assertFalse(state->interrupt[0].attached);
 }
 
-
+// Just check if declaration compiles.
+// WDT_vect defines the interrupt of the watchdog timer
+// if configured accordinly.
+// See avr/interrupt.h
+ISR (WDT_vect) {
+}
 
 unittest_main()

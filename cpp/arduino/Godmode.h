@@ -45,6 +45,24 @@ class GodmodeState {
 
     static GodmodeState* instance;
 
+  struct SleepDef {
+    bool sleep_enable = false;
+    unsigned int sleep_enable_count = 0;
+    unsigned int sleep_disable_count = 0;
+    unsigned char sleep_mode = 0;
+    unsigned int sleep_cpu_count = 0;
+    unsigned int sleep_mode_count = 0;
+    unsigned int sleep_bod_disable_count = 0;
+  };
+
+  struct WdtDef {
+    bool wdt_enable = false;
+    unsigned char timeout = 0;
+    unsigned int wdt_enable_count = 0;
+    unsigned int wdt_disable_count = 0;
+    unsigned int wdt_reset_count = 0;
+  };
+
   public:
     unsigned long micros;
     unsigned long seed;
@@ -54,6 +72,8 @@ class GodmodeState {
     struct PortDef serialPort[NUM_SERIAL_PORTS];
     struct InterruptDef interrupt[MOCK_PINS_COUNT]; // not sure how to get actual number
     struct PortDef spi;
+    struct SleepDef sleep;
+    struct WdtDef wdt;
 
     void resetPins() {
       for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
@@ -87,12 +107,32 @@ class GodmodeState {
       spi.readDelayMicros = 0;
     }
 
+    void resetSleep() {
+      sleep.sleep_enable = false;
+      sleep.sleep_enable_count = 0;
+      sleep.sleep_disable_count = 0;
+      sleep.sleep_mode = 0;
+      sleep.sleep_cpu_count = 0;
+      sleep.sleep_mode_count = 0;
+      sleep.sleep_bod_disable_count = 0;
+    }
+
+    void resetWdt() {
+      wdt.wdt_enable = false;
+      wdt.timeout = 0;
+      wdt.wdt_enable_count = 0;
+      wdt.wdt_disable_count = 0;
+      wdt.wdt_reset_count = 0;
+    }
+
     void reset() {
       resetClock();
       resetPins();
       resetInterrupts();
       resetPorts();
       resetSPI();
+      resetSleep();
+      resetWdt();
       seed = 1;
     }
 
@@ -132,7 +172,7 @@ int analogRead(uint8_t);
 void analogWrite(uint8_t, int);
 #define analogReadResolution(...) _NOP()
 #define analogWriteResolution(...) _NOP()
-void attachInterrupt(uint8_t interrupt, void ISR(void), uint8_t mode);
+void attachInterrupt(uint8_t interrupt, void isr(void), uint8_t mode);
 void detachInterrupt(uint8_t interrupt);
 
 // TODO: issue #26 to track the commanded state here
