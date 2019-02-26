@@ -1,3 +1,5 @@
+#include <ostream>
+
 #include "Godmode.h"
 #include "HardwareSerial.h"
 #include "SPI.h"

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Minimal Wire mocks. Will not provide support for unit testing I2C communication yet, but will allow compilation of libraries that use I2C.
+- Provide pin definitions for A0 to A7.
 
 ### Changed
 
