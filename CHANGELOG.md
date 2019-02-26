@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 
+- Minimal Wire mocks. Will not provide support for unit testing I2C communication yet, but will allow compilation of libraries that use I2C.
+
 ### Changed
 
 ### Deprecated

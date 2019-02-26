@@ -15,6 +15,7 @@ Where possible, variable names from the Arduino library are used to avoid confli
 #include "Stream.h"
 #include "HardwareSerial.h"
 #include "SPI.h"
+#include "Wire.h"
 
 typedef bool boolean;
 typedef uint8_t byte;

@@ -1,6 +1,7 @@
 #include "Godmode.h"
 #include "HardwareSerial.h"
 #include "SPI.h"
+#include "Wire.h"
 
 GodmodeState* GODMODE() {
   return GodmodeState::getInstance();
@@ -109,3 +110,6 @@ inline std::ostream& operator << ( std::ostream& out, const PinHistory<T>& ph ) 
 
 // defined in SPI.h
 SPIClass SPI = SPIClass(&GODMODE()->spi.dataIn, &GODMODE()->spi.dataOut);
+
+// defined in Wire.h
+TwoWire Wire = TwoWire();
