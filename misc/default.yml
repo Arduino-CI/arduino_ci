@@ -15,7 +15,16 @@ packages:
 
 platforms:
   
-  nano:
+  nano_v2:
+    board: arduino:avr:nano
+    package: arduino:avr
+    gcc:
+      features:
+      defines:
+        - __AVR_ATmega168__
+      warnings:
+      flags:
+  nano_v3: &nano_p
     board: arduino:avr:nano
     package: arduino:avr
     gcc:
@@ -24,6 +33,7 @@ platforms:
         - __AVR_ATmega328__
       warnings:
       flags:
+  nano: *nano_p
   uno:
     board: arduino:avr:uno
     package: arduino:avr
@@ -39,7 +49,7 @@ platforms:
     gcc:
       features:
       defines:
-        - __AVR_ATSAM3X8E__
+        - __ATSAM3X8E__
       warnings:
       flags:
   zero:
