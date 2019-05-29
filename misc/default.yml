@@ -14,7 +14,16 @@ packages:
     url: https://dl.espressif.com/dl/package_esp32_index.json
 
 platforms:
-
+  
+  nano:
+    board: arduino:avr:nano
+    package: arduino:avr
+    gcc:
+      features:
+      defines:
+        - __AVR_ATmega328__
+      warnings:
+      flags:
   uno:
     board: arduino:avr:uno
     package: arduino:avr
@@ -30,7 +39,7 @@ platforms:
     gcc:
       features:
       defines:
-        - __AVR_ATmega328__
+        - __AVR_ATSAM3X8E__
       warnings:
       flags:
   zero:
@@ -86,6 +95,14 @@ platforms:
       flags:
   m4:
     board: adafruit:samd:adafruit_metro_m4
+    package: adafruit:samd
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  grand_central_m4:
+    board: adafruit:samd:adafruit_grand_central_m4
     package: adafruit:samd
     gcc:
       features:
