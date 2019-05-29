@@ -92,6 +92,15 @@ platforms:
       defines:
       warnings:
       flags:
+  mega1280:
+    board: arduino:avr:mega:cpu=atmega1280
+    package: arduino:avr
+    gcc:
+      features:
+      defines:
+        - __AVR_ATmega1280__
+      warnings:
+      flags:
   mega2560:
     board: arduino:avr:mega:cpu=atmega2560
     package: arduino:avr
