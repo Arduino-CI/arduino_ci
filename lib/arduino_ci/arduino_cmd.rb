@@ -42,14 +42,14 @@ module ArduinoCI
     attr_reader   :last_msg
 
     # set the command line flags (undefined for now).
-    # These vary between gui/cli
-    flag :get_pref
-    flag :set_pref
-    flag :save_prefs
-    flag :use_board
-    flag :install_boards
-    flag :install_library
-    flag :verify
+    # These vary between gui/cli.  Inline comments added for greppability
+    flag :get_pref           # flag_get_pref
+    flag :set_pref           # flag_set_pref
+    flag :save_prefs         # flag_save_prefs
+    flag :use_board          # flag_use_board
+    flag :install_boards     # flag_install_boards
+    flag :install_library    # flag_install_library
+    flag :verify             # flag_verify
 
     def initialize
       @prefs_cache        = {}
