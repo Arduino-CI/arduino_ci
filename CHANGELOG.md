@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Arduino library dependencies are now installed prior to unit testing, instead of prior to compilation testing.  Whoops.
 
 ### Security
 
