@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Minimal Wire mocks. Will not provide support for unit testing I2C communication yet, but will allow compilation of libraries that use I2C.
 
 ### Changed
+- Arduino command failures (to read preferences) now causes a fatal error, with help for troubleshooting the underlying command
 
 ### Deprecated
 

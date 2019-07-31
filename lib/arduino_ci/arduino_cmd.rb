@@ -6,6 +6,9 @@ WORKAROUND_LIB = "USBHost".freeze
 
 module ArduinoCI
 
+  # To report errors that we can't resolve or possibly even explain
+  class ArduinoExecutionError < StandardError; end
+
   # Wrap the Arduino executable.  This requires, in some cases, a faked display.
   class ArduinoCmd
 
@@ -82,7 +85,8 @@ module ArduinoCI
     # @return [String] Preferences as a set of lines
     def _prefs_raw
       resp = run_and_capture(flag_get_pref)
-      return nil unless resp[:success]
+      fail_msg = "Arduino binary failed to operate as expected; you will have to troubleshoot it manually"
+      raise ArduinoExecutionError, "#{fail_msg}. The command was #{@last_msg}" unless resp[:success]
 
       @prefs_fetched = true
       resp[:out]
