@@ -220,7 +220,10 @@ module ArduinoCI
       # TODO: be smart and implement library spec (library.properties, etc)?
       subdirs = ["", "src", "utility"]
       all_aux_include_dirs_nested = aux_libraries.map do |libdir|
-        subdirs.map { |subdir| Pathname.new(@arduino_lib_dir) + libdir + subdir }
+        # library manager coerces spaces in package names to underscores
+        # see https://github.com/ianfixes/arduino_ci/issues/132#issuecomment-518857059
+        legal_libdir = libdir.tr(" ", "_")
+        subdirs.map { |subdir| Pathname.new(@arduino_lib_dir) + legal_libdir + subdir }
       end
       all_aux_include_dirs_nested.flatten.select(&:exist?).select(&:directory?)
     end

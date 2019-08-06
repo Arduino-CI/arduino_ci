@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Arduino library dependencies are now installed prior to unit testing, instead of prior to compilation testing.  Whoops.
+- Arduino library dependencies with spaces in their names are now handled properly during compilation -- spaces are automatically coerced to underscores
 
 ### Security
 
