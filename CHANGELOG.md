@@ -7,21 +7,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Minimal Wire mocks. Will not provide support for unit testing I2C communication yet, but will allow compilation of libraries that use I2C.
-- `StreamTape` class now bridges `Stream` and `HardwareSerial` to allow general-purpose stream mocking & history
 
 ### Changed
-- Arduino command failures (to read preferences) now causes a fatal error, with help for troubleshooting the underlying command
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- Arduino library dependencies are now installed prior to unit testing, instead of prior to compilation testing.  Whoops.
-- Arduino library dependencies with spaces in their names are now handled properly during compilation -- spaces are automatically coerced to underscores
 
 ### Security
+
+
+## [0.2.1] - 2019-08-12
+### Added
+- Minimal Wire mocks. Will not provide support for unit testing I2C communication yet, but will allow compilation of libraries that use I2C.
+- `StreamTape` class now bridges `Stream` and `HardwareSerial` to allow general-purpose stream mocking & history
+
+### Changed
+- Arduino command failures (to read preferences) now causes a fatal error, with help for troubleshooting the underlying command
+
+### Fixed
+- Arduino library dependencies are now installed prior to unit testing, instead of prior to compilation testing.  Whoops.
+- Arduino library dependencies with spaces in their names are now handled properly during compilation -- spaces are automatically coerced to underscores
 
 
 ## [0.2.0] - 2019-02-20
@@ -373,7 +381,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/ianfixes/arduino_ci/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/ianfixes/arduino_ci/compare/v0.1.21...v0.2.0
 [0.1.21]: https://github.com/ianfixes/arduino_ci/compare/v0.1.20...v0.1.21
 [0.1.20]: https://github.com/ianfixes/arduino_ci/compare/v0.1.19...v0.1.20
