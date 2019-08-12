@@ -167,6 +167,16 @@ def display_files(pathname)
   non_hidden.each { |p| puts "#{margin}#{p}" }
 end
 
+def install_arduino_library_dependencies(aux_libraries)
+  aux_libraries.each do |l|
+    if @arduino_cmd.library_present?(l)
+      inform("Using pre-existing library") { l.to_s }
+    else
+      assure("Installing aux library '#{l}'") { @arduino_cmd.install_library(l) }
+    end
+  end
+end
+
 def perform_unit_tests(file_config)
   if @cli_options[:skip_unittests]
     inform("Skipping unit tests") { "as requested via command line" }
@@ -209,6 +219,8 @@ def perform_unit_tests(file_config)
   elsif config.platforms_to_unittest.empty?
     inform("Skipping unit tests") { "no platforms were requested" }
   else
+    install_arduino_library_dependencies(config.aux_libraries_for_unittest)
+
     config.platforms_to_unittest.each do |p|
       config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
         unittest_name = unittest_path.basename.to_s
@@ -273,7 +285,7 @@ def perform_compilation_tests(config)
   # while we're doing that, get the aux libraries as well
   example_platform_info = {}
   board_package_url = {}
-  aux_libraries = Set.new(config.aux_libraries_for_unittest + config.aux_libraries_for_build)
+  aux_libraries = Set.new(config.aux_libraries_for_build)
   # while collecting the platforms, ensure they're defined
 
   library_examples.each do |path|
@@ -322,13 +334,7 @@ def perform_compilation_tests(config)
     end
   end
 
-  aux_libraries.each do |l|
-    if @arduino_cmd.library_present?(l)
-      inform("Using pre-existing library") { l.to_s }
-    else
-      assure("Installing aux library '#{l}'") { @arduino_cmd.install_library(l) }
-    end
-  end
+  install_arduino_library_dependencies(aux_libraries)
 
   last_board = nil
   if config.platforms_to_build.empty?

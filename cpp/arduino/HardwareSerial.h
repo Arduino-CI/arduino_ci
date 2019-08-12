@@ -1,7 +1,7 @@
 #pragma once
 
 //#include <inttypes.h>
-#include "Stream.h"
+#include "ci/StreamTape.h"
 
 // definitions neeeded for Serial.begin's config arg
 #define SERIAL_5N1 0x00
@@ -29,38 +29,19 @@
 #define SERIAL_7O2 0x3C
 #define SERIAL_8O2 0x3E
 
-class HardwareSerial : public Stream, public ObservableDataStream
+class HardwareSerial : public StreamTape
 {
-  protected:
-    String* mGodmodeDataOut;
-
   public:
-    HardwareSerial(String* dataIn, String* dataOut, unsigned long* delay): Stream(), ObservableDataStream() {
-      mGodmodeDataIn      = dataIn;
-      mGodmodeDataOut     = dataOut;
-      mGodmodeMicrosDelay = delay;
-    }
+    HardwareSerial(String* dataIn, String* dataOut, unsigned long* delay): StreamTape(dataIn, dataOut, delay) {}
+
     void begin(unsigned long baud) { begin(baud, SERIAL_8N1); }
     void begin(unsigned long baud, uint8_t config) {
       *mGodmodeMicrosDelay = 1000000 / baud;
     }
     void end() {}
 
-    // virtual int available(void);
-    // virtual int peek(void);
-    // virtual int read(void);
-    // virtual int availableForWrite(void);
-    // virtual void flush(void);
-    virtual size_t write(uint8_t aChar) {
-      mGodmodeDataOut->append(String((char)aChar));
-      advertiseByte((unsigned char)aChar);
-      return 1;
-    }
-
-    // https://stackoverflow.com/a/4271276
-    using Print::write; // pull in write(str) and write(buf, size) from Print
+    // support "if (Serial1) {}" sorts of things
     operator bool() { return true; }
-
 };
 
 #if defined(UBRRH) || defined(UBRR0H)

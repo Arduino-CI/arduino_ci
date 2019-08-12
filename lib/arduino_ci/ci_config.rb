@@ -293,9 +293,12 @@ module ArduinoCI
       return paths if @unittest_info[:testfiles].nil?
 
       ret = paths
+      # Check for array emptiness, otherwise nothing will be selected!
       unless @unittest_info[:testfiles][:select].nil? || @unittest_info[:testfiles][:select].empty?
         ret.select! { |p| unittest_info[:testfiles][:select].any? { |glob| p.basename.fnmatch(glob) } }
       end
+
+      # It's OK for the :reject array to be empty, that means nothing will be rejected by default
       unless @unittest_info[:testfiles][:reject].nil?
         ret.reject! { |p| unittest_info[:testfiles][:reject].any? { |glob| p.basename.fnmatch(glob) } }
       end
