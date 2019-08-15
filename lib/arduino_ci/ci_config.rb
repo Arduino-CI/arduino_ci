@@ -28,6 +28,7 @@ UNITTEST_SCHEMA = {
   compilers: Array,
   platforms: Array,
   libraries: Array,
+  exclude_dirs: Array,
   testfiles: {
     select: Array,
     reject: Array,
@@ -254,6 +255,14 @@ module ArduinoCI
       return [] if @unittest_info[:compilers].nil?
 
       @unittest_info[:compilers]
+    end
+
+    # paths to exclude all files in for building and unitttests
+    # @return [Array<String>] The directories (relative to base dir) to exclude
+    def exclude_dirs
+      return [] if @unittest_info[:exclude_dirs].nil?
+
+      @unittest_info[:exclude_dirs]
     end
 
     # platforms to build [the examples on]
