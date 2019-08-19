@@ -13,7 +13,7 @@ end
 RSpec.describe ArduinoCI::CppLibrary do
   next if skip_ruby_tests
   cpp_lib_path = sampleproj_path + "DoSomething"
-  cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, Pathname.new("my_fake_arduino_lib_dir"))
+  cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, Pathname.new("my_fake_arduino_lib_dir"), [])
   context "cpp_files" do
     it "finds cpp files in directory" do
       dosomething_cpp_files = [Pathname.new("DoSomething") + "do-something.cpp"]

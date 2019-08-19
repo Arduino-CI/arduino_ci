@@ -37,11 +37,12 @@ module ArduinoCI
 
     # @param base_dir [Pathname] The path to the library being tested
     # @param arduino_lib_dir [Pathname] The path to the libraries directory
-    def initialize(base_dir, arduino_lib_dir, exclude_dirs = [])
+    # @param exclude_dirs [Array<Pathname>] Directories that should be excluded from compilation
+    def initialize(base_dir, arduino_lib_dir, exclude_dirs)
       raise ArgumentError, 'base_dir is not a Pathname' unless base_dir.is_a? Pathname
       raise ArgumentError, 'arduino_lib_dir is not a Pathname' unless arduino_lib_dir.is_a? Pathname
-      raise ArgumentError, 'exclude_dir is not an array of Pathnames' unless exclude_dirs.is_a?(Array) &&
-                                                                             exclude_dirs.each { |p| p.is_a? Pathname }
+      raise ArgumentError, 'exclude_dir is not an array of Pathnames' unless exclude_dirs.is_a?(Array)
+      raise ArgumentError, 'exclude_dir array contains non-Pathname elements' unless exclude_dirs.all? { |p| p.is_a? Pathname }
 
       @base_dir = base_dir
       @exclude_dirs = exclude_dirs

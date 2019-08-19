@@ -1,10 +1,6 @@
-#include "test-something.h"
-int testSomething(void) {
-  millis();  // this line is only here to test that we're able to refer to the builtins
-  return 4;
-};
+This file intentionally contains syntactically incorrect code
+to break unit test compilation.  If arduino_ci is working
+properly, it should exclude this file (as per .arduino-ci.yml
+configuration) and unit test compilation should succeed.
 
-int* aNullPointer(void) {
-  int* ret = nullptr;
-  return ret;
-}
+~!@#$%^&*()
