@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Unit testing configuration now allows `exclude_dirs` to be set, which prevents stray source files from as part of unit testing allows
 
 ### Changed
 
@@ -18,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 ### Security
+
+
+## [0.3.0] - 2019-09-03
+### Added
+- Unit testing configuration now allows `exclude_dirs` to be set, which prevents stray source files from as part of unit testing allows
 
 
 ## [0.2.1] - 2019-08-12
@@ -382,7 +386,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/ianfixes/arduino_ci/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/ianfixes/arduino_ci/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/ianfixes/arduino_ci/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/ianfixes/arduino_ci/compare/v0.1.21...v0.2.0
 [0.1.21]: https://github.com/ianfixes/arduino_ci/compare/v0.1.20...v0.1.21

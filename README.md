@@ -1,5 +1,5 @@
 
-# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.2.1)
+# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.3.0)
 
 You want to run tests on your Arduino library (bonus: without hardware present), but the IDE doesn't support that.  Arduino CI provides that ability.
 
