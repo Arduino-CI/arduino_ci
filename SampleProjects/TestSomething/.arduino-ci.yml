@@ -1,4 +1,6 @@
 unittest:
+  exclude_dirs:
+    - excludeThis
   platforms:
     - uno
     - due

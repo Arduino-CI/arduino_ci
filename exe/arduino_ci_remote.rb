@@ -183,7 +183,9 @@ def perform_unit_tests(file_config)
     return
   end
   config = file_config.with_override_config(@cli_options[:ci_config])
-  cpp_library = ArduinoCI::CppLibrary.new(Pathname.new("."), @arduino_cmd.lib_dir)
+  cpp_library = ArduinoCI::CppLibrary.new(Pathname.new("."),
+                                          @arduino_cmd.lib_dir,
+                                          config.exclude_dirs.map(&Pathname.method(:new)))
 
   # check GCC
   compilers = config.compilers_to_use

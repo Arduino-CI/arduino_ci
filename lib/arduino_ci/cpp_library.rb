@@ -37,11 +37,15 @@ module ArduinoCI
 
     # @param base_dir [Pathname] The path to the library being tested
     # @param arduino_lib_dir [Pathname] The path to the libraries directory
-    def initialize(base_dir, arduino_lib_dir)
+    # @param exclude_dirs [Array<Pathname>] Directories that should be excluded from compilation
+    def initialize(base_dir, arduino_lib_dir, exclude_dirs)
       raise ArgumentError, 'base_dir is not a Pathname' unless base_dir.is_a? Pathname
       raise ArgumentError, 'arduino_lib_dir is not a Pathname' unless arduino_lib_dir.is_a? Pathname
+      raise ArgumentError, 'exclude_dir is not an array of Pathnames' unless exclude_dirs.is_a?(Array)
+      raise ArgumentError, 'exclude_dir array contains non-Pathname elements' unless exclude_dirs.all? { |p| p.is_a? Pathname }
 
       @base_dir = base_dir
+      @exclude_dirs = exclude_dirs
       @arduino_lib_dir = arduino_lib_dir.expand_path
       @artifacts = []
       @last_err = ""
@@ -115,6 +119,19 @@ module ArduinoCI
       false
     end
 
+    # Guess whether a file is part of any @excludes_dir dir (indicating library compilation should ignore it).
+    #
+    # @param path [Pathname] The path to check
+    # @return [bool]
+    def in_exclude_dir?(path)
+      # we could do this but some rubies don't return an enumerator for ascend
+      # path.ascend.any? { |part| tests_dir_aliases.include?(part) }
+      path.ascend do |part|
+        return true if exclude_dir.any? { |p| p.realpath == part }
+      end
+      false
+    end
+
     # Check whether libasan (and by extension -fsanitizer=address) is supported
     #
     # This requires compilation of a sample program, and will be cached
@@ -150,7 +167,7 @@ module ArduinoCI
     # CPP files that are part of the project library under test
     # @return [Array<Pathname>]
     def cpp_files
-      cpp_files_in(@base_dir).reject { |p| vendor_bundle?(p) || in_tests_dir?(p) }
+      cpp_files_in(@base_dir).reject { |p| vendor_bundle?(p) || in_tests_dir?(p) || in_exclude_dir?(p) }
     end
 
     # CPP files that are part of the arduino mock library we're providing
@@ -172,6 +189,12 @@ module ArduinoCI
       arduino_library_src_dirs(aux_libraries).map { |d| cpp_files_in(d) }.flatten.uniq
     end
 
+    # Returns the Pathnames for all paths to exclude from testing and compilation
+    # @return [Array<Pathname>]
+    def exclude_dir
+      @exclude_dirs.map { |p| Pathname.new(@base_dir) + p }.select(&:exist?)
+    end
+
     # The directory where we expect to find unit test defintions provided by the user
     # @return [Pathname]
     def tests_dir
@@ -190,7 +213,8 @@ module ArduinoCI
       real = @base_dir.realpath
       all_files = Find.find(real).map { |f| Pathname.new(f) }.reject(&:directory?)
       unbundled = all_files.reject { |path| vendor_bundle?(path) }
-      files = unbundled.select { |path| HPP_EXTENSIONS.include?(path.extname.downcase) }
+      unexcluded = unbundled.reject { |path| in_exclude_dir?(path) }
+      files = unexcluded.select { |path| HPP_EXTENSIONS.include?(path.extname.downcase) }
       files.map(&:dirname).uniq
     end
 

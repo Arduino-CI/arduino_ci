@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Unit testing configuration now allows `exclude_dirs` to be set, which prevents stray source files from as part of unit testing allows
 
 ### Changed
 

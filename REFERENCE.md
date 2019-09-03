@@ -112,8 +112,16 @@ For your unit tests, in addition to setting specific libraries and platforms, yo
 
 Filtering your unit tests may help speed up targeted testing locally, but it is intended primarily as a means to temporarily disable tests between individual commits.
 
+Furthermore, you can filter the files that will be included in the compilation step by specifying `exclude_dirs`. All cpp and header files in those directories will not be included in the compilation step, before the unittests are run.
+
 ```yaml
 unittest:
+
+  # Exclude these directories from compilation
+  exclude_dirs:
+    - someDirectory
+    - someOtherDirectory
+
   # Perform unit tests with these compilers (these are the binaries that will be called via the shell)
   compilers:
     - g++      # default
