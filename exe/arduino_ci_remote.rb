@@ -227,7 +227,7 @@ def perform_unit_tests(file_config)
       config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
         unittest_name = unittest_path.basename.to_s
         compilers.each do |gcc_binary|
-          attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary}") do
+          attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
             exe = cpp_library.build_for_test_with_configuration(
               unittest_path,
               config.aux_libraries_for_unittest,
