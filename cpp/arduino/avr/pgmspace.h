@@ -15,6 +15,7 @@ out.each { |l| puts d(l) }
 */
 
 #include <string.h>
+#include <stdint.h>
 
 #define PROGMEM
 
@@ -25,6 +26,11 @@ out.each { |l| puts d(l) }
 #ifndef PGM_VOID_P
 #define PGM_VOID_P const void *
 #endif
+
+// These are normally 32-bit, but here use (u)intptr_t to ensure a pointer can
+// always be safely cast to these types.
+typedef intptr_t int_farptr_t;
+typedef uintptr_t uint_farptr_t;
 
 // everything's a no-op
 #define PSTR(s) ((const char *)(s))
@@ -49,46 +55,47 @@ out.each { |l| puts d(l) }
 
 #define pgm_get_far_address(var) ( (uint_farptr_t) (&(var)) )
 
-#define memchr_P(...) ::memchr(__VA_ARGS__)
-#define memcmp_P(...) ::memcmp(__VA_ARGS__)
-#define memccpy_P(...) ::memccpy(__VA_ARGS__)
-#define memcpy_P(...) ::memcpy(__VA_ARGS__)
-#define memmem_P(...) ::memmem(__VA_ARGS__)
-#define memrchr_P(...) ::memrchr(__VA_ARGS__)
-#define strcat_P(...) ::strcat(__VA_ARGS__)
-#define strchr_P(...) ::strchr(__VA_ARGS__)
-#define strchrnul_P(...) ::strchrnul(__VA_ARGS__)
-#define strcmp_P(...) ::strcmp(__VA_ARGS__)
-#define strcpy_P(...) ::strcpy(__VA_ARGS__)
-#define strcasecmp_P(...) ::strcasecmp(__VA_ARGS__)
-#define strcasestr_P(...) ::strcasestr(__VA_ARGS__)
-#define strcspn_P(...) ::strcspn(__VA_ARGS__)
-#define strlcat_P(...) ::strlcat(__VA_ARGS__)
-#define strlcpy_P(...) ::strlcpy(__VA_ARGS__)
-#define strnlen_P(...) ::strnlen(__VA_ARGS__)
-#define strncmp_P(...) ::strncmp(__VA_ARGS__)
-#define strncasecmp_P(...) ::strncasecmp(__VA_ARGS__)
-#define strncat_P(...) ::strncat(__VA_ARGS__)
-#define strncpy_P(...) ::strncpy(__VA_ARGS__)
-#define strpbrk_P(...) ::strpbrk(__VA_ARGS__)
-#define strrchr_P(...) ::strrchr(__VA_ARGS__)
-#define strsep_P(...) ::strsep(__VA_ARGS__)
-#define strspn_P(...) ::strspn(__VA_ARGS__)
-#define strstr_P(...) ::strstr(__VA_ARGS__)
-#define strtok_P(...) ::strtok(__VA_ARGS__)
-#define strtok_P(...) ::strtok(__VA_ARGS__)
-#define strlen_P(...) ::strlen(__VA_ARGS__)
-#define strnlen_P(...) ::strnlen(__VA_ARGS__)
-#define memcpy_P(...) ::memcpy(__VA_ARGS__)
-#define strcpy_P(...) ::strcpy(__VA_ARGS__)
-#define strncpy_P(...) ::strncpy(__VA_ARGS__)
-#define strcat_P(...) ::strcat(__VA_ARGS__)
-#define strlcat_P(...) ::strlcat(__VA_ARGS__)
-#define strncat_P(...) ::strncat(__VA_ARGS__)
-#define strcmp_P(...) ::strcmp(__VA_ARGS__)
-#define strncmp_P(...) ::strncmp(__VA_ARGS__)
-#define strcasecmp_P(...) ::strcasecmp(__VA_ARGS__)
-#define strncasecmp_P(...) ::strncasecmp(__VA_ARGS__)
-#define strstr_P(...) ::strstr(__VA_ARGS__)
-#define strlcpy_P(...) ::strlcpy(__VA_ARGS__)
-#define memcmp_P(...) ::memcmp(__VA_ARGS__)
+inline const void * memchr_P(const void *s, int val, size_t len) { return memchr(s, val, len); }
+inline int memcmp_P(const void *s1, const void *s2, size_t len) { return memcmp(s1, s2, len); }
+inline void *memccpy_P(void *dest, const void *src, int val, size_t len) { return memccpy(dest, src, val, len); }
+inline void *memcpy_P(void *dest, const void *src, size_t n) { return memcpy(dest, src, n); }
+inline void *memmem_P(const void *s1, size_t len1, const void *s2, size_t len2) { return memmem(s1, len1, s2, len2); }
+inline const void *memrchr_P(const void *src, int val, size_t len) { return memrchr(src, val, len); }
+inline char *strcat_P(char *dest, const char *src) { return strcat(dest, src); }
+inline const char *strchr_P(const char *s, int val) { return strchr(s, val); }
+inline const char *strchrnul_P(const char *s, int c) { return strchrnul(s, c); }
+inline int strcmp_P(const char *s1, const char *s2) { return strcmp(s1, s2); }
+inline char *strcpy_P(char *dest, const char *src) { return strcpy(dest, src); }
+inline int strcasecmp_P(const char *s1, const char *s2) { return strcasecmp(s1, s2); }
+inline char *strcasestr_P(const char *s1, const char *s2) { return (char*)strcasestr(s1, s2); }
+inline size_t strcspn_P(const char *s, const char *reject) { return strcspn(s, reject); }
+// strlcat and strlcpy are AVR-specific and not entirely trivial to reimplement using strncat it seems
+//inline size_t strlcat_P(char *dst, const char *src, size_t siz) { return strlcat(dst, src, siz); }
+//inline size_t strlcpy_P(char *dst, const char *src, size_t siz) { return strlcpy(dst, src, siz); }
+//inline size_t strlcat_PF(char *dst, uint_farptr_t src, size_t n) { return strlcat(dst, (const char*)src, n); }
+//inline size_t strlcpy_PF(char *dst, uint_farptr_t src, size_t siz) { return strlcpy(dst, (const char*)src, siz); }
+inline int strncmp_P(const char *s1, const char *s2, size_t n) { return strncmp(s1, s2, n); }
+inline int strncasecmp_P(const char *s1, const char *s2, size_t n) { return strncasecmp(s1, s2, n); }
+inline char *strncat_P(char *dest, const char *src, size_t len) { return strncat(dest, src, len); }
+inline char *strncpy_P(char *dest, const char *src, size_t n) { return strncpy(dest, src, n); }
+inline char *strpbrk_P(const char *s, const char *accept) { return (char*)strpbrk(s, accept); }
+inline const char *strrchr_P(const char *s, int val) { return strrchr(s, val); }
+inline char *strsep_P(char **sp, const char *delim) { return strsep(sp, delim); }
+inline size_t strspn_P(const char *s, const char *accept) { return strspn(s, accept); }
+inline char *strstr_P(const char *s1, const char *s2) { return (char*)strstr(s1, s2); }
+inline char *strtok_P(char *s, const char * delim) { return strtok(s, delim); }
+inline char *strtok_r_P(char *string, const char *delim, char **last) { return strtok_r(string, delim, last); }
+inline size_t strlen_PF(uint_farptr_t s) { return strlen((char*)s); }
+inline size_t strnlen_P(uint_farptr_t s, size_t len) { return strnlen((char*)s, len); }
+inline void *memcpy_PF(void *dest, uint_farptr_t src, size_t n) { return memcpy(dest, (const char*)src, n); }
+inline char *strcpy_PF(char *dst, uint_farptr_t src) { return strcpy(dst, (const char*)src); }
+inline char *strncpy_PF(char *dst, uint_farptr_t src, size_t n) { return strncpy(dst, (const char*)src, n); }
+inline char *strcat_PF(char *dst, uint_farptr_t src) { return strcat(dst, (const char*)src); }
+inline char *strncat_PF(char *dst, uint_farptr_t src, size_t n) { return strncat(dst, (const char*)src, n); }
+inline int strcmp_PF(const char *s1, uint_farptr_t s2) { return strcmp(s1, (const char*)s2); }
+inline int strncmp_PF(const char *s1, uint_farptr_t s2, size_t n) { return strncmp(s1, (const char*)s2, n); }
+inline int strcasecmp_PF(const char *s1, uint_farptr_t s2) { return strcasecmp(s1, (const char*)s2); }
+inline int strncasecmp_PF(const char *s1, uint_farptr_t s2, size_t n) { return strncasecmp(s1, (const char*)s2, n); }
+inline char *strstr_PF(const char *s1, uint_farptr_t s2) { return (char*)strstr(s1, (const char*)s2); }
+inline int memcmp_PF(const void *s1, uint_farptr_t s2, size_t len) { return memcmp(s1, (const char*)s2, len); }
+inline size_t strlen_P(const char *src) { return strlen(src); }
