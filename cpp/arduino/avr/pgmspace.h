@@ -33,13 +33,13 @@ out.each { |l| puts d(l) }
 #define pgm_read_word_near(address_short)  (* (const uint16_t *) (address_short) )
 #define pgm_read_dword_near(address_short) (* (const uint32_t *) (address_short) )
 #define pgm_read_float_near(address_short) (* (const float *)    (address_short) )
-#define pgm_read_ptr_near(address_short)   (* (const void *)     (address_short) )
+#define pgm_read_ptr_near(address_short)   (* (const void **)    (address_short) )
 
 #define pgm_read_byte_far(address_long)    (* (const uint8_t *)  (address_long) )
 #define pgm_read_word_far(address_long)    (* (const uint16_t *) (address_long) )
 #define pgm_read_dword_far(address_long)   (* (const uint32_t *) (address_long) )
 #define pgm_read_float_far(address_long)   (* (const float *)    (address_long) )
-#define pgm_read_ptr_far(address_long)     (* (const void *)     (address_long) )
+#define pgm_read_ptr_far(address_long)     (* (const void **)    (address_long) )
 
 #define pgm_read_byte(address_short)   pgm_read_byte_near(address_short)
 #define pgm_read_word(address_short)   pgm_read_word_near(address_short)
