@@ -20,16 +20,18 @@ unsigned long micros();
 
 #define MOCK_PINS_COUNT 256
 
-#if defined(UBRR3H)
-  #define NUM_SERIAL_PORTS 4
-#elif defined(UBRR2H)
-  #define NUM_SERIAL_PORTS 3
-#elif defined(UBRR1H)
-  #define NUM_SERIAL_PORTS 2
-#elif defined(UBRRH) || defined(UBRR0H)
-  #define NUM_SERIAL_PORTS 1
-#else
-  #define NUM_SERIAL_PORTS 0
+#if (!defined NUM_SERIAL_PORTS)
+  #if defined(UBRR3H)
+    #define NUM_SERIAL_PORTS 4
+  #elif defined(UBRR2H)
+    #define NUM_SERIAL_PORTS 3
+  #elif defined(UBRR1H)
+    #define NUM_SERIAL_PORTS 2
+  #elif defined(UBRRH) || defined(UBRR0H)
+    #define NUM_SERIAL_PORTS 1
+  #else
+    #define NUM_SERIAL_PORTS 0
+  #endif
 #endif
 
 class GodmodeState {
