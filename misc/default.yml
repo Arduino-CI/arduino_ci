@@ -37,6 +37,7 @@ platforms:
         - __SAM3X8E__
         - ARDUINO_ARCH_SAM
         - ARDUINO_SAM_DUE
+        - NUM_SERIAL_PORTS=4
       warnings:
       flags:
   zero:
@@ -48,6 +49,8 @@ platforms:
         - __SAMD21G18A__
         - ARDUINO_ARCH_SAMD
         - ARDUINO_SAMD_ZERO
+        # This also has SerialUSB, which is not included here.
+        - NUM_SERIAL_PORTS=2
       warnings:
       flags:
   esp32:
@@ -59,6 +62,7 @@ platforms:
         - ESP32
         - ARDUINO_ARCH_ESP32
         - ARDUINO_FEATHER_ESP32
+        - NUM_SERIAL_PORTS=3
       warnings:
       flags:
   esp8266:
@@ -70,6 +74,7 @@ platforms:
         - ESP8266
         - ARDUINO_ARCH_ESP8266
         - ARDUINO_ESP8266_ESP12
+        - NUM_SERIAL_PORTS=2
       warnings:
       flags:
   leonardo:
@@ -118,6 +123,8 @@ platforms:
         - __SAMD51J19A__
         - ARDUINO_ARCH_SAMD
         - ARDUINO_METRO_M4
+        # Serial is actually USB virtual serial, not HardwareSerial
+        - NUM_SERIAL_PORTS=2
       warnings:
       flags:
   mega2560:
@@ -153,6 +160,8 @@ platforms:
         - __SAMD21G18A__
         - ARDUINO_ARCH_SAMD
         - ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS
+        # Serial is actually an alias of SerialUSB, not a HardwareSerial
+        - NUM_SERIAL_PORTS=2
       warnings:
       flags:
 
