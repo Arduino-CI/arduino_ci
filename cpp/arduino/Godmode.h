@@ -1,6 +1,8 @@
 #pragma once
 #include "ArduinoDefines.h"
+#if defined(__AVR__)
 #include <avr/io.h>
+#endif
 #include "WString.h"
 #include "PinHistory.h"
 

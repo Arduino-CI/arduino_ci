@@ -14,7 +14,6 @@ out = externs.map {|l| l.split("(")[0].split(" ")[-1].gsub("*", "") }.uniq
 out.each { |l| puts d(l) }
 */
 
-#include <avr/io.h>
 #include <string.h>
 
 #define PROGMEM
