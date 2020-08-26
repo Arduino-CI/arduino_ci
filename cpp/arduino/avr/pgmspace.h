@@ -15,7 +15,9 @@ out.each { |l| puts d(l) }
 */
 
 #include <string.h>
+#include <stdio.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 #define PROGMEM
 
@@ -99,3 +101,21 @@ inline int strncasecmp_PF(const char *s1, uint_farptr_t s2, size_t n) { return s
 inline char *strstr_PF(const char *s1, uint_farptr_t s2) { return (char*)strstr(s1, (const char*)s2); }
 inline int memcmp_PF(const void *s1, uint_farptr_t s2, size_t len) { return memcmp(s1, (const char*)s2, len); }
 inline size_t strlen_P(const char *src) { return strlen(src); }
+
+// These are normally defined by stdio.h on AVR, but we cannot override that
+// include file (at least not without no longer being able to include the
+// original as well), so just define these here. It seems likely that any
+// sketch that uses these progmem-stdio functions will also include pgmspace.h
+inline int  vfprintf_P(FILE *stream, const char *__fmt, va_list __ap) { return vfprintf(stream, __fmt, __ap); }
+inline int  printf_P(const char *__fmt, ...) { va_list args; va_start(args, __fmt); return vprintf(__fmt, args); va_end(args); }
+inline int  sprintf_P(char *s, const char *__fmt, ...) { va_list args; va_start(args, __fmt); return sprintf(s, __fmt, args); va_end(args); }
+inline int  snprintf_P(char *s, size_t __n, const char *__fmt, ...) { va_list args; va_start(args, __fmt); return vsnprintf(s, __n, __fmt, args); va_end(args); }
+inline int  vsprintf_P(char *s, const char *__fmt, va_list ap) { return vsprintf(s, __fmt, ap); }
+inline int  vsnprintf_P(char *s, size_t __n, const char *__fmt, va_list ap) { return vsnprintf(s, __n, __fmt, ap); }
+inline int  fprintf_P(FILE *stream, const char *__fmt, ...) { va_list args; va_start(args, __fmt); return vfprintf(stream, __fmt, args); va_end(args); }
+inline int  fputs_P(const char *str, FILE *__stream) { return fputs(str, __stream); }
+inline int  puts_P(const char *str) { return puts(str); }
+inline int  vfscanf_P(FILE *stream, const char *__fmt, va_list __ap) { return vfscanf(stream, __fmt, __ap); }
+inline int  fscanf_P(FILE *stream, const char *__fmt, ...) { va_list args; va_start(args, __fmt); return vfscanf(stream, __fmt, args); va_end(args); }
+inline int  scanf_P(const char *__fmt, ...) { va_list args; va_start(args, __fmt); return vscanf(__fmt, args); va_end(args); }
+inline int  sscanf_P(const char *buf, const char *__fmt, ...) { va_list args; va_start(args, __fmt); return vsscanf(buf, __fmt, args); va_end(args); }
