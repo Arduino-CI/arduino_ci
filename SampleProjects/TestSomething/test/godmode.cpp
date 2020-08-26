@@ -1,5 +1,6 @@
 #include <ArduinoUnitTests.h>
 #include <Arduino.h>
+#include <SPI.h>
 #include "fibonacciClock.h"
 
 GodmodeState* state = GODMODE();
