@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   binfiles           = Dir[File.join(spec.bindir, '/**/*.*')].reject { |f| f.match(rejection_regex) }
   cppfiles           = Dir['cpp/**/*.*']
   miscfiles          = Dir['misc/**/*.*']
-  spec.files         = ['README.md', '.yardopts'] + libfiles + binfiles + cppfiles + miscfiles
+  spec.files         = ['README.md', 'REFERENCE.md', '.yardopts'] + libfiles + binfiles + cppfiles + miscfiles
 
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
