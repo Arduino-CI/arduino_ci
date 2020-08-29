@@ -41,7 +41,7 @@ This will install the necessary ruby gem, and run it.  There are no command line
 
 ### `.arduino-ci.yaml` ArduinoCI configuration
 
-This file controls all aspects of building and unit testing.  The (relatively-complete) defaults can be found [in the base project](../../misc/default.yaml).
+This file controls all aspects of building and unit testing.  The (relatively-complete) defaults can be found [in the base project](../../misc/default.yml).
 
 The most relevant sections for most projects will be as follows:
 

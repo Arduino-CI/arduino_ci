@@ -22,7 +22,7 @@ Windows  | [![Windows Build status](https://ci.appveyor.com/api/projects/status/
 |-----------------------------------------------------------------------------|:--:|:---------------:|:--------:|:-------------:|:-------:|:---:|:-----:|:--------|
 |[ArduinoCI](https://github.com/ianfixes/arduino_ci)                          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |Free (Apache-2.0)|
 |[ArduinoUnit](https://github.com/mmurdoch/arduinounit)                       | ❌ | ❌ | ⚠️ Hardware-based|❌ | ✅ | ✅ | ✅ |Free (MIT)|
-|[Adafruit `travis-ci-arduino`](https://github.com/adafruit/travis-ci-arduino)| ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |Free (MIT)|
+|[Adafruit `ci-arduino`](https://github.com/adafruit/ci-arduino)| ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |Free (MIT)|
 |[PlatformIO](https://platformio.org)                                         | ✅ | ✅ | ⚠️ Paid only | ❌ | ✅ | ✅ | ✅ |⚠️ EULA|
 |Official [Arduino IDE](https://www.arduino.cc/en/main/software)              | ❌ | ⚠️ Manually | ❌ |N/A 😉| ✅ | ✅ | ✅ |Free (GPLv2)|
 
@@ -167,6 +167,6 @@ This gem was written by Ian Katz (ianfixes@gmail.com) in 2018.  It's released un
 ## See Also
 
 * [Contributing](CONTRIBUTING.md)
-* [Adafruit/travis-ci-arduino](https://github.com/adafruit/travis-ci-arduino) which inspired this project
+* [Adafruit/ci-arduino](https://github.com/adafruit/ci-arduino) which inspired this project
 * [mmurdoch/arduinounit](https://github.com/mmurdoch/arduinounit) from which the unit test macros were adopted
 
