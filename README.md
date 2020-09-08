@@ -1,5 +1,5 @@
 
-# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.3.0)
+# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) [![Documentation](https://img.shields.io/badge/docs-rdoc.info-blue.svg)](https://www.rubydoc.info/gems/arduino_ci/0.3.0)
 
 You want to run tests on your Arduino library (bonus: without hardware present), but the IDE doesn't support that.  Arduino CI provides that ability.
 
@@ -11,8 +11,8 @@ You want your Arduino library to be automatically built and tested every time so
 
 Platform | CI Status
 ---------|:---------
-OSX      | [![OSX Build Status](http://badges.herokuapp.com/travis/ianfixes/arduino_ci?env=BADGE=osx&label=build&branch=master)](https://travis-ci.org/ianfixes/arduino_ci)
-Linux    | [![Linux Build Status](http://badges.herokuapp.com/travis/ianfixes/arduino_ci?env=BADGE=linux&label=build&branch=master)](https://travis-ci.org/ianfixes/arduino_ci)
+OSX      | [![OSX Build Status](https://badges.herokuapp.com/travis/ianfixes/arduino_ci?env=BADGE=osx&label=build&branch=master)](https://travis-ci.org/ianfixes/arduino_ci)
+Linux    | [![Linux Build Status](https://badges.herokuapp.com/travis/ianfixes/arduino_ci?env=BADGE=linux&label=build&branch=master)](https://travis-ci.org/ianfixes/arduino_ci)
 Windows  | [![Windows Build status](https://ci.appveyor.com/api/projects/status/8f6e39dea319m83q/branch/master?svg=true)](https://ci.appveyor.com/project/ianfixes/arduino-ci)
 
 
