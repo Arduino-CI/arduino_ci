@@ -29,6 +29,8 @@ Windows  | [![Windows Build status](https://ci.appveyor.com/api/projects/status/
 
 ## Quick Start
 
+Create a project in (or copy your project to) the Projects directory. 
+
 For a bare-bones example that you can copy from, see [SampleProjects/DoSomething](SampleProjects/DoSomething).
 
 The complete set of C++ unit tests for the `arduino_ci` library itself are in the [SampleProjects/TestSomething](SampleProjects/TestSomething) project.  The [test files](SampleProjects/TestSomething/test/) are named after the type of feature being tested.
@@ -82,10 +84,11 @@ vendor
 
 ### Installing the Dependencies
 
-Fulfilling the `arduino_ci` library dependency is as easy as running this command:
+Fulfilling the `arduino_ci` library dependency is as easy as running either of these two commands:
 
 ```
-$ bundle install
+$ bundle install   # adds packages to global library (may require admin rights)
+$ bundle install --path vendor/bundle   # adds packages to local library
 ```
 
 

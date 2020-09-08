@@ -5,6 +5,7 @@ Gemfile.lock
 /coverage/
 /doc/
 /pkg/
+/Projects/
 /spec/reports/
 vendor
 *.gem
