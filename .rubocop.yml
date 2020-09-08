@@ -4,8 +4,7 @@ AllCops:
     - 'spec/*.rb'
     - '**/generated_parser/*'
     - './vendor/**/*'
-
-# inherit_from: .rubocop_todo.yml
+    - 'SampleProjects/**/vendor/**/*'
 
 # TODO: stuff I actually want to fix
 Style/RescueStandardError:
