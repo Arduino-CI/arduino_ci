@@ -8,11 +8,11 @@ Gem::Specification.new do |spec|
   spec.version       = ArduinoCI::VERSION
   spec.licenses      = ['Apache-2.0']
   spec.authors       = ["Ian Katz"]
-  spec.email         = ["ianfixes@gmail.com"]
+  spec.email         = ["arduino.continuous.integration@gmail.com"]
 
   spec.summary       = "Tools for building and unit testing Arduino libraries"
   spec.description   = spec.description
-  spec.homepage      = "http://github.com/ianfixes/arduino_ci"
+  spec.homepage      = "http://github.com/Arduino-CI/arduino_ci"
 
   spec.bindir        = "exe"
   rejection_regex    = %r{^(test|spec|features)/}
