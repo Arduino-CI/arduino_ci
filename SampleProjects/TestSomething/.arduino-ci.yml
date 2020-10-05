@@ -4,6 +4,7 @@ unittest:
   platforms:
     - uno
     - due
+    - mega2560
 
 compile:
   platforms:

@@ -27,8 +27,8 @@
 #include <inttypes.h>
 #include <avr/io.h>
 
-// I see EEPROM_SIZE defined in various arv/io*.h files; why isn't it defined here?
-#define EEPROM_SIZE (4096)
+#ifdef EEPROM_SIZE
+
 // Is this all the custom code required?
 static uint8_t eeprom[EEPROM_SIZE];
 inline uint8_t eeprom_read_byte( uint8_t* index ) { return eeprom[(unsigned long) index % EEPROM_SIZE]; }
@@ -152,4 +152,5 @@ struct EEPROMClass{
 };
 
 static EEPROMClass EEPROM;
+#endif
 #endif
