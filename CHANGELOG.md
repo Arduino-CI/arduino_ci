@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Support for EEPROM
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
