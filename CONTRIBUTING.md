@@ -3,7 +3,7 @@
 ArduinoCI uses a very standard GitHub workflow.
 
 1. Fork the repository on github
-2. Make your desired changes on top of the latest `master` branch
+2. Make your desired changes on top of the latest `master` branch, document them in [CHANGELOG.md](CHANGELOG.md)
 3. Push to your personal fork
 4. Open a pull request
     * If you are submitting code, use `master` as the base branch
