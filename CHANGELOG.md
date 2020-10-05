@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Don't define `ostream& operator<<(nullptr_t)` if already defined by Apple
 
 ### Security
 
