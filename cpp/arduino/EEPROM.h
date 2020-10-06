@@ -27,6 +27,9 @@
 #include <inttypes.h>
 #include <avr/io.h>
 
+#if !defined(EEPROM_SIZE) && defined(E2END) && (E2END)
+#define EEPROM_SIZE (E2END + 1)
+#endif 
 #ifdef EEPROM_SIZE
 
 // Is this all the custom code required?
