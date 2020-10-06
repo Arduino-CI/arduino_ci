@@ -351,17 +351,6 @@
    Last two letters:   EEAR address.  */
 #define __EEPROM_REG_LOCATIONS__ 1F2021
 
-/* According to https://ww1.microchip.com/downloads/en/devicedoc/atmel-2549-8-bit-avr-microcontroller-atmega640-1280-1281-2560-2561_datasheet.pdf,
- * the Atmel ATmega640/V-1280/V-1281/V-2560/V-2561/V microcontrollers each have 
- * 4Kbytes of EEPROM and since this file is included from things that seem
- * to match that description, it would be helpful to know that EEPROM is 
- * available and know its size. This macro is defined for many other models,
- * so we will add it here.
- * 
- * See https://github.com/Arduino-CI/arduino_ci/issues/166#issuecomment-703904394.
- */
-#define EEPROM_SIZE     (4096)
-
 #define GTCCR   _SFR_IO8(0x23)
 #define TSM     7
 #define PSRASY  1

@@ -100,6 +100,7 @@ platforms:
       features:
       defines:
         - __AVR_ATmega2560__
+        - EEPROM_SIZE=(4096)
       warnings:
       flags:
   cplayClassic:
