@@ -4,7 +4,7 @@
   New version by Christopher Andrews 2015.
 
   Copy of https://github.com/arduino/ArduinoCore-megaavr/blob/c8a1dd996c783777ec46167cfd8ad3fd2e6df185/libraries/EEPROM/src/EEPROM.h
-  modified by James Foster 2020 to work with Arduino CI.
+  modified by James Foster in 2020 to work with Arduino CI.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,15 +27,23 @@
 #include <inttypes.h>
 #include <avr/io.h>
 
+// different EEPROM implementations have different macros that leak out
 #if !defined(EEPROM_SIZE) && defined(E2END) && (E2END)
 #define EEPROM_SIZE (E2END + 1)
 #endif 
-#ifdef EEPROM_SIZE
 
-// Is this all the custom code required?
+// Does the current board have EEPROM?
+#ifndef EEPROM_SIZE
+// In lieu of an "EEPROM.h not found" error for unsupported boards
+#error "EEPROM library not available for your board"
+#endif
+
+// On a real device this would be in hardware, but we have a mock board!
 static uint8_t eeprom[EEPROM_SIZE];
 inline uint8_t eeprom_read_byte( uint8_t* index ) { return eeprom[(unsigned long) index % EEPROM_SIZE]; }
 inline void eeprom_write_byte( uint8_t* index, uint8_t value ) { eeprom[(unsigned long) index % EEPROM_SIZE] = value; }
+
+// Everything following is from the original (referenced above)
 
 /***
     EERef class.
@@ -155,5 +163,4 @@ struct EEPROMClass{
 };
 
 static EEPROMClass EEPROM;
-#endif
 #endif
