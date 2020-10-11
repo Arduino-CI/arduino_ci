@@ -3,6 +3,7 @@
 #include <avr/io.h>
 #include "WString.h"
 #include "PinHistory.h"
+#include "EEPROM.h"
 
 // random
 void randomSeed(unsigned long seed);
@@ -87,12 +88,19 @@ class GodmodeState {
       spi.readDelayMicros = 0;
     }
 
+    void resetEEPROM() {
+      for(int i = 0; i < EEPROM.length(); ++i){
+        EEPROM.update(i, 255);
+      }
+    }
+
     void reset() {
       resetClock();
       resetPins();
       resetInterrupts();
       resetPorts();
       resetSPI();
+      resetEEPROM();
       seed = 1;
     }
 
