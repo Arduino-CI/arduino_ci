@@ -63,6 +63,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Proper `ostream operator <<` for `nullptr`
 - Proper comparison operations fro `nullptr`
+- Mocks for avr/sleep.h and avr/wdt.h
+- Definitions for ISR and ADCSRA
 
 ### Changed
 - `Compare.h` heavily refactored to use a smallish macro

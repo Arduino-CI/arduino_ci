@@ -1,0 +1,11 @@
+compile:
+  libraries: ~
+  platforms:
+    - uno
+    - leonardo
+
+unittest:
+  libraries: ~
+  platforms:
+    - uno
+    - leonardo
