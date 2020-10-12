@@ -23,14 +23,22 @@ unittest(writeRead)
   assertEqual(24, a);
 
   EEPROM.write(0, 128);
-  uint8_t b = EEPROM.read(0);
-  assertEqual(128, b);
+  a = EEPROM.read(0);
+  assertEqual(128, a);
 
-// this will fail since it is out of bound (0 - 255)
   EEPROM.write(0, 256);
-  uint8_t c = EEPROM.read(0);
-  assertEqual(256, c);
+  a = EEPROM.read(0);
+  assertEqual(0, a);
 
+  int addr = EEPROM_SIZE / 2;
+  EEPROM.write(addr, 63);
+  a = EEPROM.read(addr);
+  assertEqual(63, a);
+
+  addr = EEPROM_SIZE - 1;
+  EEPROM.write(addr, 188);
+  a = EEPROM.read(addr);
+  assertEqual(188, a);
 }
 
 unittest(updateWrite)
@@ -55,7 +63,7 @@ unittest(array)
 {
   int val = 10;
   EEPROM[2] = val;
-  uint8_t a = EEPROM.read(2);
+  uint8_t a = EEPROM[2];
   assertEqual(10, a);
 }
 
