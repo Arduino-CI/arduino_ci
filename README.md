@@ -82,10 +82,10 @@ vendor
 
 ### Installing the Dependencies
 
-Fulfilling the `arduino_ci` library dependency is as easy as running this command:
-
+Fulfilling the `arduino_ci` library dependency is as easy as running either of these two commands:
 ```
-$ bundle install
+$ bundle install   # adds packages to global library (may require admin rights)
+$ bundle install --path vendor/bundle   # adds packages to local library
 ```
 
 
