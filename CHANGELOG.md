@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Don't define `ostream& operator<<(nullptr_t)` if already defined by Apple
+- Don't define `ARDUINO=100` if already defined as something else
 
 ### Security
 
