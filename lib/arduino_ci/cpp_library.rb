@@ -334,9 +334,9 @@ module ArduinoCI
         ]
       end
       arg_sets << test_args(aux_libraries, ci_gcc_config)
-      if (arg_sets.flatten(1).index{|s| s.include?("-DARDUINO=")} == nil) 
-        arg_sets << ["-DARDUINO=100"]
-      end
+      index = arg_sets.flatten(1).index { |s| s.include?("-DARDUINO=") }
+      arg_sets << ["-DARDUINO=100"] if index.nil?
+    end
       arg_sets << cpp_files_libraries(aux_libraries).map(&:to_s)
       arg_sets << [test_file.to_s]
       args = arg_sets.flatten(1)
