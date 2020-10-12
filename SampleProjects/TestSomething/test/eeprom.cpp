@@ -5,6 +5,12 @@
 #if defined(EEPROM_SIZE) || (defined(E2END) && E2END)
 #include <EEPROM.h>
 
+GodmodeState* state = GODMODE();
+unittest_setup()
+{
+  state->reset();
+}
+
 unittest(length)
 {
   assertEqual(EEPROM_SIZE, EEPROM.length());
