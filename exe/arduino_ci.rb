@@ -29,7 +29,12 @@ class Parser
         output_options[:skip_unittests] = p
       end
 
-      opts.on("--skip-compilation", "Don't compile example sketches") do |p|
+      opts.on("--skip-compilation", "Don't compile example sketches (deprecated)") do |p|
+        puts "The option --skip-compilation has been deprecated in favor of --skip-examples-compilation"
+        output_options[:skip_compilation] = p
+      end
+
+      opts.on("--skip-examples-compilation", "Don't compile example sketches") do |p|
         output_options[:skip_compilation] = p
       end
 

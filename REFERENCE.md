@@ -19,9 +19,14 @@ When testing locally, it's often advantageous to limit the number of tests that 
 This completely skips the unit testing portion of the CI script.
 
 
-### `--skip-compilation` option
+### `--skip-compilation` option (deprecated)
 
-This completely skips the compilation tests (of library examples) portion of the CI script.
+This completely skips the compilation tests (of library examples) portion of the CI script.  It does not skip the compilation of unit tests.
+
+
+### `--skip-examples-compilation` option
+
+This completely skips the compilation tests (of library examples) portion of the CI script.  It does not skip the compilation of unit tests.
 
 
 ### `--testfile-select` option
@@ -90,8 +95,8 @@ platforms:
 
 ### Control How Examples Are Compiled
 
-Put a file `.arduino-ci.yml` in each example directory where you require a different configuration than default.  
-The `compile:` section controls the platforms on which the compilation will be attempted, as well as any external libraries that must be installed and included.  
+Put a file `.arduino-ci.yml` in each example directory where you require a different configuration than default.
+The `compile:` section controls the platforms on which the compilation will be attempted, as well as any external libraries that must be installed and included.
 
 ```yaml
 compile:
