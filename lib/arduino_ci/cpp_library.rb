@@ -122,6 +122,8 @@ module ArduinoCI
     # @param path [Pathname] The path to check
     # @return [bool]
     def in_tests_dir?(path)
+      return false unless tests_dir.exist?
+
       tests_dir_aliases = [tests_dir, tests_dir.realpath]
       # we could do this but some rubies don't return an enumerator for ascend
       # path.ascend.any? { |part| tests_dir_aliases.include?(part) }
