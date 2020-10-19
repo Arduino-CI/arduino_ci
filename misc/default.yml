@@ -15,7 +15,26 @@ packages:
     url: https://dl.espressif.com/dl/package_esp32_index.json
 
 platforms:
-
+  
+  nano_v2:
+    board: arduino:avr:nano
+    package: arduino:avr
+    gcc:
+      features:
+      defines:
+        - __AVR_ATmega168__
+      warnings:
+      flags:
+  nano_v3: &nano_p
+    board: arduino:avr:nano
+    package: arduino:avr
+    gcc:
+      features:
+      defines:
+        - __AVR_ATmega328__
+      warnings:
+      flags:
+  nano: *nano_p
   uno:
     board: arduino:avr:uno
     package: arduino:avr
@@ -31,7 +50,13 @@ platforms:
     gcc:
       features:
       defines:
-        - __AVR_ATmega328__
+        # The due should use the ATSAM3X8E; however, that component does not seem
+        # to be defined for the Godmode tests/components
+        # The next closest part would be the AVR_ATmega2560 as both boards
+        # use the mega form factor
+        #- __ATSAM3X8E__
+        - __AVR_ATmega2560__
+        #- __AVR_ATmega328__
       warnings:
       flags:
   zero:
@@ -91,6 +116,23 @@ platforms:
     gcc:
       features:
       defines:
+      warnings:
+      flags:
+  grand_central_m4:
+    board: adafruit:samd:adafruit_grand_central_m4
+    package: adafruit:samd
+    gcc:
+      features:
+      defines:
+      warnings:
+      flags:
+  mega1280:
+    board: arduino:avr:mega:cpu=atmega1280
+    package: arduino:avr
+    gcc:
+      features:
+      defines:
+        - __AVR_ATmega1280__
       warnings:
       flags:
   mega2560:
