@@ -19,8 +19,8 @@ RSpec.describe "TestSomething C++ without excludes" do
   context "cpp_files" do
     it "finds cpp files in directory" do
       testsomething_cpp_files = [
-        Pathname.new("TestSomething/test-something.cpp"),
-        Pathname.new("TestSomething/excludeThis/exclude-this.cpp")
+        Pathname.new("TestSomething/src/test-something.cpp"),
+        Pathname.new("TestSomething/src/excludeThis/exclude-this.cpp")
       ]
       relative_paths = cpp_library.cpp_files.map { |f| get_relative_dir(f) }
       expect(relative_paths).to match_array(testsomething_cpp_files)
@@ -47,10 +47,10 @@ RSpec.describe "TestSomething C++" do
   cpp_lib_path = sampleproj_path + "TestSomething"
   cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path,
                                           Pathname.new("my_fake_arduino_lib_dir"),
-                                          ["excludeThis"].map(&Pathname.method(:new)))
+                                          ["src/excludeThis"].map(&Pathname.method(:new)))
   context "cpp_files" do
     it "finds cpp files in directory" do
-      testsomething_cpp_files = [Pathname.new("TestSomething/test-something.cpp")]
+      testsomething_cpp_files = [Pathname.new("TestSomething/src/test-something.cpp")]
       relative_paths = cpp_library.cpp_files.map { |f| get_relative_dir(f) }
       expect(relative_paths).to match_array(testsomething_cpp_files)
     end
