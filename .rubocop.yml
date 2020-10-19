@@ -31,6 +31,12 @@ Layout/ExtraSpacing:
 Layout/EndOfLine:
   EnforcedStyle: lf
 
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: start_of_line
+
+Layout/CaseIndentation:
+  EnforcedStyle: end
+
 Metrics/LineLength:
   Description: Limit lines to 80 characters.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#80-character-limits

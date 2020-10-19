@@ -170,7 +170,6 @@ module ArduinoCI
       raise ArgumentError, 'some_dir is not a Pathname' unless some_dir.is_a? Pathname
       return [] unless some_dir.exist? && some_dir.directory?
 
-      real = some_dir.realpath
       files = some_dir.realpath.children.reject(&:directory?)
       cpp = files.select { |path| extensions.include?(path.extname.downcase) }
       not_hidden = cpp.reject { |path| path.basename.to_s.start_with?(".") }
