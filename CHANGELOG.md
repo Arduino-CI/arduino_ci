@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add `__AVR__` to defines when compiling
 - `arduino_ci_remote.rb` CLI switch `--skip-examples-compilation`
 - Add support for `diditalPinToPort()`, `digitalPinToBitMask()`, and `portOutputRegister()`
+- `CppLibrary.header_files` to find header files
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
 - Revise math macros to avoid name clashes
+- `CppLibrary` functions returning C++ header or code files now respect the 1.0/1.5 library specification
 
 ### Deprecated
 - `arduino_ci_remote.rb` CLI switch `--skip-compilation`

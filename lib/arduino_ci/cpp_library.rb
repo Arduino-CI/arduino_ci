@@ -55,6 +55,18 @@ module ArduinoCI
       @vendor_bundle_cache = nil
     end
 
+    # Decide whether this is a 1.5-compatible library
+    #
+    # according to https://arduino.github.io/arduino-cli/latest/library-specification
+    #
+    # Should match logic from https://github.com/arduino/arduino-cli/blob/master/arduino/libraries/loader.go
+    # @return [bool]
+    def one_point_five?
+      lib_props = (@base_dir + "library.properties")
+      src_dir = (@base_dir + "src")
+      [lib_props, src_dir].all?(&:exist?) && lib_props.file? && src_dir.directory?
+    end
+
     # Guess whether a file is part of the vendor bundle (indicating we should ignore it).
     #
     # A safe way to do this seems to be to check whether any of the installed gems
@@ -152,41 +164,76 @@ module ArduinoCI
 
     # Get a list of all CPP source files in a directory and its subdirectories
     # @param some_dir [Pathname] The directory in which to begin the search
+    # @param extensions [Array<Sring>] The set of allowable file extensions
     # @return [Array<Pathname>] The paths of the found files
-    def cpp_files_in(some_dir)
+    def code_files_in(some_dir, extensions)
       raise ArgumentError, 'some_dir is not a Pathname' unless some_dir.is_a? Pathname
       return [] unless some_dir.exist? && some_dir.directory?
 
       real = some_dir.realpath
-      files = Find.find(real).map { |p| Pathname.new(p) }.reject(&:directory?)
-      cpp = files.select { |path| CPP_EXTENSIONS.include?(path.extname.downcase) }
+      files = some_dir.realpath.children.reject(&:directory?)
+      cpp = files.select { |path| extensions.include?(path.extname.downcase) }
       not_hidden = cpp.reject { |path| path.basename.to_s.start_with?(".") }
       not_hidden.sort_by(&:to_s)
+    end
+
+    # Get a list of all CPP source files in a directory and its subdirectories
+    # @param some_dir [Pathname] The directory in which to begin the search
+    # @param extensions [Array<Sring>] The set of allowable file extensions
+    # @return [Array<Pathname>] The paths of the found files
+    def code_files_in_recursive(some_dir, extensions)
+      raise ArgumentError, 'some_dir is not a Pathname' unless some_dir.is_a? Pathname
+      return [] unless some_dir.exist? && some_dir.directory?
+
+      real = some_dir.realpath
+      Find.find(real).map { |p| Pathname.new(p) }.select(&:directory?).map { |d| code_files_in(d, extensions) }.flatten
+    end
+
+    # Header files that are part of the project library under test
+    # @return [Array<Pathname>]
+    def header_files
+      ret = if one_point_five?
+        code_files_in_recursive(@base_dir + "src", HPP_EXTENSIONS)
+      else
+        [@base_dir, @base_dir + "utility"].map { |d| code_files_in(d, HPP_EXTENSIONS) }.flatten
+      end
+
+      # note to future troubleshooter: some of these tests may not be relevant, but at the moment at
+      # least some of them are tied to existing features
+      ret.reject { |p| vendor_bundle?(p) || in_tests_dir?(p) || in_exclude_dir?(p) }
     end
 
     # CPP files that are part of the project library under test
     # @return [Array<Pathname>]
     def cpp_files
-      cpp_files_in(@base_dir).reject { |p| vendor_bundle?(p) || in_tests_dir?(p) || in_exclude_dir?(p) }
+      ret = if one_point_five?
+        code_files_in_recursive(@base_dir + "src", CPP_EXTENSIONS)
+      else
+        [@base_dir, @base_dir + "utility"].map { |d| code_files_in(d, CPP_EXTENSIONS) }.flatten
+      end
+
+      # note to future troubleshooter: some of these tests may not be relevant, but at the moment at
+      # least some of them are tied to existing features
+      ret.reject { |p| vendor_bundle?(p) || in_tests_dir?(p) || in_exclude_dir?(p) }
     end
 
     # CPP files that are part of the arduino mock library we're providing
     # @return [Array<Pathname>]
     def cpp_files_arduino
-      cpp_files_in(ARDUINO_HEADER_DIR)
+      code_files_in(ARDUINO_HEADER_DIR, CPP_EXTENSIONS)
     end
 
     # CPP files that are part of the unit test library we're providing
     # @return [Array<Pathname>]
     def cpp_files_unittest
-      cpp_files_in(UNITTEST_HEADER_DIR)
+      code_files_in(UNITTEST_HEADER_DIR, CPP_EXTENSIONS)
     end
 
     # CPP files that are part of the 3rd-party libraries we're including
     # @param [Array<String>] aux_libraries
     # @return [Array<Pathname>]
     def cpp_files_libraries(aux_libraries)
-      arduino_library_src_dirs(aux_libraries).map { |d| cpp_files_in(d) }.flatten.uniq
+      arduino_library_src_dirs(aux_libraries).map { |d| code_files_in(d, CPP_EXTENSIONS) }.flatten.uniq
     end
 
     # Returns the Pathnames for all paths to exclude from testing and compilation
@@ -204,15 +251,13 @@ module ArduinoCI
     # The files provided by the user that contain unit tests
     # @return [Array<Pathname>]
     def test_files
-      cpp_files_in(tests_dir)
+      code_files_in(tests_dir, CPP_EXTENSIONS)
     end
 
     # Find all directories in the project library that include C++ header files
     # @return [Array<Pathname>]
     def header_dirs
-      real = @base_dir.realpath
-      all_files = Find.find(real).map { |f| Pathname.new(f) }.reject(&:directory?)
-      unbundled = all_files.reject { |path| vendor_bundle?(path) }
+      unbundled = header_files.reject { |path| vendor_bundle?(path) }
       unexcluded = unbundled.reject { |path| in_exclude_dir?(path) }
       files = unexcluded.select { |path| HPP_EXTENSIONS.include?(path.extname.downcase) }
       files.map(&:dirname).uniq
@@ -241,15 +286,8 @@ module ArduinoCI
     def arduino_library_src_dirs(aux_libraries)
       # Pull in all possible places that headers could live, according to the spec:
       # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification
-      # TODO: be smart and implement library spec (library.properties, etc)?
-      subdirs = ["", "src", "utility"]
-      all_aux_include_dirs_nested = aux_libraries.map do |libdir|
-        # library manager coerces spaces in package names to underscores
-        # see https://github.com/Arduino-CI/arduino_ci/issues/132#issuecomment-518857059
-        legal_libdir = libdir.tr(" ", "_")
-        subdirs.map { |subdir| Pathname.new(@arduino_lib_dir) + legal_libdir + subdir }
-      end
-      all_aux_include_dirs_nested.flatten.select(&:exist?).select(&:directory?)
+
+      aux_libraries.map { |d| self.new(d, @arduino_lib_dir, @exclude_dirs).header_dirs }.flatten
     end
 
     # GCC command line arguments for including aux libraries
