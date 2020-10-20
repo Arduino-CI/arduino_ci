@@ -6,6 +6,7 @@
 #include <cassert>
 #include "Stream.h"
 
+using std::vector;
 
 // Some inspiration taken from https://github.com/arduino/ArduinoCore-megaavr/blob/d2a81093ba66d22dbda14c30d146c231c5910734/libraries/Wire/src/Wire.cpp
 class TwoWire : public ObservableDataStream
@@ -161,8 +162,9 @@ public:
   // testing methods
   bool getIsMaster() { return isMaster; }
   int getAddress() { return txAddress; }
-  vector<uint8_t> getTxBuffer() { return txBuffer; }
-  vector<uint8_t> getWriteData() { return writeData; }
+  bool isTxBufferEmpty() { return txBuffer.empty(); }
+  uint8_t getTxBufferElement(int index) { return txBuffer.at(index); }
+  uint8_t getWriteDataElement(int index) { return writeData.at(index); }
 
 private:
   bool isMaster = false;

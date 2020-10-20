@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <Wire.h>
+using namespace std;
 
 unittest(beginAsMaster) {
     Wire.begin();
@@ -27,19 +28,19 @@ unittest(getSlaveAddress) {
 unittest(begin_write_end) {
     Wire.begin();
     Wire.beginTransmission(14);
-    assertEqual(14, txAddress);
+    assertEqual(14, Wire.getAddress());
     
-    assertTrue(Wire.getTxBuffer().empty());
+    assertTrue(Wire.isTxBufferEmpty());
 
     Wire.write(0x07);
     Wire.write(0x0E);
-    assertEqual(0x07, getTxBuffer().at(0));
-    assertEqual(0x0E, getTxBuffer().at(1));
+    assertEqual(0x07, Wire.getTxBufferElement(0));
+    assertEqual(0x0E, Wire.getTxBufferElement(1));
 
     Wire.endTransmission(true);
-    assertTrue(txBuffer.empty());
-    assertEqual(0x07, getWriteData.at(0));
-    assertEqual(0x0E, getWriteData.at(1));
+    assertTrue(Wire.isTxBufferEmpty());
+    assertEqual(0x07, Wire.getWriteDataElement(0));
+    assertEqual(0x0E, Wire.getWriteDataElement(1));
 }
 
 // want to add read test, though it seems to depend on requestFrom
