@@ -2,11 +2,38 @@
 #pragma once
 
 #include <inttypes.h>
+
+// https://github.com/Arduino-CI/arduino_ci/issues/165
+#ifdef max
+#undef max
+#ifdef __cplusplus
+template <class T, class L>
+auto max(const T &a, const L &b) -> decltype((b < a) ? b : a) {
+  return (a < b) ? b : a;
+}
+#else
+#define max(a, b)                                                              \
+  ({                                                                           \
+    __typeof__(a) _a = (a);                                                    \
+    __typeof__(b) _b = (b);                                                    \
+    _a > _b ? _a : _b;                                                         \
+  })
+#endif
+#endif
+
+// map is already defined in AvrMath.h. Need to use C++'s map.
+#ifdef map
+#undef map
+#endif
+
+
 #include <vector>
+#include <map>
 #include <cassert>
 #include "Stream.h"
 
 using std::vector;
+using std::map;
 
 // Some inspiration taken from https://github.com/arduino/ArduinoCore-megaavr/blob/d2a81093ba66d22dbda14c30d146c231c5910734/libraries/Wire/src/Wire.cpp
 class TwoWire : public ObservableDataStream
@@ -45,7 +72,6 @@ public:
   // Begin a transmission to the I2C slave device with the given address. Subsequently, queue bytes for
   // transmission with the write() function and transmit them by calling endTransmission().
   void beginTransmission(int address) {
-    // TODO: implement
     assert(isMaster);
     txAddress = address;
     txBuffer.clear();
@@ -59,9 +85,12 @@ public:
   // queued by write().
   uint8_t endTransmission(uint8_t sendStop) {
     assert(isMaster);
-    txAddress = 0;
-    writeData = txBuffer;
+    int bufferSize = txBuffer.size();
+    dataWritten[txAddress] = txBuffer;
     txBuffer.clear();
+    // ensure separate objects
+    assert(bufferSize == dataWritten[txAddress].size());
+    txAddress = 0;
     return 0; // success
   }
   uint8_t endTransmission(void) {
@@ -72,10 +101,13 @@ public:
   // Used by the master to request bytes from a slave device. The bytes may then be retrieved with the
   // available() and read() functions.
   uint8_t requestFrom(int address, int quantity, int stop) {
-    // TODO: implement
-    // NOTE: deemed unnecessary for current high level implementation
+    // TODO: implement quantity and stop?
     assert(isMaster);
-    return 0; // number of bytes returned from the slave device
+    
+    int oldRxBufferLength = rxBuffer.size();
+    // append vector to vector
+    rxBuffer.insert(rxBuffer.end(), dataToRead[address].begin(), dataToRead[address].end());
+    return rxBuffer.size()-oldRxBufferLength; // number of bytes returned from the slave device
   }
   uint8_t requestFrom(int address, int quantity) {
     int stop = true;
@@ -96,7 +128,6 @@ public:
   // Writes data from a slave device in response to a request from a master, or queues bytes for transmission from a
   // master to slave device (in-between calls to beginTransmission() and endTransmission()).
   size_t write(uint8_t value) {
-    // TODO: implement
     txBuffer.push_back(value);
     return 1; // number of bytes written
   }
@@ -116,9 +147,6 @@ public:
   // Returns the number of bytes available for retrieval with read(). This should be called on a master device after a
   // call to requestFrom() or on a slave inside the onReceive() handler.
   int available(void) {
-    // TODO: implement
-    // NOTE: probably unnecessary for current high level implementation
-
     return rxBuffer.size(); // number of bytes available for reading
   }
 
@@ -163,16 +191,18 @@ public:
   bool getIsMaster() { return isMaster; }
   int getAddress() { return txAddress; }
   bool isTxBufferEmpty() { return txBuffer.empty(); }
-  uint8_t getTxBufferElement(int index) { return txBuffer.at(index); }
-  uint8_t getWriteDataElement(int index) { return writeData.at(index); }
+  int getTxBufferElement(int index) { return txBuffer.at(index); }
+  vector<int> getDataWritten(int address) { return dataWritten.at(address); }
+  int getRxBufferSize() { return rxBuffer.size(); }
+  void setDataToRead(int address, vector<int> data) { dataToRead[address] = data; }
 
 private:
   bool isMaster = false;
   uint8_t txAddress;
   static void (*user_onReceive)(int);
   static void (*user_onRequest)(void);
-  // Consider queue data structure for a more "buffer-like" implementation with HEAD/TAIL
-  vector<uint8_t> txBuffer, rxBuffer, writeData;
+  vector<int> txBuffer, rxBuffer;
+  map<uint8_t, vector<int>> dataToRead, dataWritten;
 };
 
 extern TwoWire Wire;
