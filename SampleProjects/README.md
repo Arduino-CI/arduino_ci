@@ -12,3 +12,4 @@ Because of this, these projects include some intentional quirks that differ from
 * "OnePointFiveMalformed" is a non-functional library meant to test file inclusion logic on libraries that attempt to conform to the ["1.5" specfication](https://arduino.github.io/arduino-cli/latest/library-specification/) but fail to include a `src` directory
 * "OnePointFiveDummy" is a non-functional library meant to test file inclusion logic on libraries conforming to the ["1.5" specfication](https://arduino.github.io/arduino-cli/latest/library-specification/)
 * "DependOnSomething" is a non-functional library meant to test file inclusion logic with dependencies
+* "ExcludeSomething" is a non-functional library meant to test directory exclusion logic
