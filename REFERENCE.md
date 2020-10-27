@@ -581,3 +581,40 @@ unittest(spi) {
   assertEqual("LMNOe", String(inBuf));
 }
 ```
+
+### EEPROM
+
+`EEPROM` is a global with a simple API to read and write bytes to persistent memory (like a tiny hard disk) given an `int` location. Since the Arduino core already provides this as a global, and the core API is sufficient for basic testing (read/write), there is no direct tie to the `GODMODE` API. (If you need more, such as a log of intermediate values, enter a feature request.)
+
+```C++
+unittest(eeprom)
+{
+  uint8_t a;
+  // size
+  assertEqual(EEPROM_SIZE, EEPROM.length());
+  // initial values
+  a = EEPROM.read(0);
+  assertEqual(255, a);
+  // write and read
+  EEPROM.write(0, 24);
+  a = EEPROM.read(0);
+  assertEqual(24, a);
+  // update
+  EEPROM.write(1, 14);
+  EEPROM.update(1, 22);
+  a = EEPROM.read(1);
+  assertEqual(22, a);
+  // put and get
+  const float f1 = 0.025f;
+  float f2 = 0.0f;
+  EEPROM.put(5, f1);
+  assertEqual(0.0f, f2);
+  EEPROM.get(5, f2);
+  assertEqual(0.025f, f2);
+  // array access
+  int val = 10;
+  EEPROM[2] = val;
+  a = EEPROM[2];
+  assertEqual(10, a);
+}
+```
