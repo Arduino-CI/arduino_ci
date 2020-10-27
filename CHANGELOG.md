@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Don't define `ostream& operator<<(nullptr_t)` if already defined by Apple
 - `CppLibrary.in_tests_dir?` no longer produces an error if there is no tests directory
+- The definition of the `_SFR_IO8` macro no longer produces errors about rvalues
 
 ### Deprecated
 - `arduino_ci_remote.rb` CLI switch `--skip-compilation`

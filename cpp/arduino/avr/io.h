@@ -96,7 +96,7 @@
 #ifndef _AVR_IO_H_
 #define _AVR_IO_H_
 
-#define _SFR_IO8(io_addr) (io_addr) // this macro is all we need from the sfr file
+#define _SFR_IO8(io_addr) (*(volatile uint8_t *)(io_addr)) // this macro is all we need from the sfr file
 
 #if defined (__AVR_AT94K__)
 #  include "ioat94k.h"
