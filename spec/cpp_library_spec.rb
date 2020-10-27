@@ -90,7 +90,9 @@ RSpec.describe ArduinoCI::CppLibrary do
         "OnePointOhDummy/utility"
       ].map { |f| Pathname.new(f) },
       arduino_library_src_dirs: [],
-      test_files: []
+      test_files: [
+        "OnePointOhDummy/test/null.cpp",
+      ].map { |f| Pathname.new(f) }
     },
     OnePointFiveMalformed: {
       one_five: false,
@@ -118,7 +120,9 @@ RSpec.describe ArduinoCI::CppLibrary do
         "OnePointFiveDummy/src/subdir",
       ].map { |f| Pathname.new(f) },
       arduino_library_src_dirs: [],
-      test_files: []
+      test_files: [
+        "OnePointFiveDummy/test/null.cpp",
+      ].map { |f| Pathname.new(f) }
     }
   }
 
@@ -129,7 +133,9 @@ RSpec.describe ArduinoCI::CppLibrary do
     cpp_files_libraries: answers[:OnePointOhDummy][:cpp_files] + answers[:OnePointFiveDummy][:cpp_files],
     header_dirs: ["DependOnSomething/src"].map { |f| Pathname.new(f) }, # this is not recursive!
     arduino_library_src_dirs: answers[:OnePointOhDummy][:header_dirs] + answers[:OnePointFiveDummy][:header_dirs],
-    test_files: []
+    test_files: [
+        "DependOnSomething/test/null.cpp",
+      ].map { |f| Pathname.new(f) }
   }
 
   answers.freeze
