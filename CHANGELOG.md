@@ -20,15 +20,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Revise math macros to avoid name clashes
 - `CppLibrary` functions returning C++ header or code files now respect the 1.0/1.5 library specification
 
+### Fixed
+- Don't define `ostream& operator<<(nullptr_t)` if already defined by Apple
+- `CppLibrary.in_tests_dir?` no longer produces an error if there is no tests directory
+
 ### Deprecated
 - `arduino_ci_remote.rb` CLI switch `--skip-compilation`
 - Deprecated `arduino_ci_remote.rb` in favor of `arduino_ci.rb`
 
 ### Removed
-
-### Fixed
-- Don't define `ostream& operator<<(nullptr_t)` if already defined by Apple
-- `CppLibrary.in_tests_dir?` no longer produces an error if there is no tests directory
 
 ### Security
 
