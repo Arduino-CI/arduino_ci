@@ -210,6 +210,8 @@ def perform_unit_tests(file_config)
   all_platform_info = {}
   config.platforms_to_unittest.each { |p| all_platform_info[p] = assured_platform("unittest", p, config) }
 
+  inform("Library conforms to Arduino library specification") { cpp_library.one_point_five? ? "1.5" : "1.0" }
+
   # iterate boards / tests
   if !cpp_library.tests_dir.exist?
     inform_multiline("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") do

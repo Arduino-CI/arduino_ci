@@ -55,6 +55,19 @@ module ArduinoCI
       @vendor_bundle_cache = nil
     end
 
+    # The expected path to the library.properties file (i.e. even if it does not exist)
+    # @return [Pathname]
+    def library_properties_path
+      @base_dir + "library.properties"
+    end
+
+    # Whether library.properties definitions for this library exist
+    # @return [bool]
+    def library_properties?
+      lib_props = library_properties_path
+      lib_props.exist? && lib_props.file?
+    end
+
     # Decide whether this is a 1.5-compatible library
     #
     # according to https://arduino.github.io/arduino-cli/latest/library-specification
@@ -62,9 +75,10 @@ module ArduinoCI
     # Should match logic from https://github.com/arduino/arduino-cli/blob/master/arduino/libraries/loader.go
     # @return [bool]
     def one_point_five?
-      lib_props = (@base_dir + "library.properties")
+      return false unless library_properties?
+
       src_dir = (@base_dir + "src")
-      [lib_props, src_dir].all?(&:exist?) && lib_props.file? && src_dir.directory?
+      src_dir.exist? && src_dir.directory?
     end
 
     # Guess whether a file is part of the vendor bundle (indicating we should ignore it).
@@ -162,6 +176,21 @@ module ArduinoCI
         end
       end
       @has_libasan_cache[gcc_binary]
+    end
+
+    # Library properties
+    def library_properties
+      return nil unless library_properties?
+
+      LibraryProperties.new(library_properties_path)
+    end
+
+    # Get a list of all dependencies as defined in library.properties
+    # @return [Array<String>] The library names of the dependencies (not the paths)
+    def arduino_library_dependencies
+      return nil unless library_properties?
+
+      library_properties.depends
     end
 
     # Get a list of all CPP source files in a directory and its subdirectories
@@ -282,16 +311,19 @@ module ArduinoCI
       @last_err
     end
 
-    # Arduino library directories containing sources
+    # Arduino library directories containing sources -- only those of the dependencies
     # @return [Array<Pathname>]
     def arduino_library_src_dirs(aux_libraries)
       # Pull in all possible places that headers could live, according to the spec:
       # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification
 
-      aux_libraries.map { |d| self.new(d, @arduino_lib_dir, @exclude_dirs).header_dirs }.flatten
+      aux_libraries.map { |d| self.class.new(@arduino_lib_dir + d, @arduino_lib_dir, @exclude_dirs).header_dirs }.flatten.uniq
     end
 
     # GCC command line arguments for including aux libraries
+    #
+    # This function recursively collects the library directores of the dependencies
+    #
     # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @return [Array<String>] The GCC command-line flags necessary to include those libraries
     def include_args(aux_libraries)
@@ -354,6 +386,9 @@ module ArduinoCI
     end
 
     # build a file for running a test of the given unit test file
+    #
+    # The dependent libraries configuration is appended with data from library.properties internal to the library under test
+    #
     # @param test_file [Pathname] The path to the file containing the unit tests
     # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @param ci_gcc_config [Hash] The GCC config object
@@ -372,8 +407,12 @@ module ArduinoCI
           "-fsanitize=address"
         ]
       end
-      arg_sets << test_args(aux_libraries, ci_gcc_config)
-      arg_sets << cpp_files_libraries(aux_libraries).map(&:to_s)
+
+      # combine library.properties defs (if existing) with config file.
+      # TODO: as much as I'd like to rely only on the properties file(s), I think that would prevent testing 1.0-spec libs
+      full_aux_libraries = arduino_library_dependencies.nil? ? aux_libraries : aux_libaries + arduino_library_dependencies
+      arg_sets << test_args(full_aux_libraries, ci_gcc_config)
+      arg_sets << cpp_files_libraries(full_aux_libraries).map(&:to_s)
       arg_sets << [test_file.to_s]
       args = arg_sets.flatten(1)
       return nil unless run_gcc(gcc_binary, *args)
