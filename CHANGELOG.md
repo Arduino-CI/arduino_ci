@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `arduino_ci_remote.rb` CLI switch `--skip-examples-compilation`
 - Add support for `diditalPinToPort()`, `digitalPinToBitMask()`, and `portOutputRegister()`
 - `CppLibrary.header_files` to find header files
+- `LibraryProperties` to read metadata from Arduino libraries
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
