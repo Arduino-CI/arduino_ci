@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `LibraryProperties` to read metadata from Arduino libraries
 - `CppLibrary.library_properties_path`, `CppLibrary.library_properties?`, `CppLibrary.library_properties` to expose library properties of a Cpp library
 - `CppLibrary.arduino_library_dependencies` to list the dependent libraries specified by the library.properties file
+- `CppLibrary.print_stack_dump` prints stack trace dumps (on Windows specifically) to the console if encountered
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci

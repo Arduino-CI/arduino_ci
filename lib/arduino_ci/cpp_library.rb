@@ -421,14 +421,31 @@ module ArduinoCI
       executable
     end
 
+    # print any found stack dumps
+    # @param executable [Pathname] the path to the test file
+    def print_stack_dump(executable)
+      possible_dumpfiles = [
+        executable.sub_ext(executable.extname + ".stackdump")
+      ]
+      possible_dumpfiles.select(&:exist?).each do |dump|
+        puts "========== Stack dump from #{dump}:"
+        File.foreach(dump) { |line| print "    #{line}" }
+      end
+    end
+
     # run a test file
-    # @param [Pathname] the path to the test file
+    # @param executable [Pathname] the path to the test file
     # @return [bool] whether all tests were successful
     def run_test_file(executable)
       @last_cmd = executable
       @last_out = ""
       @last_err = ""
-      Host.run_and_output(executable.to_s.shellescape)
+      ret = Host.run_and_output(executable.to_s.shellescape)
+
+      # print any stack traces found during a failure
+      print_stack_dump(executable) unless ret
+
+      ret
     end
 
   end
