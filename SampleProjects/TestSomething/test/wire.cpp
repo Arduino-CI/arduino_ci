@@ -1,7 +1,7 @@
 #include <ArduinoUnitTests.h>
 #include <Arduino.h>
 #include <Wire.h>
-using namespace std;
+using std::deque;
 
 unittest(begin_write_end) {
     deque<uint8_t>* mosi = Wire.getMosi(14);
