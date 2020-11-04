@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
 
 ### Deprecated
+- Deprecated `arduino_ci_remote.rb` in favor of `arduino_ci.rb`
 
 ### Removed
 
