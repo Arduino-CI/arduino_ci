@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Add `__AVR__` to defines when compiling
 - Support for mock EEPROM (but only if board supports it)
 
 ### Changed
