@@ -30,6 +30,14 @@ unsigned long micros();
   #define NUM_SERIAL_PORTS 0
 #endif
 
+// These definitions allow the following to compile (see issue #193):
+// https://github.com/arduino-libraries/Ethernet/blob/master/src/utility/w5100.h:341
+// add padding because some boards (__MK20DX128__) offset from the given address
+#define MMAP_PORTS_SIZE (MOCK_PINS_COUNT + 256)
+#define digitalPinToBitMask(pin)  (1)
+#define digitalPinToPort(pin)     (pin)
+#define portOutputRegister(port)  (GODMODE()->pMmapPort(port))
+
 class GodmodeState {
   private:
     struct PortDef {
@@ -42,6 +50,8 @@ class GodmodeState {
       bool attached;
       uint8_t mode;
     };
+
+    uint8_t mmapPorts[MMAP_PORTS_SIZE];
 
     static GodmodeState* instance;
 
@@ -87,12 +97,19 @@ class GodmodeState {
       spi.readDelayMicros = 0;
     }
 
+    void resetMmapPorts() {
+      for (int i = 0; i < MMAP_PORTS_SIZE; ++i) {
+        mmapPorts[i] = 1;
+      }
+    }
+
     void reset() {
       resetClock();
       resetPins();
       resetInterrupts();
       resetPorts();
       resetSPI();
+      resetMmapPorts();
       seed = 1;
     }
 
@@ -111,6 +128,9 @@ class GodmodeState {
     static unsigned long getMicros() {
       return instance->micros;
     }
+
+    uint8_t* pMmapPort(uint8_t port) { return &mmapPorts[port]; }
+    uint8_t mmapPortValue(uint8_t port) { return mmapPorts[port]; }
 
     // C++ 11, declare as public for better compiler error messages
     GodmodeState(GodmodeState const&) = delete;
