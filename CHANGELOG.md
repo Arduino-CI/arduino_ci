@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Add `__AVR__` to defines when compiling
 - Add support for `diditalPinToPort()`, `digitalPinToBitMask()`, and `portOutputRegister()`
+- Add stubs for `Client.h`, `IPAddress.h`, `Printable.h`, `Server.h`, and `Udp.h` 
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci

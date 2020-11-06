@@ -1,11 +1,11 @@
 unittest:
   platforms:
     - mega2560
-  # libraries:
-    # - "Ethernet"
+  libraries:
+    - "Ethernet"
 
 compile:
   platforms:
     - mega2560
-  # libraries:
-    # - "Ethernet"
+  libraries:
+    - "Ethernet"
