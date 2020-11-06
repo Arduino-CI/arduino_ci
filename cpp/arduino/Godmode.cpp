@@ -113,3 +113,6 @@ SPIClass SPI = SPIClass(&GODMODE()->spi.dataIn, &GODMODE()->spi.dataOut);
 
 // defined in Wire.h
 TwoWire Wire = TwoWire();
+
+// Memory-mapped ports defined in Client.h
+uint8_t volatile mmapPorts[MOCK_PINS_COUNT];
