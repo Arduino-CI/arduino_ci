@@ -27,5 +27,7 @@ test_script:
   - bundle exec arduino_ci_remote.rb
   - cd ../NetworkLib
   - bundle install
-  - scripts/install.sh
+  - cd scripts
+  - install.sh
+  - cd ..
   - bundle exec arduino_ci_remote.rb
