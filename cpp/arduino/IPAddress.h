@@ -7,12 +7,12 @@ private:
   union {
     uint8_t bytes[4];
     uint32_t dword;
-    operator uint8_t* () const { return (uint8_t*) bytes; }
+    operator uint8_t *() const { return (uint8_t *)bytes; }
   } _address;
 
 public:
   // Constructors
-  IPAddress() { IPAddress(0, 0, 0, 0); }
+  IPAddress() : IPAddress(0, 0, 0, 0) {}
   IPAddress(uint8_t octet1, uint8_t octet2, uint8_t octet3, uint8_t octet4) {
     _address.bytes[0] = octet1;
     _address.bytes[1] = octet2;
@@ -26,12 +26,11 @@ public:
     _address.bytes[2] = bytes[2];
     _address.bytes[3] = bytes[3];
   }
-
-  IPAddress(unsigned long dword) { _address.dword = (uint32_t) dword; }
+  IPAddress(unsigned long dword) { _address.dword = (uint32_t)dword; }
 
   // Accessors
   uint32_t asWord() const { return _address.dword; }
-  uint8_t *raw_address() { return _address.bytes; };
+  uint8_t *raw_address() { return _address.bytes; }
 
   // Comparisons
   bool operator==(const IPAddress &rhs) const {
