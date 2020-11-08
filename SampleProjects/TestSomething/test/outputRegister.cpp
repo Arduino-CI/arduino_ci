@@ -1,9 +1,11 @@
 #include <ArduinoUnitTests.h>
 #include <Arduino.h>
 
+// added to fix https://github.com/Arduino-CI/arduino_ci/issues/193
 // https://github.com/arduino-libraries/Ethernet/blob/master/src/utility/w5100.h#L337
 
-unittest(test)
+#if defined(__AVR__)
+unittest(portOutputRegister)
 {
   uint8_t ss_pin = 12;
   uint8_t ss_port = digitalPinToPort(ss_pin);
@@ -19,5 +21,6 @@ unittest(test)
   *(ss_pin_reg) |= ss_pin_mask;               // clear SS
   assertEqual((int) 1, (int) *ss_pin_reg);    // verify value
 }
+#endif
 
 unittest_main()
