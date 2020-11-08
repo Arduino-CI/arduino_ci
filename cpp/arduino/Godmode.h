@@ -3,7 +3,6 @@
 #include <avr/io.h>
 #include "WString.h"
 #include "PinHistory.h"
-#include "EEPROM.h"
 
 // random
 void randomSeed(unsigned long seed);
@@ -31,6 +30,17 @@ unsigned long micros();
   #define NUM_SERIAL_PORTS 0
 #endif
 
+// different EEPROM implementations have different macros that leak out
+#if !defined(EEPROM_SIZE) && defined(E2END) && (E2END)
+  // public value indicates that feature is available
+  #define EEPROM_SIZE (E2END + 1)
+  // local array size
+  #define _EEPROM_SIZE EEPROM_SIZE
+#else
+  // feature is not available but we want to have the array so other code compiles
+  #define _EEPROM_SIZE (0)
+#endif 
+
 class GodmodeState {
   private:
     struct PortDef {
@@ -55,6 +65,7 @@ class GodmodeState {
     struct PortDef serialPort[NUM_SERIAL_PORTS];
     struct InterruptDef interrupt[MOCK_PINS_COUNT]; // not sure how to get actual number
     struct PortDef spi;
+    uint8_t eeprom[_EEPROM_SIZE];
 
     void resetPins() {
       for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
@@ -89,8 +100,8 @@ class GodmodeState {
     }
 
     void resetEEPROM() {
-      for(int i = 0; i < EEPROM.length(); ++i){
-        EEPROM.update(i, 255);
+      for(int i = 0; i < EEPROM_SIZE; ++i){
+        eeprom[i] = 255;
       }
     }
 

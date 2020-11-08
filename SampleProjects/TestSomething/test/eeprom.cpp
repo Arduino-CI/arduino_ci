@@ -1,11 +1,13 @@
 #include <ArduinoUnitTests.h>
 #include <Arduino.h>
+#include <Godmode.h>
 
 // Only run EEPROM tests if there is hardware support!
-#if defined(EEPROM_SIZE) || (defined(E2END) && E2END)
+#if defined(EEPROM_SIZE)
 #include <EEPROM.h>
 
 GodmodeState* state = GODMODE();
+
 unittest_setup()
 {
   state->reset();
@@ -32,9 +34,9 @@ unittest(writeRead)
   a = EEPROM.read(0);
   assertEqual(128, a);
 
-  EEPROM.write(0, 256);
+  EEPROM.write(0, 255);
   a = EEPROM.read(0);
-  assertEqual(0, a);
+  assertEqual(255, a);
 
   int addr = EEPROM_SIZE / 2;
   EEPROM.write(addr, 63);
