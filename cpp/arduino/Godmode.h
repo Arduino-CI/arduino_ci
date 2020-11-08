@@ -30,14 +30,6 @@ unsigned long micros();
   #define NUM_SERIAL_PORTS 0
 #endif
 
-// These definitions allow the following to compile (see issue #193):
-// https://github.com/arduino-libraries/Ethernet/blob/master/src/utility/w5100.h:341
-// add padding because some boards (__MK20DX128__) offset from the given address
-#define MMAP_PORTS_SIZE (MOCK_PINS_COUNT + 256)
-#define digitalPinToBitMask(pin)  (1)
-#define digitalPinToPort(pin)     (pin)
-#define portOutputRegister(port)  (GODMODE()->pMmapPort(port))
-
 class GodmodeState {
   private:
     struct PortDef {
@@ -51,7 +43,7 @@ class GodmodeState {
       uint8_t mode;
     };
 
-    uint8_t mmapPorts[MMAP_PORTS_SIZE];
+    uint8_t mmapPorts[MOCK_PINS_COUNT];
 
     static GodmodeState* instance;
 
@@ -98,7 +90,7 @@ class GodmodeState {
     }
 
     void resetMmapPorts() {
-      for (int i = 0; i < MMAP_PORTS_SIZE; ++i) {
+      for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
         mmapPorts[i] = 1;
       }
     }
@@ -158,6 +150,17 @@ void detachInterrupt(uint8_t interrupt);
 // TODO: issue #26 to track the commanded state here
 inline void tone(uint8_t _pin, unsigned int frequency, unsigned long duration = 0) {}
 inline void noTone(uint8_t _pin) {}
+
+// These definitions allow the following to compile (see issue #193):
+// https://github.com/arduino-libraries/Ethernet/blob/master/src/utility/w5100.h:341
+// we allow one byte per port which "wastes" 224 bytes, but makes the code easier
+#if defined(__AVR__)
+  #define digitalPinToBitMask(pin)  (1)
+  #define digitalPinToPort(pin)     (pin)
+  #define portOutputRegister(port)  (GODMODE()->pMmapPort(port))
+#else
+  // we don't (yet) support other boards
+#endif
 
 
 GodmodeState* GODMODE();
