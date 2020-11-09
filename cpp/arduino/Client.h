@@ -10,6 +10,12 @@ public:
       mGodmodeDataIn = new String;
     }
   }
+  ~Client() {
+    if (mGodmodeDataIn) {
+      delete mGodmodeDataIn;
+      mGodmodeDataIn = nullptr;
+    }
+  }
   virtual size_t write(uint8_t value) {
     mGodmodeDataIn->concat(value);
     return 1;

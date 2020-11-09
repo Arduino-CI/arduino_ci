@@ -30,6 +30,6 @@ script:
    - cd ../NetworkLib
    - bundle install
    - cd scripts
-   - install.sh
+   - bash -x ./install.sh
    - cd ..
    - bundle exec arduino_ci_remote.rb
