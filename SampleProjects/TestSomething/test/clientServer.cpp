@@ -62,7 +62,10 @@ unittest(Printable) {
 class TestServer : public Server {
 public:
   uint8_t data;
-  virtual size_t write(uint8_t value) { data = value; };
+  virtual size_t write(uint8_t value) {
+    data = value;
+    return 1;
+  };
 };
 
 unittest(Server) {
