@@ -1,0 +1,28 @@
+# This is the name of the workflow, visible on GitHub UI
+name: Arduino CI
+
+# Run on a Push or a Pull Request
+on: [push, pull_request]
+
+jobs:
+  runTest: 
+    runs-on: ubuntu-latest
+    steps:
+      # Clone the repo using the `checkout` action
+      - uses: actions/checkout@v2
+
+      # Get Ruby
+      - uses: ruby/setup-ruby@v1
+        with: 
+          ruby-version: 2.6
+
+      # Install and run Arduino CI tests
+      - run: |
+        g++ -v
+        bundle install
+        bundle exec rubocop --version
+        bundle exec rubocop -D .
+        bundle exec rspec --backtrace
+        cd SampleProjects/TestSomething
+        bundle install
+        bundle exec arduino_ci_remote.rb
