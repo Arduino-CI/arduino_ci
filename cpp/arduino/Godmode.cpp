@@ -114,5 +114,7 @@ SPIClass SPI = SPIClass(&GODMODE()->spi.dataIn, &GODMODE()->spi.dataOut);
 // defined in Wire.h
 TwoWire Wire = TwoWire();
 
-#include <EEPROM.h>
-EEPROMClass EEPROM;
+#if defined(EEPROM_SIZE)
+  #include <EEPROM.h>
+  EEPROMClass EEPROM;
+#endif
