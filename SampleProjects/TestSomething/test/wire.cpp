@@ -7,10 +7,12 @@ unittest(begin_write_end) {
     deque<uint8_t>* mosi = Wire.getMosi(14);
     assertEqual(0, mosi->size());
     Wire.begin();
+    // write some random values to random slave
     Wire.beginTransmission(14);
     Wire.write(0x07);
     Wire.write(0x0E);
     Wire.endTransmission();
+    // check values
     assertEqual(2, mosi->size());
     assertEqual(0x07, mosi->front());
     mosi->pop_front();
@@ -22,6 +24,7 @@ unittest(begin_write_end) {
 unittest(readTwo_writeOne) {
     Wire.begin();
     deque<uint8_t>* miso;
+    // place some values on random slaves' read buffers
     miso = Wire.getMiso(19);
     miso->push_back(0x07);
     miso->push_back(0x0E);
@@ -46,11 +49,13 @@ unittest(readTwo_writeOne) {
     assertEqual(7, Wire.read());
     assertEqual(0, Wire.available());
 
+    // write some values to different random slave
     Wire.beginTransmission(47);
     for (int i = 1; i < 4; i++) {
         Wire.write(i * 2);
     }
     Wire.endTransmission();
+    // check master write buffer
     deque<uint8_t>* mosi = Wire.getMosi(47);
 
     assertEqual(3, mosi->size());
