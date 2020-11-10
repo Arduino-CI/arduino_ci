@@ -7,7 +7,6 @@ on: [push, pull_request]
 jobs:
   runTest: 
     strategy:
-      fail-fast: false
       matrix:
         os: [windows, ubuntu, macos]
     runs-on: ${{ matrix.os }}-latest

@@ -9,12 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Add `__AVR__` to defines when compiling
 - Add documentation on how to use Arduino CI with GitHub Actions
-- Allow tests to run locally on GitHub with out external set up with GitHub Actions (for all os environments)
+- Allow tests to run on GitHub without external set up with GitHub Actions (for Windows, Ubuntu, and MacOS)
 - Add support for `diditalPinToPort()`, `digitalPinToBitMask()`, and `portOutputRegister()`
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
 - Revise math macros to avoid name clashes
+- Moved to Arduino IDE version 1.8.13
 
 ### Deprecated
 - Deprecated `arduino_ci_remote.rb` in favor of `arduino_ci.rb`
