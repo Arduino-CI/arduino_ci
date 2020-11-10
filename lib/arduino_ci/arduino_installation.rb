@@ -9,7 +9,7 @@ require "arduino_ci/arduino_downloader_linux"
 
 require "arduino_ci/arduino_downloader_windows" if ArduinoCI::Host.os == :windows
 
-DESIRED_ARDUINO_IDE_VERSION = "1.8.6".freeze
+DESIRED_ARDUINO_IDE_VERSION = "1.8.13".freeze
 
 module ArduinoCI
 
