@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Revise math macros to avoid name clashes
 
 ### Deprecated
+- Deprecated `arduino_ci_remote.rb` in favor of `arduino_ci.rb`
 
 ### Removed
 
