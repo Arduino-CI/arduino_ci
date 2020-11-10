@@ -6,7 +6,11 @@ on: [push, pull_request]
 
 jobs:
   runTest: 
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows, ubuntu, macos]
+    runs-on: ${{ matrix.os }}-latest
     steps:
       # Clone the repo using the `checkout` action
       - uses: actions/checkout@v2

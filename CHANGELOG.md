@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Add `__AVR__` to defines when compiling
-- Add options for automating workflows through GitHub Actions
+- Add documentation on how to use Arduino CI with GitHub Actions
+- Allow tests to run locally on GitHub with out external set up with GitHub Actions (for all os environments)
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
