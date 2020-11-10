@@ -34,7 +34,7 @@ At a minimum, you will need the following lines in your file:
 language: ruby
 script:
    - bundle install
-   - bundle exec arduino_ci_remote.rb
+   - bundle exec arduino_ci.rb
 ```
 
 This will install the necessary ruby gem, and run it.  There are no command line arguments as of this writing, because all configuration is provided by...
