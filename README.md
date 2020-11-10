@@ -152,6 +152,28 @@ test_script:
   - bundle exec arduino_ci_remote.rb
 ```
 
+#### GitHub Actions
+
+GitHub Actions allows you to automate your workflows directly in GitHub.
+No additional steps are needed.
+Just create a YAML file with the information below in your repo under the `.github/workflows/` directory.
+
+```yaml
+on: [push, pull_request]
+jobs:
+  runTest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - run: |
+          bundle install
+          bundle exec arduino_ci_remote.rb
+```
+
+
 ## Known Problems
 
 * The Arduino library is not fully mocked.
