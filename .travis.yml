@@ -26,10 +26,10 @@ script:
    - bundle exec rspec --backtrace
    - cd SampleProjects/TestSomething
    - bundle install
-   - bundle exec arduino_ci_remote.rb
+   - bundle exec arduino_ci.rb
    - cd ../NetworkLib
    - bundle install
    - cd scripts
    - bash -x ./install.sh
    - cd ..
-   - bundle exec arduino_ci_remote.rb
+   - bundle exec arduino_ci.rb
