@@ -4,15 +4,18 @@
 using std::deque;
 
 unittest(begin_write_end) {
+    // master write buffer should be empty
     deque<uint8_t>* mosi = Wire.getMosi(14);
     assertEqual(0, mosi->size());
-    Wire.begin();
+    
     // write some random values to random slave
+    Wire.begin();
     Wire.beginTransmission(14);
     Wire.write(0x07);
     Wire.write(0x0E);
     Wire.endTransmission();
-    // check values
+
+    // check master write buffer values
     assertEqual(2, mosi->size());
     assertEqual(0x07, mosi->front());
     mosi->pop_front();
@@ -33,6 +36,7 @@ unittest(readTwo_writeOne) {
     miso->push_back(4);
     miso->push_back(7);
 
+    // check read buffers and read-related functions
     assertEqual(0, Wire.requestFrom(19, 3));
     assertEqual(2, Wire.requestFrom(19, 2));
     assertEqual(2, Wire.available());
@@ -55,6 +59,7 @@ unittest(readTwo_writeOne) {
         Wire.write(i * 2);
     }
     Wire.endTransmission();
+
     // check master write buffer
     deque<uint8_t>* mosi = Wire.getMosi(47);
 
