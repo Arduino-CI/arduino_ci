@@ -54,6 +54,8 @@ class GodmodeState {
       uint8_t mode;
     };
 
+    uint8_t mmapPorts[MOCK_PINS_COUNT];
+
     static GodmodeState* instance;
 
   public:
@@ -99,9 +101,15 @@ class GodmodeState {
       spi.readDelayMicros = 0;
     }
 
+    void resetMmapPorts() {
+      for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
+        mmapPorts[i] = 1;
+      }
+    }
+  
     void resetEEPROM() {
-      for(int i = 0; i < EEPROM_SIZE; ++i){
-        eeprom[i] = 255;
+      for(int i = 0; i < EEPROM_SIZE; ++i) {
+        eeprom[i] = 255;  
       }
     }
 
@@ -111,6 +119,7 @@ class GodmodeState {
       resetInterrupts();
       resetPorts();
       resetSPI();
+      resetMmapPorts();
       resetEEPROM();
       seed = 1;
     }
@@ -130,6 +139,9 @@ class GodmodeState {
     static unsigned long getMicros() {
       return instance->micros;
     }
+
+    uint8_t* pMmapPort(uint8_t port) { return &mmapPorts[port]; }
+    uint8_t mmapPortValue(uint8_t port) { return mmapPorts[port]; }
 
     // C++ 11, declare as public for better compiler error messages
     GodmodeState(GodmodeState const&) = delete;
@@ -157,6 +169,17 @@ void detachInterrupt(uint8_t interrupt);
 // TODO: issue #26 to track the commanded state here
 inline void tone(uint8_t _pin, unsigned int frequency, unsigned long duration = 0) {}
 inline void noTone(uint8_t _pin) {}
+
+// These definitions allow the following to compile (see issue #193):
+// https://github.com/arduino-libraries/Ethernet/blob/master/src/utility/w5100.h:341
+// we allow one byte per port which "wastes" 224 bytes, but makes the code easier
+#if defined(__AVR__)
+  #define digitalPinToBitMask(pin)  (1)
+  #define digitalPinToPort(pin)     (pin)
+  #define portOutputRegister(port)  (GODMODE()->pMmapPort(port))
+#else
+  // we don't (yet) support other boards
+#endif
 
 
 GodmodeState* GODMODE();

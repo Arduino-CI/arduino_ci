@@ -8,12 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Add `__AVR__` to defines when compiling
+- Add support for `diditalPinToPort()`, `digitalPinToBitMask()`, and `portOutputRegister()`
 - Support for mock EEPROM (but only if board supports it)
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
+- Revise math macros to avoid name clashes
 
 ### Deprecated
+- Deprecated `arduino_ci_remote.rb` in favor of `arduino_ci.rb`
 
 ### Removed
 

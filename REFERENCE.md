@@ -1,6 +1,6 @@
 # Build / Test Behavior of Arduino CI
 
-All tests are run via the same command: `bundle exec arduino_ci_remote.rb`.
+All tests are run via the same command: `bundle exec arduino_ci.rb`.
 
 This script is responsible for detecting and runing all unit tests, on every combination of Arduino platform and C++ compiler.  This is followed by attempting to detect and build every example on every "default" Arduino platform.
 
@@ -11,7 +11,7 @@ These defaults are specified in [misc/default.yml](misc/default.yml).  You are f
 
 ## Directly Overriding Build Behavior (short term use)
 
-When testing locally, it's often advantageous to limit the number of tests that are performed to only those tests that relate to the work you're doing; you'll get a faster turnaround time in seeing the results.  For a full listing, see `bundle exec arduino_ci_remote.rb --help`.
+When testing locally, it's often advantageous to limit the number of tests that are performed to only those tests that relate to the work you're doing; you'll get a faster turnaround time in seeing the results.  For a full listing, see `bundle exec arduino_ci.rb --help`.
 
 
 ### `--skip-unittests` option
@@ -233,14 +233,14 @@ For most build environments, the only script that need be executed by the CI sys
 ```shell
 # simplest build script
 bundle install
-bundle exec arduino_ci_remote.rb
+bundle exec arduino_ci.rb
 ```
 
 However, more flexible usage is available:
 
 ### Custom Versions of external Arduino Libraries
 
-Sometimes you need a fork of an Arduino library instead of the version that will be installed via their GUI.  `arduino_ci_remote.rb` won't overwrite existing downloaded libraries with fresh downloads, but it won't fetch the custom versions for you either.
+Sometimes you need a fork of an Arduino library instead of the version that will be installed via their GUI.  `arduino_ci.rb` won't overwrite existing downloaded libraries with fresh downloads, but it won't fetch the custom versions for you either.
 
 If this is the behavior you need, `ensure_arduino_installation.rb` is for you.  It ensures that an Arduino binary is available on the system.
 
@@ -261,7 +261,7 @@ git clone https://repository.com/custom_library_repo.git
 mv custom_library_repo $(bundle exec arduino_library_location.rb)
 
 # now run CI
-bundle exec arduino_ci_remote.rb
+bundle exec arduino_ci.rb
 ```
 
 Note the use of subshell to execute `bundle exec arduino_library_location.rb`.  This command simply returns the directory in which Arduino Libraries are (or should be) installed.

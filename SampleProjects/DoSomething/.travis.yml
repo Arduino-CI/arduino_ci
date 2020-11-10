@@ -2,4 +2,4 @@ sudo: false
 language: ruby
 script:
    - bundle install
-   - bundle exec arduino_ci_remote.rb
+   - bundle exec arduino_ci.rb
