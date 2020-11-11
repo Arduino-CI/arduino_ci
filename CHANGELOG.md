@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `CppLibrary.arduino_library_dependencies` to list the dependent libraries specified by the library.properties file
 - `CppLibrary.print_stack_dump` prints stack trace dumps (on Windows specifically) to the console if encountered
 - Definitions for Arduino zero
+- Support for mock EEPROM (but only if board supports it)
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
