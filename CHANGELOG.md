@@ -15,11 +15,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `CppLibrary.library_properties_path`, `CppLibrary.library_properties?`, `CppLibrary.library_properties` to expose library properties of a Cpp library
 - `CppLibrary.arduino_library_dependencies` to list the dependent libraries specified by the library.properties file
 - `CppLibrary.print_stack_dump` prints stack trace dumps (on Windows specifically) to the console if encountered
+- Definitions for Arduino zero
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
 - Revise math macros to avoid name clashes
 - `CppLibrary` functions returning C++ header or code files now respect the 1.0/1.5 library specification
+- Mocks of built-in macros made more accurate
+- NUM_SERIAL_PORTS can now be set explicitly
+- Improve SPI header strategy
 
 ### Fixed
 - Don't define `ostream& operator<<(nullptr_t)` if already defined by Apple
