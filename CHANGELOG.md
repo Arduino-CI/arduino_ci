@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `CppLibrary.print_stack_dump` prints stack trace dumps (on Windows specifically) to the console if encountered
 - Definitions for Arduino zero
 - Support for mock EEPROM (but only if board supports it)
+- Add stubs for `Client.h`, `IPAddress.h`, `Printable.h`, `Server.h`, and `Udp.h`
 
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
