@@ -118,3 +118,5 @@ TwoWire Wire = TwoWire();
   #include <EEPROM.h>
   EEPROMClass EEPROM;
 #endif
+
+volatile long long __ARDUINO_CI_SFR_MOCK[1024];

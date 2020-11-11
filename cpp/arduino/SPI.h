@@ -40,7 +40,11 @@
 
 class SPISettings {
 public:
-  SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode){};
+  uint8_t bitOrder;
+
+  SPISettings(uint32_t clock, uint8_t bitOrder = MSBFIRST, uint8_t dataMode = SPI_MODE0) {
+    this->bitOrder = bitOrder;
+  };
   SPISettings(){};
 };
 
@@ -68,6 +72,7 @@ public:
   // and configure the correct settings.
   void beginTransaction(SPISettings settings)
   {
+    this->bitOrder = settings.bitOrder;
     #ifdef SPI_TRANSACTION_MISMATCH_LED
     if (inTransactionFlag) {
       pinMode(SPI_TRANSACTION_MISMATCH_LED, OUTPUT);
@@ -95,7 +100,7 @@ public:
     union { uint16_t val; struct { uint8_t lsb; uint8_t msb; }; } in, out;
     in.val = data;
     #if defined(SPCR) && defined(DORD)
-    if (!(SPCR & (1 << DORD))) {
+    if (bitOrder == MSBFIRST) {
       out.msb = transfer(in.msb);
       out.lsb =  transfer(in.lsb);
     }
@@ -147,6 +152,7 @@ private:
   #endif
 
   bool isStarted = false;
+  uint8_t bitOrder;
   String* dataIn;
   String* dataOut;
 };

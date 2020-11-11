@@ -16,7 +16,7 @@ unittest(SFR_IO8)
   // error like: cannot take the address of an rvalue of type 'int'
   //
   // this tests that directly
-  &DDRE;
+  auto foo = &DDRE;  // avoid compiler warning by using the result of an expression
 }
 
 unittest_main()
