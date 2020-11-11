@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Add `__AVR__` to defines when compiling
 - `arduino_ci_remote.rb` CLI switch `--skip-examples-compilation`
 - Add support for `diditalPinToPort()`, `digitalPinToBitMask()`, and `portOutputRegister()`
 - `CppLibrary.header_files` to find header files

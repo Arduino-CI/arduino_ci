@@ -398,7 +398,7 @@ module ArduinoCI
       executable = Pathname.new("unittest_#{base}.bin").expand_path
       File.delete(executable) if File.exist?(executable)
       arg_sets = []
-      arg_sets << ["-std=c++0x", "-o", executable.to_s, "-DARDUINO=100", "-D__AVR__"]
+      arg_sets << ["-std=c++0x", "-o", executable.to_s, "-DARDUINO=100"]
       if libasan?(gcc_binary)
         arg_sets << [ # Stuff to help with dynamic memory mishandling
           "-g", "-O1",
