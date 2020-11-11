@@ -112,9 +112,11 @@ class GodmodeState {
     }
 
     void resetEEPROM() {
+#if defined(EEPROM_SIZE)
       for(int i = 0; i < EEPROM_SIZE; ++i) {
         eeprom[i] = 255;
       }
+#endif
     }
 
     void reset() {
