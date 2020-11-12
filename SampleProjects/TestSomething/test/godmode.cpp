@@ -175,18 +175,35 @@ unittest(spi) {
   // 8-bit
   state->reset();
   state->spi.dataIn = "LMNO";
+  SPI.beginTransaction(SPISettings(14000000, LSBFIRST, SPI_MODE0));
   uint8_t out8 = SPI.transfer('a');
+  SPI.endTransaction();
   assertEqual("a", state->spi.dataOut);
   assertEqual('L', out8);
   assertEqual("MNO", state->spi.dataIn);
 
-  // 16-bit
+  // 16-bit MSBFIRST
   union { uint16_t val; struct { char lsb; char msb; }; } in16, out16;
   state->reset();
   state->spi.dataIn = "LMNO";
   in16.lsb = 'a';
   in16.msb = 'b';
+  SPI.beginTransaction(SPISettings(14000000, MSBFIRST, SPI_MODE0));
   out16.val = SPI.transfer16(in16.val);
+  SPI.endTransaction();
+  assertEqual("NO", state->spi.dataIn);
+  assertEqual('M', out16.lsb);
+  assertEqual('L', out16.msb);
+  assertEqual("ba", state->spi.dataOut);
+
+  // 16-bit LSBFIRST
+  state->reset();
+  state->spi.dataIn = "LMNO";
+  in16.lsb = 'a';
+  in16.msb = 'b';
+  SPI.beginTransaction(SPISettings(14000000, LSBFIRST, SPI_MODE0));
+  out16.val = SPI.transfer16(in16.val);
+  SPI.endTransaction();
   assertEqual("NO", state->spi.dataIn);
   assertEqual('L', out16.lsb);
   assertEqual('M', out16.msb);
@@ -196,7 +213,9 @@ unittest(spi) {
   state->reset();
   state->spi.dataIn = "LMNOP";
   char inBuf[6] = "abcde";
+  SPI.beginTransaction(SPISettings(14000000, LSBFIRST, SPI_MODE0));
   SPI.transfer(inBuf, 4);
+  SPI.endTransaction();
 
   assertEqual("abcd", state->spi.dataOut);
   assertEqual("LMNOe", String(inBuf));
