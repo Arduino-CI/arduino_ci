@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cassert>
 #include "Stream.h"
 
 // defines from original file
@@ -72,13 +71,7 @@ public:
   // and configure the correct settings.
   void beginTransaction(SPISettings settings)
   {
-    // Set DORD to zero to send the most significant bit (MSB) first.
-    // Set DORD to one to send the least significant bit (LSB) first.
-    int dord = settings.bitOrder == MSBFIRST ? 0b0 : 0b1;
-    SPCR = (0b1 << SPE)      // SPE (SPI Enable) bit
-           | (0b0 << CPOL)   // CPOL (Clock Polarity)
-           | (0b0 << CPHA)   // CPHA (Clock Phase)
-           | (dord << DORD); // DORD (Data Order) bit
+    this->bitOrder = settings.bitOrder;
     #ifdef SPI_TRANSACTION_MISMATCH_LED
     if (inTransactionFlag) {
       pinMode(SPI_TRANSACTION_MISMATCH_LED, OUTPUT);
@@ -90,9 +83,6 @@ public:
 
   // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
   uint8_t transfer(uint8_t data) {
-    #ifdef SPI_TRANSACTION_MISMATCH_LED
-    assert(inTransactionFlag);
-    #endif
     //FIXME!
     // push memory->bus
     dataOut->append(String((char)data));
@@ -107,11 +97,8 @@ public:
 
   uint16_t transfer16(uint16_t data) {
     union { uint16_t val; struct { uint8_t lsb; uint8_t msb; }; } in, out;
-    #ifdef SPI_TRANSACTION_MISMATCH_LED
-    assert(inTransactionFlag);
-    #endif
     in.val = data;
-    if (!(SPCR & (1 << DORD))) {
+    if (bitOrder == MSBFIRST) {
       out.msb = transfer(in.msb);
       out.lsb =  transfer(in.lsb);
     } else {
@@ -122,9 +109,6 @@ public:
   }
 
   void transfer(void *buf, size_t count) {
-    #ifdef SPI_TRANSACTION_MISMATCH_LED
-    assert(inTransactionFlag);
-    #endif
     // TODO: this logic is rewritten from the original,
     // I'm not sure what role the SPDR register (which I removed) plays
 
@@ -137,10 +121,6 @@ public:
   // After performing a group of transfers and releasing the chip select
   // signal, this function allows others to access the SPI bus
   void endTransaction(void) {
-    #ifdef SPI_TRANSACTION_MISMATCH_LED
-    assert(inTransactionFlag);
-    #endif
-    SPCR = 0; // set all flags to zero pending another transaction
     #ifdef SPI_TRANSACTION_MISMATCH_LED
     if (!inTransactionFlag) {
       pinMode(SPI_TRANSACTION_MISMATCH_LED, OUTPUT);
@@ -167,6 +147,7 @@ private:
   #endif
 
   bool isStarted = false;
+  uint8_t bitOrder;
   String* dataIn;
   String* dataOut;
 };
