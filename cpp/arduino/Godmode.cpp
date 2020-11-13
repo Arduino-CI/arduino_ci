@@ -119,4 +119,4 @@ TwoWire Wire = TwoWire();
   EEPROMClass EEPROM;
 #endif
 
-volatile long long __ARDUINO_CI_SFR_MOCK[1024];
+volatile uint8_t __ARDUINO_CI_SFR_MOCK[1024];

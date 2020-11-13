@@ -96,10 +96,11 @@
 #ifndef _AVR_IO_H_
 #define _AVR_IO_H_
 
-// hardware mocks
+#include <stdint.h>
 
+// hardware mocks
 // this set of macros is all we need from the sfr file
-extern volatile long long __ARDUINO_CI_SFR_MOCK[1024];
+extern volatile uint8_t __ARDUINO_CI_SFR_MOCK[1024];
 #define _SFR_IO8(io_addr) (*(volatile uint8_t *)(__ARDUINO_CI_SFR_MOCK + io_addr))
 #define _SFR_IO16(io_addr) (*(volatile uint16_t *)(__ARDUINO_CI_SFR_MOCK + io_addr))
 #define _SFR_MEM8(io_addr) (*(volatile uint8_t *)(__ARDUINO_CI_SFR_MOCK + io_addr))
