@@ -99,13 +99,11 @@ public:
   uint16_t transfer16(uint16_t data) {
     union { uint16_t val; struct { uint8_t lsb; uint8_t msb; }; } in, out;
     in.val = data;
-    #if defined(SPCR) && defined(DORD)
     if (bitOrder == MSBFIRST) {
       out.msb = transfer(in.msb);
       out.lsb =  transfer(in.lsb);
     }
     else
-    #endif
     {
       out.lsb =  transfer(in.lsb);
       out.msb = transfer(in.msb);
