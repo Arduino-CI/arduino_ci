@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 #include <avr/pgmspace.h>
+
+#include "Printable.h"
 #include "WString.h"
 
 #define DEC 10
@@ -12,22 +14,17 @@
 #endif
 #define BIN 2
 
-class Print;
-
-class Printable
-{
-  public:
-    virtual size_t printTo(Print& p) const = 0;
-};
-
 class Print
 {
+  private:
+    int write_error;
+  protected:
+    void setWriteError(int err = 1) { write_error = err; }
   public:
-    Print() {}
+    Print() : write_error(0) {}
 
-    // Arduino's version of this is richer but until I see an actual error case I'm not sure how to mock
-    int getWriteError() { return 0; }
-    void clearWriteError() { }
+    int getWriteError() { return write_error; }
+    void clearWriteError() { setWriteError(0); }
     virtual int availableForWrite() { return 0; }
 
     virtual size_t write(uint8_t) = 0;

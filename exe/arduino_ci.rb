@@ -29,7 +29,12 @@ class Parser
         output_options[:skip_unittests] = p
       end
 
-      opts.on("--skip-compilation", "Don't compile example sketches") do |p|
+      opts.on("--skip-compilation", "Don't compile example sketches (deprecated)") do |p|
+        puts "The option --skip-compilation has been deprecated in favor of --skip-examples-compilation"
+        output_options[:skip_compilation] = p
+      end
+
+      opts.on("--skip-examples-compilation", "Don't compile example sketches") do |p|
         output_options[:skip_compilation] = p
       end
 
@@ -205,6 +210,8 @@ def perform_unit_tests(file_config)
   all_platform_info = {}
   config.platforms_to_unittest.each { |p| all_platform_info[p] = assured_platform("unittest", p, config) }
 
+  inform("Library conforms to Arduino library specification") { cpp_library.one_point_five? ? "1.5" : "1.0" }
+
   # iterate boards / tests
   if !cpp_library.tests_dir.exist?
     inform_multiline("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") do
@@ -227,7 +234,7 @@ def perform_unit_tests(file_config)
       config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
         unittest_name = unittest_path.basename.to_s
         compilers.each do |gcc_binary|
-          attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary}") do
+          attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
             exe = cpp_library.build_for_test_with_configuration(
               unittest_path,
               config.aux_libraries_for_unittest,

@@ -44,19 +44,19 @@ class HardwareSerial : public StreamTape
     operator bool() { return true; }
 };
 
-#if defined(UBRRH) || defined(UBRR0H)
+#if NUM_SERIAL_PORTS >= 1
   extern HardwareSerial Serial;
   #define HAVE_HWSERIAL0
 #endif
-#if defined(UBRR1H)
+#if NUM_SERIAL_PORTS >= 2
   extern HardwareSerial Serial1;
   #define HAVE_HWSERIAL1
 #endif
-#if defined(UBRR2H)
+#if NUM_SERIAL_PORTS >= 3
   extern HardwareSerial Serial2;
   #define HAVE_HWSERIAL2
 #endif
-#if defined(UBRR3H)
+#if NUM_SERIAL_PORTS >= 4
   extern HardwareSerial Serial3;
   #define HAVE_HWSERIAL3
 #endif

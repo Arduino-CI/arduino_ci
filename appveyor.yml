@@ -25,3 +25,9 @@ test_script:
   - cd SampleProjects\TestSomething
   - bundle install
   - bundle exec arduino_ci.rb
+  - cd ../NetworkLib
+  - cd scripts
+  - install.sh
+  - cd ..
+  - bundle install
+  - bundle exec arduino_ci.rb

@@ -113,3 +113,10 @@ SPIClass SPI = SPIClass(&GODMODE()->spi.dataIn, &GODMODE()->spi.dataOut);
 
 // defined in Wire.h
 TwoWire Wire = TwoWire();
+
+#if defined(EEPROM_SIZE)
+  #include <EEPROM.h>
+  EEPROMClass EEPROM;
+#endif
+
+volatile uint8_t __ARDUINO_CI_SFR_MOCK[1024];

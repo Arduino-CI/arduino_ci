@@ -1,0 +1,3 @@
+unittest:
+  exclude_dirs:
+    - src/excludeThis

@@ -9,13 +9,12 @@ Where possible, variable names from the Arduino library are used to avoid confli
 
 #include "ArduinoDefines.h"
 
+#include "IPAddress.h"
 #include "WCharacter.h"
 #include "WString.h"
 #include "Print.h"
 #include "Stream.h"
 #include "HardwareSerial.h"
-#include "SPI.h"
-#include "Wire.h"
 
 typedef bool boolean;
 typedef uint8_t byte;
