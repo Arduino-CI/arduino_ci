@@ -15,7 +15,7 @@ You want your Arduino library to be automatically built and tested every time so
  &nbsp;            | Linux | macOS | Windows
 -------------------|:------|:------|:--------
 **AppVeyor**       |       |       | [![Windows Build status](https://ci.appveyor.com/api/projects/status/abynv8xd75m26qo9/branch/master?svg=true)](https://ci.appveyor.com/project/ianfixes/arduino-ci)
-**GitHub Actions** | [![Arduino CI](https://github.com/Arduino-CI/arduino_ci/workflows/linux/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=linux) | | [![Arduino CI](https://github.com/Arduino-CI/arduino_ci/workflows/windows/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=winows)
+**GitHub Actions** | [![Arduino CI](https://github.com/Arduino-CI/arduino_ci/workflows/linux/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=linux) | | [![Arduino CI](https://github.com/Arduino-CI/arduino_ci/workflows/windows/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=windows)
 **Travis CI**      | [![Linux Build Status](http://badges.herokuapp.com/travis/Arduino-CI/arduino_ci?env=BADGE=linux&label=build&branch=master)](https://travis-ci.org/Arduino-CI/arduino_ci) | [![OSX Build Status](http://badges.herokuapp.com/travis/Arduino-CI/arduino_ci?env=BADGE=osx&label=build&branch=master)](https://travis-ci.org/Arduino-CI/arduino_ci) |
 
 
