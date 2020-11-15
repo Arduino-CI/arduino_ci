@@ -24,9 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Move repository from https://github.com/ianfixes/arduino_ci to https://github.com/Arduino-CI/arduino_ci
 - Revise math macros to avoid name clashes
-<<<<<<< HEAD
-- Moved to Arduino IDE version 1.8.13
-=======
 - `CppLibrary` functions returning C++ header or code files now respect the 1.0/1.5 library specification
 - Mocks of built-in macros made more accurate
 - NUM_SERIAL_PORTS can now be set explicitly
@@ -36,7 +33,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Don't define `ostream& operator<<(nullptr_t)` if already defined by Apple
 - `CppLibrary.in_tests_dir?` no longer produces an error if there is no tests directory
 - The definition of the `_SFR_IO8` macro no longer produces errors about rvalues
->>>>>>> 2c20e0e61e3e15dac8fcdb754ba89f80046454ce
 
 ### Deprecated
 - `arduino_ci_remote.rb` CLI switch `--skip-compilation`

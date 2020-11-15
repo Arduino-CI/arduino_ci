@@ -1,0 +1,47 @@
+# This is the name of the workflow, visible on GitHub UI
+name: Arduino CI
+
+# Run on a Push or a Pull Request
+on: [push, pull_request]
+
+jobs:
+  TestSomething: 
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with: 
+          ruby-version: 2.6
+
+      # Install and run Arduino CI tests for TestSomething
+      - name: Build and Execute
+        run: |
+          g++ -v
+          bundle install
+          bundle exec rubocop --version
+          bundle exec rubocop -D .
+          bundle exec rspec --backtrace
+          cd SampleProjects/TestSomething
+          bundle install
+          bundle exec arduino_ci.rb
+
+  Network: 
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with: 
+          ruby-version: 2.6
+
+      # Install and run Arduino CI tests for Network
+      - name: Build and Execute
+        run: |
+          g++ -v
+          bundle install
+          bundle exec rubocop --version
+          bundle exec rubocop -D .
+          bundle exec rspec --backtrace
+          cd SampleProjects/NetworkLib
+          ./scripts/install.sh
+          bundle install
+          bundle exec arduino_ci.rb

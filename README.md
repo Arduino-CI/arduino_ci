@@ -12,11 +12,11 @@ You want your Arduino library to be automatically built and tested every time so
 
 `arduino_ci` is a cross-platform build/test system, consisting of a Ruby gem and a series of C++ mocks.  It enables tests to be run both locally and as part of a CI service like Travis or Appveyor.  Any OS that can run the Arduino IDE can run `arduino_ci`.
 
-Platform | CI Status
----------|:---------
-OSX      | [![OSX Build Status](http://badges.herokuapp.com/travis/Arduino-CI/arduino_ci?env=BADGE=osx&label=build&branch=master)](https://travis-ci.org/Arduino-CI/arduino_ci)
-Linux    | [![Linux Build Status](http://badges.herokuapp.com/travis/Arduino-CI/arduino_ci?env=BADGE=linux&label=build&branch=master)](https://travis-ci.org/Arduino-CI/arduino_ci)
-Windows  | [![Windows Build status](https://ci.appveyor.com/api/projects/status/abynv8xd75m26qo9/branch/master?svg=true)](https://ci.appveyor.com/project/ianfixes/arduino-ci)
+ &nbsp;            | Linux | macOS | Windows
+-------------------|:------|:------|:--------
+**AppVeyor**       |       |       | [![Windows Build status](https://ci.appveyor.com/api/projects/status/abynv8xd75m26qo9/branch/master?svg=true)](https://ci.appveyor.com/project/ianfixes/arduino-ci)
+**GitHub Actions** | [![Arduino CI](https://github.com/Arduino-CI/arduino_ci/workflows/linux/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=linux) | | [![Arduino CI](https://github.com/Arduino-CI/arduino_ci/workflows/windows/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=winows)
+**Travis CI**      | [![Linux Build Status](http://badges.herokuapp.com/travis/Arduino-CI/arduino_ci?env=BADGE=linux&label=build&branch=master)](https://travis-ci.org/Arduino-CI/arduino_ci) | [![OSX Build Status](http://badges.herokuapp.com/travis/Arduino-CI/arduino_ci?env=BADGE=osx&label=build&branch=master)](https://travis-ci.org/Arduino-CI/arduino_ci) |
 
 
 ## Comparison to Other Arduino Testing Tools
