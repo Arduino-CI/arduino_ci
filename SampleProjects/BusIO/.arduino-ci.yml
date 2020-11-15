@@ -1,0 +1,12 @@
+unittest:
+  platforms:
+    - mega2560
+  libraries:
+    - "Adafruit BusIO"
+    # - "Adafruit_BusIO"    <= This works if you have the library pre-installed
+
+compile:
+  platforms:
+    - mega2560
+  libraries:
+    - "Adafruit BusIO"
