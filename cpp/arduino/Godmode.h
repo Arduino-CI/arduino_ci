@@ -182,6 +182,7 @@ inline void noTone(uint8_t _pin) {}
 #if defined(__AVR__)
   #define digitalPinToBitMask(pin)  (1)
   #define digitalPinToPort(pin)     (pin)
+  #define portInputRegister(port)   (GODMODE()->pMmapPort(port))
   #define portOutputRegister(port)  (GODMODE()->pMmapPort(port))
 #else
   // we don't (yet) support other boards

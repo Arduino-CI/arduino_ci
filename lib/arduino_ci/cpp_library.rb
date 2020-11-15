@@ -410,7 +410,7 @@ module ArduinoCI
 
       # combine library.properties defs (if existing) with config file.
       # TODO: as much as I'd like to rely only on the properties file(s), I think that would prevent testing 1.0-spec libs
-      full_aux_libraries = arduino_library_dependencies.nil? ? aux_libraries : aux_libaries + arduino_library_dependencies
+      full_aux_libraries = arduino_library_dependencies.nil? ? aux_libraries : aux_libraries + arduino_library_dependencies
       arg_sets << test_args(full_aux_libraries, ci_gcc_config)
       arg_sets << cpp_files_libraries(full_aux_libraries).map(&:to_s)
       arg_sets << [test_file.to_s]
