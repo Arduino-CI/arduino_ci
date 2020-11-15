@@ -110,11 +110,11 @@ module ArduinoCI
       # Forcibly install Arduino from the web
       # @return [bool] Whether the command succeeded
       def force_install(output = $stdout, version = DESIRED_ARDUINO_IDE_VERSION)
-        worker_class =  case Host.os
-                        when :osx then ArduinoDownloaderOSX
-                        when :windows then ArduinoDownloaderWindows
-                        when :linux then ArduinoDownloaderLinux
-                        end
+        worker_class = case Host.os
+        when :osx then ArduinoDownloaderOSX
+        when :windows then ArduinoDownloaderWindows
+        when :linux then ArduinoDownloaderLinux
+        end
         worker = worker_class.new(version, output)
         worker.execute
       end

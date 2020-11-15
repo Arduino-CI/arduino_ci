@@ -22,7 +22,10 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR__
         - __AVR_ATmega328P__
+        - ARDUINO_ARCH_AVR
+        - ARDUINO_AVR_UNO
       warnings:
       flags:
   due:
@@ -31,7 +34,10 @@ platforms:
     gcc:
       features:
       defines:
-        - __AVR_ATmega328__
+        - __SAM3X8E__
+        - ARDUINO_ARCH_SAM
+        - ARDUINO_SAM_DUE
+        - NUM_SERIAL_PORTS=4
       warnings:
       flags:
   zero:
@@ -40,8 +46,11 @@ platforms:
     gcc:
       features:
       defines:
-       - __SAMD21G18A__
-       - ARDUINO_SAMD_ZERO
+        - __SAMD21G18A__
+        - ARDUINO_ARCH_SAMD
+        - ARDUINO_SAMD_ZERO
+        # This also has SerialUSB, which is not included here.
+        - NUM_SERIAL_PORTS=2
       warnings:
       flags:
   esp32:
@@ -50,6 +59,10 @@ platforms:
     gcc:
       features:
       defines:
+        - ESP32
+        - ARDUINO_ARCH_ESP32
+        - ARDUINO_FEATHER_ESP32
+        - NUM_SERIAL_PORTS=3
       warnings:
       flags:
   esp8266:
@@ -58,6 +71,10 @@ platforms:
     gcc:
       features:
       defines:
+        - ESP8266
+        - ARDUINO_ARCH_ESP8266
+        - ARDUINO_ESP8266_ESP12
+        - NUM_SERIAL_PORTS=2
       warnings:
       flags:
   leonardo:
@@ -66,7 +83,10 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR__
         - __AVR_ATmega32U4__
+        - ARDUINO_ARCH_AVR
+        - ARDUINO_AVR_LEONARDO
       warnings:
       flags:
   trinket:
@@ -75,6 +95,10 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR__
+        - __AVR_ATtiny85__
+        - ARDUINO_ARCH_AVR
+        - ARDUINO_AVR_TRINKET5
       warnings:
       flags:
   gemma:
@@ -83,6 +107,10 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR__
+        - __AVR_ATtiny85__
+        - ARDUINO_ARCH_AVR
+        - ARDUINO_AVR_GEMMA
       warnings:
       flags:
   m4:
@@ -91,6 +119,12 @@ platforms:
     gcc:
       features:
       defines:
+        - __SAMD51__
+        - __SAMD51J19A__
+        - ARDUINO_ARCH_SAMD
+        - ARDUINO_METRO_M4
+        # Serial is actually USB virtual serial, not HardwareSerial
+        - NUM_SERIAL_PORTS=2
       warnings:
       flags:
   mega2560:
@@ -99,7 +133,10 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR__
         - __AVR_ATmega2560__
+        - ARDUINO_ARCH_AVR
+        - ARDUINO_AVR_MEGA2560
       warnings:
       flags:
   cplayClassic:
@@ -108,6 +145,10 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR__
+        - __AVR_ATmega32U4__
+        - ARDUINO_ARCH_AVR
+        - ARDUINO_AVR_CIRCUITPLAY
       warnings:
       flags:
   cplayExpress:
@@ -116,6 +157,11 @@ platforms:
     gcc:
       features:
       defines:
+        - __SAMD21G18A__
+        - ARDUINO_ARCH_SAMD
+        - ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS
+        # Serial is actually an alias of SerialUSB, not a HardwareSerial
+        - NUM_SERIAL_PORTS=2
       warnings:
       flags:
 

@@ -1,6 +1,8 @@
 #pragma once
 #include "ArduinoDefines.h"
+#if defined(__AVR__)
 #include <avr/io.h>
+#endif
 #include "WString.h"
 #include "PinHistory.h"
 
@@ -18,16 +20,29 @@ unsigned long micros();
 
 #define MOCK_PINS_COUNT 256
 
-#if defined(UBRR3H)
-  #define NUM_SERIAL_PORTS 4
-#elif defined(UBRR2H)
-  #define NUM_SERIAL_PORTS 3
-#elif defined(UBRR1H)
-  #define NUM_SERIAL_PORTS 2
-#elif defined(UBRRH) || defined(UBRR0H)
-  #define NUM_SERIAL_PORTS 1
+#if (!defined NUM_SERIAL_PORTS)
+  #if defined(UBRR3H)
+    #define NUM_SERIAL_PORTS 4
+  #elif defined(UBRR2H)
+    #define NUM_SERIAL_PORTS 3
+  #elif defined(UBRR1H)
+    #define NUM_SERIAL_PORTS 2
+  #elif defined(UBRRH) || defined(UBRR0H)
+    #define NUM_SERIAL_PORTS 1
+  #else
+    #define NUM_SERIAL_PORTS 0
+  #endif
+#endif
+
+// different EEPROM implementations have different macros that leak out
+#if !defined(EEPROM_SIZE) && defined(E2END) && (E2END)
+  // public value indicates that feature is available
+  #define EEPROM_SIZE (E2END + 1)
+  // local array size
+  #define _EEPROM_SIZE EEPROM_SIZE
 #else
-  #define NUM_SERIAL_PORTS 0
+  // feature is not available but we want to have the array so other code compiles
+  #define _EEPROM_SIZE (0)
 #endif
 
 class GodmodeState {
@@ -56,6 +71,7 @@ class GodmodeState {
     struct PortDef serialPort[NUM_SERIAL_PORTS];
     struct InterruptDef interrupt[MOCK_PINS_COUNT]; // not sure how to get actual number
     struct PortDef spi;
+    uint8_t eeprom[_EEPROM_SIZE];
 
     void resetPins() {
       for (int i = 0; i < MOCK_PINS_COUNT; ++i) {
@@ -95,6 +111,14 @@ class GodmodeState {
       }
     }
 
+    void resetEEPROM() {
+#if defined(EEPROM_SIZE)
+      for(int i = 0; i < EEPROM_SIZE; ++i) {
+        eeprom[i] = 255;
+      }
+#endif
+    }
+
     void reset() {
       resetClock();
       resetPins();
@@ -102,6 +126,7 @@ class GodmodeState {
       resetPorts();
       resetSPI();
       resetMmapPorts();
+      resetEEPROM();
       seed = 1;
     }
 

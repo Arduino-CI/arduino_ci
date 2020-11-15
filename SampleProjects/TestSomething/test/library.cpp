@@ -1,5 +1,5 @@
 #include <ArduinoUnitTests.h>
-#include "../test-something.h"
+#include "../src/test-something.h"
 
 unittest(library_tests_something)
 {
