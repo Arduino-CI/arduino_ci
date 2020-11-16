@@ -38,9 +38,6 @@ jobs:
         run: |
           g++ -v
           bundle install
-          bundle exec rubocop --version
-          bundle exec rubocop -D .
-          bundle exec rspec --backtrace
           cd SampleProjects/NetworkLib
           ./scripts/install.sh
           bundle install
