@@ -8,7 +8,6 @@ end
 
 RSpec.describe ArduinoCI::ArduinoCmd do
   next if skip_ruby_tests
-  next if skip_splash_screen_tests
 
   arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
 
@@ -24,8 +23,7 @@ RSpec.describe ArduinoCI::ArduinoCmd do
 
   context "initialize" do
     it "sets base vars" do
-      expect(arduino_cmd.base_cmd).not_to be nil
-      expect(arduino_cmd.prefs.class).to be Hash
+      expect(arduino_cmd.binary_path).not_to be nil
     end
   end
 
@@ -46,7 +44,6 @@ RSpec.describe ArduinoCI::ArduinoCmd do
   context "installation of boards" do
     it "installs and sets boards" do
       expect(arduino_cmd.install_boards("arduino:sam")).to be true
-      expect(arduino_cmd.use_board("arduino:sam:arduino_due_x")).to be true
     end
   end
 
@@ -58,16 +55,6 @@ RSpec.describe ArduinoCI::ArduinoCmd do
       expect(arduino_cmd.library_present?(fake_lib)).to be false
     end
   end
-
-  context "set_pref" do
-
-    it "Sets key to what it was before" do
-      upload_verify = arduino_cmd.get_pref("upload.verify")
-      result = arduino_cmd.set_pref("upload.verify", upload_verify)
-      expect(result).to be true
-    end
-  end
-
 
   context "board_manager" do
     it "Reads and writes board_manager URLs" do
@@ -85,7 +72,7 @@ RSpec.describe ArduinoCI::ArduinoCmd do
   end
 
 
-  context "verify_sketch" do
+  context "compile_sketch" do
 
     sketch_path_ino = get_sketch("FakeSketch", "FakeSketch.ino")
     sketch_path_pde = get_sketch("FakeSketch", "FakeSketch.pde")
@@ -93,19 +80,19 @@ RSpec.describe ArduinoCI::ArduinoCmd do
     sketch_path_bad = get_sketch("BadSketch", "BadSketch.ino")
 
     it "Rejects a PDE sketch at #{sketch_path_pde}" do
-      expect(arduino_cmd.verify_sketch(sketch_path_pde)).to be false
+      expect(arduino_cmd.compile_sketch(sketch_path_pde, "arduino:avr:uno")).to be false
     end
 
     it "Fails a missing sketch at #{sketch_path_mia}" do
-      expect(arduino_cmd.verify_sketch(sketch_path_mia)).to be false
+      expect(arduino_cmd.compile_sketch(sketch_path_mia, "arduino:avr:uno")).to be false
     end
 
     it "Fails a bad sketch at #{sketch_path_bad}" do
-      expect(arduino_cmd.verify_sketch(sketch_path_bad)).to be false
+      expect(arduino_cmd.compile_sketch(sketch_path_bad, "arduino:avr:uno")).to be false
     end
 
     it "Passes a simple INO sketch at #{sketch_path_ino}" do
-      expect(arduino_cmd.verify_sketch(sketch_path_ino)).to be true
+      expect(arduino_cmd.compile_sketch(sketch_path_ino, "arduino:avr:uno")).to be true
     end
   end
 end

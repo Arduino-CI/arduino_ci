@@ -2,7 +2,6 @@ require "spec_helper"
 
 RSpec.describe ArduinoCI::ArduinoInstallation do
   next if skip_ruby_tests
-  next if skip_splash_screen_tests
 
   context "autolocate" do
     it "doesn't fail" do
@@ -13,7 +12,7 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
   context "autolocate!" do
     arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
     it "doesn't fail" do
-      expect(arduino_cmd.base_cmd).not_to be nil
+      expect(arduino_cmd.binary_path).not_to be nil
       expect(arduino_cmd.lib_dir).not_to be nil
     end
   end
@@ -31,4 +30,3 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
   end
 
 end
-

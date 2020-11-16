@@ -9,10 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Arduino backend is now `arduino-cli` version `0.13.0`
 
 ### Deprecated
+- `arduino_ci_remote.rb` CLI switch `--skip-compilation`
+- Deprecated `arduino_ci_remote.rb` in favor of `arduino_ci.rb`
 
 ### Removed
+- `ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS` no longer affects any tests because there are no longer splash screens since switching to `arduino-cli`
 
 ### Fixed
 

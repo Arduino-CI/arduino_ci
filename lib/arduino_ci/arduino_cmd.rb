@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'pathname'
+require 'json'
 
 # workaround for https://github.com/arduino/Arduino/issues/3535
 WORKAROUND_LIB = "USBHost".freeze
@@ -24,16 +25,9 @@ module ArduinoCI
       self.class_eval("def flag_#{name};\"#{text}\";end", __FILE__, __LINE__)
     end
 
-    # the array of command components to launch the Arduino executable
-    # @return [Array<String>]
-    attr_accessor :base_cmd
-
     # the actual path to the executable on this platform
     # @return [Pathname]
     attr_accessor :binary_path
-
-    # part of a workaround for https://github.com/arduino/Arduino/issues/3535
-    attr_reader   :libraries_indexed
 
     # @return [String] STDOUT of the most recently-run command
     attr_reader   :last_out
@@ -44,89 +38,21 @@ module ArduinoCI
     # @return [String] the most recently-run command
     attr_reader   :last_msg
 
+    # @return [Array<String>] Additional URLs for the boards manager
+    attr_reader   :additional_urls
+
     # set the command line flags (undefined for now).
     # These vary between gui/cli.  Inline comments added for greppability
-    flag :get_pref           # flag_get_pref
-    flag :set_pref           # flag_set_pref
-    flag :save_prefs         # flag_save_prefs
-    flag :use_board          # flag_use_board
     flag :install_boards     # flag_install_boards
     flag :install_library    # flag_install_library
     flag :verify             # flag_verify
 
-    def initialize
-      @prefs_cache        = {}
-      @prefs_fetched      = false
-      @libraries_indexed  = false
+    def initialize(binary_path)
+      @binary_path        = binary_path
+      @additional_urls    = []
       @last_out           = ""
       @last_err           = ""
       @last_msg           = ""
-    end
-
-    # Convert a preferences dump into a flat hash
-    # @param arduino_output [String] The raw Arduino executable output
-    # @return [Hash] preferences as a hash
-    def parse_pref_string(arduino_output)
-      lines = arduino_output.split("\n").select { |l| l.include? "=" }
-      ret = lines.each_with_object({}) do |e, acc|
-        parts = e.split("=", 2)
-        acc[parts[0]] = parts[1]
-        acc
-      end
-      ret
-    end
-
-    # @return [String] the path to the Arduino libraries directory
-    def lib_dir
-      Pathname.new(get_pref("sketchbook.path")) + "libraries"
-    end
-
-    # fetch preferences in their raw form
-    # @return [String] Preferences as a set of lines
-    def _prefs_raw
-      resp = run_and_capture(flag_get_pref)
-      fail_msg = "Arduino binary failed to operate as expected; you will have to troubleshoot it manually"
-      raise ArduinoExecutionError, "#{fail_msg}. The command was #{@last_msg}" unless resp[:success]
-
-      @prefs_fetched = true
-      resp[:out]
-    end
-
-    # Get the Arduino preferences, from cache if possible
-    # @return [Hash] The full set of preferences
-    def prefs
-      prefs_raw = _prefs_raw unless @prefs_fetched
-      return nil if prefs_raw.nil?
-
-      @prefs_cache = parse_pref_string(prefs_raw)
-      @prefs_cache.clone
-    end
-
-    # get a preference key
-    # @param key [String] The preferences key to look up
-    # @return [String] The preference value
-    def get_pref(key)
-      data = @prefs_fetched ? @prefs_cache : prefs
-      data[key]
-    end
-
-    # underlying preference-setter.
-    # @param key [String] The preference name
-    # @param value [String] The value to set to
-    # @return [bool] whether the command succeeded
-    def _set_pref(key, value)
-      run_and_capture(flag_set_pref, "#{key}=#{value}", flag_save_prefs)[:success]
-    end
-
-    # set a preference key/value pair, and update the cache.
-    # @param key [String] the preference key
-    # @param value [String] the preference value
-    # @return [bool] whether the command succeeded
-    def set_pref(key, value)
-      prefs unless @prefs_fetched  # update cache first
-      success = _set_pref(key, value)
-      @prefs_cache[key] = value if success
-      success
     end
 
     def _wrap_run(work_fn, *args, **kwargs)
@@ -134,7 +60,7 @@ module ArduinoCI
       has_env = !args.empty? && args[0].class == Hash
       env_vars = has_env ? args[0] : {}
       actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
-      full_args = @base_cmd + actual_args
+      full_args = [binary_path.to_s, "--format", "json"] + actual_args
       full_cmd = env_vars.empty? ? full_args : [env_vars] + full_args
 
       shell_vars = env_vars.map { |k, v| "#{k}=#{v}" }.join(" ")
@@ -156,19 +82,34 @@ module ArduinoCI
       ret
     end
 
+    def capture_json(*args, **kwargs)
+      ret = run_and_capture(*args, **kwargs)
+      ret[:json] = JSON.parse(ret[:out])
+    end
+
+    # Get a dump of the entire config
+    # @return [Hash] The configuration
+    def config_dump
+      capture_json("config", "dump")
+    end
+
+    # @return [String] the path to the Arduino libraries directory
+    def lib_dir
+      Pathname.new(config_dump["directories"]["user"]) + "libraries"
+    end
+
     # Board manager URLs
     # @return [Array<String>] The additional URLs used by the board manager
     def board_manager_urls
-      url_list = get_pref("boardsmanager.additional.urls")
-      return [] if url_list.nil?
-
-      url_list.split(",")
+      config_dump["board_manager"]["additional_urls"] + @additional_urls
     end
 
     # Set board manager URLs
     # @return [Array<String>] The additional URLs used by the board manager
     def board_manager_urls=(all_urls)
-      set_pref("boardsmanager.additional.urls", all_urls.join(","))
+      raise ArgumentError("all_urls should be an array, got #{all_urls.class}") unless all_urls.is_a? Array
+
+      @additional_urls = all_urls
     end
 
     # check whether a board is installed
@@ -177,48 +118,33 @@ module ArduinoCI
     # @param boardname [String] The board to test
     # @return [bool] Whether the board is installed
     def board_installed?(boardname)
-      run_and_capture(flag_use_board, boardname)[:success]
+      # capture_json("core", "list")[:json].find { |b| b["ID"] == boardname } # nope, this is for the family
+      run_and_capture("board", "details", "--fqbn", boardname)[:success]
     end
 
     # install a board by name
     # @param name [String] the board name
     # @return [bool] whether the command succeeded
     def install_boards(boardfamily)
-      # TODO: find out why IO.pipe fails but File::NULL succeeds :(
-      result = run_and_capture(flag_install_boards, boardfamily)
-      already_installed = result[:err].include?("Platform is already installed!")
-      result[:success] || already_installed
+      result = run_and_capture("core", "install", boardfamily)
+      result[:success]
+    end
+
+    # @return [Hash] information about installed libraries via the CLI
+    def installed_libraries
+      capture_json("lib", "list")[:json]
     end
 
     # install a library by name
     # @param name [String] the library name
+    # @param version [String] the version to install
     # @return [bool] whether the command succeeded
-    def _install_library(library_name)
-      result = run_and_capture(flag_install_library, library_name)
+    def install_library(library_name, version = nil)
+      return true if library_present?(library_name)
 
-      already_installed = result[:err].include?("Library is already installed: #{library_name}")
-      success = result[:success] || already_installed
-
-      @libraries_indexed = (@libraries_indexed || success) if library_name == WORKAROUND_LIB
-      success
-    end
-
-    # index the set of libraries by installing a dummy library
-    # related to WORKAROUND_LIB and https://github.com/arduino/Arduino/issues/3535
-    # TODO: unclear if this is still necessary
-    def index_libraries
-      return true if @libraries_indexed
-
-      _install_library(WORKAROUND_LIB)
-      @libraries_indexed
-    end
-
-    # install a library by name
-    # @param name [String] the library name
-    # @return [bool] whether the command succeeded
-    def install_library(library_name)
-      index_libraries
-      _install_library(library_name)
+      fqln = version.nil? ? library_name : "#{library_name}@#{version}"
+      result = run_and_capture("lib", "install", fqln)
+      result[:success]
     end
 
     # generate the (very likely) path of a library given its name
@@ -239,47 +165,20 @@ module ArduinoCI
       library_path(library_name).exist?
     end
 
-    # update the library index
-    # @return [bool] Whether the update succeeded
-    def update_library_index
-      # install random lib so the arduino IDE grabs a new library index
-      # see: https://github.com/arduino/Arduino/issues/3535
-      install_library(WORKAROUND_LIB)
-    end
-
-    # use a particular board for compilation
+    # @param path [String] The sketch to compile
     # @param boardname [String] The board to use
     # @return [bool] whether the command succeeded
-    def use_board(boardname)
-      run_and_capture(flag_use_board, boardname, flag_save_prefs)[:success]
-    end
-
-    # use a particular board for compilation, installing it if necessary
-    # @param boardname [String] The board to use
-    # @return [bool] whether the command succeeded
-    def use_board!(boardname)
-      return true if use_board(boardname)
-
-      boardfamily = boardname.split(":")[0..1].join(":")
-      puts "Board '#{boardname}' not found; attempting to install '#{boardfamily}'"
-      return false unless install_boards(boardfamily) # guess board family from first 2 :-separated fields
-
-      use_board(boardname)
-    end
-
-    # @param path [String] The sketch to verify
-    # @return [bool] whether the command succeeded
-    def verify_sketch(path)
+    def compile_sketch(path, boardname)
       ext = File.extname path
       unless ext.casecmp(".ino").zero?
-        @last_msg = "Refusing to verify sketch with '#{ext}' extension -- rename it to '.ino'!"
+        @last_msg = "Refusing to compile sketch with '#{ext}' extension -- rename it to '.ino'!"
         return false
       end
       unless File.exist? path
-        @last_msg = "Can't verify Sketch at nonexistent path '#{path}'!"
+        @last_msg = "Can't compile Sketch at nonexistent path '#{path}'!"
         return false
       end
-      ret = run_and_capture(flag_verify, path)
+      ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path)
       ret[:success]
     end
 

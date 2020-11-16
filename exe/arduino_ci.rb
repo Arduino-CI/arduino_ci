@@ -262,9 +262,6 @@ def perform_compilation_tests(config)
     return
   end
 
-  # index the existing libraries
-  attempt("Indexing libraries") { @arduino_cmd.index_libraries } unless @arduino_cmd.libraries_indexed
-
   # initialize library under test
   installed_library_path = attempt("Installing library under test") do
     @arduino_cmd.install_local_library(Pathname.new("."))
@@ -345,7 +342,6 @@ def perform_compilation_tests(config)
 
   install_arduino_library_dependencies(aux_libraries)
 
-  last_board = nil
   if config.platforms_to_build.empty?
     inform("Skipping builds") { "no platforms were requested" }
     return
@@ -355,8 +351,6 @@ def perform_compilation_tests(config)
     end
     return
   end
-
-  attempt("Setting compiler warning level")  { @arduino_cmd.set_pref("compiler.warning_level", "all") }
 
   # switching boards takes time, so iterate board first
   # _then_ whichever examples match it
@@ -370,13 +364,10 @@ def perform_compilation_tests(config)
 
   examples_by_platform.each do |platform, example_paths|
     board = example_platform_info[platform][:board]
-    assure("Switching to board for #{platform} (#{board})") { @arduino_cmd.use_board(board) } unless last_board == board
-    last_board = board
-
     example_paths.each do |example_path|
       example_name = File.basename(example_path)
-      attempt("Verifying #{example_name}") do
-        ret = @arduino_cmd.verify_sketch(example_path)
+      attempt("Compiling #{example_name} for #{board}") do
+        ret = @arduino_cmd.compile_sketch(example_path, board)
         unless ret
           puts
           puts "Last command: #{@arduino_cmd.last_msg}"
@@ -393,7 +384,7 @@ end
 config = ArduinoCI::CIConfig.default.from_project_library
 
 @arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
-inform("Located Arduino binary") { @arduino_cmd.binary_path.to_s }
+inform("Located arduino-cli binary") { @arduino_cmd.binary_path.to_s }
 
 perform_unit_tests(config)
 perform_compilation_tests(config)
