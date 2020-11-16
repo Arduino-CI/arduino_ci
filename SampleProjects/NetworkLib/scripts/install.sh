@@ -4,5 +4,5 @@
 # then get the custom one we want to use for testing
 cd $(bundle exec arduino_library_location.rb)
 if [ ! -d ./Ethernet ] ; then
-  git clone https://github.com/Arduino-CI/Ethernet.git
+  git clone --depth 1 https://github.com/Arduino-CI/Ethernet.git
 fi
