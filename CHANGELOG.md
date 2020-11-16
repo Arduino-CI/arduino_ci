@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - `arduino_ci_remote.rb` CLI switch `--skip-examples-compilation`
-- Add support for `diditalPinToPort()`, `digitalPinToBitMask()`, and `portOutputRegister()`
+- Add support for `diditalPinToPort()`, `digitalPinToBitMask()`, `portOutputRegister()`, and `portInputRegister()`
 - `CppLibrary.header_files` to find header files
 - `LibraryProperties` to read metadata from Arduino libraries
 - `CppLibrary.library_properties_path`, `CppLibrary.library_properties?`, `CppLibrary.library_properties` to expose library properties of a Cpp library
@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Don't define `ostream& operator<<(nullptr_t)` if already defined by Apple
 - `CppLibrary.in_tests_dir?` no longer produces an error if there is no tests directory
 - The definition of the `_SFR_IO8` macro no longer produces errors about rvalues
+- Typo in `cpp_library.rb`, misspelling of `aux_libraries`
 
 ### Deprecated
 - `arduino_ci_remote.rb` CLI switch `--skip-compilation`
