@@ -161,16 +161,17 @@ module ArduinoCI
         return false
       end
 
+      arduino_package = "Arduino #{@desired_ide_version} package"
       attempts = 0
 
       loop do
         if File.exist? package_file
-          @output.puts "Arduino package seems to have been downloaded already" if attempts.zero?
+          @output.puts "#{arduino_package} seems to have been downloaded already" if attempts.zero?
           break
         elsif attempts >= DOWNLOAD_ATTEMPTS
           break @output.puts "After #{DOWNLOAD_ATTEMPTS} attempts, failed to download #{package_url}"
         else
-          @output.print "Attempting to download Arduino package with #{downloader}"
+          @output.print "Attempting to download #{arduino_package} with #{downloader}"
           download
           @output.puts
         end
@@ -178,7 +179,7 @@ module ArduinoCI
       end
 
       if File.exist? extracted_file
-        @output.puts "Arduino package seems to have been extracted already"
+        @output.puts "#{arduino_package} seems to have been extracted already"
       elsif File.exist? package_file
         @output.print "Extracting archive with #{extracter}"
         extract
@@ -186,7 +187,7 @@ module ArduinoCI
       end
 
       if File.exist? self.class.force_install_location
-        @output.puts "Arduino package seems to have been installed already"
+        @output.puts "#{arduino_package} seems to have been installed already"
       elsif File.exist? extracted_file
         install
       else
