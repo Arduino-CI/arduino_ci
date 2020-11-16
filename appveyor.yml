@@ -31,3 +31,6 @@ test_script:
   - cd ..
   - bundle install
   - bundle exec arduino_ci.rb
+  - cd ../BusIO
+  - bundle install
+  - bundle exec arduino_ci.rb
