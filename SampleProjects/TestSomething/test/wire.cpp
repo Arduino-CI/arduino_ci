@@ -43,7 +43,6 @@ unittest(readTwo_writeOne) {
     // check read buffers and read-related functions
     // request more data than is in input buffer
     assertEqual(0, Wire.requestFrom(randomSlaveAddr, 3));
-    assertEqual(0, Wire.available());
     // normal use cases
     assertEqual(2, Wire.requestFrom(randomSlaveAddr, 2));
     assertEqual(2, Wire.available());
