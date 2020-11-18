@@ -8,18 +8,20 @@ unittest(begin_write_end) {
     deque<uint8_t>* mosi = Wire.getMosi(14);
     assertEqual(0, mosi->size());
     
-    // write some random values to random slave
+    // write some random data to random slave
+    const uint8_t randomSlaveAddr = 14;
+    const uint8_t randomData[] = { 0x07, 0x0E };
     Wire.begin();
-    Wire.beginTransmission(14);
-    Wire.write(0x07);
-    Wire.write(0x0E);
+    Wire.beginTransmission(randomSlaveAddr);
+    Wire.write(randomData[0]);
+    Wire.write(randomData[1]);
     Wire.endTransmission();
 
     // check master write buffer values
     assertEqual(2, mosi->size());
-    assertEqual(0x07, mosi->front());
+    assertEqual(randomData[0], mosi->front());
     mosi->pop_front();
-    assertEqual(0x0E, mosi->front());
+    assertEqual(randomData[1], mosi->front());
     mosi->pop_front();
     assertEqual(0, mosi->size());
 }
@@ -28,29 +30,34 @@ unittest(readTwo_writeOne) {
     Wire.begin();
     deque<uint8_t>* miso;
     // place some values on random slaves' read buffers
-    miso = Wire.getMiso(19);
-    miso->push_back(0x07);
-    miso->push_back(0x0E);
-    miso = Wire.getMiso(34);
-    miso->push_back(1);
-    miso->push_back(4);
-    miso->push_back(7);
+    const int randomSlaveAddr = 19, anotherRandomSlave = 34;
+    const uint8_t randomData[] = { 0x07, 0x0E }, moreRandomData[] = { 1, 4, 7 };
+    miso = Wire.getMiso(randomSlaveAddr);
+    miso->push_back(randomData[0]);
+    miso->push_back(randomData[1]);
+    miso = Wire.getMiso(anotherRandomSlave);
+    miso->push_back(moreRandomData[0]);
+    miso->push_back(moreRandomData[1]);
+    miso->push_back(moreRandomData[2]);
 
     // check read buffers and read-related functions
-    assertEqual(0, Wire.requestFrom(19, 3));
-    assertEqual(2, Wire.requestFrom(19, 2));
-    assertEqual(2, Wire.available());
-    assertEqual(0x07, Wire.read());
-    assertEqual(1, Wire.available());
-    assertEqual(0x0E, Wire.read());
+    // request more data than is in input buffer
+    assertEqual(0, Wire.requestFrom(randomSlaveAddr, 3));
     assertEqual(0, Wire.available());
-    assertEqual(3, Wire.requestFrom(34, 3));
-    assertEqual(3, Wire.available());
-    assertEqual(1, Wire.read());
+    // normal use cases
+    assertEqual(2, Wire.requestFrom(randomSlaveAddr, 2));
     assertEqual(2, Wire.available());
-    assertEqual(4, Wire.read());
+    assertEqual(randomData[0], Wire.read());
     assertEqual(1, Wire.available());
-    assertEqual(7, Wire.read());
+    assertEqual(randomData[1], Wire.read());
+    assertEqual(0, Wire.available());
+    assertEqual(3, Wire.requestFrom(anotherRandomSlave, 3));
+    assertEqual(3, Wire.available());
+    assertEqual(moreRandomData[0], Wire.read());
+    assertEqual(2, Wire.available());
+    assertEqual(moreRandomData[1], Wire.read());
+    assertEqual(1, Wire.available());
+    assertEqual(moreRandomData[2], Wire.read());
     assertEqual(0, Wire.available());
 
     // write some values to different random slave
