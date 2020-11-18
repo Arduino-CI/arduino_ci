@@ -30,7 +30,7 @@ unittest(readTwo_writeOne) {
     Wire.begin();
     deque<uint8_t>* miso;
     // place some values on random slaves' read buffers
-    const int randomSlaveAddr = 19, anotherRandomSlave = 34;
+    const int randomSlaveAddr = 19, anotherRandomSlave = 34, yetAnotherSlave = 47;
     const uint8_t randomData[] = { 0x07, 0x0E }, moreRandomData[] = { 1, 4, 7 };
     miso = Wire.getMiso(randomSlaveAddr);
     miso->push_back(randomData[0]);
@@ -60,24 +60,25 @@ unittest(readTwo_writeOne) {
     assertEqual(moreRandomData[2], Wire.read());
     assertEqual(0, Wire.available());
 
-    // write some values to different random slave
-    Wire.beginTransmission(47);
+    // write some arbitrary values to a third slave
+    Wire.beginTransmission(yetAnotherSlave);
     for (int i = 1; i < 4; i++) {
         Wire.write(i * 2);
     }
     Wire.endTransmission();
 
     // check master write buffer
-    deque<uint8_t>* mosi = Wire.getMosi(47);
+    deque<uint8_t>* mosi = Wire.getMosi(yetAnotherSlave);
+    const uint8_t expectedValues[] = { 2, 4, 6 };
 
     assertEqual(3, mosi->size());
-    assertEqual(2, mosi->front());
+    assertEqual(expectedValues[0], mosi->front());
     mosi->pop_front();
     assertEqual(2, mosi->size());
-    assertEqual(4, mosi->front());
+    assertEqual(expectedValues[1], mosi->front());
     mosi->pop_front();
     assertEqual(1, mosi->size());
-    assertEqual(6, mosi->front());
+    assertEqual(expectedValues[2], mosi->front());
     mosi->pop_front();
     assertEqual(0, mosi->size());
 }
