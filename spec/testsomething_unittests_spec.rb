@@ -10,47 +10,16 @@ def get_relative_dir(sampleprojects_tests_dir)
   sampleprojects_tests_dir.relative_path_from(base_dir)
 end
 
-RSpec.describe "TestSomething C++ without excludes" do
-  next if skip_cpp_tests
-  cpp_lib_path = sampleproj_path + "TestSomething"
-  cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path,
-                                          Pathname.new("my_fake_arduino_lib_dir"),
-                                          [])
-  context "cpp_files" do
-    it "finds cpp files in directory" do
-      testsomething_cpp_files = [
-        Pathname.new("TestSomething/test-something.cpp"),
-        Pathname.new("TestSomething/excludeThis/exclude-this.cpp")
-      ]
-      relative_paths = cpp_library.cpp_files.map { |f| get_relative_dir(f) }
-      expect(relative_paths).to match_array(testsomething_cpp_files)
-    end
-  end
-
-  context "unit tests" do
-    it "can't build due to files that should have been excluded" do
-      config = ArduinoCI::CIConfig.default.from_example(cpp_lib_path)
-      path = config.allowable_unittest_files(cpp_library.test_files).first
-      compiler = config.compilers_to_use.first
-      result = cpp_library.build_for_test_with_configuration(path,
-                                                             [],
-                                                             compiler,
-                                                             config.gcc_config("uno"))
-      expect(result).to be nil
-    end
-  end
-
-end
 
 RSpec.describe "TestSomething C++" do
   next if skip_cpp_tests
   cpp_lib_path = sampleproj_path + "TestSomething"
   cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path,
                                           Pathname.new("my_fake_arduino_lib_dir"),
-                                          ["excludeThis"].map(&Pathname.method(:new)))
+                                          ["src/excludeThis"].map(&Pathname.method(:new)))
   context "cpp_files" do
     it "finds cpp files in directory" do
-      testsomething_cpp_files = [Pathname.new("TestSomething/test-something.cpp")]
+      testsomething_cpp_files = [Pathname.new("TestSomething/src/test-something.cpp")]
       relative_paths = cpp_library.cpp_files.map { |f| get_relative_dir(f) }
       expect(relative_paths).to match_array(testsomething_cpp_files)
     end

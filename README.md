@@ -1,5 +1,8 @@
 
-# ArduinoCI Ruby gem (`arduino_ci`) [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.3.0)
+# ArduinoCI Ruby gem (`arduino_ci`) 
+[![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) 
+[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.3.0)
+[![Gitter](https://badges.gitter.im/Arduino-CI/arduino_ci.svg)](https://gitter.im/Arduino-CI/arduino_ci?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 You want to run tests on your Arduino library (bonus: without hardware present), but the IDE doesn't support that.  Arduino CI provides that ability.
 
@@ -94,15 +97,15 @@ $ bundle install --path vendor/bundle   # adds packages to local library
 With that installed, just the following shell command each time you want the tests to execute:
 
 ```
-$ bundle exec arduino_ci_remote.rb
+$ bundle exec arduino_ci.rb
 ```
 
-`arduino_ci_remote.rb` is the main entry point for this library.  This command will iterate over all the library's `examples/` and attempt to compile them.  If you set up unit tests, it will run those as well.
+`arduino_ci.rb` is the main entry point for this library.  This command will iterate over all the library's `examples/` and attempt to compile them.  If you set up unit tests, it will run those as well.
 
 
 ### Reference
 
-For more information on the usage of `arduino_ci_remote.rb`, see [REFERENCE.md](REFERENCE.md).  It contains information such as:
+For more information on the usage of `arduino_ci.rb`, see [REFERENCE.md](REFERENCE.md).  It contains information such as:
 
 * How to configure build options (platforms to test, Arduino library dependencies to install) with an `.arduino-ci.yml` file
 * Where to put unit test files
@@ -121,7 +124,7 @@ The following prerequisites must be fulfilled:
 
 ### Testing with remote CI
 
-> **Note:** `arduino_ci_remote.rb` expects to be run from the root directory of your Arduino project library.
+> **Note:** `arduino_ci.rb` expects to be run from the root directory of your Arduino project library.
 
 
 #### Travis CI
@@ -135,7 +138,7 @@ sudo: false
 language: ruby
 script:
   - bundle install
-  - bundle exec arduino_ci_remote.rb
+  - bundle exec arduino_ci.rb
 ```
 
 
@@ -149,7 +152,7 @@ Next, you'll need this in `appveyor.yml` in your repo.
 build: off
 test_script:
   - bundle install
-  - bundle exec arduino_ci_remote.rb
+  - bundle exec arduino_ci.rb
 ```
 
 ## Known Problems
