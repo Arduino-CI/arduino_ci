@@ -8,10 +8,10 @@ bundle exec arduino_ci.rb --skip-examples-compilation
 #include <ArduinoUnitTests.h>
 #include <BusIO.h>
 
-unittest(loop) {
+unittest(busio_answer) {
   // token test
   BusIO busIO;
-  assertEqual(42, busIO.answer()));
+  assertEqual(42, busIO.answer());
 }
 
 unittest_main()

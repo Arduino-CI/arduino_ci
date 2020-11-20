@@ -6,4 +6,4 @@ public:
   BusIO() {}
   ~BusIO() {}
   int answer() { return 42; }
-}
+};

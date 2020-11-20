@@ -116,7 +116,7 @@ public:
   // https://www.arduino.cc/en/Reference/WireRequestFrom
   // Used by the master to request bytes from a slave device. The bytes may then
   // be retrieved with the available() and read() functions.
-  uint8_t requestFrom(uint8_t address, size_t quantity, bool stop) {
+  uint8_t requestFrom(uint8_t address, uint8_t quantity, uint32_t _iaddress, uint8_t _isize, uint8_t stop) {
     assert(_didBegin);
     assert(address > 0 && address < SLAVE_COUNT);
     assert(quantity <= BUFFER_LENGTH);
@@ -131,11 +131,20 @@ public:
       return 0;
     }
   }
+
+  uint8_t requestFrom(uint8_t address, uint8_t quantity, uint8_t stop) {
+    return requestFrom((uint8_t)address, (uint8_t)quantity, (uint32_t)0, (uint8_t)0, (uint8_t)stop);
+  }
+
+  uint8_t requestFrom(uint8_t address, uint8_t quantity) {
+    return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t)true);
+  }
+
   uint8_t requestFrom(int address, int quantity) {
-    return requestFrom((uint8_t)address, (size_t)quantity, true);
+    return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t)true);
   }
   uint8_t requestFrom(int address, int quantity, int stop) {
-    return requestFrom((uint8_t)address, (size_t)quantity, (bool)stop);
+    return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t)stop);
   }
 
   // https://www.arduino.cc/en/Reference/WireWrite
