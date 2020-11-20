@@ -317,7 +317,12 @@ module ArduinoCI
       # Pull in all possible places that headers could live, according to the spec:
       # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification
 
-      aux_libraries.map { |d| self.class.new(@arduino_lib_dir + d, @arduino_lib_dir, @exclude_dirs).header_dirs }.flatten.uniq
+      aux_libraries.map do |d|
+        # library manager coerces spaces in package names to underscores
+        # see https://github.com/ianfixes/arduino_ci/issues/132#issuecomment-518857059
+        legal_dir = d.tr(" ", "_")
+        self.class.new(@arduino_lib_dir + legal_dir, @arduino_lib_dir, @exclude_dirs).header_dirs
+      end.flatten.uniq
     end
 
     # GCC command line arguments for including aux libraries
