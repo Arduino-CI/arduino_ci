@@ -36,6 +36,13 @@ RSpec.describe ArduinoCI::LibraryProperties do
       end
     end
 
+    it "reads full_paragraph" do
+      expect(library_properties.full_paragraph).to eq ([
+        expected[:string][:sentence],
+        expected[:string][:paragraph]
+      ].join(" "))
+    end
+
     it "doesn't crash on nonexistent fields" do
       expect(library_properties.dot_a_linkage).to be(nil)
     end

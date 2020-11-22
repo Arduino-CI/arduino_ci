@@ -17,6 +17,11 @@ module ArduinoCI
       end
     end
 
+    # @return [Hash] the properties as a hash, all strings
+    def to_h
+      @fields.clone
+    end
+
     # Enable a shortcut syntax for library property accessors, in the style of `attr_accessor` metaprogramming.
     # This is used to create a named field pointing to a specific property in the file, optionally applying
     # a specific formatting function.

@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Arduino backend is now `arduino-cli` version `0.13.0`
 - `ArduinoCmd` is now `ArduinoBackend`
+- `CppLibrary` now relies largely on `ArduinoBackend` instead of making its own judgements about libraries (metadata, includes, and examples)
+- `ArduinoBackend` functionality related to `CppLibrary` now lives in `CppLibrary`
+- `CppLibrary` now works in an installation-first manner for exposure to `arduino-cli`'s logic -- without installation, there is no ability to reason about libraries
+- `CppLibrary` forces just-in-time recursive dependency installation in order to work sensibly
+- `ArduinoBackend` maintains the central "best guess" logic on what a library (on disk) might be named
 
 ### Deprecated
 - `arduino_ci_remote.rb` CLI switch `--skip-compilation`

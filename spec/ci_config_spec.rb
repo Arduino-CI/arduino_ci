@@ -1,6 +1,8 @@
 require "spec_helper"
 require "pathname"
 
+require "fake_lib_dir"
+
 RSpec.describe ArduinoCI::CIConfig do
   next if skip_ruby_tests
   context "default" do
@@ -156,11 +158,20 @@ RSpec.describe ArduinoCI::CIConfig do
   end
 
   context "allowable_unittest_files" do
+
+    # we will need to install some dummy libraries into a fake location, so do that on demand
+    fld = FakeLibDir.new
+    backend = fld.backend
     cpp_lib_path = Pathname.new(__dir__) + "fake_library"
-    cpp_library = ArduinoCI::CppLibrary.new(cpp_lib_path, Pathname.new("my_fake_arduino_lib_dir"), [])
+
+    around(:example) { |example| fld.in_pristine_fake_libraries_dir(example) }
+    before(:each) { @cpp_library = backend.install_local_library(cpp_lib_path) }
 
     it "starts with a known set of files" do
-      expect(cpp_library.test_files.map { |f| File.basename(f) }).to match_array([
+      expect(cpp_lib_path.exist?).to be(true)
+      expect(@cpp_library).to_not be(nil)
+      expect(@cpp_library.path.exist?).to be(true)
+      expect(@cpp_library.test_files.map { |f| File.basename(f) }).to match_array([
         "sam-squamsh.cpp",
         "yes-good.cpp",
         "mars.cpp"
@@ -170,7 +181,7 @@ RSpec.describe ArduinoCI::CIConfig do
     it "filters that set of files" do
       override_file = File.join(File.dirname(__FILE__), "yaml", "o1.yaml")
       combined_config = ArduinoCI::CIConfig.default.with_override(override_file)
-      expect(combined_config.allowable_unittest_files(cpp_library.test_files).map { |f| File.basename(f) }).to match_array([
+      expect(combined_config.allowable_unittest_files(@cpp_library.test_files).map { |f| File.basename(f) }).to match_array([
         "yes-good.cpp",
       ])
     end

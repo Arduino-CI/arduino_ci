@@ -9,6 +9,7 @@ FIND_FILES_INDENT = 4
 
 @failure_count = 0
 @passfail = proc { |result| result ? "✓" : "✗" }
+@backend = nil
 
 # Use some basic parsing to allow command-line overrides of config
 class Parser
@@ -27,11 +28,6 @@ class Parser
 
       opts.on("--skip-unittests", "Don't run unit tests") do |p|
         output_options[:skip_unittests] = p
-      end
-
-      opts.on("--skip-compilation", "Don't compile example sketches (deprecated)") do |p|
-        puts "The option --skip-compilation has been deprecated in favor of --skip-examples-compilation"
-        output_options[:skip_compilation] = p
       end
 
       opts.on("--skip-examples-compilation", "Don't compile example sketches") do |p|
@@ -68,11 +64,11 @@ end
 def terminate(final = nil)
   puts "Failures: #{@failure_count}"
   unless @failure_count.zero? || final
-    puts "Last message: #{@arduino_backend.last_msg}"
+    puts "Last message: #{@backend.last_msg}"
     puts "========== Stdout:"
-    puts @arduino_backend.last_out
+    puts @backend.last_out
     puts "========== Stderr:"
-    puts @arduino_backend.last_err
+    puts @backend.last_err
   end
   retcode = @failure_count.zero? ? 0 : 1
   exit(retcode)
@@ -172,25 +168,33 @@ def display_files(pathname)
   non_hidden.each { |p| puts "#{margin}#{p}" }
 end
 
-def install_arduino_library_dependencies(aux_libraries)
-  aux_libraries.each do |l|
-    if @arduino_backend.library_present?(l)
-      inform("Using pre-existing library") { l.to_s }
+# @return [Array<String>] The list of installed libraries
+def install_arduino_library_dependencies(library_names, on_behalf_of, already_installed = [])
+  installed = already_installed.clone
+  library_names.map { |n| @backend.library_of_name(n) }.each do |l|
+    if installed.include?(l)
+      # do nothing
+    elsif l.installed?
+      inform("Using pre-existing dependency of #{on_behalf_of}") { l.name }
     else
-      assure("Installing aux library '#{l}'") { @arduino_backend.install_library(l) }
+      assure("Installing dependency of #{on_behalf_of}: '#{l.name}'") do
+        next nil unless l.install
+
+        l.name
+      end
     end
+    installed << l.name
+    installed += install_arduino_library_dependencies(l.arduino_library_dependencies, l.name, installed)
   end
+  installed
 end
 
-def perform_unit_tests(file_config)
+def perform_unit_tests(cpp_library, file_config)
   if @cli_options[:skip_unittests]
     inform("Skipping unit tests") { "as requested via command line" }
     return
   end
   config = file_config.with_override_config(@cli_options[:ci_config])
-  cpp_library = ArduinoCI::CppLibrary.new(Pathname.new("."),
-                                          @arduino_backend.lib_dir,
-                                          config.exclude_dirs.map(&Pathname.method(:new)))
 
   # check GCC
   compilers = config.compilers_to_use
@@ -216,7 +220,7 @@ def perform_unit_tests(file_config)
   if !cpp_library.tests_dir.exist?
     # alert future me about running the script from the wrong directory, instead of doing the huge file dump
     # otherwise, assume that the user might be running the script on a library with no actual unit tests
-    if (Pathname.new(__dir__).parent == Pathname.new(Dir.pwd))
+    if Pathname.new(__dir__).parent == Pathname.new(Dir.pwd)
       inform_multiline("arduino_ci seems to be trying to test itself") do
         [
           "arduino_ci (the ruby gem) isn't an arduino project itself, so running the CI test script against",
@@ -243,7 +247,7 @@ def perform_unit_tests(file_config)
   elsif config.platforms_to_unittest.empty?
     inform("Skipping unit tests") { "no platforms were requested" }
   else
-    install_arduino_library_dependencies(config.aux_libraries_for_unittest)
+    install_arduino_library_dependencies(config.aux_libraries_for_unittest, "<unittest/libraries>")
 
     config.platforms_to_unittest.each do |p|
       config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
@@ -271,35 +275,11 @@ def perform_unit_tests(file_config)
   end
 end
 
-def perform_compilation_tests(config)
+def perform_example_compilation_tests(cpp_library, config)
   if @cli_options[:skip_compilation]
     inform("Skipping compilation of examples") { "as requested via command line" }
     return
   end
-
-  # initialize library under test
-  installed_library_path = attempt("Installing library under test") do
-    @arduino_backend.install_local_library(Pathname.new("."))
-  end
-
-  if !installed_library_path.nil? && installed_library_path.exist?
-    inform("Library installed at") { installed_library_path.to_s }
-  else
-    assure_multiline("Library installed successfully") do
-      if installed_library_path.nil?
-        puts @arduino_backend.last_msg
-      else
-        # print out the contents of the deepest directory we actually find
-        @arduino_backend.lib_dir.ascend do |path_part|
-          next unless path_part.exist?
-
-          break display_files(path_part)
-        end
-        false
-      end
-    end
-  end
-  library_examples = @arduino_backend.library_examples(installed_library_path)
 
   # gather up all required boards for compilation so we can install them up front.
   # start with the "platforms to unittest" and add the examples
@@ -309,6 +289,7 @@ def perform_compilation_tests(config)
   aux_libraries = Set.new(config.aux_libraries_for_build)
   # while collecting the platforms, ensure they're defined
 
+  library_examples = cpp_library.example_sketches
   library_examples.each do |path|
     ovr_config = config.from_example(path)
     ovr_config.platforms_to_build.each do |platform|
@@ -329,33 +310,35 @@ def perform_compilation_tests(config)
   # do that, set the URLs, and download the packages
   all_packages = example_platform_info.values.map { |v| v[:package] }.uniq.reject(&:nil?)
 
+  builtin_packages, external_packages = all_packages.partition { |p| config.package_builtin?(p) }
+
   # inform about builtin packages
-  all_packages.select { |p| config.package_builtin?(p) }.each do |p|
+  builtin_packages.each do |p|
     inform("Using built-in board package") { p }
   end
 
   # make sure any non-builtin package has a URL defined
-  all_packages.reject { |p| config.package_builtin?(p) }.each do |p|
+  external_packages.each do |p|
     assure("Board package #{p} has a defined URL") { board_package_url[p] }
   end
 
   # set up all the board manager URLs.
   # we can safely reject nils now, they would be for the builtins
-  all_urls = all_packages.map { |p| board_package_url[p] }.uniq.reject(&:nil?)
+  all_urls = external_packages.map { |p| board_package_url[p] }.uniq.reject(&:nil?)
 
   unless all_urls.empty?
     assure("Setting board manager URLs") do
-      @arduino_backend.board_manager_urls = all_urls
+      @backend.board_manager_urls = all_urls
     end
   end
 
-  all_packages.each do |p|
+  external_packages.each do |p|
     assure("Installing board package #{p}") do
-      @arduino_backend.install_boards(p)
+      @backend.install_boards(p)
     end
   end
 
-  install_arduino_library_dependencies(aux_libraries)
+  install_arduino_library_dependencies(aux_libraries, "<compile/libraries>")
 
   if config.platforms_to_build.empty?
     inform("Skipping builds") { "no platforms were requested" }
@@ -367,41 +350,51 @@ def perform_compilation_tests(config)
     return
   end
 
-  # switching boards takes time, so iterate board first
-  # _then_ whichever examples match it
-  examples_by_platform = library_examples.each_with_object({}) do |example_path, acc|
+  library_examples.each do |example_path|
     ovr_config = config.from_example(example_path)
     ovr_config.platforms_to_build.each do |p|
-      acc[p] = [] unless acc.key?(p)
-      acc[p] << example_path
-    end
-  end
-
-  examples_by_platform.each do |platform, example_paths|
-    board = example_platform_info[platform][:board]
-    example_paths.each do |example_path|
+      board = example_platform_info[p][:board]
       example_name = File.basename(example_path)
       attempt("Compiling #{example_name} for #{board}") do
-        ret = @arduino_backend.compile_sketch(example_path, board)
+        ret = @backend.compile_sketch(example_path, board)
         unless ret
           puts
-          puts "Last command: #{@arduino_backend.last_msg}"
-          puts @arduino_backend.last_err
+          puts "Last command: #{@backend.last_msg}"
+          puts @backend.last_err
         end
         ret
       end
     end
   end
-
 end
 
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library
 
-@arduino_backend = ArduinoCI::ArduinoInstallation.autolocate!
-inform("Located arduino-cli binary") { @arduino_backend.binary_path.to_s }
+@backend = ArduinoCI::ArduinoInstallation.autolocate!
+inform("Located arduino-cli binary") { @backend.binary_path.to_s }
 
-perform_unit_tests(config)
-perform_compilation_tests(config)
+# initialize library under test
+cpp_library = assure("Installing library under test") do
+  @backend.install_local_library(Pathname.new("."))
+end
+
+if !cpp_library.nil?
+  inform("Library installed at") { cpp_library.path.to_s }
+else
+  # this is a longwinded way of failing, we aren't really "assuring" anything at this point
+  assure_multiline("Library installed successfully") do
+    puts @backend.last_msg
+    false
+  end
+end
+
+install_arduino_library_dependencies(
+  cpp_library.arduino_library_dependencies,
+  "<#{ArduinoCI::CppLibrary::LIBRARY_PROPERTIES_FILE}>"
+)
+
+perform_unit_tests(cpp_library, config)
+perform_example_compilation_tests(cpp_library, config)
 
 terminate(true)

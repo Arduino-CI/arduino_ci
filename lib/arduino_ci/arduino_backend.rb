@@ -13,21 +13,19 @@ module ArduinoCI
   # Wrap the Arduino executable.  This requires, in some cases, a faked display.
   class ArduinoBackend
 
-    # Enable a shortcut syntax for command line flags
-    # @param name [String] What the flag will be called (prefixed with 'flag_')
-    # @return [void]
-    # @macro [attach] flag
-    #   The text of the command line flag for $1
-    #   @!attribute [r] flag_$1
-    #   @return [String] the text of the command line flag (`$2` in this case)
-    def self.flag(name, text = nil)
-      text = "(flag #{name} not defined)" if text.nil?
-      self.class_eval("def flag_#{name};\"#{text}\";end", __FILE__, __LINE__)
-    end
+    # We never even use this in code, it's just here for reference because the backend is picky about it. Used for testing
+    # @return [String] the only allowable name for the arduino-cli config file.
+    CONFIG_FILE_NAME = "arduino-cli.yaml".freeze
 
     # the actual path to the executable on this platform
     # @return [Pathname]
     attr_accessor :binary_path
+
+    # If a custom config is deired (i.e. for testing), specify it here.
+    # Note https://github.com/arduino/arduino-cli/issues/753 : the --config-file option
+    # is really the director that contains the file
+    # @return [Pathname]
+    attr_accessor :config_dir
 
     # @return [String] STDOUT of the most recently-run command
     attr_reader   :last_out
@@ -41,14 +39,9 @@ module ArduinoCI
     # @return [Array<String>] Additional URLs for the boards manager
     attr_reader   :additional_urls
 
-    # set the command line flags (undefined for now).
-    # These vary between gui/cli.  Inline comments added for greppability
-    flag :install_boards     # flag_install_boards
-    flag :install_library    # flag_install_library
-    flag :verify             # flag_verify
-
     def initialize(binary_path)
       @binary_path        = binary_path
+      @config_dir         = nil
       @additional_urls    = []
       @last_out           = ""
       @last_err           = ""
@@ -60,7 +53,8 @@ module ArduinoCI
       has_env = !args.empty? && args[0].class == Hash
       env_vars = has_env ? args[0] : {}
       actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
-      full_args = [binary_path.to_s, "--format", "json"] + actual_args
+      custom_config = @config_dir.nil? ? [] : ["--config-file", @config_dir.to_s]
+      full_args = [binary_path.to_s, "--format", "json"] + custom_config + actual_args
       full_cmd = env_vars.empty? ? full_args : [env_vars] + full_args
 
       shell_vars = env_vars.map { |k, v| "#{k}=#{v}" }.join(" ")
@@ -85,12 +79,13 @@ module ArduinoCI
     def capture_json(*args, **kwargs)
       ret = run_and_capture(*args, **kwargs)
       ret[:json] = JSON.parse(ret[:out])
+      ret
     end
 
     # Get a dump of the entire config
     # @return [Hash] The configuration
     def config_dump
-      capture_json("config", "dump")
+      capture_json("config", "dump")[:json]
     end
 
     # @return [String] the path to the Arduino libraries directory
@@ -135,36 +130,6 @@ module ArduinoCI
       capture_json("lib", "list")[:json]
     end
 
-    # install a library by name
-    # @param name [String] the library name
-    # @param version [String] the version to install
-    # @return [bool] whether the command succeeded
-    def install_library(library_name, version = nil)
-      return true if library_present?(library_name)
-
-      fqln = version.nil? ? library_name : "#{library_name}@#{version}"
-      result = run_and_capture("lib", "install", fqln)
-      result[:success]
-    end
-
-    # generate the (very likely) path of a library given its name
-    # @param library_name [String] The name of the library
-    # @return [Pathname] The fully qualified library name
-    def library_path(library_name)
-      Pathname.new(lib_dir) + library_name
-    end
-
-    # Determine whether a library is present in the lib dir
-    #
-    # Note that `true` doesn't guarantee that the library is valid/installed
-    #  and `false` doesn't guarantee that the library isn't built-in
-    #
-    # @param library_name [String] The name of the library
-    # @return [bool]
-    def library_present?(library_name)
-      library_path(library_name).exist?
-    end
-
     # @param path [String] The sketch to compile
     # @param boardname [String] The board to use
     # @return [bool] whether the command succeeded
@@ -178,28 +143,61 @@ module ArduinoCI
         @last_msg = "Can't compile Sketch at nonexistent path '#{path}'!"
         return false
       end
-      ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path)
+      ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path.to_s)
       ret[:success]
     end
 
-    # ensure that the given library is installed, or symlinked as appropriate
-    # return the path of the prepared library, or nil
-    # @param path [Pathname] library to use
-    # @return [String] the path of the installed library
-    def install_local_library(path)
+    # Guess the name of a library
+    # @param path [Pathname] The path to the library (installed or not)
+    # @return [String] the probable library name
+    def name_of_library(path)
       src_path = path.realpath
-      library_name = src_path.basename
-      destination_path = library_path(library_name)
+      properties_file = src_path + CppLibrary::LIBRARY_PROPERTIES_FILE
+      return src_path.basename.to_s unless properties_file.exist?
+      return src_path.basename.to_s if LibraryProperties.new(properties_file).name.nil?
+
+      LibraryProperties.new(properties_file).name
+    end
+
+    # Create a handle to an Arduino library by name
+    # @param name [String] The library "real name"
+    # @return [CppLibrary] The library object
+    def library_of_name(name)
+      raise ArgumentError, "name is not a String (got #{name.class})" unless name.is_a? String
+
+      CppLibrary.new(name, self)
+    end
+
+    # Create a handle to an Arduino library by path
+    # @param path [Pathname] The path to the library
+    # @return [CppLibrary] The library object
+    def library_of_path(path)
+      # the path must exist... and if it does, brute-force search the installed libs for it
+      realpath = path.realpath  # should produce error if the path doesn't exist to begin with
+      entry = installed_libraries.find { |l| Pathname.new(l["library"]["install_dir"]).realpath == realpath }
+      probable_name = entry["real_name"].nil? ? realpath.basename.to_s : entry["real_name"]
+      CppLibrary.new(probable_name, self)
+    end
+
+    # install a library from a path on the local machine (not via library manager), by symlink or no-op as appropriate
+    # @param path [Pathname] library to use
+    # @return [CppLibrary] the installed library, or nil
+    def install_local_library(path)
+      src_path         = path.realpath
+      library_name     = name_of_library(path)
+      cpp_library      = library_of_name(library_name)
+      destination_path = cpp_library.path
 
       # things get weird if the sketchbook contains the library.
       # check that first
-      if destination_path.exist?
-        uhoh = "There is already a library '#{library_name}' in the library directory"
-        return destination_path if destination_path == src_path
+      if cpp_library.installed?
+        # maybe the project has always lived in the libraries directory, no need to symlink
+        return cpp_library if destination_path == src_path
 
+        uhoh = "There is already a library '#{library_name}' in the library directory (#{destination_path})"
         # maybe it's a symlink? that would be OK
         if destination_path.symlink?
-          return destination_path if destination_path.readlink == src_path
+          return cpp_library if destination_path.readlink == src_path
 
           @last_msg = "#{uhoh} and it's not symlinked to #{src_path}"
           return nil
@@ -210,22 +208,10 @@ module ArduinoCI
       end
 
       # install the library
+      libraries_dir = destination_path.parent
+      libraries_dir.mkpath unless libraries_dir.exist?
       Host.symlink(src_path, destination_path)
-      destination_path
-    end
-
-    # @param installed_library_path [String] The library to query
-    # @return [Array<String>] Example sketch files
-    def library_examples(installed_library_path)
-      example_path = Pathname.new(installed_library_path) + "examples"
-      return [] unless File.exist?(example_path)
-
-      examples = example_path.children.select(&:directory?).map(&:to_path).map(&File.method(:basename))
-      files = examples.map do |e|
-        proj_file = example_path + e + "#{e}.ino"
-        proj_file.exist? ? proj_file.to_s : nil
-      end
-      files.reject(&:nil?).sort_by(&:to_s)
+      cpp_library
     end
   end
 end
