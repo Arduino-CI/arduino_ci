@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.4.0] - 2020-11-21
+### Added
 - `arduino_ci_remote.rb` CLI switch `--skip-examples-compilation`
 - Add support for `diditalPinToPort()`, `digitalPinToBitMask()`, `portOutputRegister()`, and `portInputRegister()`
 - `CppLibrary.header_files` to find header files
@@ -28,19 +42,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - NUM_SERIAL_PORTS can now be set explicitly
 - Improve SPI header strategy
 
+### Deprecated
+- `arduino_ci_remote.rb` CLI switch `--skip-compilation`
+- Deprecated `arduino_ci_remote.rb` in favor of `arduino_ci.rb`
+
 ### Fixed
 - Don't define `ostream& operator<<(nullptr_t)` if already defined by Apple
 - `CppLibrary.in_tests_dir?` no longer produces an error if there is no tests directory
 - The definition of the `_SFR_IO8` macro no longer produces errors about rvalues
 - Typo in `cpp_library.rb`, misspelling of `aux_libraries`
-
-### Deprecated
-- `arduino_ci_remote.rb` CLI switch `--skip-compilation`
-- Deprecated `arduino_ci_remote.rb` in favor of `arduino_ci.rb`
-
-### Removed
-
-### Security
 
 
 ## [0.3.0] - 2019-09-03
@@ -410,7 +420,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/Arduino-CI/arduino_ci/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.1.21...v0.2.0
