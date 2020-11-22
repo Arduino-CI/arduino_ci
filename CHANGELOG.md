@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Special handling of attempts to run the `arduino_ci.rb` CI script against the ruby library instead of an actual Arduino project
+- Explicit checks for attemping to test `arduino_ci` itself as if it were a library, resolving a minor annoyance to this developer.
 
 ### Changed
 - Arduino backend is now `arduino-cli` version `0.13.0`

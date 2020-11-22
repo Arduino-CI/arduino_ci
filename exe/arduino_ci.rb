@@ -214,10 +214,25 @@ def perform_unit_tests(file_config)
 
   # iterate boards / tests
   if !cpp_library.tests_dir.exist?
-    inform_multiline("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") do
-      puts "  In case that's an error, this is what was found in the library:"
-      display_files(cpp_library.tests_dir.parent)
-      true
+    # alert future me about running the script from the wrong directory, instead of doing the huge file dump
+    # otherwise, assume that the user might be running the script on a library with no actual unit tests
+    if (Pathname.new(__dir__).parent == Pathname.new(Dir.pwd))
+      inform_multiline("arduino_ci seems to be trying to test itself") do
+        [
+          "arduino_ci (the ruby gem) isn't an arduino project itself, so running the CI test script against",
+          "the core library isn't really a valid thing to do... but it's easy for a developer (including the",
+          "owner) to mistakenly do just that.  Hello future me, you probably meant to run this against one of",
+          "the sample projects in SampleProjects/ ... if not, please submit a bug report; what a wild case!"
+        ].each { |l| puts "  #{l}" }
+        false
+      end
+      exit(1)
+    else
+      inform_multiline("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") do
+        puts "  In case that's an error, this is what was found in the library:"
+        display_files(cpp_library.tests_dir.parent)
+        true
+      end
     end
   elsif cpp_library.test_files.empty?
     inform_multiline("Skipping unit tests; no test files were found in #{cpp_library.tests_dir}") do
