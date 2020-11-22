@@ -68,11 +68,11 @@ end
 def terminate(final = nil)
   puts "Failures: #{@failure_count}"
   unless @failure_count.zero? || final
-    puts "Last message: #{@arduino_cmd.last_msg}"
+    puts "Last message: #{@arduino_backend.last_msg}"
     puts "========== Stdout:"
-    puts @arduino_cmd.last_out
+    puts @arduino_backend.last_out
     puts "========== Stderr:"
-    puts @arduino_cmd.last_err
+    puts @arduino_backend.last_err
   end
   retcode = @failure_count.zero? ? 0 : 1
   exit(retcode)
@@ -174,10 +174,10 @@ end
 
 def install_arduino_library_dependencies(aux_libraries)
   aux_libraries.each do |l|
-    if @arduino_cmd.library_present?(l)
+    if @arduino_backend.library_present?(l)
       inform("Using pre-existing library") { l.to_s }
     else
-      assure("Installing aux library '#{l}'") { @arduino_cmd.install_library(l) }
+      assure("Installing aux library '#{l}'") { @arduino_backend.install_library(l) }
     end
   end
 end
@@ -189,7 +189,7 @@ def perform_unit_tests(file_config)
   end
   config = file_config.with_override_config(@cli_options[:ci_config])
   cpp_library = ArduinoCI::CppLibrary.new(Pathname.new("."),
-                                          @arduino_cmd.lib_dir,
+                                          @arduino_backend.lib_dir,
                                           config.exclude_dirs.map(&Pathname.method(:new)))
 
   # check GCC
@@ -264,7 +264,7 @@ def perform_compilation_tests(config)
 
   # initialize library under test
   installed_library_path = attempt("Installing library under test") do
-    @arduino_cmd.install_local_library(Pathname.new("."))
+    @arduino_backend.install_local_library(Pathname.new("."))
   end
 
   if !installed_library_path.nil? && installed_library_path.exist?
@@ -272,10 +272,10 @@ def perform_compilation_tests(config)
   else
     assure_multiline("Library installed successfully") do
       if installed_library_path.nil?
-        puts @arduino_cmd.last_msg
+        puts @arduino_backend.last_msg
       else
         # print out the contents of the deepest directory we actually find
-        @arduino_cmd.lib_dir.ascend do |path_part|
+        @arduino_backend.lib_dir.ascend do |path_part|
           next unless path_part.exist?
 
           break display_files(path_part)
@@ -284,7 +284,7 @@ def perform_compilation_tests(config)
       end
     end
   end
-  library_examples = @arduino_cmd.library_examples(installed_library_path)
+  library_examples = @arduino_backend.library_examples(installed_library_path)
 
   # gather up all required boards for compilation so we can install them up front.
   # start with the "platforms to unittest" and add the examples
@@ -330,13 +330,13 @@ def perform_compilation_tests(config)
 
   unless all_urls.empty?
     assure("Setting board manager URLs") do
-      @arduino_cmd.board_manager_urls = all_urls
+      @arduino_backend.board_manager_urls = all_urls
     end
   end
 
   all_packages.each do |p|
     assure("Installing board package #{p}") do
-      @arduino_cmd.install_boards(p)
+      @arduino_backend.install_boards(p)
     end
   end
 
@@ -367,11 +367,11 @@ def perform_compilation_tests(config)
     example_paths.each do |example_path|
       example_name = File.basename(example_path)
       attempt("Compiling #{example_name} for #{board}") do
-        ret = @arduino_cmd.compile_sketch(example_path, board)
+        ret = @arduino_backend.compile_sketch(example_path, board)
         unless ret
           puts
-          puts "Last command: #{@arduino_cmd.last_msg}"
-          puts @arduino_cmd.last_err
+          puts "Last command: #{@arduino_backend.last_msg}"
+          puts @arduino_backend.last_err
         end
         ret
       end
@@ -383,8 +383,8 @@ end
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library
 
-@arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
-inform("Located arduino-cli binary") { @arduino_cmd.binary_path.to_s }
+@arduino_backend = ArduinoCI::ArduinoInstallation.autolocate!
+inform("Located arduino-cli binary") { @arduino_backend.binary_path.to_s }
 
 perform_unit_tests(config)
 perform_compilation_tests(config)

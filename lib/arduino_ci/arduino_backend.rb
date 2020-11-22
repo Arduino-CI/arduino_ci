@@ -11,7 +11,7 @@ module ArduinoCI
   class ArduinoExecutionError < StandardError; end
 
   # Wrap the Arduino executable.  This requires, in some cases, a faked display.
-  class ArduinoCmd
+  class ArduinoBackend
 
     # Enable a shortcut syntax for command line flags
     # @param name [String] What the flag will be called (prefixed with 'flag_')

@@ -10,10 +10,10 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
   end
 
   context "autolocate!" do
-    arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
+    arduino_backend = ArduinoCI::ArduinoInstallation.autolocate!
     it "doesn't fail" do
-      expect(arduino_cmd.binary_path).not_to be nil
-      expect(arduino_cmd.lib_dir).not_to be nil
+      expect(arduino_backend.binary_path).not_to be nil
+      expect(arduino_backend.lib_dir).not_to be nil
     end
   end
 
@@ -23,7 +23,7 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
       output.rewind
       expect(output.read.empty?).to be true
       # install a bogus version to save time downloading
-      arduino_cmd = ArduinoCI::ArduinoInstallation.force_install(output, "BOGUS VERSION")
+      arduino_backend = ArduinoCI::ArduinoInstallation.force_install(output, "BOGUS VERSION")
       output.rewind
       expect(output.read.empty?).to be false
     end

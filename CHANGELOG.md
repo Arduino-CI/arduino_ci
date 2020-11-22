@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Arduino backend is now `arduino-cli` version `0.13.0`
+- `ArduinoCmd` is now `ArduinoBackend`
 
 ### Deprecated
 - `arduino_ci_remote.rb` CLI switch `--skip-compilation`

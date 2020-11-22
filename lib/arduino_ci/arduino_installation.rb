@@ -1,6 +1,6 @@
 require 'pathname'
 require "arduino_ci/host"
-require "arduino_ci/arduino_cmd"
+require "arduino_ci/arduino_backend"
 require "arduino_ci/arduino_downloader_osx"
 require "arduino_ci/arduino_downloader_linux"
 require "arduino_ci/arduino_downloader_windows" if ArduinoCI::Host.os == :windows
@@ -19,7 +19,7 @@ module ArduinoCI
       # attempt to find a workable Arduino executable across platforms
       #
       # Autolocation assumed to be an expensive operation
-      # @return [ArduinoCI::ArduinoCmd] an instance of the command or nil if it can't be found
+      # @return [ArduinoCI::ArduinoBackend] an instance of the command or nil if it can't be found
       def autolocate
         downloader_class = case Host.os
         when :osx     then ArduinoDownloaderOSX
@@ -30,11 +30,11 @@ module ArduinoCI
         loc = downloader_class.autolocated_executable
         return nil if loc.nil?
 
-        ArduinoCmd.new(loc)
+        ArduinoBackend.new(loc)
       end
 
       # Attempt to find a workable Arduino executable across platforms, and install it if we don't
-      # @return [ArduinoCI::ArduinoCmd] an instance of a command
+      # @return [ArduinoCI::ArduinoBackend] an instance of a command
       def autolocate!(output = $stdout)
         candidate = autolocate
         return candidate unless candidate.nil?

@@ -2,6 +2,6 @@
 require 'arduino_ci'
 
 # locate and/or forcibly install Arduino, keep stdout clean
-@arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!($stderr)
+@arduino_backend = ArduinoCI::ArduinoInstallation.autolocate!($stderr)
 
-puts @arduino_cmd.lib_dir
+puts @arduino_backend.lib_dir
