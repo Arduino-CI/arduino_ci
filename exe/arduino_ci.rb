@@ -375,8 +375,15 @@ config = ArduinoCI::CIConfig.default.from_project_library
 inform("Located arduino-cli binary") { @backend.binary_path.to_s }
 
 # initialize library under test
+cpp_library_path = Pathname.new(".")
 cpp_library = assure("Installing library under test") do
-  @backend.install_local_library(Pathname.new("."))
+  @backend.install_local_library(cpp_library_path)
+end
+
+assumed_name = @backend.name_of_library(cpp_library_path)
+ondisk_name = cpp_library_path.realpath.basename
+if assumed_name != ondisk_name
+  inform("WARNING") { "Installed library named '#{assumed_name}' has directory name '#{ondisk_name}'" }
 end
 
 if !cpp_library.nil?

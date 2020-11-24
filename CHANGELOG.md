@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Special handling of attempts to run the `arduino_ci.rb` CI script against the ruby library instead of an actual Arduino project
 - Explicit checks for attemping to test `arduino_ci` itself as if it were a library, resolving a minor annoyance to this developer.
 - Code coverage tooling
+- Explicit check and warning for library directory names that do not match our guess of what the library should/would be called
 
 ### Changed
 - Arduino backend is now `arduino-cli` version `0.13.0`
@@ -28,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS` no longer affects any tests because there are no longer splash screens since switching to `arduino-cli`
 
 ### Fixed
+- Mismatches between library names in `library.properties` and the directory names, which can cause cryptic failures
 
 ### Security
 
