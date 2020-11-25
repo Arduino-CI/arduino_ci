@@ -12,7 +12,7 @@ module ArduinoCI
     def initialize(path)
       @fields = {}
       File.foreach(path) do |line|
-        parts = line.strip.split("=", 2)  # check for empty on next line fails if there is a newline
+        parts = line.strip.split("=", 2)  # check for empty on next line fails if there is a newline (#224)
         @fields[parts[0]] = parts[1].chomp unless parts.empty?
       end
     end
