@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Parse error in `library_properties.rb`
+- Missing include of `IPAddress.h` in `Client.h`
 
 ### Security
 
