@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Mismatches between library names in `library.properties` and the directory names, which can cause cryptic failures
+- `LibraryProperties` skips over parse errors instead of crashing: only lines with non-empty keys and non-nil values are recorded
 
 ### Security
 
