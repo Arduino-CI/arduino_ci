@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Missing include of `IPAddress.h` in `Client.h`
 
 ### Security
 
