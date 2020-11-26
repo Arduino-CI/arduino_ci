@@ -255,13 +255,10 @@ module ArduinoCI
     # @param gcc_binary [String]
     def libasan?(gcc_binary)
       unless @has_libasan_cache.key?(gcc_binary)
-        file = Tempfile.new(["arduino_ci_libasan_check", ".cpp"])
-        begin
+        Tempfile.create(["arduino_ci_libasan_check", ".cpp"]) do |file|
           file.write "int main(){}"
           file.close
           @has_libasan_cache[gcc_binary] = run_gcc(gcc_binary, "-o", "/dev/null", "-fsanitize=address", file.path)
-        ensure
-          file.delete
         end
       end
       @has_libasan_cache[gcc_binary]
