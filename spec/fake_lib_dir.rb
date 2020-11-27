@@ -18,7 +18,8 @@ class FakeLibDir
 
   # designed to be called by rspec's "around" function
   def in_pristine_fake_libraries_dir(example)
-    Dir.mktmpdir do |d|
+    d = Dir.mktmpdir
+    begin
       # write a yaml file containing the current directory
       dummy_config = { "directories" => { "user" => d.to_s } }
       @arduino_dir = Pathname.new(d)
@@ -36,6 +37,17 @@ class FakeLibDir
         rescue Errno::ENOENT
           # cool, already done
         end
+      end
+    ensure
+      if ArduinoCI::Host.needs_symlink_hack?
+        stdout, stderr, exitstatus = Open3.capture3('cmd.exe', "/c rmdir /s /q #{ArduinoCI::Host.pathname_to_windows(d)}")
+        unless exitstatus.success?
+          puts "====== rmdir of #{d} failed"
+          puts stdout
+          puts stderr
+        end
+      else
+        FileUtils.remove_entry(d)
       end
     end
   end

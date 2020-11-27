@@ -171,7 +171,7 @@ RSpec.describe ArduinoCI::CIConfig do
       expect(cpp_lib_path.exist?).to be(true)
       expect(@cpp_library).to_not be(nil)
       expect(@cpp_library.path.exist?).to be(true)
-      expect(@cpp_library.test_files.map { |f| File.basename(f) }).to match_array([
+      expect(@cpp_library.test_files.map(&:basename).map(&:to_s)).to match_array([
         "sam-squamsh.cpp",
         "yes-good.cpp",
         "mars.cpp"
@@ -179,9 +179,19 @@ RSpec.describe ArduinoCI::CIConfig do
     end
 
     it "filters that set of files" do
+      expect(cpp_lib_path.exist?).to be(true)
+      expect(@cpp_library).to_not be(nil)
+      expect(@cpp_library.test_files.map(&:basename).map(&:to_s)).to match_array([
+        "sam-squamsh.cpp",
+        "yes-good.cpp",
+        "mars.cpp"
+      ])
+
       override_file = File.join(File.dirname(__FILE__), "yaml", "o1.yaml")
       combined_config = ArduinoCI::CIConfig.default.with_override(override_file)
-      expect(combined_config.allowable_unittest_files(@cpp_library.test_files).map { |f| File.basename(f) }).to match_array([
+      expect(combined_config.unittest_info[:testfiles][:select]).to match_array(["*-*.*"])
+      expect(combined_config.unittest_info[:testfiles][:reject]).to match_array(["sam-squamsh.*"])
+      expect(combined_config.allowable_unittest_files(@cpp_library.test_files).map(&:basename).map(&:to_s)).to match_array([
         "yes-good.cpp",
       ])
     end

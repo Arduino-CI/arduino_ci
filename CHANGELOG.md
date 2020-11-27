@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Explicit checks for attemping to test `arduino_ci` itself as if it were a library, resolving a minor annoyance to this developer.
 - Code coverage tooling
 - Explicit check and warning for library directory names that do not match our guess of what the library should/would be called
+- Symlink tests for `Host`
 
 ### Changed
 - Arduino backend is now `arduino-cli` version `0.13.0`

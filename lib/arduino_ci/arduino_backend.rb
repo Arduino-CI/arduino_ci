@@ -196,10 +196,11 @@ module ArduinoCI
 
         uhoh = "There is already a library '#{library_name}' in the library directory (#{destination_path})"
         # maybe it's a symlink? that would be OK
-        if destination_path.symlink?
-          return cpp_library if destination_path.readlink == src_path
+        if Host.symlink?(destination_path)
+          current_destination_target = Host.readlink(destination_path)
+          return cpp_library if current_destination_target == src_path
 
-          @last_msg = "#{uhoh} and it's not symlinked to #{src_path}"
+          @last_msg = "#{uhoh} and it's symlinked to #{current_destination_target} (expected #{src_path})"
           return nil
         end
 

@@ -157,7 +157,7 @@ end
 # print out some files
 def display_files(pathname)
   # `find` doesn't follow symlinks, so we should instead
-  realpath = pathname.symlink? ? pathname.readlink : pathname
+  realpath = Host.symlink?(pathname) ? Host.readlink(pathname) : pathname
 
   # suppress directories and dotfile-based things
   all_files = realpath.find.select(&:file?)

@@ -6,6 +6,13 @@ module ArduinoCI
 
   # Tools for interacting with the host machine
   class Host
+    # TODO: this came from https://stackoverflow.com/a/22716582/2063546
+    #       and I'm not sure if it can be replaced by self.os == :windows
+    WINDOWS_VARIANT_REGEX = /mswin32|cygwin|mingw|bccwin/
+
+    # e.g. 11/27/2020  01:02 AM    <SYMLINKD>     ExcludeSomething [C:\projects\arduino-ci\SampleProjects\ExcludeSomething]
+    DIR_SYMLINK_REGEX = %r{\d+/\d+/\d+\s+[^<]+<SYMLINKD?>\s+(.*) \[([^\]]+)\]}
+
     # Cross-platform way of finding an executable in the $PATH.
     # via https://stackoverflow.com/a/5471032/2063546
     #   which('ruby') #=> /usr/bin/ruby
@@ -38,21 +45,69 @@ module ArduinoCI
       return :windows if OS.windows?
     end
 
+    # Cross-platform symlinking
     # if on windows, call mklink, else self.symlink
     # @param [Pathname] old_path
     # @param [Pathname] new_path
     def self.symlink(old_path, new_path)
-      return FileUtils.ln_s(old_path.to_s, new_path.to_s) unless RUBY_PLATFORM =~ /mswin32|cygwin|mingw|bccwin/
+      # we would prefer `new_path.make_symlink(old_path)` but "symlink function is unimplemented on this machine" with windows
+      return new_path.make_symlink(old_path) unless needs_symlink_hack?
 
-      # https://stackoverflow.com/a/22716582/2063546
+      # via https://stackoverflow.com/a/22716582/2063546
       # windows mklink syntax is reverse of unix ln -s
       # windows mklink is built into cmd.exe
       # vulnerable to command injection, but okay because this is a hack to make a cli tool work.
-      orp = old_path.realpath.to_s.tr("/", "\\") # HACK DUE TO REALPATH BUG where it
-      np = new_path.to_s.tr("/", "\\")           # still joins windows paths with '/'
+      orp = pathname_to_windows(old_path.realpath)
+      np  = pathname_to_windows(new_path)
 
       _stdout, _stderr, exitstatus = Open3.capture3('cmd.exe', "/C mklink /D #{np} #{orp}")
       exitstatus.success?
+    end
+
+    # Hack for "realpath" which on windows joins paths with slashes instead of backslashes
+    # @param path [Pathname] the path to render
+    # @return [String] A path that will work on windows
+    def self.pathname_to_windows(path)
+      path.to_s.tr("/", "\\")
+    end
+
+    # Hack for "realpath" which on windows joins paths with slashes instead of backslashes
+    # @param str [String] the windows path
+    # @return [Pathname] A path that will be recognized by pathname
+    def self.windows_to_pathname(str)
+      Pathname.new(str.tr("\\", "/"))
+    end
+
+    # Whether this OS requires a hack for symlinks
+    # @return [bool]
+    def self.needs_symlink_hack?
+      RUBY_PLATFORM =~ WINDOWS_VARIANT_REGEX
+    end
+
+    # Cross-platform is-this-a-symlink function
+    # @param [Pathname] path
+    # @return [bool] Whether the file is a symlink
+    def self.symlink?(path)
+      return path.symlink? unless needs_symlink_hack?
+
+      !readlink(path).nil?
+    end
+
+    # Cross-platform "read link" function
+    # @param [Pathname] path
+    # @return [Pathname] the link target
+    def self.readlink(path)
+      return path.readlink unless needs_symlink_hack?
+
+      the_dir  = pathname_to_windows(path.parent)
+      the_file = path.basename.to_s
+
+      stdout, _stderr, _exitstatus = Open3.capture3('cmd.exe', "/c dir /al #{the_dir}")
+      symlinks = stdout.lines.map { |l| DIR_SYMLINK_REGEX.match(l) }.compact
+      our_link = symlinks.find { |m| m[1] == the_file }
+      return nil if our_link.nil?
+
+      windows_to_pathname(our_link[2])
     end
   end
 end
