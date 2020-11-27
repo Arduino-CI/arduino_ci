@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'pathname'
 require 'net/http'
 require 'open-uri'
 require 'zip'
@@ -10,10 +11,10 @@ module ArduinoCI
   # Manage the OS-specific download & install of Arduino
   class ArduinoDownloader
 
-    # @param desired_ide_version [string] Version string e.g. 1.8.7
+    # @param desired_version [string] Version string e.g. 1.8.7
     # @param output [IO] $stdout, $stderr, File.new(/dev/null, 'w'), etc. where console output will be sent
-    def initialize(desired_ide_version, output = $stdout)
-      @desired_ide_version = desired_ide_version
+    def initialize(desired_version, output = $stdout)
+      @desired_version = desired_version
       @output = output
     end
 
@@ -30,7 +31,7 @@ module ArduinoCI
 
     # The autolocated executable of the installation
     #
-    # @return [string] or nil
+    # @return [Pathname] or nil
     def self.autolocated_executable
       # Arbitrarily, I'm going to pick the force installed location first
       # if it exists.  I'm not sure why we would have both, but if we did
@@ -39,53 +40,10 @@ module ArduinoCI
       locations.find { |loc| !loc.nil? && File.exist?(loc) }
     end
 
-    # The autolocated directory of the installation
-    #
-    # @return [string] or nil
-    def self.autolocated_installation
-      # Arbitrarily, I'm going to pick the force installed location first
-      # if it exists.  I'm not sure why we would have both, but if we did
-      # a force install then let's make sure we actually use it.
-      locations = [self.force_install_location, self.existing_installation]
-      locations.find { |loc| !loc.nil? && File.exist?(loc) }
-    end
-
-    # The path to the directory of an existing installation, or nil
-    # @return [string]
-    def self.existing_installation
-      self.must_implement(__method__)
-    end
-
     # The executable Arduino file in an existing installation, or nil
-    # @return [string]
+    # @return [Pathname]
     def self.existing_executable
       self.must_implement(__method__)
-    end
-
-    # The executable Arduino file in a forced installation, or nil
-    # @return [string]
-    def self.force_installed_executable
-      self.must_implement(__method__)
-    end
-
-    # The technology that will be used to complete the download
-    # (for logging purposes)
-    # @return [string]
-    def downloader
-      "open-uri"
-    end
-
-    # The technology that will be used to extract the download
-    # (for logging purposes)
-    # @return [string]
-    def extracter
-      "Zip"
-    end
-
-    # The URL of the desired IDE package (zip/tar/etc) for this platform
-    # @return [string]
-    def package_url
-      "https://downloads.arduino.cc/#{package_file}"
     end
 
     # The local file (dir) name of the desired IDE package (zip/tar/etc)
@@ -96,13 +54,40 @@ module ArduinoCI
 
     # The local filename of the extracted IDE package (zip/tar/etc)
     # @return [string]
-    def extracted_file
-      self.class.must_implement(__method__)
+    def self.extracted_file
+      self.must_implement(__method__)
     end
 
-    # @return [String] The location where a forced install will go
-    def self.force_install_location
-      File.join(ENV['HOME'], 'arduino_ci_ide')
+    # The executable Arduino file in a forced installation, or nil
+    # @return [Pathname]
+    def self.force_installed_executable
+      Pathname.new(ENV['HOME']) + self.extracted_file
+    end
+
+    # The technology that will be used to complete the download
+    # (for logging purposes)
+    # @return [string]
+    def self.downloader
+      "open-uri"
+    end
+
+    # The technology that will be used to extract the download
+    # (for logging purposes)
+    # @return [string]
+    def self.extracter
+      self.must_implement(__method__)
+    end
+
+    # Extract the package_file to extracted_file
+    # @return [bool] whether successful
+    def self.extract(_package_file)
+      self.must_implement(__method__)
+    end
+
+    # The URL of the desired IDE package (zip/tar/etc) for this platform
+    # @return [string]
+    def package_url
+      "https://github.com/arduino/arduino-cli/releases/download/#{@desired_version}/#{package_file}"
     end
 
     # Download the package_url to package_file
@@ -130,26 +115,10 @@ module ArduinoCI
       @output.puts "\nArduino force-install failed downloading #{package_url}: #{e}"
     end
 
-    # Extract the package_file to extracted_file
-    # @return [bool] whether successful
-    def extract
-      Zip::File.open(package_file) do |zip|
-        batch_size = [1, (zip.size / 100).to_i].max
-        dots = 0
-        zip.each do |file|
-          @output.print "." if (dots % batch_size).zero?
-          file.restore_permissions = true
-          file.extract { accept_all }
-          dots += 1
-        end
-      end
-    end
-
-    # Move the extracted package file from extracted_file to the force_install_location
+    # Move the extracted package file from extracted_file to the force_installed_executable
     # @return [bool] whether successful
     def install
-      # Move only the content of the directory
-      FileUtils.mv extracted_file, self.class.force_install_location
+      FileUtils.mv self.class.extracted_file.to_s, self.class.force_installed_executable.to_s
     end
 
     # Forcibly install Arduino on linux from the web
@@ -161,40 +130,40 @@ module ArduinoCI
         return false
       end
 
-      arduino_package = "Arduino #{@desired_ide_version} package"
+      arduino_package = "Arduino #{@desired_version} package"
       attempts = 0
 
       loop do
-        if File.exist? package_file
-          @output.puts "#{arduino_package} seems to have been downloaded already" if attempts.zero?
+        if File.exist?(package_file)
+          @output.puts "#{arduino_package} seems to have been downloaded already at #{package_file}" if attempts.zero?
           break
         elsif attempts >= DOWNLOAD_ATTEMPTS
           break @output.puts "After #{DOWNLOAD_ATTEMPTS} attempts, failed to download #{package_url}"
         else
-          @output.print "Attempting to download #{arduino_package} with #{downloader}"
+          @output.print "Attempting to download #{arduino_package} with #{self.class.downloader}"
           download
           @output.puts
         end
         attempts += 1
       end
 
-      if File.exist? extracted_file
-        @output.puts "#{arduino_package} seems to have been extracted already"
-      elsif File.exist? package_file
-        @output.print "Extracting archive with #{extracter}"
-        extract
+      if File.exist?(self.class.extracted_file)
+        @output.puts "#{arduino_package} seems to have been extracted already at #{self.class.extracted_file}"
+      elsif File.exist?(package_file)
+        @output.print "Extracting archive with #{self.class.extracter}"
+        self.class.extract(package_file)
         @output.puts
       end
 
-      if File.exist? self.class.force_install_location
-        @output.puts "#{arduino_package} seems to have been installed already"
-      elsif File.exist? extracted_file
+      if File.exist?(self.class.force_installed_executable)
+        @output.puts "#{arduino_package} seems to have been installed already at #{self.class.force_installed_executable}"
+      elsif File.exist?(self.class.extracted_file)
         install
       else
-        @output.puts "Could not find extracted archive (tried #{extracted_file})"
+        @output.puts "Could not find extracted archive (tried #{self.class.extracted_file})"
       end
 
-      File.exist? self.class.force_install_location
+      File.exist?(self.class.force_installed_executable)
     end
 
   end

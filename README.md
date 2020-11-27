@@ -1,6 +1,6 @@
 
-# ArduinoCI Ruby gem (`arduino_ci`) 
-[![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci) 
+# ArduinoCI Ruby gem (`arduino_ci`)
+[![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci)
 [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/0.4.0)
 [![Gitter](https://badges.gitter.im/Arduino-CI/arduino_ci.svg)](https://gitter.im/Arduino-CI/arduino_ci?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -36,6 +36,9 @@ For a bare-bones example that you can copy from, see [SampleProjects/DoSomething
 
 The complete set of C++ unit tests for the `arduino_ci` library itself are in the [SampleProjects/TestSomething](SampleProjects/TestSomething) project.  The [test files](SampleProjects/TestSomething/test/) are named after the type of feature being tested.
 
+> Arduino expects all libraries to be in a specific `Arduino/libraries` directory on your system.  If your library is elsewhere, `arduino_ci` will _automatically_ create a symbolic link in the `libraries` directory that points to the directory of the project being tested.  This simplifieds working with project dependencies, but **it can have unintended consequences on Windows systems** because [in some cases deleting a folder that contains a symbolic link to another folder can cause the _entire linked folder_ to be removed instead of just the link itself](https://superuser.com/a/306618).
+>
+> If you use a Windows system **it is recommended that you only run `arduino_ci` from project directories that are already inside the `libraries` directory**
 
 ### You Need Ruby and Bundler
 
