@@ -1,3 +1,7 @@
+require 'simplecov'
+SimpleCov.start do
+  add_filter %r{^/spec/}
+end
 require "bundler/setup"
 require "arduino_ci"
 
@@ -11,10 +15,6 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
-end
-
-def skip_splash_screen_tests
-  !ENV["ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS"].nil?
 end
 
 def skip_ruby_tests

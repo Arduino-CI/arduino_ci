@@ -2,7 +2,6 @@ require "spec_helper"
 
 RSpec.describe ArduinoCI::ArduinoInstallation do
   next if skip_ruby_tests
-  next if skip_splash_screen_tests
 
   context "autolocate" do
     it "doesn't fail" do
@@ -11,10 +10,10 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
   end
 
   context "autolocate!" do
-    arduino_cmd = ArduinoCI::ArduinoInstallation.autolocate!
+    backend = ArduinoCI::ArduinoInstallation.autolocate!
     it "doesn't fail" do
-      expect(arduino_cmd.base_cmd).not_to be nil
-      expect(arduino_cmd.lib_dir).not_to be nil
+      expect(backend.binary_path).not_to be nil
+      expect(backend.lib_dir).not_to be nil
     end
   end
 
@@ -24,11 +23,10 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
       output.rewind
       expect(output.read.empty?).to be true
       # install a bogus version to save time downloading
-      arduino_cmd = ArduinoCI::ArduinoInstallation.force_install(output, "BOGUS VERSION")
+      backend = ArduinoCI::ArduinoInstallation.force_install(output, "BOGUS VERSION")
       output.rewind
       expect(output.read.empty?).to be false
     end
   end
 
 end
-

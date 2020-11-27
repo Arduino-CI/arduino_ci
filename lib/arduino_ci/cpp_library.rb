@@ -14,14 +14,20 @@ module ArduinoCI
   # Information about an Arduino CPP library, specifically for compilation purposes
   class CppLibrary
 
-    # @return [Pathname] The path to the library being tested
-    attr_reader :base_dir
+    # @return [String] The official library properties file name
+    LIBRARY_PROPERTIES_FILE = "library.properties".freeze
 
-    # @return [Pathname] The path to the Arduino 3rd-party library directory
-    attr_reader :arduino_lib_dir
+    # @return [String] The "official" name of the library, which can include spaces (in a way that the lib dir won't)
+    attr_reader :name
+
+    # @return [ArduinoBackend] The backend support for this library
+    attr_reader :backend
 
     # @return [Array<Pathname>] The set of artifacts created by this class (note: incomplete!)
     attr_reader :artifacts
+
+    # @return [Array<Pathname>] The set of directories that should be excluded from compilation
+    attr_reader :exclude_dirs
 
     # @return [String] STDERR from the last command
     attr_reader :last_err
@@ -35,30 +41,100 @@ module ArduinoCI
     # @return [Array<Pathname>] Directories suspected of being vendor-bundle
     attr_reader :vendor_bundle_cache
 
-    # @param base_dir [Pathname] The path to the library being tested
-    # @param arduino_lib_dir [Pathname] The path to the libraries directory
-    # @param exclude_dirs [Array<Pathname>] Directories that should be excluded from compilation
-    def initialize(base_dir, arduino_lib_dir, exclude_dirs)
-      raise ArgumentError, 'base_dir is not a Pathname' unless base_dir.is_a? Pathname
-      raise ArgumentError, 'arduino_lib_dir is not a Pathname' unless arduino_lib_dir.is_a? Pathname
-      raise ArgumentError, 'exclude_dir is not an array of Pathnames' unless exclude_dirs.is_a?(Array)
-      raise ArgumentError, 'exclude_dir array contains non-Pathname elements' unless exclude_dirs.all? { |p| p.is_a? Pathname }
+    # @param friendly_name [String] The "official" name of the library, which can contain spaces
+    # @param backend [ArduinoBackend] The support backend
+    def initialize(friendly_name, backend)
+      raise ArgumentError, "friendly_name is not a String (got #{friendly_name.class})" unless friendly_name.is_a? String
+      raise ArgumentError, 'backend is not a ArduinoBackend' unless backend.is_a? ArduinoBackend
 
-      @base_dir = base_dir
-      @exclude_dirs = exclude_dirs
-      @arduino_lib_dir = arduino_lib_dir.expand_path
+      @name = friendly_name
+      @backend = backend
+      @info_cache = nil
       @artifacts = []
       @last_err = ""
       @last_out = ""
       @last_msg = ""
       @has_libasan_cache = {}
       @vendor_bundle_cache = nil
+      @exclude_dirs = []
+    end
+
+    # Generate a guess as to the on-disk (coerced character) name of this library
+    #
+    # @TODO: delegate this to the backend in some way? It uses "official" names for install, but dir names in lists :(
+    # @param friendly_name [String] The library name as it might appear in library manager
+    # @return [String] How the path will be stored on disk -- spaces are coerced to underscores
+    def self.library_directory_name(friendly_name)
+      friendly_name.tr(" ", "_")
+    end
+
+    # Generate a guess as to the on-disk (coerced character) name of this library
+    #
+    # @TODO: delegate this to the backend in some way? It uses "official" names for install, but dir names in lists :(
+    # @return [String] How the path will be stored on disk -- spaces are coerced to underscores
+    def name_on_disk
+      self.class.library_directory_name(@name)
+    end
+
+    # Get the path to this library, whether or not it exists
+    # @return [Pathname] The fully qualified library path
+    def path
+      @backend.lib_dir + name_on_disk
+    end
+
+    # Determine whether a library is present in the lib dir
+    #
+    # Note that `true` doesn't guarantee that the library is valid/installed
+    #  and `false` doesn't guarantee that the library isn't built-in
+    #
+    # @return [bool]
+    def installed?
+      path.exist?
+    end
+
+    # install a library by name
+    # @param version [String] the version to install
+    # @param recursive [bool] whether to also install its dependencies
+    # @return [bool] whether the command succeeded
+    def install(version = nil, recursive = false)
+      return true if installed? && !recursive
+
+      fqln = version.nil? ? @name : "#{@name}@#{version}"
+      result = if recursive
+        @backend.run_and_capture("lib", "install", fqln)
+      else
+        @backend.run_and_capture("lib", "install", "--no-deps", fqln)
+      end
+      result[:success]
+    end
+
+    # information about the library as reported by the backend
+    # @return [Hash] the metadata object
+    def info
+      return nil unless installed?
+
+      # note that if the library isn't found, we're going to do a lot of cache attempts...
+      if @info_cache.nil?
+        @info_cache = @backend.installed_libraries.find do |l|
+          lib_info = l["library"]
+          Pathname.new(lib_info["install_dir"]).realpath == path.realpath
+        end
+      end
+
+      @info_cache
+    end
+
+    # @param installed_library_path [String] The library to query
+    # @return [Array<String>] Example sketch files
+    def example_sketches
+      reported_dirs = info["library"]["examples"].map(&Pathname::method(:new))
+      reported_dirs.map { |e| e + e.basename.sub_ext(".ino") }.select(&:exist?).sort_by(&:to_s)
     end
 
     # The expected path to the library.properties file (i.e. even if it does not exist)
     # @return [Pathname]
     def library_properties_path
-      @base_dir + "library.properties"
+      path + LIBRARY_PROPERTIES_FILE
     end
 
     # Whether library.properties definitions for this library exist
@@ -68,16 +144,29 @@ module ArduinoCI
       lib_props.exist? && lib_props.file?
     end
 
+    # Library properties
+    # @return [LibraryProperties] The library.properties metadata wrapper for this library
+    def library_properties
+      return nil unless library_properties?
+
+      LibraryProperties.new(library_properties_path)
+    end
+
+    # Set directories that should be excluded from compilation
+    # @param rval [Array] Array of strings or pathnames that will be coerced to pathnames
+    def exclude_dirs=(rval)
+      @exclude_dirs = rval.map { |d| d.is_a?(Pathname) ? d : Pathname.new(d) }
+    end
+
     # Decide whether this is a 1.5-compatible library
     #
-    # according to https://arduino.github.io/arduino-cli/latest/library-specification
-    #
-    # Should match logic from https://github.com/arduino/arduino-cli/blob/master/arduino/libraries/loader.go
+    # This should be according to https://arduino.github.io/arduino-cli/latest/library-specification
+    # but we rely on the cli to decide for us
     # @return [bool]
     def one_point_five?
       return false unless library_properties?
 
-      src_dir = (@base_dir + "src")
+      src_dir = path + "src"
       src_dir.exist? && src_dir.directory?
     end
 
@@ -88,9 +177,9 @@ module ArduinoCI
     #   That gets us the vendor directory (or multiple directories). We can check
     #   if the given path is contained by any of those.
     #
-    # @param path [Pathname] The path to check
+    # @param some_path [Pathname] The path to check
     # @return [bool]
-    def vendor_bundle?(path)
+    def vendor_bundle?(some_path)
       # Cache bundle information, as it is (1) time consuming to fetch and (2) not going to change while we run
       if @vendor_bundle_cache.nil?
         bundle_info = Host.run_and_capture("bundle show --paths")
@@ -125,7 +214,7 @@ module ArduinoCI
 
       # With vendor bundles located, check this file against those
       @vendor_bundle_cache.any? do |gem_path|
-        path.ascend do |part|
+        some_path.ascend do |part|
           break true if gem_path == part
         end
       end
@@ -135,13 +224,13 @@ module ArduinoCI
     #
     # @param path [Pathname] The path to check
     # @return [bool]
-    def in_tests_dir?(path)
+    def in_tests_dir?(sourcefile_path)
       return false unless tests_dir.exist?
 
       tests_dir_aliases = [tests_dir, tests_dir.realpath]
       # we could do this but some rubies don't return an enumerator for ascend
       # path.ascend.any? { |part| tests_dir_aliases.include?(part) }
-      path.ascend do |part|
+      sourcefile_path.ascend do |part|
         return true if tests_dir_aliases.include?(part)
       end
       false
@@ -151,11 +240,11 @@ module ArduinoCI
     #
     # @param path [Pathname] The path to check
     # @return [bool]
-    def in_exclude_dir?(path)
+    def in_exclude_dir?(sourcefile_path)
       # we could do this but some rubies don't return an enumerator for ascend
       # path.ascend.any? { |part| tests_dir_aliases.include?(part) }
-      path.ascend do |part|
-        return true if exclude_dir.any? { |p| p.realpath == part }
+      sourcefile_path.ascend do |part|
+        return true if exclude_dir.any? { |p| p.realpath == part.realpath }
       end
       false
     end
@@ -166,31 +255,13 @@ module ArduinoCI
     # @param gcc_binary [String]
     def libasan?(gcc_binary)
       unless @has_libasan_cache.key?(gcc_binary)
-        file = Tempfile.new(["arduino_ci_libasan_check", ".cpp"])
-        begin
+        Tempfile.create(["arduino_ci_libasan_check", ".cpp"]) do |file|
           file.write "int main(){}"
           file.close
           @has_libasan_cache[gcc_binary] = run_gcc(gcc_binary, "-o", "/dev/null", "-fsanitize=address", file.path)
-        ensure
-          file.delete
         end
       end
       @has_libasan_cache[gcc_binary]
-    end
-
-    # Library properties
-    def library_properties
-      return nil unless library_properties?
-
-      LibraryProperties.new(library_properties_path)
-    end
-
-    # Get a list of all dependencies as defined in library.properties
-    # @return [Array<String>] The library names of the dependencies (not the paths)
-    def arduino_library_dependencies
-      return nil unless library_properties?
-
-      library_properties.depends
     end
 
     # Get a list of all CPP source files in a directory and its subdirectories
@@ -199,9 +270,11 @@ module ArduinoCI
     # @return [Array<Pathname>] The paths of the found files
     def code_files_in(some_dir, extensions)
       raise ArgumentError, 'some_dir is not a Pathname' unless some_dir.is_a? Pathname
-      return [] unless some_dir.exist? && some_dir.directory?
 
-      files = some_dir.realpath.children.reject(&:directory?)
+      full_dir = path + some_dir
+      return [] unless full_dir.exist? && full_dir.directory?
+
+      files = full_dir.children.reject(&:directory?)
       cpp = files.select { |path| extensions.include?(path.extname.downcase) }
       not_hidden = cpp.reject { |path| path.basename.to_s.start_with?(".") }
       not_hidden.sort_by(&:to_s)
@@ -215,36 +288,35 @@ module ArduinoCI
       raise ArgumentError, 'some_dir is not a Pathname' unless some_dir.is_a? Pathname
       return [] unless some_dir.exist? && some_dir.directory?
 
-      real = some_dir.realpath
-      Find.find(real).map { |p| Pathname.new(p) }.select(&:directory?).map { |d| code_files_in(d, extensions) }.flatten
+      Find.find(some_dir).map { |p| Pathname.new(p) }.select(&:directory?).map { |d| code_files_in(d, extensions) }.flatten
+    end
+
+    # Source files that are part of the library under test
+    # @param extensions [Array<String>] the allowed extensions (or, the ones we're looking for)
+    # @return [Array<Pathname>]
+    def source_files(extensions)
+      source_dir = Pathname.new(info["library"]["source_dir"])
+      ret = if one_point_five?
+        code_files_in_recursive(source_dir, extensions)
+      else
+        [source_dir, source_dir + "utility"].map { |d| code_files_in(d, extensions) }.flatten
+      end
+
+      # note to future troubleshooter: some of these tests may not be relevant, but at the moment at
+      # least some of them are tied to existing features
+      ret.reject { |p| vendor_bundle?(p) || in_tests_dir?(p) || in_exclude_dir?(p) }
     end
 
     # Header files that are part of the project library under test
     # @return [Array<Pathname>]
     def header_files
-      ret = if one_point_five?
-        code_files_in_recursive(@base_dir + "src", HPP_EXTENSIONS)
-      else
-        [@base_dir, @base_dir + "utility"].map { |d| code_files_in(d, HPP_EXTENSIONS) }.flatten
-      end
-
-      # note to future troubleshooter: some of these tests may not be relevant, but at the moment at
-      # least some of them are tied to existing features
-      ret.reject { |p| vendor_bundle?(p) || in_tests_dir?(p) || in_exclude_dir?(p) }
+      source_files(HPP_EXTENSIONS)
     end
 
     # CPP files that are part of the project library under test
     # @return [Array<Pathname>]
     def cpp_files
-      ret = if one_point_five?
-        code_files_in_recursive(@base_dir + "src", CPP_EXTENSIONS)
-      else
-        [@base_dir, @base_dir + "utility"].map { |d| code_files_in(d, CPP_EXTENSIONS) }.flatten
-      end
-
-      # note to future troubleshooter: some of these tests may not be relevant, but at the moment at
-      # least some of them are tied to existing features
-      ret.reject { |p| vendor_bundle?(p) || in_tests_dir?(p) || in_exclude_dir?(p) }
+      source_files(CPP_EXTENSIONS)
     end
 
     # CPP files that are part of the arduino mock library we're providing
@@ -269,13 +341,13 @@ module ArduinoCI
     # Returns the Pathnames for all paths to exclude from testing and compilation
     # @return [Array<Pathname>]
     def exclude_dir
-      @exclude_dirs.map { |p| Pathname.new(@base_dir) + p }.select(&:exist?)
+      @exclude_dirs.map { |p| Pathname.new(path) + p }.select(&:exist?)
     end
 
     # The directory where we expect to find unit test defintions provided by the user
     # @return [Pathname]
     def tests_dir
-      Pathname.new(@base_dir) + "test"
+      Pathname.new(path) + "test"
     end
 
     # The files provided by the user that contain unit tests
@@ -311,18 +383,33 @@ module ArduinoCI
       @last_err
     end
 
+    # Get a list of all dependencies as defined in library.properties
+    # @return [Array<String>] The library names of the dependencies (not the paths)
+    def arduino_library_dependencies
+      return [] unless library_properties?
+      return [] if library_properties.depends.nil?
+
+      library_properties.depends
+    end
+
+    # Arduino library dependencies all the way down, installing if they are not present
+    # @return [Array<String>] The library names of the dependencies (not the paths)
+    def all_arduino_library_dependencies!(additional_libraries = [])
+      # Pull in all possible places that headers could live, according to the spec:
+      # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification
+      recursive = (additional_libraries + arduino_library_dependencies).map do |n|
+        other_lib = self.class.new(n, @backend)
+        other_lib.install unless other_lib.installed?
+        other_lib.all_arduino_library_dependencies!
+      end.flatten
+      ret = (additional_libraries + recursive).uniq
+      ret
+    end
+
     # Arduino library directories containing sources -- only those of the dependencies
     # @return [Array<Pathname>]
     def arduino_library_src_dirs(aux_libraries)
-      # Pull in all possible places that headers could live, according to the spec:
-      # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification
-
-      aux_libraries.map do |d|
-        # library manager coerces spaces in package names to underscores
-        # see https://github.com/ianfixes/arduino_ci/issues/132#issuecomment-518857059
-        legal_dir = d.tr(" ", "_")
-        self.class.new(@arduino_lib_dir + legal_dir, @arduino_lib_dir, @exclude_dirs).header_dirs
-      end.flatten.uniq
+      all_arduino_library_dependencies!(aux_libraries).map { |l| self.class.new(l, @backend).header_dirs }.flatten.uniq
     end
 
     # GCC command line arguments for including aux libraries
@@ -415,9 +502,9 @@ module ArduinoCI
 
       # combine library.properties defs (if existing) with config file.
       # TODO: as much as I'd like to rely only on the properties file(s), I think that would prevent testing 1.0-spec libs
-      full_aux_libraries = arduino_library_dependencies.nil? ? aux_libraries : aux_libraries + arduino_library_dependencies
-      arg_sets << test_args(full_aux_libraries, ci_gcc_config)
-      arg_sets << cpp_files_libraries(full_aux_libraries).map(&:to_s)
+      full_dependencies = all_arduino_library_dependencies!(aux_libraries)
+      arg_sets << test_args(full_dependencies, ci_gcc_config)
+      arg_sets << cpp_files_libraries(full_dependencies).map(&:to_s)
       arg_sets << [test_file.to_s]
       args = arg_sets.flatten(1)
       return nil unless run_gcc(gcc_binary, *args)

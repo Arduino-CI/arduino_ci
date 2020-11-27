@@ -11,10 +11,20 @@ module ArduinoCI
     # @param path [Pathname] The path to the library.properties file
     def initialize(path)
       @fields = {}
-      File.foreach(path) do |line|
+      File.foreach(path) do |line_with_delim|
+        line = line_with_delim.chomp
         parts = line.split("=", 2)
-        @fields[parts[0]] = parts[1].chomp unless parts.empty?
+        next if parts[0].nil?
+        next if parts[0].empty?
+        next if parts[1].nil?
+
+        @fields[parts[0]] = parts[1] unless parts[1].empty?
       end
+    end
+
+    # @return [Hash] the properties as a hash, all strings
+    def to_h
+      @fields.clone
     end
 
     # Enable a shortcut syntax for library property accessors, in the style of `attr_accessor` metaprogramming.
