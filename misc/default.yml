@@ -3,8 +3,12 @@
 #   https://en.wikipedia.org/wiki/List_of_Arduino_boards_and_compatible_systems
 
 packages:
-  # arduino:xxx are builtin, we don't need to include them here
-  # but if we did, it would be url: https://downloads.arduino.cc/packages/package_index.json
+  arduino:avr:
+    url: https://downloads.arduino.cc/packages/package_index.json
+  arduino:sam:
+    url: https://downloads.arduino.cc/packages/package_index.json
+  arduino:samd:
+    url: https://downloads.arduino.cc/packages/package_index.json
   esp8266:esp8266:
     url: http://arduino.esp8266.com/stable/package_esp8266com_index.json
   adafruit:avr:

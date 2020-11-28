@@ -232,13 +232,6 @@ module ArduinoCI
       deep_clone(defn)
     end
 
-    # Whether a package is built-in to arduino
-    # @param package [String] the package name (e.g. "arduino:avr")
-    # @return [bool]
-    def package_builtin?(package)
-      package.start_with?("arduino:")
-    end
-
     # the URL that gives the download info for a given package (a JSON file).
     # this is NOT where the package comes from.
     # @param package [String] the package name (e.g. "arduino:avr")

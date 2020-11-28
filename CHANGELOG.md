@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 - `ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS` no longer affects any tests because there are no longer splash screens since switching to `arduino-cli`
+- `CIConfig.package_builtin?` as this is no longer relevant to the `arduino-cli` backend (which has no built-in packages)
 
 ### Fixed
 - Mismatches between library names in `library.properties` and the directory names, which can cause cryptic failures
