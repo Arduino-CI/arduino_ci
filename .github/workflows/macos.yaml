@@ -5,12 +5,12 @@ name: macos
 on: [push, pull_request]
 
 jobs:
-  rubocop: 
+  rspec:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
-        with: 
+        with:
           ruby-version: 2.6
 
       # Install and run Arduino CI tests for rubocop
@@ -18,16 +18,29 @@ jobs:
         run: |
           g++ -v
           bundle install
-          bundle exec rubocop --version
-          bundle exec rubocop -D .
           bundle exec rspec --backtrace
 
-  TestSomething: 
+  rubocop:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
-        with: 
+        with:
+          ruby-version: 2.6
+
+      # Install and run Arduino CI tests for rubocop
+      - name: Build and Execute
+        run: |
+          bundle install
+          bundle exec rubocop --version
+          bundle exec rubocop -D .
+
+  TestSomething:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
           ruby-version: 2.6
 
       # Install and run Arduino CI tests for TestSomething
@@ -39,12 +52,12 @@ jobs:
           bundle install
           bundle exec arduino_ci.rb
 
-  NetworkLib: 
+  NetworkLib:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
-        with: 
+        with:
           ruby-version: 2.6
 
       # Install and run Arduino CI tests for NetworkLib
@@ -53,6 +66,6 @@ jobs:
           g++ -v
           bundle install
           cd SampleProjects/NetworkLib
-          ./scripts/install.sh
+          sh ./scripts/install.sh
           bundle install
           bundle exec arduino_ci.rb
