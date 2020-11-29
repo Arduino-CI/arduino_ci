@@ -3,7 +3,7 @@ require "spec_helper"
 RSpec.describe ArduinoCI::LibraryProperties do
 
   context "property extraction" do
-    library_properties = ArduinoCI::LibraryProperties.new(Pathname.new(__dir__) + "properties/example.library.properties")
+    library_properties = ArduinoCI::LibraryProperties.new(Pathname.new(__dir__) + "properties" + "example.library.properties")
 
     expected = {
       string: {
@@ -36,8 +36,32 @@ RSpec.describe ArduinoCI::LibraryProperties do
       end
     end
 
+    it "reads full_paragraph" do
+      expect(library_properties.full_paragraph).to eq ([
+        expected[:string][:sentence],
+        expected[:string][:paragraph]
+      ].join(" "))
+    end
+
     it "doesn't crash on nonexistent fields" do
       expect(library_properties.dot_a_linkage).to be(nil)
+    end
+  end
+
+  context "Input handling" do
+    malformed_examples = [
+      "extra_blank_line.library.properties",
+      "just_equals.library.properties",
+      "no_equals.library.properties",
+      "no_key.library.properties",
+      "no_value.library.properties",
+    ].map { |e| Pathname.new(__dir__) + "properties" + e }
+
+    malformed_examples.each do |e|
+      quirk = e.basename.to_s.split(".library.").first
+      it "reads a properties file with #{quirk}" do
+        expect { ArduinoCI::LibraryProperties.new(e) }.to_not raise_error
+      end
     end
   end
 

@@ -31,7 +31,6 @@ See `SampleProjects/TestSomething/test/*.cpp` for the existing tests (run by rsp
 
 To speed up testing by targeting only the files you're working on, you can set several environment variables that `bundle exec rspec` will respond to:
 
-* `ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS`: if set, this will avoid any rspec test that calls the arduino executable (and as such, causes the splash screen to pop up).
 * `ARDUINO_CI_SKIP_RUBY_RSPEC_TESTS`: if set, this will skip all tests against ruby code (useful if you are not changing Ruby code).
 * `ARDUINO_CI_SKIP_CPP_RSPEC_TESTS`: if set, this will skip all tests against the `TestSomething` sample project (useful if you are not changing C++ code).
 * `ARDUINO_CI_SELECT_CPP_TESTS=<glob>`: if set, this will skip all C++ unit tests whose filenames don't match the provided glob (executed in the tests directory)

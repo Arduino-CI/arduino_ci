@@ -7,15 +7,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Special handling of attempts to run the `arduino_ci.rb` CI script against the ruby library instead of an actual Arduino project
+- Explicit checks for attemping to test `arduino_ci` itself as if it were a library, resolving a minor annoyance to this developer.
+- Code coverage tooling
+- Explicit check and warning for library directory names that do not match our guess of what the library should/would be called
+- Symlink tests for `Host`
 
 ### Changed
+- Arduino backend is now `arduino-cli` version `0.13.0`
+- `ArduinoCmd` is now `ArduinoBackend`
+- `CppLibrary` now relies largely on `ArduinoBackend` instead of making its own judgements about libraries (metadata, includes, and examples)
+- `ArduinoBackend` functionality related to `CppLibrary` now lives in `CppLibrary`
+- `CppLibrary` now works in an installation-first manner for exposure to `arduino-cli`'s logic -- without installation, there is no ability to reason about libraries
+- `CppLibrary` forces just-in-time recursive dependency installation in order to work sensibly
+- `ArduinoBackend` maintains the central "best guess" logic on what a library (on disk) might be named
 
 ### Deprecated
+- `arduino_ci_remote.rb` CLI switch `--skip-compilation`
+- Deprecated `arduino_ci_remote.rb` in favor of `arduino_ci.rb`
 
 ### Removed
+- `ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS` no longer affects any tests because there are no longer splash screens since switching to `arduino-cli`
 
 ### Fixed
 - Missing include of `IPAddress.h` in `Client.h`
+- Mismatches between library names in `library.properties` and the directory names, which can cause cryptic failures
+- `LibraryProperties` skips over parse errors instead of crashing: only lines with non-empty keys and non-nil values are recorded
 
 ### Security
 
