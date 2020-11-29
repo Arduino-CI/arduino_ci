@@ -12,9 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Code coverage tooling
 - Explicit check and warning for library directory names that do not match our guess of what the library should/would be called
 - Symlink tests for `Host`
-- GitHub action for MacOS
 - Add documentation on how to use Arduino CI with GitHub Actions
-- Allow tests to run on GitHub without external set up with GitHub Actions (for Windows and Ubuntu)
+- Allow tests to run on GitHub without external set up, via GitHub Actions (Windows, Linux, MacOS)
 
 ### Changed
 - Arduino backend is now `arduino-cli` version `0.13.0`
@@ -32,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 - `ARDUINO_CI_SKIP_SPLASH_SCREEN_RSPEC_TESTS` no longer affects any tests because there are no longer splash screens since switching to `arduino-cli`
 - `CIConfig.package_builtin?` as this is no longer relevant to the `arduino-cli` backend (which has no built-in packages)
+- Travis and Appveyor CI
 
 ### Fixed
 - Mismatches between library names in `library.properties` and the directory names, which can cause cryptic failures

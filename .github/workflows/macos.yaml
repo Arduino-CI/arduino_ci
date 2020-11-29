@@ -13,7 +13,7 @@ jobs:
         with:
           ruby-version: 2.6
 
-      # Install and run Arduino CI tests for rubocop
+      # Install and run Arduino CI tests for rspec
       - name: Build and Execute
         run: |
           g++ -v
@@ -47,7 +47,6 @@ jobs:
       - name: Build and Execute
         run: |
           g++ -v
-          bundle install
           cd SampleProjects/TestSomething
           bundle install
           bundle exec arduino_ci.rb
@@ -64,7 +63,6 @@ jobs:
       - name: Build and Execute
         run: |
           g++ -v
-          bundle install
           cd SampleProjects/NetworkLib
           sh ./scripts/install.sh
           bundle install

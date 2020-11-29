@@ -10,13 +10,14 @@ You want to precisely replicate certain software states in your library, but you
 
 You want your Arduino library to be automatically built and tested every time someone contributes code to your project on GitHub, but the Arduino IDE lacks the ability to run unit tests. [Arduino CI](https://github.com/Arduino-CI/arduino_ci) provides that ability.
 
-`arduino_ci` is a cross-platform build/test system, consisting of a Ruby gem and a series of C++ mocks.  It enables tests to be run both locally and as part of a CI service like Travis or Appveyor.  Any OS that can run the Arduino IDE can run `arduino_ci`.
+`arduino_ci` is a cross-platform build/test system, consisting of a Ruby gem and a series of C++ mocks.  It enables tests to be run both locally and as part of a CI service like GitHub Actions, TravisCI, Appveyor, etc.  Any OS that can run the Arduino IDE can run `arduino_ci`.
 
- &nbsp;            | Linux | macOS | Windows
--------------------|:------|:------|:--------
-**AppVeyor**       |       |       | [![Windows Build status](https://ci.appveyor.com/api/projects/status/abynv8xd75m26qo9/branch/master?svg=true)](https://ci.appveyor.com/project/ianfixes/arduino-ci)
-**GitHub Actions** | [![Arduino CI](https://github.com/Arduino-CI/arduino_ci/workflows/linux/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=linux) | | [![Arduino CI](https://github.com/Arduino-CI/arduino_ci/workflows/windows/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=windows)
-**Travis CI**      | [![Linux Build Status](http://badges.herokuapp.com/travis/Arduino-CI/arduino_ci?env=BADGE=linux&label=build&branch=master)](https://travis-ci.org/Arduino-CI/arduino_ci) | [![OSX Build Status](http://badges.herokuapp.com/travis/Arduino-CI/arduino_ci?env=BADGE=osx&label=build&branch=master)](https://travis-ci.org/Arduino-CI/arduino_ci) |
+
+Platform | CI Status
+---------|:---------
+OSX      | [![OSX Build Status](https://github.com/Arduino-CI/arduino_ci/workflows/macos/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=macos)
+Linux    | [![Linux Build Status](https://github.com/Arduino-CI/arduino_ci/workflows/linux/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=linux)
+Windows  | [![Windows Build status](https://github.com/Arduino-CI/arduino_ci/workflows/windows/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=windows)
 
 
 ## Comparison to Other Arduino Testing Tools
@@ -130,6 +131,28 @@ The following prerequisites must be fulfilled:
 > **Note:** `arduino_ci.rb` expects to be run from the root directory of your Arduino project library.
 
 
+#### GitHub Actions
+
+GitHub Actions allows you to automate your workflows directly in GitHub.
+No additional steps are needed.
+Just create a YAML file with the information below in your repo under the `.github/workflows/` directory.
+
+```yaml
+on: [push, pull_request]
+jobs:
+  runTest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - run: |
+          bundle install
+          bundle exec arduino_ci_remote.rb
+```
+
+
 #### Travis CI
 
 You'll need to go to https://travis-ci.org/profile/ and enable testing for your Arduino project.  Once that happens, you should be all set.  The script will test all example projects of the library and all unit tests.
@@ -156,27 +179,6 @@ build: off
 test_script:
   - bundle install
   - bundle exec arduino_ci.rb
-```
-
-#### GitHub Actions
-
-GitHub Actions allows you to automate your workflows directly in GitHub.
-No additional steps are needed.
-Just create a YAML file with the information below in your repo under the `.github/workflows/` directory.
-
-```yaml
-on: [push, pull_request]
-jobs:
-  runTest:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - run: |
-          bundle install
-          bundle exec arduino_ci_remote.rb
 ```
 
 
