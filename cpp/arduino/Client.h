@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Stream.h>
+#include <IPAddress.h>
 
 class Client : public Stream {
 public:
