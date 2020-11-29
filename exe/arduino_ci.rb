@@ -310,21 +310,14 @@ def perform_example_compilation_tests(cpp_library, config)
   # do that, set the URLs, and download the packages
   all_packages = example_platform_info.values.map { |v| v[:package] }.uniq.reject(&:nil?)
 
-  builtin_packages, external_packages = all_packages.partition { |p| config.package_builtin?(p) }
-
-  # inform about builtin packages
-  builtin_packages.each do |p|
-    inform("Using built-in board package") { p }
-  end
-
   # make sure any non-builtin package has a URL defined
-  external_packages.each do |p|
+  all_packages.each do |p|
     assure("Board package #{p} has a defined URL") { board_package_url[p] }
   end
 
   # set up all the board manager URLs.
   # we can safely reject nils now, they would be for the builtins
-  all_urls = external_packages.map { |p| board_package_url[p] }.uniq.reject(&:nil?)
+  all_urls = all_packages.map { |p| board_package_url[p] }.uniq.reject(&:nil?)
 
   unless all_urls.empty?
     assure("Setting board manager URLs") do
@@ -332,7 +325,7 @@ def perform_example_compilation_tests(cpp_library, config)
     end
   end
 
-  external_packages.each do |p|
+  all_packages.each do |p|
     assure("Installing board package #{p}") do
       @backend.install_boards(p)
     end

@@ -27,9 +27,6 @@ RSpec.describe ArduinoCI::CIConfig do
       expect(zero[:package]).to eq("arduino:samd")
       expect(zero[:gcc].class).to eq(Hash)
 
-      expect(default_config.package_builtin?("arduino:avr")).to be true
-      expect(default_config.package_builtin?("adafruit:avr")).to be false
-
       expect(default_config.package_url("adafruit:avr")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
       expect(default_config.package_url("adafruit:samd")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
       expect(default_config.package_url("esp32:esp32")).to eq("https://dl.espressif.com/dl/package_esp32_index.json")
