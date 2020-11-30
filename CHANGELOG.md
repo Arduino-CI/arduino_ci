@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Symlink tests for `Host`
 - Add documentation on how to use Arduino CI with GitHub Actions
 - Allow tests to run on GitHub without external set up, via GitHub Actions (Windows, Linux, MacOS)
+- Exposed desired CLI backend version as `ArduinoInstallation::DESIRED_ARDUINO_CLI_VERSION`
 
 ### Changed
 - Arduino backend is now `arduino-cli` version `0.13.0`

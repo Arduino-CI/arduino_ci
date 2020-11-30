@@ -3,6 +3,12 @@ require "spec_helper"
 RSpec.describe ArduinoCI::ArduinoInstallation do
   next if skip_ruby_tests
 
+  context "constants" do
+    it "Exposes desired backend version" do
+      expect(ArduinoCI::ArduinoInstallation::DESIRED_ARDUINO_CLI_VERSION).to eq("0.13.0")
+    end
+  end
+
   context "autolocate" do
     it "doesn't fail" do
       ArduinoCI::ArduinoInstallation.autolocate

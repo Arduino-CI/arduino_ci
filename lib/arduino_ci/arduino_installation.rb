@@ -5,14 +5,14 @@ require "arduino_ci/arduino_downloader_osx"
 require "arduino_ci/arduino_downloader_linux"
 require "arduino_ci/arduino_downloader_windows" if ArduinoCI::Host.os == :windows
 
-DESIRED_ARDUINO_CLI_VERSION = "0.13.0".freeze
-
 module ArduinoCI
 
   class ArduinoInstallationError < StandardError; end
 
   # Manage the OS-specific install location of Arduino
   class ArduinoInstallation
+
+    DESIRED_ARDUINO_CLI_VERSION = "0.13.0".freeze
 
     class << self
 
