@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [1.0.0] - 2020-11-29
+### Added
 - Special handling of attempts to run the `arduino_ci.rb` CI script against the ruby library instead of an actual Arduino project
 - Explicit checks for attemping to test `arduino_ci` itself as if it were a library, resolving a minor annoyance to this developer.
 - Code coverage tooling
@@ -38,8 +52,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Missing include of `IPAddress.h` in `Client.h`
 - Mismatches between library names in `library.properties` and the directory names, which can cause cryptic failures
 - `LibraryProperties` skips over parse errors instead of crashing: only lines with non-empty keys and non-nil values are recorded
-
-### Security
 
 
 ## [0.4.0] - 2020-11-21
@@ -443,7 +455,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/Arduino-CI/arduino_ci/compare/v0.2.0...v0.2.1
