@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - `ensure_arduino_installation.rb` now ensures the existence of the library directory as well
+- Environment variables to escalate unit tests or examples not being found during CI testing
 
 ### Changed
 - Conserve CI testing minutes by grouping CI into fewer runs

@@ -6,6 +6,8 @@ require 'optparse'
 
 WIDTH = 80
 FIND_FILES_INDENT = 4
+VAR_EXPECT_EXAMPLES = "EXPECT_EXAMPLES".freeze
+VAR_EXPECT_UNITTESTS = "EXPECT_UNITTESTS".freeze
 
 @failure_count = 0
 @passfail = proc { |result| result ? "✓" : "✗" }
@@ -48,6 +50,10 @@ class Parser
 
       opts.on("-h", "--help", "Prints this help") do
         puts opts
+        puts
+        puts "Additionally, the following environment variables control the script:"
+        puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
+        puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
         exit
       end
     end
@@ -189,6 +195,23 @@ def install_arduino_library_dependencies(library_names, on_behalf_of, already_in
   installed
 end
 
+def handle_expectation_of_files(expectation_envvar, operation, filegroup_name, dir_description, dir)
+  if ENV[expectation_envvar].nil?
+    inform_multiline("Skipping #{operation}; no #{filegroup_name} were found in #{dir}") do
+      puts "  In case that's an error, this is what was found in the #{dir_description}:"
+      display_files(dir)
+      puts "To force an error in this case, set the environment variable #{expectation_envvar}"
+      true
+    end
+  else
+    assure_multiline("No #{filegroup_name} were found in #{dir} and #{expectation_envvar} was set") do
+      puts "  This is what was found in the #{dir_description}:"
+      display_files(dir)
+      false
+    end
+  end
+end
+
 def perform_unit_tests(cpp_library, file_config)
   if @cli_options[:skip_unittests]
     inform("Skipping unit tests") { "as requested via command line" }
@@ -239,11 +262,7 @@ def perform_unit_tests(cpp_library, file_config)
       end
     end
   elsif cpp_library.test_files.empty?
-    inform_multiline("Skipping unit tests; no test files were found in #{cpp_library.tests_dir}") do
-      puts "  In case that's an error, this is what was found in the tests directory:"
-      display_files(cpp_library.tests_dir)
-      true
-    end
+    handle_expectation_of_files(VAR_EXPECT_UNITTESTS, "unit tests", "test files", "tests directory", cpp_library.tests_dir)
   elsif config.platforms_to_unittest.empty?
     inform("Skipping unit tests") { "no platforms were requested" }
   else
@@ -337,9 +356,7 @@ def perform_example_compilation_tests(cpp_library, config)
     inform("Skipping builds") { "no platforms were requested" }
     return
   elsif library_examples.empty?
-    inform_multiline("Skipping builds; no examples found in #{installed_library_path}") do
-      display_files(installed_library_path)
-    end
+    handle_expectation_of_files(VAR_EXPECT_EXAMPLES, "builds", "examples", "the library directory", installed_library_path)
     return
   end
 
