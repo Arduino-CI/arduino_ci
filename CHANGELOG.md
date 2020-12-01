@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Improper reference to `Host` in `arduino_ci.rb` test runner is now properly qualified
 
 ### Security
 
