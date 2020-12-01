@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Conserve CI testing minutes by grouping CI into fewer runs
 
 ### Deprecated
 
