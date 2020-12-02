@@ -82,6 +82,11 @@ module ArduinoCI
       @backend.lib_dir + name_on_disk
     end
 
+    # @return [String] The parent directory of all examples
+    def examples_dir
+      path + "examples"
+    end
+
     # Determine whether a library is present in the lib dir
     #
     # Note that `true` doesn't guarantee that the library is valid/installed

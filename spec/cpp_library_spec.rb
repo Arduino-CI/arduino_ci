@@ -217,6 +217,13 @@ RSpec.describe ArduinoCI::CppLibrary do
         end
       end
 
+      context "examples_dir" do
+        it "locates the examples directory" do
+          relative_path = @cpp_library.examples_dir.relative_path_from(@base_dir)
+          expect(relative_path.to_s).to eq("#{sampleproject}/examples")
+        end
+      end
+
       context "test_files" do
         it "finds cpp files in directory" do
           relative_paths = @cpp_library.test_files.map { |f| f.relative_path_from(@base_dir) }
