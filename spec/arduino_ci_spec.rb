@@ -8,15 +8,3 @@ RSpec.describe ArduinoCI do
     end
   end
 end
-
-RSpec.describe ArduinoCI::Host do
-  next if skip_ruby_tests
-  context "which" do
-    it "can find things with which" do
-      ruby_path = ArduinoCI::Host.which("ruby")
-      expect(ruby_path).not_to be nil
-      expect(ruby_path.include? "ruby").to be true
-    end
-  end
-
-end
