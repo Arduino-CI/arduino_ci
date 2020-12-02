@@ -121,7 +121,11 @@ module ArduinoCI
     # @param name [String] the board name
     # @return [bool] whether the command succeeded
     def install_boards(boardfamily)
-      result = run_and_capture("core", "install", boardfamily)
+      result = if @additional_urls.empty?
+        run_and_capture("core", "install", boardfamily)
+      else
+        run_and_capture("core", "install", boardfamily, "--additional-urls", @additional_urls.join(","))
+      end
       result[:success]
     end
 

@@ -64,7 +64,7 @@ For build behavior that you'd like to persist across commits (e.g. defining the 
 
 Arduino boards are typically named in the form `manufacturer:family:model`.  These definitions are not arbitrary -- they are defined in an Arduino _package_.  For all but the built-in packages, you will need a package URL.  Here is Adafruit's: https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
 
-Here is how you would declare a package that includes the `potato:salad` family of boards in your `.arduino-ci.yml`:
+Here is how you would declare a package that includes the `potato:salad` set of platforms (aka "board family") in your `.arduino-ci.yml`:
 
 ```yaml
 packages:
