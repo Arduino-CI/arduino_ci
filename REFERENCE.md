@@ -33,9 +33,20 @@ This completely skips the compilation tests (of library examples) portion of the
 
 This allows a file (or glob) pattern to be executed in your tests directory, creating a whitelist of files to test.  E.g. `--testfile-select=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (testing only those) and not `test_plant_rose.cpp`.
 
+
 ### `--testfile-reject` option
 
 This allows a file (or glob) pattern to be executed in your tests directory, creating a blacklist of files to skip.  E.g. `--testfile-reject=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (skipping those) and test only `test_plant_rose.cpp`, `test_plant_daisy.cpp`, etc.
+
+
+### `EXPECT_UNITTESTS` environment variable
+
+If set, testing will fail if no unit test files are detected (or if the directory does not exist).  This is to avoid communicating a passing status in cases where a commit may have accidentally moved or deleted the test files.
+
+
+### `EXPECT_EXAMPLES` environment variable
+
+If set, testing will fail if no example sketches are detected.  This is to avoid communicating a passing status in cases where a commit may have accidentally moved or deleted the examples.
 
 
 ## Indirectly Overriding Build Behavior (medium term use), and Advanced Options
@@ -53,7 +64,7 @@ For build behavior that you'd like to persist across commits (e.g. defining the 
 
 Arduino boards are typically named in the form `manufacturer:family:model`.  These definitions are not arbitrary -- they are defined in an Arduino _package_.  For all but the built-in packages, you will need a package URL.  Here is Adafruit's: https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
 
-Here is how you would declare a package that includes the `potato:salad` family of boards in your `.arduino-ci.yml`:
+Here is how you would declare a package that includes the `potato:salad` set of platforms (aka "board family") in your `.arduino-ci.yml`:
 
 ```yaml
 packages:

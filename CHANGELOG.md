@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- `ensure_arduino_installation.rb` now ensures the existence of the library directory as well
+- Environment variables to escalate unit tests or examples not being found during CI testing
 
 ### Changed
+- Conserve CI testing minutes by grouping CI into fewer runs
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Improper reference to `Host` in `arduino_ci.rb` test runner is now properly qualified
+- Failure to set board manager URLs (for 3rd party board providers) has been fixed
 
 ### Security
 

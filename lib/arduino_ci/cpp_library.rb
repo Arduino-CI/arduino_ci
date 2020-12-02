@@ -82,6 +82,11 @@ module ArduinoCI
       @backend.lib_dir + name_on_disk
     end
 
+    # @return [String] The parent directory of all examples
+    def examples_dir
+      path + "examples"
+    end
+
     # Determine whether a library is present in the lib dir
     #
     # Note that `true` doesn't guarantee that the library is valid/installed
@@ -402,8 +407,7 @@ module ArduinoCI
         other_lib.install unless other_lib.installed?
         other_lib.all_arduino_library_dependencies!
       end.flatten
-      ret = (additional_libraries + recursive).uniq
-      ret
+      (additional_libraries + recursive).uniq
     end
 
     # Arduino library directories containing sources -- only those of the dependencies
@@ -517,7 +521,7 @@ module ArduinoCI
     # @param executable [Pathname] the path to the test file
     def print_stack_dump(executable)
       possible_dumpfiles = [
-        executable.sub_ext(executable.extname + ".stackdump")
+        executable.sub_ext("#{executable.extname}.stackdump")
       ]
       possible_dumpfiles.select(&:exist?).each do |dump|
         puts "========== Stack dump from #{dump}:"

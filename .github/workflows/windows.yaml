@@ -1,66 +1,35 @@
 # This is the name of the workflow, visible on GitHub UI
 name: windows
 
-# Run on a Push or a Pull Request
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
-  rspec:
-    runs-on: windows-latest
+  "unittest_lint_sampleproject":
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-
-      # Install and run Arduino CI tests for rspec
-      - name: Build and Execute
+      - name: Check style, funcionality, and usage
         run: |
           g++ -v
-          bundle install
-          bundle exec rspec --backtrace
-
-  rubocop:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-
-      # Install and run Arduino CI tests for rubocop
-      - name: Build and Execute
-        run: |
           bundle install
           bundle exec rubocop --version
           bundle exec rubocop -D .
-
-  TestSomething:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-
-      # Install and run Arduino CI tests for TestSomething
-      - name: Build and Execute
-        run: |
-          g++ -v
+          bundle exec rspec --backtrace
           cd SampleProjects/TestSomething
           bundle install
           bundle exec arduino_ci.rb
 
   NetworkLib:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-
-      # Install and run Arduino CI tests for Network
-      - name: Build and Execute
+      - name: Test NetworkLib from scratch
         run: |
           g++ -v
           cd SampleProjects/NetworkLib

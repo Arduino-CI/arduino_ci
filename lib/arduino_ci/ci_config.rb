@@ -66,6 +66,7 @@ module ArduinoCI
     attr_accessor :platform_info
     attr_accessor :compile_info
     attr_accessor :unittest_info
+
     def initialize
       @package_info = {}
       @platform_info = {}
@@ -107,7 +108,7 @@ module ArduinoCI
       good_data = {}
       source.each do |key, value|
         ksym = key.to_sym
-        expected_type = schema[ksym].class == Class ? schema[ksym] : Hash
+        expected_type = schema[ksym].instance_of?(Class) ? schema[ksym] : Hash
         if !schema.include?(ksym)
           puts "Warning: unknown field '#{ksym}' under definition for #{rootname}"
         elsif value.nil?
@@ -115,7 +116,7 @@ module ArduinoCI
         elsif value.class != expected_type
           puts "Warning: expected field '#{ksym}' of #{rootname} to be '#{expected_type}', got '#{value.class}'"
         else
-          good_data[ksym] = value.class == Hash ? validate_data(key, value, schema[ksym]) : value
+          good_data[ksym] = value.instance_of?(Hash) ? validate_data(key, value, schema[ksym]) : value
         end
       end
       good_data

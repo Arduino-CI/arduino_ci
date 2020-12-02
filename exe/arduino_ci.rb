@@ -5,7 +5,8 @@ require 'pathname'
 require 'optparse'
 
 WIDTH = 80
-FIND_FILES_INDENT = 4
+VAR_EXPECT_EXAMPLES = "EXPECT_EXAMPLES".freeze
+VAR_EXPECT_UNITTESTS = "EXPECT_UNITTESTS".freeze
 
 @failure_count = 0
 @passfail = proc { |result| result ? "✓" : "✗" }
@@ -48,6 +49,10 @@ class Parser
 
       opts.on("-h", "--help", "Prints this help") do
         puts opts
+        puts
+        puts "Additionally, the following environment variables control the script:"
+        puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
+        puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
         exit
       end
     end
@@ -93,7 +98,7 @@ def perform_action(message, multiline, mark_fn, on_fail_msg, tally_on_fail, abor
   else
     print line
   end
-  STDOUT.flush
+  $stdout.flush
   result = yield
   mark = mark_fn.nil? ? "" : mark_fn.call(result)
   # if multline, put checkmark at full width
@@ -119,7 +124,7 @@ def attempt_multiline(message, &block)
 end
 
 # Make a nice status for something that kills the script immediately on failure
-FAILED_ASSURANCE_MESSAGE = "This may indicate a problem with ArduinoCI, or your configuration".freeze
+FAILED_ASSURANCE_MESSAGE = "This may indicate a problem with your configuration; halting here".freeze
 def assure(message, &block)
   perform_action(message, false, @passfail, FAILED_ASSURANCE_MESSAGE, true, true, &block)
 end
@@ -139,9 +144,7 @@ end
 # Assure that a platform exists and return its definition
 def assured_platform(purpose, name, config)
   platform_definition = config.platform_definition(name)
-  assure("Requested #{purpose} platform '#{name}' is defined in 'platforms' YML") do
-    !platform_definition.nil?
-  end
+  assure("Requested #{purpose} platform '#{name}' is defined in 'platforms' YML") { !platform_definition.nil? }
   platform_definition
 end
 
@@ -157,24 +160,22 @@ end
 # print out some files
 def display_files(pathname)
   # `find` doesn't follow symlinks, so we should instead
-  realpath = Host.symlink?(pathname) ? Host.readlink(pathname) : pathname
+  realpath = ArduinoCI::Host.symlink?(pathname) ? ArduinoCI::Host.readlink(pathname) : pathname
 
   # suppress directories and dotfile-based things
   all_files = realpath.find.select(&:file?)
   non_hidden = all_files.reject { |path| file_is_hidden_somewhere?(path) }
 
   # print files with an indent
-  margin = " " * FIND_FILES_INDENT
-  non_hidden.each { |p| puts "#{margin}#{p}" }
+  puts "  Files (excluding hidden files): #{non_hidden.size}"
+  non_hidden.each { |p| puts "    #{p}" }
 end
 
 # @return [Array<String>] The list of installed libraries
 def install_arduino_library_dependencies(library_names, on_behalf_of, already_installed = [])
   installed = already_installed.clone
-  library_names.map { |n| @backend.library_of_name(n) }.each do |l|
-    if installed.include?(l)
-      # do nothing
-    elsif l.installed?
+  (library_names.map { |n| @backend.library_of_name(n) } - installed).each do |l|
+    if l.installed?
       inform("Using pre-existing dependency of #{on_behalf_of}") { l.name }
     else
       assure("Installing dependency of #{on_behalf_of}: '#{l.name}'") do
@@ -189,13 +190,77 @@ def install_arduino_library_dependencies(library_names, on_behalf_of, already_in
   installed
 end
 
-def perform_unit_tests(cpp_library, file_config)
-  if @cli_options[:skip_unittests]
-    inform("Skipping unit tests") { "as requested via command line" }
-    return
-  end
-  config = file_config.with_override_config(@cli_options[:ci_config])
+# @param example_platform_info [Hash] mapping of platform name to package information
+# @param board_package_url [Hash] mapping of package name to URL
+def install_all_packages(example_platform_info, board_package_url)
+  # with all platform info, we can extract unique packages and their urls
+  # do that, set the URLs, and download the packages
+  all_packages = example_platform_info.values.map { |v| v[:package] }.uniq.reject(&:nil?)
 
+  # make sure any non-builtin package has a URL defined
+  all_packages.each { |p| assure("Board package #{p} has a defined URL") { board_package_url[p] } }
+
+  # set up all the board manager URLs.
+  # we can safely reject nils now, they would be for the builtins
+  all_urls = all_packages.map { |p| board_package_url[p] }.uniq.reject(&:nil?)
+  unless all_urls.empty?
+    assure_multiline("Setting board manager URLs") do
+      @backend.board_manager_urls = all_urls
+      result = @backend.board_manager_urls
+      result.each { |u| puts "  #{u}" }
+      (all_urls - result).empty?  # check that all_urls is completely contained in the result
+    end
+  end
+  all_packages.each { |p| assure("Installing board package #{p}") { @backend.install_boards(p) } }
+end
+
+# @param expectation_envvar [String] the name of the env var to check
+# @param operation [String] a description of what operation we might be skipping
+# @param filegroup_name [String] a description of the set of files without which we effectively skip the operation
+# @param dir_description [String] a description of the directory where we looked for the files
+# @param dir [Pathname] the directory where we looked for the files
+def handle_expectation_of_files(expectation_envvar, operation, filegroup_name, dir_description, dir_path)
+  # alert future me about running the script from the wrong directory, instead of doing the huge file dump
+  # otherwise, assume that the user might be running the script on a library with no actual unit tests
+  if Pathname.new(__dir__).parent == Pathname.new(Dir.pwd)
+    inform_multiline("arduino_ci seems to be trying to test itself") do
+      [
+        "arduino_ci (the ruby gem) isn't an arduino project itself, so running the CI test script against",
+        "the core library isn't really a valid thing to do... but it's easy for a developer (including the",
+        "owner) to mistakenly do just that.  Hello future me, you probably meant to run this against one of",
+        "the sample projects in SampleProjects/ ... if not, please submit a bug report; what a wild case!"
+      ].each { |l| puts "  #{l}" }
+      false
+    end
+    exit(1)
+  end
+
+  # either the directory is empty, or it doesn't exist at all. message accordingly.
+  (problem, dir_desc, dir) = if dir_path.exist?
+    ["No #{filegroup_name} were found in", dir_description, dir_path]
+  else
+    ["No #{dir_description} at", "base directory", dir_path.parent]
+  end
+
+  inform(problem) { dir_path }
+  inform("Environment variable #{expectation_envvar} is") { "(#{ENV[expectation_envvar].class}) #{ENV[expectation_envvar]}" }
+  if ENV[expectation_envvar].nil?
+    inform_multiline("Skipping #{operation}") do
+      puts "  In case that's an error, this is what was found in the #{dir_desc}:"
+      display_files(dir)
+      puts "  To force an error in this case, set the environment variable #{expectation_envvar}"
+      true
+    end
+  else
+    assure_multiline("Dumping project's #{dir_desc} before exit") do
+      display_files(dir)
+      false
+    end
+  end
+end
+
+# report and return the set of compilers
+def get_annotated_compilers(config, cpp_library)
   # check GCC
   compilers = config.compilers_to_use
   assure("The set of compilers (#{compilers.length}) isn't empty") { !compilers.empty? }
@@ -209,66 +274,54 @@ def perform_unit_tests(cpp_library, file_config)
     end
     inform("libasan availability for #{gcc_binary}") { cpp_library.libasan?(gcc_binary) }
   end
+  compilers
+end
 
-  # Ensure platforms exist for unit test, and save their info in all_platform_info keyed by name
-  all_platform_info = {}
-  config.platforms_to_unittest.each { |p| all_platform_info[p] = assured_platform("unittest", p, config) }
+def perform_unit_tests(cpp_library, file_config)
+  if @cli_options[:skip_unittests]
+    inform("Skipping unit tests") { "as requested via command line" }
+    return
+  end
+
+  config = file_config.with_override_config(@cli_options[:ci_config])
+  compilers = get_annotated_compilers(config, cpp_library)
+  config.platforms_to_unittest.each_with_object({}) { |p, acc| acc[p] = assured_platform("unittest", p, config) }
 
   inform("Library conforms to Arduino library specification") { cpp_library.one_point_five? ? "1.5" : "1.0" }
 
-  # iterate boards / tests
-  if !cpp_library.tests_dir.exist?
-    # alert future me about running the script from the wrong directory, instead of doing the huge file dump
-    # otherwise, assume that the user might be running the script on a library with no actual unit tests
-    if Pathname.new(__dir__).parent == Pathname.new(Dir.pwd)
-      inform_multiline("arduino_ci seems to be trying to test itself") do
-        [
-          "arduino_ci (the ruby gem) isn't an arduino project itself, so running the CI test script against",
-          "the core library isn't really a valid thing to do... but it's easy for a developer (including the",
-          "owner) to mistakenly do just that.  Hello future me, you probably meant to run this against one of",
-          "the sample projects in SampleProjects/ ... if not, please submit a bug report; what a wild case!"
-        ].each { |l| puts "  #{l}" }
-        false
-      end
-      exit(1)
-    else
-      inform_multiline("Skipping unit tests; no tests dir at #{cpp_library.tests_dir}") do
-        puts "  In case that's an error, this is what was found in the library:"
-        display_files(cpp_library.tests_dir.parent)
-        true
-      end
-    end
-  elsif cpp_library.test_files.empty?
-    inform_multiline("Skipping unit tests; no test files were found in #{cpp_library.tests_dir}") do
-      puts "  In case that's an error, this is what was found in the tests directory:"
-      display_files(cpp_library.tests_dir)
-      true
-    end
-  elsif config.platforms_to_unittest.empty?
-    inform("Skipping unit tests") { "no platforms were requested" }
-  else
-    install_arduino_library_dependencies(config.aux_libraries_for_unittest, "<unittest/libraries>")
+  # Handle lack of test files
+  if cpp_library.test_files.empty?
+    handle_expectation_of_files(VAR_EXPECT_UNITTESTS, "unit tests", "test files", "tests directory", cpp_library.tests_dir)
+    return
+  end
 
-    config.platforms_to_unittest.each do |p|
-      config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
-        unittest_name = unittest_path.basename.to_s
-        compilers.each do |gcc_binary|
-          attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
-            exe = cpp_library.build_for_test_with_configuration(
-              unittest_path,
-              config.aux_libraries_for_unittest,
-              gcc_binary,
-              config.gcc_config(p)
-            )
-            puts
-            unless exe
-              puts "Last command: #{cpp_library.last_cmd}"
-              puts cpp_library.last_out
-              puts cpp_library.last_err
-              next false
-            end
-            cpp_library.run_test_file(exe)
+  # Handle lack of platforms
+  if config.platforms_to_unittest.empty?
+    inform("Skipping unit tests") { "no platforms were requested" }
+    return
+  end
+
+  install_arduino_library_dependencies(config.aux_libraries_for_unittest, "<unittest/libraries>")
+
+  config.platforms_to_unittest.each do |p|
+    config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
+      unittest_name = unittest_path.basename.to_s
+      compilers.each do |gcc_binary|
+        attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
+          exe = cpp_library.build_for_test_with_configuration(
+            unittest_path,
+            config.aux_libraries_for_unittest,
+            gcc_binary,
+            config.gcc_config(p)
+          )
+          puts
+          unless exe
+            puts "Last command: #{cpp_library.last_cmd}"
+            puts cpp_library.last_out
+            puts cpp_library.last_err
+            next false
           end
+          cpp_library.run_test_file(exe)
         end
       end
     end
@@ -306,40 +359,14 @@ def perform_example_compilation_tests(cpp_library, config)
     aux_libraries.merge(ovr_config.aux_libraries_for_build)
   end
 
-  # with all platform info, we can extract unique packages and their urls
-  # do that, set the URLs, and download the packages
-  all_packages = example_platform_info.values.map { |v| v[:package] }.uniq.reject(&:nil?)
-
-  # make sure any non-builtin package has a URL defined
-  all_packages.each do |p|
-    assure("Board package #{p} has a defined URL") { board_package_url[p] }
-  end
-
-  # set up all the board manager URLs.
-  # we can safely reject nils now, they would be for the builtins
-  all_urls = all_packages.map { |p| board_package_url[p] }.uniq.reject(&:nil?)
-
-  unless all_urls.empty?
-    assure("Setting board manager URLs") do
-      @backend.board_manager_urls = all_urls
-    end
-  end
-
-  all_packages.each do |p|
-    assure("Installing board package #{p}") do
-      @backend.install_boards(p)
-    end
-  end
-
+  install_all_packages(example_platform_info, board_package_url)
   install_arduino_library_dependencies(aux_libraries, "<compile/libraries>")
 
   if config.platforms_to_build.empty?
     inform("Skipping builds") { "no platforms were requested" }
     return
   elsif library_examples.empty?
-    inform_multiline("Skipping builds; no examples found in #{installed_library_path}") do
-      display_files(installed_library_path)
-    end
+    handle_expectation_of_files(VAR_EXPECT_EXAMPLES, "builds", "examples", "the examples directory", cpp_library.examples_dir)
     return
   end
 
