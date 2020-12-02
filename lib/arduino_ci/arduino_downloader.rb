@@ -104,7 +104,7 @@ module ArduinoCI
         total_size += size
         needed_dots = (total_size / chunk_size).to_i
         unprinted_dots = needed_dots - dots
-        @output.print("." * unprinted_dots) if unprinted_dots > 0
+        @output.print("." * unprinted_dots) if unprinted_dots.positive?
         dots = needed_dots
       end
 

@@ -407,8 +407,7 @@ module ArduinoCI
         other_lib.install unless other_lib.installed?
         other_lib.all_arduino_library_dependencies!
       end.flatten
-      ret = (additional_libraries + recursive).uniq
-      ret
+      (additional_libraries + recursive).uniq
     end
 
     # Arduino library directories containing sources -- only those of the dependencies
@@ -522,7 +521,7 @@ module ArduinoCI
     # @param executable [Pathname] the path to the test file
     def print_stack_dump(executable)
       possible_dumpfiles = [
-        executable.sub_ext(executable.extname + ".stackdump")
+        executable.sub_ext("#{executable.extname}.stackdump")
       ]
       possible_dumpfiles.select(&:exist?).each do |dump|
         puts "========== Stack dump from #{dump}:"

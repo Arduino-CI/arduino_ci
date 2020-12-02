@@ -8,10 +8,10 @@ module ArduinoCI
   class Host
     # TODO: this came from https://stackoverflow.com/a/22716582/2063546
     #       and I'm not sure if it can be replaced by self.os == :windows
-    WINDOWS_VARIANT_REGEX = /mswin32|cygwin|mingw|bccwin/
+    WINDOWS_VARIANT_REGEX = /mswin32|cygwin|mingw|bccwin/.freeze
 
     # e.g. 11/27/2020  01:02 AM    <SYMLINKD>     ExcludeSomething [C:\projects\arduino-ci\SampleProjects\ExcludeSomething]
-    DIR_SYMLINK_REGEX = %r{\d+/\d+/\d+\s+[^<]+<SYMLINKD?>\s+(.*) \[([^\]]+)\]}
+    DIR_SYMLINK_REGEX = %r{\d+/\d+/\d+\s+[^<]+<SYMLINKD?>\s+(.*) \[([^\]]+)\]}.freeze
 
     # Cross-platform way of finding an executable in the $PATH.
     # via https://stackoverflow.com/a/5471032/2063546
