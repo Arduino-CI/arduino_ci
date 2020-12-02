@@ -7,21 +7,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- `ensure_arduino_installation.rb` now ensures the existence of the library directory as well
-- Environment variables to escalate unit tests or examples not being found during CI testing
 
 ### Changed
-- Conserve CI testing minutes by grouping CI into fewer runs
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- Improper reference to `Host` in `arduino_ci.rb` test runner is now properly qualified
-- Failure to set board manager URLs (for 3rd party board providers) has been fixed
 
 ### Security
+
+
+## [1.1.0] - 2020-12-02
+### Added
+- `ensure_arduino_installation.rb` now ensures the existence of the library directory as well
+- Environment variables to escalate unit tests or examples not being found during CI testing
+
+### Changed
+- Conserve CI testing minutes by grouping CI into fewer runs
+
+### Fixed
+- Improper reference to `Host` in `arduino_ci.rb` test runner is now properly qualified
+- Failure to set board manager URLs (for 3rd party board providers) has been fixed
 
 
 ## [1.0.0] - 2020-11-29
@@ -460,7 +468,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.2.1...v0.3.0
