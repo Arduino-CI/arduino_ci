@@ -6,6 +6,7 @@ require 'optparse'
 
 WIDTH = 80
 VAR_CUSTOM_INIT_SCRIPT = "CUSTOM_INIT_SCRIPT".freeze
+VAR_USE_SUBDIR         = "USE_SUBDIR".freeze
 VAR_EXPECT_EXAMPLES    = "EXPECT_EXAMPLES".freeze
 VAR_EXPECT_UNITTESTS   = "EXPECT_UNITTESTS".freeze
 
@@ -54,6 +55,7 @@ class Parser
         puts "Additionally, the following environment variables control the script:"
         puts " - #{VAR_CUSTOM_INIT_SCRIPT} - if set, this script will be run from the Arduino/libraries directory"
         puts "       prior to any automated library installation or testing (e.g. to install unoffical libraries)"
+        puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
         puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
         puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
         exit
@@ -424,8 +426,10 @@ inform("Located arduino-cli binary") { @backend.binary_path.to_s }
 # run any library init scripts from the library itself.
 perform_custom_initialization(config)
 
+
 # initialize library under test
-cpp_library_path = Pathname.new(".")
+inform("Environment variable #{VAR_USE_SUBDIR}") { "'#{ENV[VAR_USE_SUBDIR]}'" }
+cpp_library_path = Pathname.new(ENV[VAR_USE_SUBDIR].nil? ? "." : ENV[VAR_USE_SUBDIR])
 cpp_library = assure("Installing library under test") do
   @backend.install_local_library(cpp_library_path)
 end

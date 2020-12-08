@@ -44,6 +44,11 @@ This allows a file (or glob) pattern to be executed in your tests directory, cre
 If set, testing will execute (using `/bin/sh`) the script referred to by this variable -- relative to the current working directory.  This enables use cases like the GitHub action to install custom library versions (i.e. a version of a library that is different than what the library manager would automatically install by name) prior to CI test runs.
 
 
+### `USE_SUBDIR` environment variable
+
+If set, testing will be conducted in this subdirectory (relative to the working directory).  This is for monorepos or other layouts where the library directory and project root directory are different.
+
+
 ### `EXPECT_UNITTESTS` environment variable
 
 If set, testing will fail if no unit test files are detected (or if the directory does not exist).  This is to avoid communicating a passing status in cases where a commit may have accidentally moved or deleted the test files.

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Environment variable to run a custom initialization script during CI testing: `CUSTOM_INIT_SCRIPT`
+- Environment variable to run from a subdirectory during CI testing: `USE_SUBDIR`
 
 ### Changed
 
