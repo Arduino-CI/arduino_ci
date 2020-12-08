@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Environment variable to run a custom initialization script during CI testing: `CUSTOM_INIT_SCRIPT`
 
 ### Changed
 
@@ -22,7 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.1.0] - 2020-12-02
 ### Added
 - `ensure_arduino_installation.rb` now ensures the existence of the library directory as well
-- Environment variables to escalate unit tests or examples not being found during CI testing
+- Environment variables to escalate unit tests or examples not being found during CI testing - `EXPECT_EXAMPLES` and `EXPECT_UNITTESTS`
 
 ### Changed
 - Conserve CI testing minutes by grouping CI into fewer runs

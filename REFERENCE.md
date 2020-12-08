@@ -39,6 +39,11 @@ This allows a file (or glob) pattern to be executed in your tests directory, cre
 This allows a file (or glob) pattern to be executed in your tests directory, creating a blacklist of files to skip.  E.g. `--testfile-reject=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (skipping those) and test only `test_plant_rose.cpp`, `test_plant_daisy.cpp`, etc.
 
 
+### `CUSTOM_INIT_SCRIPT` environment variable
+
+If set, testing will execute (using `/bin/sh`) the script referred to by this variable -- relative to the current working directory.  This enables use cases like the GitHub action to install custom library versions (i.e. a version of a library that is different than what the library manager would automatically install by name) prior to CI test runs.
+
+
 ### `EXPECT_UNITTESTS` environment variable
 
 If set, testing will fail if no unit test files are detected (or if the directory does not exist).  This is to avoid communicating a passing status in cases where a commit may have accidentally moved or deleted the test files.

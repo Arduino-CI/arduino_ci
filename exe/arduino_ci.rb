@@ -5,8 +5,9 @@ require 'pathname'
 require 'optparse'
 
 WIDTH = 80
-VAR_EXPECT_EXAMPLES = "EXPECT_EXAMPLES".freeze
-VAR_EXPECT_UNITTESTS = "EXPECT_UNITTESTS".freeze
+VAR_CUSTOM_INIT_SCRIPT = "CUSTOM_INIT_SCRIPT".freeze
+VAR_EXPECT_EXAMPLES    = "EXPECT_EXAMPLES".freeze
+VAR_EXPECT_UNITTESTS   = "EXPECT_UNITTESTS".freeze
 
 @failure_count = 0
 @passfail = proc { |result| result ? "✓" : "✗" }
@@ -51,6 +52,8 @@ class Parser
         puts opts
         puts
         puts "Additionally, the following environment variables control the script:"
+        puts " - #{VAR_CUSTOM_INIT_SCRIPT} - if set, this script will be run from the Arduino/libraries directory"
+        puts "       prior to any automated library installation or testing (e.g. to install unoffical libraries)"
         puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
         puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
         exit
@@ -68,7 +71,7 @@ end
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate(final = nil)
   puts "Failures: #{@failure_count}"
-  unless @failure_count.zero? || final
+  unless @failure_count.zero? || final || @backend.nil?
     puts "Last message: #{@backend.last_msg}"
     puts "========== Stdout:"
     puts @backend.last_out
@@ -277,6 +280,30 @@ def get_annotated_compilers(config, cpp_library)
   compilers
 end
 
+# Handle existence or nonexistence of custom initialization script -- run it if you have it
+#
+# This feature is to drive GitHub actions / docker image installation where the container is
+# in a clean-slate state but needs some way to have custom library versions injected into it.
+# In this case, the user provided script would fetch a git repo or some other method
+def perform_custom_initialization(_config)
+  script_path = ENV[VAR_CUSTOM_INIT_SCRIPT]
+  inform("Environment variable #{VAR_CUSTOM_INIT_SCRIPT}") { "'#{script_path}'" }
+  return if script_path.nil?
+  return if script_path.empty?
+
+  script_pathname = Pathname.getwd + script_path
+  assure("Script at #{VAR_CUSTOM_INIT_SCRIPT} exists") { script_pathname.exist? }
+
+  assure_multiline("Running #{script_pathname} with sh in libraries working dir") do
+    Dir.chdir(@backend.lib_dir) do
+      IO.popen(["/bin/sh", script_pathname.to_s], err: [:child, :out]) do |io|
+        io.each_line { |line| puts "    #{line}" }
+      end
+    end
+  end
+end
+
+# Unit test procedure
 def perform_unit_tests(cpp_library, file_config)
   if @cli_options[:skip_unittests]
     inform("Skipping unit tests") { "as requested via command line" }
@@ -393,6 +420,9 @@ config = ArduinoCI::CIConfig.default.from_project_library
 
 @backend = ArduinoCI::ArduinoInstallation.autolocate!
 inform("Located arduino-cli binary") { @backend.binary_path.to_s }
+
+# run any library init scripts from the library itself.
+perform_custom_initialization(config)
 
 # initialize library under test
 cpp_library_path = Pathname.new(".")
