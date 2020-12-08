@@ -435,7 +435,7 @@ cpp_library = assure("Installing library under test") do
 end
 
 assumed_name = @backend.name_of_library(cpp_library_path)
-ondisk_name = cpp_library_path.realpath.basename
+ondisk_name = cpp_library_path.realpath.basename.to_s
 if assumed_name != ondisk_name
   inform("WARNING") { "Installed library named '#{assumed_name}' has directory name '#{ondisk_name}'" }
 end
