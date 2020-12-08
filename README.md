@@ -20,17 +20,6 @@ Linux    | [![Linux Build Status](https://github.com/Arduino-CI/arduino_ci/workf
 Windows  | [![Windows Build status](https://github.com/Arduino-CI/arduino_ci/workflows/windows/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=windows)
 
 
-## Comparison to Other Arduino Testing Tools
-
-| Project                                                                     | CI | Builds Examples | Unittest | Arduino Mocks | Windows | OSX | Linux | License |
-|-----------------------------------------------------------------------------|:--:|:---------------:|:--------:|:-------------:|:-------:|:---:|:-----:|:--------|
-|[ArduinoCI](https://github.com/Arduino-CI/arduino_ci)                          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |Free (Apache-2.0)|
-|[ArduinoUnit](https://github.com/mmurdoch/arduinounit)                       | ❌ | ❌ | ⚠️ Hardware-based|❌ | ✅ | ✅ | ✅ |Free (MIT)|
-|[Adafruit `ci-arduino`](https://github.com/adafruit/ci-arduino)| ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |Free (MIT)|
-|[PlatformIO](https://platformio.org)                                         | ✅ | ✅ | ⚠️ Paid only | ❌ | ✅ | ✅ | ✅ |⚠️ EULA|
-|Official [Arduino IDE](https://www.arduino.cc/en/main/software)              | ❌ | ⚠️ Manually | ❌ |N/A 😉| ✅ | ✅ | ✅ |Free (GPLv2)|
-
-
 ## Quick Start
 
 For a bare-bones example that you can copy from, see [SampleProjects/DoSomething](SampleProjects/DoSomething).
