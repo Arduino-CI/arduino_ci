@@ -29,7 +29,7 @@ RSpec.describe ArduinoCI::CIConfig do
 
       expect(default_config.package_url("adafruit:avr")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
       expect(default_config.package_url("adafruit:samd")).to eq("https://adafruit.github.io/arduino-board-index/package_adafruit_index.json")
-      expect(default_config.package_url("esp32:esp32")).to eq("https://dl.espressif.com/dl/package_esp32_index.json")
+      expect(default_config.package_url("esp32:esp32")).to eq("https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json")
       expect(default_config.platforms_to_build).to match(["uno", "due", "zero", "leonardo", "m4", "esp32", "esp8266", "mega2560"])
       expect(default_config.platforms_to_unittest).to match(["uno", "due", "zero", "leonardo"])
       expect(default_config.aux_libraries_for_build).to match([])
