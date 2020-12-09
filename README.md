@@ -53,7 +53,7 @@ Add a file called `Gemfile` (no extension) to your Arduino project:
 
 ```ruby
 source 'https://rubygems.org'
-gem 'arduino_ci'
+gem 'arduino_ci' '~> 1.1'
 ```
 
 It would also make sense to add the following to your `.gitignore`, or copy [the `.gitignore` used by this project](.gitignore):

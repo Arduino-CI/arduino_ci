@@ -419,13 +419,11 @@ end
 
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library
-
 @backend = ArduinoCI::ArduinoInstallation.autolocate!
 inform("Located arduino-cli binary") { @backend.binary_path.to_s }
 
 # run any library init scripts from the library itself.
 perform_custom_initialization(config)
-
 
 # initialize library under test
 inform("Environment variable #{VAR_USE_SUBDIR}") { "'#{ENV[VAR_USE_SUBDIR]}'" }
@@ -434,6 +432,7 @@ cpp_library = assure("Installing library under test") do
   @backend.install_local_library(cpp_library_path)
 end
 
+# Warn if the library name isn't obvious
 assumed_name = @backend.name_of_library(cpp_library_path)
 ondisk_name = cpp_library_path.realpath.basename.to_s
 if assumed_name != ondisk_name

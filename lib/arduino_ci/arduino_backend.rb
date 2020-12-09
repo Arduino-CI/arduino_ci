@@ -52,7 +52,7 @@ module ArduinoCI
       # do some work to extract & merge environment variables if they exist
       has_env = !args.empty? && args[0].instance_of?(Hash)
       env_vars = has_env ? args[0] : {}
-      actual_args = has_env ? args[1..] : args  # need to shift over if we extracted args
+      actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
       custom_config = @config_dir.nil? ? [] : ["--config-file", @config_dir.to_s]
       full_args = [binary_path.to_s, "--format", "json"] + custom_config + actual_args
       full_cmd = env_vars.empty? ? full_args : [env_vars] + full_args

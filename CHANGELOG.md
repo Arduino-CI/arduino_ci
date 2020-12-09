@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Environment variable to run from a subdirectory during CI testing: `USE_SUBDIR`
 
 ### Changed
+- Rubocop expected syntax downgraded from ruby 2.6 to 2.5
 
 ### Deprecated
 
