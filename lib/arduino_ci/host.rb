@@ -103,7 +103,7 @@ module ArduinoCI
       the_file = path.basename.to_s
 
       stdout, _stderr, _exitstatus = Open3.capture3('cmd.exe', "/c dir /al #{the_dir}")
-      symlinks = stdout.lines.map { |l| DIR_SYMLINK_REGEX.match(l) }.compact
+      symlinks = stdout.lines.map { |l| DIR_SYMLINK_REGEX.match(l.scrub) }.compact
       our_link = symlinks.find { |m| m[1] == the_file }
       return nil if our_link.nil?
 
