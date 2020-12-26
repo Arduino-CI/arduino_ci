@@ -220,6 +220,14 @@ assertMoreOrEqual(lowerBound, actual);       // a >= b
 assertTrue(actual);
 assertFalse(actual);
 assertNull(actual);
+
+// special cases for floats
+assertEqualFloat(expected, actual, epsilon);    // fabs(a - b) <= epsilon
+assertNotEqualFloat(unwanted, actual, epsilon); // fabs(a - b) >= epsilon
+assertInfinity(actual);                         // isinf(a)
+assertNotInfinity(actual);                      // !isinf(a)
+assertNAN(arg);                                 // isnan(a)
+assertNotNAN(arg);                              // !isnan(a)
 ```
 
 These functions will report the result of the test to the console, and the testing will continue if they fail.

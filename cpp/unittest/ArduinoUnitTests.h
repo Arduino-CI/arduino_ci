@@ -69,6 +69,23 @@ class Test
           }
         }
 
+        // non-comparative assert
+        void onAssert(
+          const char* file,
+          int line,
+          const char* description,
+          bool pass
+        ) {
+          cerr << "    " << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - " << description << endl;
+          if (!pass) {
+            cerr << "      ---" << endl;
+            cerr << "      at:" << endl;
+            cerr << "        file: " << file << endl;
+            cerr << "        line: " << line << endl;
+            cerr << "      ..." << endl;
+          }
+        }
+
         template <typename A, typename B> void onAssert(
           const char* file,
           int line,
@@ -192,6 +209,21 @@ class Test
 
     virtual ~Test() {
       excise();
+    }
+
+    bool assertion(
+        const char *file,
+        int line,
+        const char *description,
+        bool ok)
+    {
+      if (mReporter) {
+        mReporter->onAssert(file, line, description, ok);
+      }
+
+      if (!ok)
+        fail();
+      return ok;
     }
 
     template <typename A, typename B>

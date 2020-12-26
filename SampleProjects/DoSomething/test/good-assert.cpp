@@ -32,4 +32,15 @@ unittest(assert_equal_without_total_ordering)
 
 }
 
+unittest(float_assertions)
+{
+  assertInfinity(exp(800));
+  assertInfinity(0.0/0.0);
+  assertNotInfinity(42);
+
+  assertNAN(INFINITY - INFINITY);
+  assertNAN(0.0/0.0);
+  assertNotNAN(42);
+}
+
 unittest_main()

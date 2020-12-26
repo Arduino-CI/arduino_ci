@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Environment variable to run a custom initialization script during CI testing: `CUSTOM_INIT_SCRIPT`
 - Environment variable to run from a subdirectory during CI testing: `USE_SUBDIR`
 - `assertComparativeEqual()` and `assertComparativeNotEqual()` to evaluate equality on an `a - b == 0` basis (and/or `!(a > b) && !(a < b)`)
+- `assertEqualFloat()` and `assertNotEqualFloat()` for comparing floats with epsilon
+- `assertInfinity()` and `assertNotInfinity()` for comparing floats to infinity
+- `assertNAN()` and `assertNotNAN()` for comparing floats to `NaN`
+- `assertion()`, `ReporterTAP.onAssert()`, and `testBehaviorExp` macro to handle simple expression evaluation (is true, is false, etc)
 
 ### Changed
 - Rubocop expected syntax downgraded from ruby 2.6 to 2.5
 - `assertEqual()` and `assertNotEqual()` use actual `==` and `!=` -- they no longer require a type to be totally ordered just to do equality tests
+- Evaluative assertions (is true/false/null/etc) now produce simpler error messages instead of masquerading as an operation (e.g. "== true")
 
 ### Deprecated
 

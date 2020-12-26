@@ -7,7 +7,7 @@
 
 unittest(check_that_assertion_error_messages_are_comprehensible)
 {
-  assertEqual(1 ,2);
+  assertEqual(1, 2);
   assertNotEqual(2, 2);
   assertComparativeEqual(1, 2);
   assertComparativeNotEqual(2, 2);
@@ -19,6 +19,13 @@ unittest(check_that_assertion_error_messages_are_comprehensible)
   assertFalse(true);
   assertNull(3);
   assertNotNull(NULL);
+
+  assertEqualFloat(1.2, 1.0, 0.01);
+  assertNotEqualFloat(1.0, 1.02, 0.1);
+  assertInfinity(42);
+  assertNotInfinity(INFINITY);
+  assertNAN(42);
+  assertNotNAN(0.0/0.0);
 }
 
 unittest_main()
