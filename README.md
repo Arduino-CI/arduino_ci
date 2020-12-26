@@ -47,6 +47,13 @@ For unit testing, you will need a compiler; [g++](https://gcc.gnu.org/) is prefe
 * **Windows**: you will need Cygwin, and the `mingw-gcc-g++` package.  A full set of (working) install instructions can be found in `appveyor.yml`, as this is how CI runs for this project.
 
 
+### You _May_ Need `python`
+
+ESP32 and ESP8266 boards have [a dependency on `python` that they don't install themselves](https://github.com/Arduino-CI/arduino_ci/issues/235#issuecomment-739629243).  If you intend to test on these platforms (which are included in the default list of platforms to test against), you will need to make `python` (and possibly `pyserial`) available in the test environment.
+
+Alternately, you might configure `arduino_ci` to simply not test against these.  Consult the reference for those details.
+
+
 ### Changes to Your Repo
 
 Add a file called `Gemfile` (no extension) to your Arduino project:
