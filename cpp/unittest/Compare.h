@@ -110,3 +110,6 @@ template <typename A, typename B> bool compareLess(       const A &a, const B &b
 template <typename A, typename B> bool compareMore(       const A &a, const B &b) { return Compare<A, B>::more(       a, b); }
 template <typename A, typename B> bool compareLessOrEqual(const A &a, const B &b) { return Compare<A, B>::lessOrEqual(a, b); }
 template <typename A, typename B> bool compareMoreOrEqual(const A &a, const B &b) { return Compare<A, B>::moreOrEqual(a, b); }
+
+template <typename A, typename B> bool evaluateDoubleEqual(const A &a, const B &b) { return a == b; }
+template <typename A, typename B> bool evaluateNotEqual(   const A &a, const B &b) { return a != b; }

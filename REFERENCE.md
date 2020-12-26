@@ -208,15 +208,19 @@ This test defines one `unittest` (a macro provided by `ArduinoUnitTests.h`), cal
 
 The following assertion functions are available in unit tests.
 
-* `assertEqual(expected, actual)`
-* `assertNotEqual(expected, actual)`
-* `assertLess(expected, actual)`
-* `assertMore(expected, actual)`
-* `assertLessOrEqual(expected, actual)`
-* `assertMoreOrEqual(expected, actual)`
-* `assertTrue(actual)`
-* `assertFalse(actual)`
-* `assertNull(actual)`
+```c++
+assertEqual(expected, actual);               // a == b
+assertNotEqual(unwanted, actual);            // a != b
+assertComparativeEqual(expected, actual);    // abs(a - b) == 0 or (!(a > b) && !(a < b))
+assertComparativeNotEqual(unwanted, actual); // abs(a - b) > 0  or ((a > b) || (a < b))
+assertLess(upperBound, actual);              // a < b
+assertMore(lowerBound, actual);              // a > b
+assertLessOrEqual(upperBound, actual);       // a <= b
+assertMoreOrEqual(lowerBound, actual);       // a >= b
+assertTrue(actual);
+assertFalse(actual);
+assertNull(actual);
+```
 
 These functions will report the result of the test to the console, and the testing will continue if they fail.
 

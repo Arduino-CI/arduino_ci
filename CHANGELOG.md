@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Environment variable to run a custom initialization script during CI testing: `CUSTOM_INIT_SCRIPT`
 - Environment variable to run from a subdirectory during CI testing: `USE_SUBDIR`
+- `assertComparativeEqual()` and `assertComparativeNotEqual()` to evaluate equality on an `a - b == 0` basis (and/or `!(a > b) && !(a < b)`)
 
 ### Changed
 - Rubocop expected syntax downgraded from ruby 2.6 to 2.5
+- `assertEqual()` and `assertNotEqual()` use actual `==` and `!=` -- they no longer require a type to be totally ordered just to do equality tests
 
 ### Deprecated
 
