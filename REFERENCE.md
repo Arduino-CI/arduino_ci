@@ -332,7 +332,7 @@ unittest(pin_history)
   // we expect 6 values in that queue (5 that we set plus one
   // initial value), which we'll hard-code here for convenience.
   // (we'll actually assert those 6 values in the next block)
-  assertEqual(6, state->digitalPin[1].queueSize));
+  assertEqual(6, state->digitalPin[1].queueSize());
   bool expected[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
   bool actual[6];
 
