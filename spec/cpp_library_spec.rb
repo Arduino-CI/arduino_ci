@@ -85,9 +85,11 @@ RSpec.describe ArduinoCI::CppLibrary do
       header_dirs: [Pathname.new("DoSomething")],
       arduino_library_src_dirs: [],
       test_files: [
-        "DoSomething/test/good-null.cpp",
-        "DoSomething/test/good-library.cpp",
+        "DoSomething/test/bad-errormessages.cpp",
         "DoSomething/test/bad-null.cpp",
+        "DoSomething/test/good-assert.cpp",
+        "DoSomething/test/good-library.cpp",
+        "DoSomething/test/good-null.cpp",
       ].map { |f| Pathname.new(f) }
     },
     OnePointOhDummy: {

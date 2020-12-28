@@ -39,6 +39,16 @@ This allows a file (or glob) pattern to be executed in your tests directory, cre
 This allows a file (or glob) pattern to be executed in your tests directory, creating a blacklist of files to skip.  E.g. `--testfile-reject=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (skipping those) and test only `test_plant_rose.cpp`, `test_plant_daisy.cpp`, etc.
 
 
+### `CUSTOM_INIT_SCRIPT` environment variable
+
+If set, testing will execute (using `/bin/sh`) the script referred to by this variable -- relative to the current working directory.  This enables use cases like the GitHub action to install custom library versions (i.e. a version of a library that is different than what the library manager would automatically install by name) prior to CI test runs.
+
+
+### `USE_SUBDIR` environment variable
+
+If set, testing will be conducted in this subdirectory (relative to the working directory).  This is for monorepos or other layouts where the library directory and project root directory are different.
+
+
 ### `EXPECT_UNITTESTS` environment variable
 
 If set, testing will fail if no unit test files are detected (or if the directory does not exist).  This is to avoid communicating a passing status in cases where a commit may have accidentally moved or deleted the test files.
@@ -198,15 +208,27 @@ This test defines one `unittest` (a macro provided by `ArduinoUnitTests.h`), cal
 
 The following assertion functions are available in unit tests.
 
-* `assertEqual(expected, actual)`
-* `assertNotEqual(expected, actual)`
-* `assertLess(expected, actual)`
-* `assertMore(expected, actual)`
-* `assertLessOrEqual(expected, actual)`
-* `assertMoreOrEqual(expected, actual)`
-* `assertTrue(actual)`
-* `assertFalse(actual)`
-* `assertNull(actual)`
+```c++
+assertEqual(expected, actual);               // a == b
+assertNotEqual(unwanted, actual);            // a != b
+assertComparativeEquivalent(expected, actual);    // abs(a - b) == 0 or (!(a > b) && !(a < b))
+assertComparativeNotEquivalent(unwanted, actual); // abs(a - b) > 0  or ((a > b) || (a < b))
+assertLess(upperBound, actual);              // a < b
+assertMore(lowerBound, actual);              // a > b
+assertLessOrEqual(upperBound, actual);       // a <= b
+assertMoreOrEqual(lowerBound, actual);       // a >= b
+assertTrue(actual);
+assertFalse(actual);
+assertNull(actual);
+
+// special cases for floats
+assertEqualFloat(expected, actual, epsilon);    // fabs(a - b) <= epsilon
+assertNotEqualFloat(unwanted, actual, epsilon); // fabs(a - b) >= epsilon
+assertInfinity(actual);                         // isinf(a)
+assertNotInfinity(actual);                      // !isinf(a)
+assertNAN(arg);                                 // isnan(a)
+assertNotNAN(arg);                              // !isnan(a)
+```
 
 These functions will report the result of the test to the console, and the testing will continue if they fail.
 
@@ -327,7 +349,7 @@ unittest(pin_history)
   // we expect 6 values in that queue (5 that we set plus one
   // initial value), which we'll hard-code here for convenience.
   // (we'll actually assert those 6 values in the next block)
-  assertEqual(6, state->digitalPin[1].queueSize));
+  assertEqual(6, state->digitalPin[1].queueSize());
   bool expected[6] = {LOW, HIGH, LOW, LOW, HIGH, HIGH};
   bool actual[6];
 
@@ -632,5 +654,49 @@ unittest(eeprom)
   EEPROM[2] = val;
   a = EEPROM[2];
   assertEqual(10, a);
+}
+```
+
+
+### Wire
+
+This library allows communication with I2C / TWI devices.
+
+The interface the library has been fully mocked, with the addition of several functions for debugging
+
+* `Wire.resetMocks()`: Initializes all mocks, and for test repeatability should be called at the top of any unit tests that use Wire.
+* `Wire.didBegin()`: returns whether `Wire.begin()` was called at any point
+* `Wire.getMosi(address)`: returns a pointer to a `deque` that represents the history of data sent to `address`
+* `Wire.getMiso(address)`: returns a pointer to a `deque` that defines what the master will read from `address` (i.e. for you to supply)
+
+```c++
+unittest(wire_basics) {
+  // ensure known starting state
+  Wire.resetMocks();
+
+  // in case you need to check that your library is properly calling .begin()
+  assertFalse(Wire.didBegin());
+  Wire.begin();
+  assertTrue(Wire.didBegin());
+
+  // pick a random device. master write buffer should be empty
+  const uint8_t randomSlaveAddr = 14;
+  deque<uint8_t>* mosi = Wire.getMosi(randomSlaveAddr);
+  assertEqual(0, mosi->size());
+
+  // write some random data to random device
+  const uint8_t randomData[] = { 0x07, 0x0E };
+  Wire.beginTransmission(randomSlaveAddr);
+  Wire.write(randomData[0]);
+  Wire.write(randomData[1]);
+  Wire.endTransmission();
+
+  // check master write buffer values
+  assertEqual(2, mosi->size());
+  assertEqual(randomData[0], mosi->front());
+  mosi->pop_front();
+  assertEqual(randomData[1], mosi->front());
+  mosi->pop_front();
+  assertEqual(0, mosi->size());
 }
 ```

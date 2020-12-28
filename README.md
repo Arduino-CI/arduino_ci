@@ -3,6 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci)
 [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/1.1.0)
 [![Gitter](https://badges.gitter.im/Arduino-CI/arduino_ci.svg)](https://gitter.im/Arduino-CI/arduino_ci?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![GitHub Marketplace](https://img.shields.io/badge/Get_it-on_Marketplace-informational.svg)](https://github.com/marketplace/actions/arduino_ci)
 
 You want to run tests on your Arduino library (bonus: without hardware present), but the IDE doesn't support that.  Arduino CI provides that ability.
 
@@ -12,6 +13,8 @@ You want your Arduino library to be automatically built and tested every time so
 
 `arduino_ci` is a cross-platform build/test system, consisting of a Ruby gem and a series of C++ mocks.  It enables tests to be run both locally and as part of a CI service like GitHub Actions, TravisCI, Appveyor, etc.  Any OS that can run the Arduino IDE can run `arduino_ci`.
 
+> Note: for running tests in response to [GitHub events](https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/github-event-types), an [Arduino CI GitHub Action](https://github.com/marketplace/actions/arduino_ci) is available for your convenience.  This method of running `arduino_ci` is driven by Docker, which may also serve your local testing needs (as it does not require a ruby environment to be installed).
+
 
 Platform | CI Status
 ---------|:---------
@@ -20,20 +23,9 @@ Linux    | [![Linux Build Status](https://github.com/Arduino-CI/arduino_ci/workf
 Windows  | [![Windows Build status](https://github.com/Arduino-CI/arduino_ci/workflows/windows/badge.svg)](https://github.com/Arduino-CI/arduino_ci/actions?workflow=windows)
 
 
-## Comparison to Other Arduino Testing Tools
-
-| Project                                                                     | CI | Builds Examples | Unittest | Arduino Mocks | Windows | OSX | Linux | License |
-|-----------------------------------------------------------------------------|:--:|:---------------:|:--------:|:-------------:|:-------:|:---:|:-----:|:--------|
-|[ArduinoCI](https://github.com/Arduino-CI/arduino_ci)                          | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |Free (Apache-2.0)|
-|[ArduinoUnit](https://github.com/mmurdoch/arduinounit)                       | ❌ | ❌ | ⚠️ Hardware-based|❌ | ✅ | ✅ | ✅ |Free (MIT)|
-|[Adafruit `ci-arduino`](https://github.com/adafruit/ci-arduino)| ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |Free (MIT)|
-|[PlatformIO](https://platformio.org)                                         | ✅ | ✅ | ⚠️ Paid only | ❌ | ✅ | ✅ | ✅ |⚠️ EULA|
-|Official [Arduino IDE](https://www.arduino.cc/en/main/software)              | ❌ | ⚠️ Manually | ❌ |N/A 😉| ✅ | ✅ | ✅ |Free (GPLv2)|
-
-
 ## Quick Start
 
-For a bare-bones example that you can copy from, see [SampleProjects/DoSomething](SampleProjects/DoSomething).
+For a fairly minimal practical example that you can copy from, see [the `Arduino-CI/Blink` repository](https://github.com/Arduino-CI/Blink).
 
 The complete set of C++ unit tests for the `arduino_ci` library itself are in the [SampleProjects/TestSomething](SampleProjects/TestSomething) project.  The [test files](SampleProjects/TestSomething/test/) are named after the type of feature being tested.
 
@@ -55,13 +47,20 @@ For unit testing, you will need a compiler; [g++](https://gcc.gnu.org/) is prefe
 * **Windows**: you will need Cygwin, and the `mingw-gcc-g++` package.  A full set of (working) install instructions can be found in `appveyor.yml`, as this is how CI runs for this project.
 
 
+### You _May_ Need `python`
+
+ESP32 and ESP8266 boards have [a dependency on `python` that they don't install themselves](https://github.com/Arduino-CI/arduino_ci/issues/235#issuecomment-739629243).  If you intend to test on these platforms (which are included in the default list of platforms to test against), you will need to make `python` (and possibly `pyserial`) available in the test environment.
+
+Alternately, you might configure `arduino_ci` to simply not test against these.  Consult the reference for those details.
+
+
 ### Changes to Your Repo
 
 Add a file called `Gemfile` (no extension) to your Arduino project:
 
 ```ruby
 source 'https://rubygems.org'
-gem 'arduino_ci'
+gem 'arduino_ci' '~> 1.1'
 ```
 
 It would also make sense to add the following to your `.gitignore`, or copy [the `.gitignore` used by this project](.gitignore):

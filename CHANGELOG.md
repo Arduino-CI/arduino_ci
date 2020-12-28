@@ -7,14 +7,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Environment variable to run a custom initialization script during CI testing: `CUSTOM_INIT_SCRIPT`
+- Environment variable to run from a subdirectory during CI testing: `USE_SUBDIR`
+- `assertComparativeEquivalent()` and `assertComparativeNotEquivalent()` to evaluate equality on an `a - b == 0` basis (and/or `!(a > b) && !(a < b)`)
+- `assertEqualFloat()` and `assertNotEqualFloat()` for comparing floats with epsilon
+- `assertInfinity()` and `assertNotInfinity()` for comparing floats to infinity
+- `assertNAN()` and `assertNotNAN()` for comparing floats to `NaN`
+- `assertion()`, `ReporterTAP.onAssert()`, and `testBehaviorExp` macro to handle simple expression evaluation (is true, is false, etc)
+- `Wire.resetMocks()` and documentation
 
 ### Changed
+- Rubocop expected syntax downgraded from ruby 2.6 to 2.5
+- `assertEqual()` and `assertNotEqual()` use actual `==` and `!=` -- they no longer require a type to be totally ordered just to do equality tests
+- Evaluative assertions (is true/false/null/etc) now produce simpler error messages instead of masquerading as an operation (e.g. "== true")
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Warnings about directory name mismatches are now based on proper comparison of strings
+- Now using the recommended "stable" URL for the `esp32` board family
 
 ### Security
 
@@ -22,7 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.1.0] - 2020-12-02
 ### Added
 - `ensure_arduino_installation.rb` now ensures the existence of the library directory as well
-- Environment variables to escalate unit tests or examples not being found during CI testing
+- Environment variables to escalate unit tests or examples not being found during CI testing - `EXPECT_EXAMPLES` and `EXPECT_UNITTESTS`
 
 ### Changed
 - Conserve CI testing minutes by grouping CI into fewer runs

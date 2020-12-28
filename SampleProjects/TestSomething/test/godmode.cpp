@@ -146,7 +146,7 @@ unittest(analog_pin_write_history) {
 }
 
 unittest(ascii_pin_write_history) {
-  // digitial history as serial data, big-endian
+  // digital history as serial data, big-endian
   bool binaryAscii[24] = {
       0, 1, 0, 1, 1, 0, 0, 1,
       0, 1, 1, 0, 0, 1, 0, 1,
@@ -157,7 +157,7 @@ unittest(ascii_pin_write_history) {
 
   assertEqual("Yes", state->digitalPin[2].toAscii(1, true));
 
-  // digitial history as serial data, little-endian
+  // digital history as serial data, little-endian
   bool binaryAscii2[16] = {
       0, 1, 1, 1, 0, 0, 1, 0,
       1, 1, 1, 1, 0, 1, 1, 0};
