@@ -54,17 +54,50 @@ struct wireData_t {
 class TwoWire : public ObservableDataStream {
 private:
   bool _didBegin = false;
-  wireData_t *in = nullptr;  // pointer to current slave for writing
-  wireData_t *out = nullptr; // pointer to current slave for reading
+  wireData_t* in = nullptr;  // pointer to current slave for writing
+  wireData_t* out = nullptr; // pointer to current slave for reading
   wireData_t slaves[SLAVE_COUNT];
 
 public:
-  // constructor initializes internal data
-  TwoWire() {
+
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  // testing methods
+  //////////////////////////////////////////////////////////////////////////////////////////////
+
+  // initialize all the mocks
+  void resetMocks() {
+    _didBegin = false;
+    in = nullptr;  // pointer to current slave for writing
+    out = nullptr; // pointer to current slave for reading
     for (int i = 0; i < SLAVE_COUNT; ++i) {
       slaves[i].misoSize = 0;
       slaves[i].mosiSize = 0;
+      slaves[i].misoBuffer.clear();
+      slaves[i].mosiBuffer.clear();
     }
+  }
+
+  // to verify that Wire.begin() was called at some point
+  bool didBegin() { return _didBegin; }
+
+  // to access the MISO buffer, which allows you to mock what the master will read in a request
+  deque<uint8_t>* getMiso(uint8_t address) {
+    return &slaves[address].misoBuffer;
+  }
+
+  // to access the MOSI buffer, which records what the master sends during a write
+  deque<uint8_t>* getMosi(uint8_t address) {
+    return &slaves[address].mosiBuffer;
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  // mock implementation
+  //////////////////////////////////////////////////////////////////////////////////////////////
+
+  // constructor initializes internal data
+  TwoWire() {
+    resetMocks();
   }
 
   // https://www.arduino.cc/en/Reference/WireBegin
@@ -220,15 +253,6 @@ public:
   // We don't (yet) support the slave role in the mock
   void onRequest(void (*callback)(void)) { assert(false); }
 
-  // testing methods
-  bool didBegin() { return _didBegin; }
-
-  deque<uint8_t> *getMiso(uint8_t address) {
-    return &slaves[address].misoBuffer;
-  }
-  deque<uint8_t> *getMosi(uint8_t address) {
-    return &slaves[address].mosiBuffer;
-  }
 };
 
 extern TwoWire Wire;

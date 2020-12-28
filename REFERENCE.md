@@ -656,3 +656,47 @@ unittest(eeprom)
   assertEqual(10, a);
 }
 ```
+
+
+### Wire
+
+This library allows communication with I2C / TWI devices.
+
+The interface the library has been fully mocked, with the addition of several functions for debugging
+
+* `Wire.resetMocks()`: Initializes all mocks, and for test repeatability should be called at the top of any unit tests that use Wire.
+* `Wire.didBegin()`: returns whether `Wire.begin()` was called at any point
+* `Wire.getMosi(address)`: returns a pointer to a `deque` that represents the history of data sent to `address`
+* `Wire.getMiso(address)`: returns a pointer to a `deque` that defines what the master will read from `address` (i.e. for you to supply)
+
+```c++
+unittest(wire_basics) {
+  // ensure known starting state
+  Wire.resetMocks();
+
+  // in case you need to check that your library is properly calling .begin()
+  assertFalse(Wire.didBegin());
+  Wire.begin();
+  assertTrue(Wire.didBegin());
+
+  // pick a random device. master write buffer should be empty
+  const uint8_t randomSlaveAddr = 14;
+  deque<uint8_t>* mosi = Wire.getMosi(randomSlaveAddr);
+  assertEqual(0, mosi->size());
+
+  // write some random data to random device
+  const uint8_t randomData[] = { 0x07, 0x0E };
+  Wire.beginTransmission(randomSlaveAddr);
+  Wire.write(randomData[0]);
+  Wire.write(randomData[1]);
+  Wire.endTransmission();
+
+  // check master write buffer values
+  assertEqual(2, mosi->size());
+  assertEqual(randomData[0], mosi->front());
+  mosi->pop_front();
+  assertEqual(randomData[1], mosi->front());
+  mosi->pop_front();
+  assertEqual(0, mosi->size());
+}
+```

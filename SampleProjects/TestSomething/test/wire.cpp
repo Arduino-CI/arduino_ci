@@ -3,14 +3,27 @@
 #include <Wire.h>
 using std::deque;
 
+unittest(wire_init) {
+    Wire.resetMocks();
+    assertFalse(Wire.didBegin());
+    Wire.begin();
+    assertTrue(Wire.didBegin());
+    Wire.resetMocks();
+    assertFalse(Wire.didBegin());
+}
+
 unittest(begin_write_end) {
-    // master write buffer should be empty
-    deque<uint8_t>* mosi = Wire.getMosi(14);
-    assertEqual(0, mosi->size());
-    
-    // write some random data to random slave
+    Wire.resetMocks();
+
     const uint8_t randomSlaveAddr = 14;
     const uint8_t randomData[] = { 0x07, 0x0E };
+
+    // master write buffer should be empty
+    deque<uint8_t>* mosi = Wire.getMosi(randomSlaveAddr);
+    assertEqual(0, mosi->size());
+
+    // write some random data to random slave
+
     Wire.begin();
     Wire.beginTransmission(randomSlaveAddr);
     Wire.write(randomData[0]);
@@ -27,6 +40,8 @@ unittest(begin_write_end) {
 }
 
 unittest(readTwo_writeOne) {
+    Wire.resetMocks();
+
     Wire.begin();
     deque<uint8_t>* miso;
     // place some values on random slaves' read buffers

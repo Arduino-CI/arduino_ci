@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `assertInfinity()` and `assertNotInfinity()` for comparing floats to infinity
 - `assertNAN()` and `assertNotNAN()` for comparing floats to `NaN`
 - `assertion()`, `ReporterTAP.onAssert()`, and `testBehaviorExp` macro to handle simple expression evaluation (is true, is false, etc)
+- `Wire.resetMocks()` and documentation
 
 ### Changed
 - Rubocop expected syntax downgraded from ruby 2.6 to 2.5
