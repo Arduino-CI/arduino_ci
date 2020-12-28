@@ -34,13 +34,24 @@ unittest(assert_equal_without_total_ordering)
 
 unittest(float_assertions)
 {
+  assertEqualFloat(1.0, 1.02, 0.1);
+  assertNotEqualFloat(1.2, 1.0, 0.01);
+
   assertInfinity(exp(800));
-  assertInfinity(0.0/0.0);
+  assertInfinity(1.0/0.0);
   assertNotInfinity(42);
 
   assertNAN(INFINITY - INFINITY);
   assertNAN(0.0/0.0);
   assertNotNAN(42);
+
+  assertComparativeEquivalent(exp(800), INFINITY);
+  assertComparativeEquivalent(0.0/0.0, INFINITY - INFINITY);
+  assertComparativeNotEquivalent(INFINITY,  -INFINITY);
+
+  assertLess(0, INFINITY);
+  assertLess(-INFINITY, 0);
+  assertLess(-INFINITY, INFINITY);
 }
 
 unittest_main()
