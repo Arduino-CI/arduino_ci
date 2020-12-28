@@ -211,8 +211,8 @@ The following assertion functions are available in unit tests.
 ```c++
 assertEqual(expected, actual);               // a == b
 assertNotEqual(unwanted, actual);            // a != b
-assertComparativeEqual(expected, actual);    // abs(a - b) == 0 or (!(a > b) && !(a < b))
-assertComparativeNotEqual(unwanted, actual); // abs(a - b) > 0  or ((a > b) || (a < b))
+assertComparativeEquivalent(expected, actual);    // abs(a - b) == 0 or (!(a > b) && !(a < b))
+assertComparativeNotEquivalent(unwanted, actual); // abs(a - b) > 0  or ((a > b) || (a < b))
 assertLess(upperBound, actual);              // a < b
 assertMore(lowerBound, actual);              // a > b
 assertLessOrEqual(upperBound, actual);       // a <= b
