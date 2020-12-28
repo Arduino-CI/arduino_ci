@@ -92,3 +92,6 @@
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
   #define LED_BUILTIN 13
 #endif
+
+// Arduino defines this
+#define _NOP() do { 0; } while (0)

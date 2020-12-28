@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Warnings about directory name mismatches are now based on proper comparison of strings
 - Now using the recommended "stable" URL for the `esp32` board family
 - `esp8266:huzzah` options updated as per upstream
+- Errors about `'_NOP' was not declared in this scope` (test added)
 
 ### Security
 

@@ -36,9 +36,6 @@ typedef uint8_t byte;
 #define highByte(w) ((uint8_t) ((w) >> 8))
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 
-// Arduino defines this
-#define _NOP() do { 0; } while (0)
-
 // might as well use that NO-op macro for these, while unit testing
 // you need interrupts? interrupt yourself
 #define yield() _NOP()
@@ -70,5 +67,3 @@ inline unsigned int makeWord(unsigned int w) { return w; }
 inline unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8) | l; }
 
 #define word(...) makeWord(__VA_ARGS__)
-
-
