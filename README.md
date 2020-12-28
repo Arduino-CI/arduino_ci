@@ -25,7 +25,7 @@ Windows  | [![Windows Build status](https://github.com/Arduino-CI/arduino_ci/wor
 
 ## Quick Start
 
-For a bare-bones example that you can copy from, see [SampleProjects/DoSomething](SampleProjects/DoSomething).
+For a fairly minimal practical example that you can copy from, see [the `Arduino-CI/Blink` repository](https://github.com/Arduino-CI/Blink).
 
 The complete set of C++ unit tests for the `arduino_ci` library itself are in the [SampleProjects/TestSomething](SampleProjects/TestSomething) project.  The [test files](SampleProjects/TestSomething/test/) are named after the type of feature being tested.
 
