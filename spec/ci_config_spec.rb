@@ -9,6 +9,7 @@ RSpec.describe ArduinoCI::CIConfig do
     it "loads from yaml" do
       default_config = ArduinoCI::CIConfig.default
       expect(default_config).not_to be nil
+      expect(default_config.is_default).to be true
       uno = default_config.platform_definition("uno")
       expect(uno.class).to eq(Hash)
       expect(uno[:board]).to eq("arduino:avr:uno")
@@ -39,8 +40,8 @@ RSpec.describe ArduinoCI::CIConfig do
     end
   end
 
-  context "clone" do
-    it "creates a copy" do
+  context "hash" do
+    it "converts to hash" do
       base = ArduinoCI::CIConfig.new
       base.load_yaml(File.join(File.dirname(__FILE__), "yaml", "o2.yaml"))
 
@@ -82,8 +83,11 @@ RSpec.describe ArduinoCI::CIConfig do
   context "with_override" do
     it "loads from yaml" do
       override_file = File.join(File.dirname(__FILE__), "yaml", "o1.yaml")
-      combined_config = ArduinoCI::CIConfig.default.with_override(override_file)
+      base = ArduinoCI::CIConfig.default
+      expect(base.is_default).to be true
+      combined_config = base.with_override(override_file)
       expect(combined_config).not_to be nil
+      expect(combined_config.is_default).to be false
       uno = combined_config.platform_definition("uno")
       expect(uno.class).to eq(Hash)
       expect(uno[:board]).to eq("arduino:avr:uno")
