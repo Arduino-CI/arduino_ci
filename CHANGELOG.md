@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rubocop expected syntax downgraded from ruby 2.6 to 2.5
 - `assertEqual()` and `assertNotEqual()` use actual `==` and `!=` -- they no longer require a type to be totally ordered just to do equality tests
 - Evaluative assertions (is true/false/null/etc) now produce simpler error messages instead of masquerading as an operation (e.g. "== true")
+- `LibraryProperties.to_h` now properly uses formatters and symbolic keys, in order to support a `.to_s`
 
 ### Deprecated
 

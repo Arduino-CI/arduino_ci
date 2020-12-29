@@ -46,6 +46,14 @@ RSpec.describe ArduinoCI::LibraryProperties do
     it "doesn't crash on nonexistent fields" do
       expect(library_properties.dot_a_linkage).to be(nil)
     end
+
+    it "converts to hash" do
+      h = library_properties.to_h
+      expect(h[:name].class).to eq(String)
+      expect(h[:name]).to eq("WebServer")
+      expect(h[:architectures].class).to eq(Array)
+      expect(h[:architectures]).to contain_exactly("avr")
+    end
   end
 
   context "Input handling" do
@@ -64,6 +72,5 @@ RSpec.describe ArduinoCI::LibraryProperties do
       end
     end
   end
-
 
 end
