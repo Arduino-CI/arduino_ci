@@ -195,28 +195,20 @@ def install_arduino_library_dependencies(library_names, on_behalf_of, already_in
   installed
 end
 
-# @param example_platform_info [Hash] mapping of platform name to package information
-# @param board_package_url [Hash] mapping of package name to URL
-def install_all_packages(example_platform_info, board_package_url)
-  # with all platform info, we can extract unique packages and their urls
-  # do that, set the URLs, and download the packages
-  all_packages = example_platform_info.values.map { |v| v[:package] }.uniq.reject(&:nil?)
+# @param platforms [Array<String>] list of platforms to consider
+# @param specific_config [CIConfig] configuration to use
+def install_all_packages(platforms, specific_config)
 
-  # make sure any non-builtin package has a URL defined
-  all_packages.each { |p| assure("Board package #{p} has a defined URL") { board_package_url[p] } }
+  # get packages from platforms
+  all_packages = specific_config.platform_info.select { |p, _| platforms.include?(p) }.values.map { |v| v[:package] }.compact.uniq
 
-  # set up all the board manager URLs.
-  # we can safely reject nils now, they would be for the builtins
-  all_urls = all_packages.map { |p| board_package_url[p] }.uniq.reject(&:nil?)
-  unless all_urls.empty?
-    assure_multiline("Setting board manager URLs") do
-      @backend.board_manager_urls = all_urls
-      result = @backend.board_manager_urls
-      result.each { |u| puts "  #{u}" }
-      (all_urls - result).empty?  # check that all_urls is completely contained in the result
-    end
+  all_packages.each do |pkg|
+    next if @backend.boards_installed?(pkg)
+
+    url = assure("Board package #{pkg} has a defined URL") { specific_config.package_url(pkg) }
+    @backend.board_manager_urls = [url]
+    assure("Installing board package #{pkg}") { @backend.install_boards(pkg) }
   end
-  all_packages.each { |p| assure("Installing board package #{p}") { @backend.install_boards(p) } }
 end
 
 # @param expectation_envvar [String] the name of the env var to check
@@ -248,17 +240,25 @@ def handle_expectation_of_files(expectation_envvar, operation, filegroup_name, d
   end
 
   inform(problem) { dir_path }
+  explain_and_exercise_envvar(expectation_envvar, operation, "contents of #{dir_desc}") { display_files(dir) }
+end
+
+# @param expectation_envvar [String] the name of the env var to check
+# @param operation [String] a description of what operation we might be skipping
+# @param block_desc [String] a description of what information will be dumped to assist the user
+# @param block [Proc] a function that dumps information
+def explain_and_exercise_envvar(expectation_envvar, operation, block_desc, &block)
   inform("Environment variable #{expectation_envvar} is") { "(#{ENV[expectation_envvar].class}) #{ENV[expectation_envvar]}" }
   if ENV[expectation_envvar].nil?
     inform_multiline("Skipping #{operation}") do
-      puts "  In case that's an error, this is what was found in the #{dir_desc}:"
-      display_files(dir)
+      puts "  In case that's an error, displaying #{block_desc}:"
+      block.call
       puts "  To force an error in this case, set the environment variable #{expectation_envvar}"
       true
     end
   else
-    assure_multiline("Dumping project's #{dir_desc} before exit") do
-      display_files(dir)
+    assure_multiline("Displaying #{block_desc} before exit") do
+      block.call
       false
     end
   end
@@ -305,6 +305,55 @@ def perform_custom_initialization(_config)
   end
 end
 
+# Auto-select some platforms to test based on the information available
+#
+# Top choice is always library.properties -- otherwise use the default.
+# But filter that through any non-default config
+#
+# @param config [CIConfig] the overridden config object
+# @param reason [String] description of why we might use this platform (i.e. unittest or compilation)
+# @param desired_platforms [Array<String>] the platform names specified
+# @param library_properties [Hash] the library properties defined by the library
+# @return [Array<String>] platforms to use
+def choose_platform_set(config, reason, desired_platforms, library_properties)
+
+  # if there are no properties or no architectures, defer entirely to desired platforms
+  if library_properties.nil? || library_properties.architectures.nil? || library_properties.architectures.empty?
+    # verify that all platforms exist
+    desired_platforms.each { |p| assured_platform(reason, p, config) }
+    return inform_multiline("No architectures listed in library.properties, using configured platforms") do
+      desired_platforms.each { |p| puts "    #{p}" } # this returns desired_platforms
+    end
+  end
+
+  if library_properties.architectures.include?("*")
+    return inform_multiline("Wildcard architecture in library.properties, using configured platforms") do
+      desired_platforms.each { |p| puts "    #{p}" } # this returns desired_platforms
+    end
+  end
+
+  platform_architecture = config.platform_info.transform_values { |v| v[:board].split(":")[1] }
+  supported_platforms = platform_architecture.select { |_, a| library_properties.architectures.include?(a) }
+
+  if config.is_default
+    # completely ignore default config, opting for brute-force library matches
+    # OTOH, we don't need to assure platforms because we defined them
+    return inform_multiline("Default config, platforms matching architectures in library.properties") do
+      supported_platforms.each_key do |p|
+        puts "    #{p}"
+      end # this returns supported_platforms
+    end
+  end
+
+  desired_supported_platforms = supported_platforms.select { |p, _| desired_platforms.include?(p) }.keys
+  desired_supported_platforms.each { |p| assured_platform(reason, p, config) }
+  inform_multiline("Configured platforms that match architectures in library.properties") do
+    desired_supported_platforms.each do |p|
+      puts "    #{p}"
+    end # this returns supported_platforms
+  end
+end
+
 # Unit test procedure
 def perform_unit_tests(cpp_library, file_config)
   if @cli_options[:skip_unittests]
@@ -314,7 +363,6 @@ def perform_unit_tests(cpp_library, file_config)
 
   config = file_config.with_override_config(@cli_options[:ci_config])
   compilers = get_annotated_compilers(config, cpp_library)
-  config.platforms_to_unittest.each_with_object({}) { |p, acc| acc[p] = assured_platform("unittest", p, config) }
 
   inform("Library conforms to Arduino library specification") { cpp_library.one_point_five? ? "1.5" : "1.0" }
 
@@ -324,15 +372,20 @@ def perform_unit_tests(cpp_library, file_config)
     return
   end
 
-  # Handle lack of platforms
-  if config.platforms_to_unittest.empty?
-    inform("Skipping unit tests") { "no platforms were requested" }
-    return
+  # Get platforms, handle lack of them
+  platforms = choose_platform_set(config, "unittest", config.platforms_to_unittest, cpp_library.library_properties)
+  if platforms.empty?
+    explain_and_exercise_envvar(VAR_EXPECT_UNITTESTS, "unit tests", "platforms and architectures") do
+      puts "    Configured platforms: #{config.platforms_to_unittest}"
+      puts "    Configuration is default: #{config.is_default}"
+      arches = cpp_library.library_properties.nil? ? nil : cpp_library.library_properties.architectures
+      puts "    Architectures in library.properties: #{arches}"
+    end
   end
 
   install_arduino_library_dependencies(config.aux_libraries_for_unittest, "<unittest/libraries>")
 
-  config.platforms_to_unittest.each do |p|
+  platforms.each do |p|
     config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
       unittest_name = unittest_path.basename.to_s
       compilers.each do |gcc_binary|
@@ -363,47 +416,33 @@ def perform_example_compilation_tests(cpp_library, config)
     return
   end
 
-  # gather up all required boards for compilation so we can install them up front.
-  # start with the "platforms to unittest" and add the examples
-  # while we're doing that, get the aux libraries as well
-  example_platform_info = {}
-  board_package_url = {}
-  aux_libraries = Set.new(config.aux_libraries_for_build)
-  # while collecting the platforms, ensure they're defined
-
   library_examples = cpp_library.example_sketches
-  library_examples.each do |path|
-    ovr_config = config.from_example(path)
-    ovr_config.platforms_to_build.each do |platform|
-      # assure the platform if we haven't already
-      next if example_platform_info.key?(platform)
 
-      platform_info = assured_platform("library example", platform, config)
-      next if platform_info.nil?
-
-      example_platform_info[platform] = platform_info
-      package = platform_info[:package]
-      board_package_url[package] = ovr_config.package_url(package)
-    end
-    aux_libraries.merge(ovr_config.aux_libraries_for_build)
-  end
-
-  install_all_packages(example_platform_info, board_package_url)
-  install_arduino_library_dependencies(aux_libraries, "<compile/libraries>")
-
-  if config.platforms_to_build.empty?
-    inform("Skipping builds") { "no platforms were requested" }
-    return
-  elsif library_examples.empty?
+  if library_examples.empty?
     handle_expectation_of_files(VAR_EXPECT_EXAMPLES, "builds", "examples", "the examples directory", cpp_library.examples_dir)
     return
   end
 
   library_examples.each do |example_path|
+    example_name = File.basename(example_path)
     ovr_config = config.from_example(example_path)
-    ovr_config.platforms_to_build.each do |p|
-      board = example_platform_info[p][:board]
-      example_name = File.basename(example_path)
+    platforms = choose_platform_set(ovr_config, "library example", ovr_config.platforms_to_build, cpp_library.library_properties)
+
+    if platforms.empty?
+      explain_and_exercise_envvar(VAR_EXPECT_EXAMPLES, "examples compilation", "platforms and architectures") do
+        puts "    Configured platforms: #{config.platforms_to_build}"
+        puts "    Configuration is default: #{config.is_default}"
+        arches = cpp_library.library_properties.nil? ? nil : cpp_library.library_properties.architectures
+        puts "    Architectures in library.properties: #{arches}"
+      end
+    end
+
+    install_all_packages(platforms, ovr_config)
+
+    platforms.each do |p|
+      install_arduino_library_dependencies(ovr_config.aux_libraries_for_build, "<compile/libraries>")
+
+      board = ovr_config.platform_info[p][:board]
       attempt("Compiling #{example_name} for #{board}") do
         ret = @backend.compile_sketch(example_path, board)
         unless ret
