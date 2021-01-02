@@ -113,8 +113,15 @@ module ArduinoCI
     # @param boardname [String] The board to test
     # @return [bool] Whether the board is installed
     def board_installed?(boardname)
-      # capture_json("core", "list")[:json].find { |b| b["ID"] == boardname } # nope, this is for the family
       run_and_capture("board", "details", "--fqbn", boardname)[:success]
+    end
+
+    # check whether a board family is installed (e.g. arduino:avr)
+    #
+    # @param boardfamily_name [String] The board family to test
+    # @return [bool] Whether the board is installed
+    def boards_installed?(boardfamily_name)
+      capture_json("core", "list")[:json].any? { |b| b["ID"] == boardfamily_name }
     end
 
     # install a board by name

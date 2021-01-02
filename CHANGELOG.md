@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Wire.resetMocks()` and documentation
 - `shiftIn()` and `shiftOut()`
 - `CIConfig.is_default` to detect when the default configuration is used
+- `ArduinoBackend.boards_installed?` to detect whether a board family (or package, like `arduino:avr`) is installed
 
 ### Changed
 - Rubocop expected syntax downgraded from ruby 2.6 to 2.5
