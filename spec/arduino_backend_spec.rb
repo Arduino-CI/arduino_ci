@@ -56,6 +56,13 @@ RSpec.describe ArduinoCI::ArduinoBackend do
       expect(fake_lib.path).to eq(expected_dir)
       expect(fake_lib.installed?).to be false
     end
+
+    it "knows whether libraries exist in the manager" do
+      expect(backend.library_available?("OneWire")).to be true
+
+      # TODO: replace with a less offensive library name guaranteed never to exist?
+      expect(backend.library_available?("fuck")).to be false
+    end
   end
 
   context "board_manager" do

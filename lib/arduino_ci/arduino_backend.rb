@@ -136,6 +136,15 @@ module ArduinoCI
       result[:success]
     end
 
+    # Find out if a library is available
+    #
+    # @param name [String] the library name
+    # @return [bool] whether the library can be installed via the library manager
+    def library_available?(name)
+      # the --names flag limits the size of the response to just the name field
+      capture_json("lib", "search", "--names", name)[:json]["libraries"].any? { |l| l["name"] == name }
+    end
+
     # @return [Hash] information about installed libraries via the CLI
     def installed_libraries
       capture_json("lib", "list")[:json]
