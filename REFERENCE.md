@@ -94,6 +94,8 @@ packages:
 
 To define a platform called `bogo` that uses a board called `potato:salad:bogo` (based on the `potato:salad` family), set it up in the `plaforms:` section.  Note that this will override any default configuration of `bogo` if it had existed in `arduino_ci`'s `misc/default.yml` file.  If this board defines particular features in the compiler, you can set those here.
 
+> Note that the platform names are arbitrary -- just keys in this yaml file and in the [`default.yml`](https://github.com/Arduino-CI/arduino_ci/blob/master/misc/default.yml) file included in this gem.  That said, they are also case sensitive; defining the `bogo` platform will not let you refer to it as `Bogo` nor `BOGO`.
+
 ```yaml
 platforms:
   # our custom definition of the "bogo" platform
@@ -127,7 +129,9 @@ platforms:
 ### Control How Examples Are Compiled
 
 Put a file `.arduino-ci.yml` in each example directory where you require a different configuration than default.
-The `compile:` section controls the platforms on which the compilation will be attempted, as well as any external libraries that must be installed and included.
+The `compile:` section controls the platforms on which the compilation will be attempted, as well as any external libraries that must be installed and included.  This works by _overriding_ portions of the default configuration.
+
+> Note that the platform names _must_ match (case-sensitive) the platform names in the underlying [`default.yml`](https://github.com/Arduino-CI/arduino_ci/blob/master/misc/default.yml), or else match platforms that you have defined yourself in your `.arduino-ci.yml` override.
 
 ```yaml
 compile:
