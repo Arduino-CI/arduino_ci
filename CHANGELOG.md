@@ -34,6 +34,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Now using the recommended "stable" URL for the `esp32` board family
 - `esp8266:huzzah` options updated as per upstream
 - Errors about `'_NOP' was not declared in this scope` (test added)
+- `pinMode()` and `analogReference()` are now functions (no longer macros), because that conflicted with actual function names in the wild
+- `analogReadResolution()` and `analogWriteResolution()` are also no longer macros
 
 ### Security
 

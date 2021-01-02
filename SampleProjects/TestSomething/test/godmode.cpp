@@ -283,10 +283,10 @@ unittest(shift_out) {
 }
 
 unittest(no_ops) {
-  pinMode();
-  analogReference();
-  analogReadResolution();
-  analogWriteResolution();
+  pinMode(1, INPUT);
+  analogReference(3);
+  analogReadResolution(4);
+  analogWriteResolution(5);
 }
 
 #ifdef HAVE_HWSERIAL0

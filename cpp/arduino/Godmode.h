@@ -160,15 +160,15 @@ class GodmodeState {
 };
 
 // io pins
-#define pinMode(...) _NOP()
-#define analogReference(...) _NOP()
+inline void pinMode(uint8_t pin, uint8_t mode) { _NOP(); }
+inline void analogReference(uint8_t mode) { _NOP(); }
 
 void digitalWrite(uint8_t, uint8_t);
 int digitalRead(uint8_t);
 int analogRead(uint8_t);
 void analogWrite(uint8_t, int);
-#define analogReadResolution(...) _NOP()
-#define analogWriteResolution(...) _NOP()
+inline void analogReadResolution(uint8_t bits) { _NOP(); }
+inline void analogWriteResolution(uint8_t bits) { _NOP(); }
 void attachInterrupt(uint8_t interrupt, void ISR(void), uint8_t mode);
 void detachInterrupt(uint8_t interrupt);
 
