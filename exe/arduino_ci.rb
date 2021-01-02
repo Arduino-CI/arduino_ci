@@ -9,6 +9,7 @@ VAR_CUSTOM_INIT_SCRIPT = "CUSTOM_INIT_SCRIPT".freeze
 VAR_USE_SUBDIR         = "USE_SUBDIR".freeze
 VAR_EXPECT_EXAMPLES    = "EXPECT_EXAMPLES".freeze
 VAR_EXPECT_UNITTESTS   = "EXPECT_UNITTESTS".freeze
+VAR_SKIP_LIBPROPS      = "SKIP_LIBRARY_PROPERTIES".freeze
 
 @failure_count = 0
 @passfail = proc { |result| result ? "✓" : "✗" }
@@ -21,6 +22,7 @@ class Parser
     output_options = {
       skip_unittests: false,
       skip_compilation: false,
+      skip_library_properties: false,
       ci_config: {
         "unittest" => unit_config
       },
@@ -34,6 +36,10 @@ class Parser
       end
 
       opts.on("--skip-examples-compilation", "Don't compile example sketches") do |p|
+        output_options[:skip_compilation] = p
+      end
+
+      opts.on("--skip-library-properties", "Don't validate library.properties entries") do |p|
         output_options[:skip_compilation] = p
       end
 
@@ -58,6 +64,7 @@ class Parser
         puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
         puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
         puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
+        puts " - #{VAR_SKIP_LIBPROPS} - if set, testing will skip [experimental] library.properties validation"
         exit
       end
     end
@@ -144,6 +151,10 @@ end
 
 def inform_multiline(message, &block)
   perform_action(message, true, nil, nil, false, false, &block)
+end
+
+def warn(message)
+  inform("WARNING") { message }
 end
 
 # Assure that a platform exists and return its definition
@@ -354,6 +365,32 @@ def choose_platform_set(config, reason, desired_platforms, library_properties)
   end
 end
 
+# tests of sane library.properties values
+def perform_property_tests(cpp_library)
+  return inform("Skipping library.properties tests") { "as requested via command line" } if @cli_options[:skip_library_properties]
+  return inform("Skipping library.properties tests") { "as requested via environment" } unless ENV[VAR_SKIP_LIBPROPS].nil?
+  return inform("Skipping library.properties tests") { "file not found" } unless cpp_library.library_properties?
+
+  props = cpp_library.library_properties
+
+  props.depends&.each do |l|
+    assure("library.properties 'depends=' entry '#{l}' is available via the library manager") { @backend.library_available?(l) }
+  end
+
+  # the IDE would add these entries to a sketch (as "#include <...>" lines), they are nothing to do with the compioler
+  props.includes&.map(&:strip)&.map(&Pathname::method(:new))&.each do |f|
+    if (cpp_library.path + f).exist?
+      inform("library.properties 'includes=' entry found") { f }
+    elsif (cpp_library.path + "src" + f).exist?
+      inform("library.properties 'includes=' entry found") { Pathname.new("src") + f }
+    else
+      # this is if they want to "#include <math>" or something -- may or may not be valid!  so just warn.
+      warn("library.properties 'includes=' entry '#{f}' does not refer to a file in the library")
+    end
+  end
+
+end
+
 # Unit test procedure
 def perform_unit_tests(cpp_library, file_config)
   if @cli_options[:skip_unittests]
@@ -474,9 +511,7 @@ end
 # Warn if the library name isn't obvious
 assumed_name = @backend.name_of_library(cpp_library_path)
 ondisk_name = cpp_library_path.realpath.basename.to_s
-if assumed_name != ondisk_name
-  inform("WARNING") { "Installed library named '#{assumed_name}' has directory name '#{ondisk_name}'" }
-end
+warn("Installed library named '#{assumed_name}' has directory name '#{ondisk_name}'") if assumed_name != ondisk_name
 
 if !cpp_library.nil?
   inform("Library installed at") { cpp_library.path.to_s }
@@ -487,6 +522,8 @@ else
     false
   end
 end
+
+perform_property_tests(cpp_library)
 
 install_arduino_library_dependencies(
   cpp_library.arduino_library_dependencies,

@@ -29,6 +29,11 @@ This completely skips the compilation tests (of library examples) portion of the
 This completely skips the compilation tests (of library examples) portion of the CI script.  It does not skip the compilation of unit tests.
 
 
+### `--skip-library-properties` option
+
+This completely skips validation of entries in `library.properties`.
+
+
 ### `--testfile-select` option
 
 This allows a file (or glob) pattern to be executed in your tests directory, creating a whitelist of files to test.  E.g. `--testfile-select=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (testing only those) and not `test_plant_rose.cpp`.
@@ -57,6 +62,11 @@ If set, testing will fail if no unit test files are detected (or if the director
 ### `EXPECT_EXAMPLES` environment variable
 
 If set, testing will fail if no example sketches are detected.  This is to avoid communicating a passing status in cases where a commit may have accidentally moved or deleted the examples.
+
+
+### `SKIP_LIBRARY_PROPERTIES` environment variable
+
+If set, testing will skip validating `library.properties` entries.  This is to work around any possible bugs in `arduino_ci`'s interpretation of what is "correct".
 
 
 ## Indirectly Overriding Build Behavior (medium term use), and Advanced Options
