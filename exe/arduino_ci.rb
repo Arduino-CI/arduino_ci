@@ -81,10 +81,11 @@ end
 def terminate(final = nil)
   puts "Failures: #{@failure_count}"
   unless @failure_count.zero? || final || @backend.nil?
-    puts "Last message: #{@backend.last_msg}"
-    puts "========== Stdout:"
+    puts "========== Last backend command (if relevant):"
+    puts @backend.last_msg.to_s
+    puts "========== Backend Stdout:"
     puts @backend.last_out
-    puts "========== Stderr:"
+    puts "========== Backend Stderr:"
     puts @backend.last_err
   end
   retcode = @failure_count.zero? ? 0 : 1
