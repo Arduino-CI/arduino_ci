@@ -45,6 +45,10 @@ Layout/EmptyLinesAroundMethodBody:
 Layout/EmptyLinesAroundModuleBody:
   Enabled: false
 
+# This can add clarity
+Style/CommentedKeyword:
+  Enabled: false
+
 # Configuration parameters: AllowForAlignment.
 Layout/ExtraSpacing:
   Enabled: false

@@ -57,20 +57,23 @@ module ArduinoCI
       # @return [ArudinoCI::CIConfig] The configuration with defaults filled in
       def default
         ret = new
+        ret.instance_variable_set("@is_default", true)
         ret.load_yaml(File.expand_path("../../misc/default.yml", __dir__))
         ret
       end
     end
 
+    attr_reader   :is_default
     attr_accessor :package_info
     attr_accessor :platform_info
     attr_accessor :compile_info
     attr_accessor :unittest_info
 
     def initialize
-      @package_info = {}
+      @is_default    = false
+      @package_info  = {}
       @platform_info = {}
-      @compile_info = {}
+      @compile_info  = {}
       @unittest_info = {}
     end
 

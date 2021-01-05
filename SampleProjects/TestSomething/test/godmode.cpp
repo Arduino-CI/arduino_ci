@@ -222,6 +222,72 @@ unittest(spi) {
   assertEqual("LMNOe", String(inBuf));
 }
 
+unittest(shift_in) {
+
+  uint8_t dataPin = 2;
+  uint8_t clockPin = 3;
+  uint8_t input;
+  bool actualClock[16];
+  uint8_t originalSize;
+
+  // verify data
+  state->reset();
+  state->digitalPin[dataPin].fromAscii("|", true); // 0111 1100
+  originalSize = state->digitalPin[clockPin].historySize();
+
+  input = shiftIn(dataPin, clockPin, MSBFIRST);
+  assertEqual(0x7C, (uint)input);                  // 0111 1100
+  assertEqual('|', input);                         // 0111 1100
+  assertEqual((uint)'|', (uint)input);             // 0111 1100
+
+  // now verify clock
+  assertEqual(16, state->digitalPin[clockPin].historySize() - originalSize);
+  int numMoved = state->digitalPin[clockPin].toArray(actualClock, 16);
+  assertEqual(16, numMoved);
+  for (int i = 0; i < 16; ++i) assertEqual(i % 2, actualClock[i]);
+
+  state->reset();
+  state->digitalPin[dataPin].fromAscii("|", true); // 0111 1100
+  input = shiftIn(dataPin, clockPin, LSBFIRST);    //          <- note the LSB/MSB flip
+  assertEqual(0x3E, (uint)input);                  // 0011 1110
+  assertEqual('>', input);                         // 0011 1110
+  assertEqual((uint)'>', (uint)input);             // 0011 1110
+
+  // test setting MSB
+  state->reset();
+  state->digitalPin[dataPin].fromAscii("U", true); // 0101 0101
+  input = shiftIn(dataPin, clockPin, LSBFIRST);    //          <- note the LSB/MSB flip
+  assertEqual(0xAA, (uint)input);                  // 1010 1010
+}
+
+unittest(shift_out) {
+
+  uint8_t dataPin = 2;
+  uint8_t clockPin = 3;
+  uint8_t output;
+  bool actualClock[16];
+  uint8_t originalSize;
+
+  state->reset();
+  originalSize = state->digitalPin[clockPin].historySize();
+  shiftOut(dataPin, clockPin, MSBFIRST, '|');
+  assertEqual("|", state->digitalPin[dataPin].toAscii(1, true));
+  assertEqual(16, state->digitalPin[clockPin].historySize() - originalSize);
+  int numMoved = state->digitalPin[clockPin].toArray(actualClock, 16);
+  for (int i = 0; i < 16; ++i) assertEqual(i % 2, actualClock[i]);
+
+  state->reset();
+  shiftOut(dataPin, clockPin, LSBFIRST, '|');
+  assertEqual(">", state->digitalPin[dataPin].toAscii(1, true));
+
+}
+
+unittest(no_ops) {
+  pinMode(1, INPUT);
+  analogReference(3);
+  analogReadResolution(4);
+  analogWriteResolution(5);
+}
 
 #ifdef HAVE_HWSERIAL0
 

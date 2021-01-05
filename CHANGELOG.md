@@ -15,11 +15,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `assertNAN()` and `assertNotNAN()` for comparing floats to `NaN`
 - `assertion()`, `ReporterTAP.onAssert()`, and `testBehaviorExp` macro to handle simple expression evaluation (is true, is false, etc)
 - `Wire.resetMocks()` and documentation
+- `shiftIn()` and `shiftOut()`
+- `CIConfig.is_default` to detect when the default configuration is used
+- `ArduinoBackend.boards_installed?` to detect whether a board family (or package, like `arduino:avr`) is installed
+- `ArduinoBackend.library_available?` to detect whether the library manager knows of a library
+- Sanity checks for `library.properties` `includes=` and `depends=` entries
 
 ### Changed
 - Rubocop expected syntax downgraded from ruby 2.6 to 2.5
 - `assertEqual()` and `assertNotEqual()` use actual `==` and `!=` -- they no longer require a type to be totally ordered just to do equality tests
 - Evaluative assertions (is true/false/null/etc) now produce simpler error messages instead of masquerading as an operation (e.g. "== true")
+- `LibraryProperties.to_h` now properly uses formatters and symbolic keys, in order to support a `.to_s`
+- Architectures from `library.properties` are considered when iterating over unit test or examples compilation, as well as the configured platforms
 
 ### Deprecated
 
@@ -28,6 +35,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Warnings about directory name mismatches are now based on proper comparison of strings
 - Now using the recommended "stable" URL for the `esp32` board family
+- `esp8266:huzzah` options updated as per upstream
+- Errors about `'_NOP' was not declared in this scope` (test added)
+- `pinMode()` and `analogReference()` are now functions (no longer macros), because that conflicted with actual function names in the wild
+- `analogReadResolution()` and `analogWriteResolution()` are also no longer macros
 
 ### Security
 

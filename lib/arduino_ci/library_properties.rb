@@ -24,7 +24,12 @@ module ArduinoCI
 
     # @return [Hash] the properties as a hash, all strings
     def to_h
-      @fields.clone
+      Hash[@fields.map { |k, _| [k.to_sym, send(k)] }]
+    end
+
+    # @return [String] the string representation
+    def to_s
+      to_h.to_s
     end
 
     # Enable a shortcut syntax for library property accessors, in the style of `attr_accessor` metaprogramming.
