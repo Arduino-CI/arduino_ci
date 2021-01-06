@@ -5,16 +5,20 @@
 [![Gitter](https://badges.gitter.im/Arduino-CI/arduino_ci.svg)](https://gitter.im/Arduino-CI/arduino_ci?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![GitHub Marketplace](https://img.shields.io/badge/Get_it-on_Marketplace-informational.svg)](https://github.com/marketplace/actions/arduino_ci)
 
-You want to run tests on your Arduino library (bonus: without hardware present), but the IDE doesn't support that.  Arduino CI provides that ability.
+Arduino CI was created to enable better collaboration among Arduino library maintainers and contributors, by enabling automated code checks to be performed as part of a pull request process.
 
-You want to precisely replicate certain software states in your library, but you don't have sub-millisecond reflexes for physically faking the inputs, outputs, and serial port.   Arduino CI fakes 100% of the physical input and output of an Arduino board, including the clock.
-
-You want your Arduino library to be automatically built and tested every time someone contributes code to your project on GitHub, but the Arduino IDE lacks the ability to run unit tests. [Arduino CI](https://github.com/Arduino-CI/arduino_ci) provides that ability.
-
-`arduino_ci` is a cross-platform build/test system, consisting of a Ruby gem and a series of C++ mocks.  It enables tests to be run both locally and as part of a CI service like GitHub Actions, TravisCI, Appveyor, etc.  Any OS that can run the Arduino IDE can run `arduino_ci`.
+* enables running unit tests against the library **without hardware present**
+* provides a system of mocks that allow fine-grained control over the hardare inputs, including the system's clock
+* verifies compilation of any example sketches included in the library
+* can test a wide range of arduino boards with different hardware options available
+* compares entries in `library.properties` to the contents of the library and reports mismatches
+* can be run both locally and as part of CI (GitHub Actions, TravisCI, Appveyor, etc.)
+* runs on multiple platforms -- any platform that supports the Arduino IDE
+* provides detailed analysis of segfaults in compilers that support such debugging features
 
 > Note: for running tests in response to [GitHub events](https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/github-event-types), an [Arduino CI GitHub Action](https://github.com/marketplace/actions/arduino_ci) is available for your convenience.  This method of running `arduino_ci` is driven by Docker, which may also serve your local testing needs (as it does not require a ruby environment to be installed).
 
+Arduino CI works on multiple platforms, which should enable your CI system of choice to leverage it for testing.
 
 Platform | CI Status
 ---------|:---------
@@ -25,17 +29,20 @@ Windows  | [![Windows Build status](https://github.com/Arduino-CI/arduino_ci/wor
 
 ## Quick Start
 
-For a fairly minimal practical example that you can copy from, see [the `Arduino-CI/Blink` repository](https://github.com/Arduino-CI/Blink).
+### You Need Your Arduino Library
 
-The complete set of C++ unit tests for the `arduino_ci` library itself are in the [SampleProjects/TestSomething](SampleProjects/TestSomething) project.  The [test files](SampleProjects/TestSomething/test/) are named after the type of feature being tested.
+For a fairly minimal practical example of a unit-testable library repo that you can copy from, see [the `Arduino-CI/Blink` repository](https://github.com/Arduino-CI/Blink).
 
-> Arduino expects all libraries to be in a specific `Arduino/libraries` directory on your system.  If your library is elsewhere, `arduino_ci` will _automatically_ create a symbolic link in the `libraries` directory that points to the directory of the project being tested.  This simplifieds working with project dependencies, but **it can have unintended consequences on Windows systems** because [in some cases deleting a folder that contains a symbolic link to another folder can cause the _entire linked folder_ to be removed instead of just the link itself](https://superuser.com/a/306618).
->
-> If you use a Windows system **it is recommended that you only run `arduino_ci` from project directories that are already inside the `libraries` directory**
+> Note: The `SampleProjects` directory you see within _this_ repo contains tests for validing the `arduino_ci` framework itself, and due to that coupling will not be helpful to duplicate.  That said, the [SampleProjects/TestSomething](SampleProjects/TestSomething) project contains [test files](SampleProjects/TestSomething/test/) (each named after the type of feature being tested) that may be illustrative of testing strategy and capabilities _on an individual basis_.
+
+Arduino expects all libraries to be in a specific `Arduino/libraries` directory on your system.  If your library is elsewhere, `arduino_ci` will _automatically_ create a symbolic link in the `libraries` directory that points to the directory of the project being tested.  This simplifieds working with project dependencies, but **it can have unintended consequences on Windows systems**.
+
+> If you use a Windows system **it is recommended that you only run `arduino_ci` from project directories that are already inside the `libraries` directory** because [in some cases deleting a folder that contains a symbolic link to another folder can cause the _entire linked folder_ to be removed instead of just the link itself](https://superuser.com/a/306618).
+
 
 ### You Need Ruby and Bundler
 
-You'll need Ruby version 2.2 or higher, and to `gem install bundler` if it's not already there.
+You'll need Ruby version 2.5 or higher, and to `gem install bundler` if it's not already there.
 
 
 ### You Need A Compiler (`g++`)
@@ -44,7 +51,7 @@ For unit testing, you will need a compiler; [g++](https://gcc.gnu.org/) is prefe
 
 * **Linux**: `gcc`/`g++` is likely pre-installed.
 * **OSX**: `g++` is an alias for `clang`, which is provided by Xcode and the developer tools.  You are free to `brew install gcc` as well; this is also tested and working.
-* **Windows**: you will need Cygwin, and the `mingw-gcc-g++` package.  A full set of (working) install instructions can be found in `appveyor.yml`, as this is how CI runs for this project.
+* **Windows**: you will need Cygwin, and the `mingw-gcc-g++` package.
 
 
 ### You _May_ Need `python`
@@ -62,6 +69,8 @@ Add a file called `Gemfile` (no extension) to your Arduino project:
 source 'https://rubygems.org'
 gem 'arduino_ci' '~> 1.1'
 ```
+
+At the time of this writing, `1.1` is the latest version available, and the `~>` syntax will allow your system to update it to the latest `1.x.x` version.  The list of all available versions can be found on [rubygems.org](https://rubygems.org/gems/arduino_ci) if you prefer to explicitly pin a higher version.
 
 It would also make sense to add the following to your `.gitignore`, or copy [the `.gitignore` used by this project](.gitignore):
 
@@ -183,7 +192,7 @@ test_script:
 
 ## Known Problems
 
-* The Arduino library is not fully mocked.
+* The Arduino library is not fully mocked, nor is `avr-libc`.
 * I don't have preprocessor defines for all the Arduino board flavors
 * https://github.com/Arduino-CI/arduino_ci/issues
 
