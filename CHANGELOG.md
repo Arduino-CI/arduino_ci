@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Example sketches with no configured platforms were printing the wrong configuration values to the debug message
 
 ### Security
 

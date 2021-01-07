@@ -468,8 +468,8 @@ def perform_example_compilation_tests(cpp_library, config)
 
     if platforms.empty?
       explain_and_exercise_envvar(VAR_EXPECT_EXAMPLES, "examples compilation", "platforms and architectures") do
-        puts "    Configured platforms: #{config.platforms_to_build}"
-        puts "    Configuration is default: #{config.is_default}"
+        puts "    Configured platforms: #{ovr_config.platforms_to_build}"
+        puts "    Configuration is default: #{ovr_config.is_default}"
         arches = cpp_library.library_properties.nil? ? nil : cpp_library.library_properties.architectures
         puts "    Architectures in library.properties: #{arches}"
       end
