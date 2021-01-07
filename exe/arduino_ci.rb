@@ -158,6 +158,10 @@ def warn(message)
   inform("WARNING") { message }
 end
 
+def phase(name)
+  inform("Beginning the next phase of testing") { name }
+end
+
 # Assure that a platform exists and return its definition
 def assured_platform(purpose, name, config)
   platform_definition = config.platform_definition(name)
@@ -368,6 +372,7 @@ end
 
 # tests of sane library.properties values
 def perform_property_tests(cpp_library)
+  phase("library.properties validation")
   return inform("Skipping library.properties tests") { "as requested via command line" } if @cli_options[:skip_library_properties]
   return inform("Skipping library.properties tests") { "as requested via environment" } unless ENV[VAR_SKIP_LIBPROPS].nil?
   return inform("Skipping library.properties tests") { "file not found" } unless cpp_library.library_properties?
@@ -394,6 +399,7 @@ end
 
 # Unit test procedure
 def perform_unit_tests(cpp_library, file_config)
+  phase("Unit testing")
   if @cli_options[:skip_unittests]
     inform("Skipping unit tests") { "as requested via command line" }
     return
@@ -449,6 +455,7 @@ def perform_unit_tests(cpp_library, file_config)
 end
 
 def perform_example_compilation_tests(cpp_library, config)
+  phase("Compilation of example sketches")
   if @cli_options[:skip_compilation]
     inform("Skipping compilation of examples") { "as requested via command line" }
     return
