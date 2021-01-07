@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [1.2.0] - 2021-01-06
+### Added
 - Environment variable to run a custom initialization script during CI testing: `CUSTOM_INIT_SCRIPT`
 - Environment variable to run from a subdirectory during CI testing: `USE_SUBDIR`
 - `assertComparativeEquivalent()` and `assertComparativeNotEquivalent()` to evaluate equality on an `a - b == 0` basis (and/or `!(a > b) && !(a < b)`)
@@ -28,10 +42,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `LibraryProperties.to_h` now properly uses formatters and symbolic keys, in order to support a `.to_s`
 - Architectures from `library.properties` are considered when iterating over unit test or examples compilation, as well as the configured platforms
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Warnings about directory name mismatches are now based on proper comparison of strings
 - Now using the recommended "stable" URL for the `esp32` board family
@@ -39,8 +49,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Errors about `'_NOP' was not declared in this scope` (test added)
 - `pinMode()` and `analogReference()` are now functions (no longer macros), because that conflicted with actual function names in the wild
 - `analogReadResolution()` and `analogWriteResolution()` are also no longer macros
-
-### Security
 
 
 ## [1.1.0] - 2020-12-02
@@ -492,7 +500,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.3.0...v0.4.0
