@@ -470,6 +470,8 @@ def perform_example_compilation_tests(cpp_library, config)
 
   library_examples.each do |example_path|
     example_name = File.basename(example_path)
+    inform("Discovered example sketch") { example_name }
+
     ovr_config = config.from_example(example_path)
     platforms = choose_platform_set(ovr_config, "library example", ovr_config.platforms_to_build, cpp_library.library_properties)
 

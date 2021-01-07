@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Better indications of the build phases in the test runner `arduino_ci.rb`
+- Better indications of which example sketch is being compiled as part of testing
 
 ### Changed
 
