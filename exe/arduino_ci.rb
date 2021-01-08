@@ -154,12 +154,30 @@ def inform_multiline(message, &block)
   perform_action(message, true, nil, nil, false, false, &block)
 end
 
+def rule(char)
+  puts char[0] * WIDTH
+end
+
 def warn(message)
   inform("WARNING") { message }
 end
 
 def phase(name)
+  puts
+  rule("=")
   inform("Beginning the next phase of testing") { name }
+end
+
+def banner
+  art = [
+    "         .                  __  ___",
+    " _, ,_  _| , . * ._   _    /  `  | ",
+    "(_| [ `(_] (_| | [ ) (_)   \\__. _|_   v#{ArduinoCI::VERSION}",
+  ]
+
+  pad = " " * ((WIDTH - art[2].length) / 2)
+  art.each { |l| puts "#{pad}#{l}" }
+  puts
 end
 
 # Assure that a platform exists and return its definition
@@ -430,6 +448,7 @@ def perform_unit_tests(cpp_library, file_config)
   install_arduino_library_dependencies(config.aux_libraries_for_unittest, "<unittest/libraries>")
 
   platforms.each do |p|
+    puts
     config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
       unittest_name = unittest_path.basename.to_s
       compilers.each do |gcc_binary|
@@ -470,6 +489,7 @@ def perform_example_compilation_tests(cpp_library, config)
 
   library_examples.each do |example_path|
     example_name = File.basename(example_path)
+    puts
     inform("Discovered example sketch") { example_name }
 
     ovr_config = config.from_example(example_path)
@@ -502,6 +522,9 @@ def perform_example_compilation_tests(cpp_library, config)
     end
   end
 end
+
+banner
+inform("Host OS") { ArduinoCI::Host.os }
 
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library
