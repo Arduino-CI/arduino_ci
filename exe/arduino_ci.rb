@@ -530,6 +530,11 @@ inform("Host OS") { ArduinoCI::Host.os }
 config = ArduinoCI::CIConfig.default.from_project_library
 @backend = ArduinoCI::ArduinoInstallation.autolocate!
 inform("Located arduino-cli binary") { @backend.binary_path.to_s }
+if @backend.lib_dir.exist?
+  inform("Found libraries directory") { @backend.lib_dir }
+else
+  assure("Creating libraries directory") { @backend.lib_dir.mkpath || true }
+end
 
 # run any library init scripts from the library itself.
 perform_custom_initialization(config)
