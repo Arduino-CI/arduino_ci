@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Deprecated
 
 ### Removed
+- scanning of `library.properties`; this can and should now be performed by the standalone [`arduino-lint` tool](https://arduino.github.io/arduino-lint).
 
 ### Fixed
 - Example sketches with no configured platforms were printing the wrong configuration values to the debug message

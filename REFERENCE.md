@@ -64,11 +64,6 @@ If set, testing will fail if no unit test files are detected (or if the director
 If set, testing will fail if no example sketches are detected.  This is to avoid communicating a passing status in cases where a commit may have accidentally moved or deleted the examples.
 
 
-### `SKIP_LIBRARY_PROPERTIES` environment variable
-
-If set, testing will skip validating `library.properties` entries.  This is to work around any possible bugs in `arduino_ci`'s interpretation of what is "correct".
-
-
 ## Indirectly Overriding Build Behavior (medium term use), and Advanced Options
 
 For build behavior that you'd like to persist across commits (e.g. defining the set of platforms to test against, disabling a test that you expect to re-enable at some future point), a special configuration file called `.arduino-ci.yml` can be used.  There are 3 places you can put them:
