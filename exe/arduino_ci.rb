@@ -505,10 +505,9 @@ def perform_example_compilation_tests(cpp_library, config)
     end
 
     install_all_packages(platforms, ovr_config)
+    install_arduino_library_dependencies(ovr_config.aux_libraries_for_build, "<compile/libraries>")
 
     platforms.each do |p|
-      install_arduino_library_dependencies(ovr_config.aux_libraries_for_build, "<compile/libraries>")
-
       board = ovr_config.platform_info[p][:board]
       attempt("Compiling #{example_name} for #{board}") do
         ret = @backend.compile_sketch(example_path, board)
