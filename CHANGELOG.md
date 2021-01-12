@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Example sketches with no configured platforms were printing the wrong configuration values to the debug message
 - Libraries directory was not being automatically created prior to attempting to change directory into it
+- A style error whose "fix" caused an _actual_ error.
 
 ### Security
 

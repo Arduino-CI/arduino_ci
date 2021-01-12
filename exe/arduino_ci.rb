@@ -373,7 +373,7 @@ def choose_platform_set(config, reason, desired_platforms, library_properties)
     # completely ignore default config, opting for brute-force library matches
     # OTOH, we don't need to assure platforms because we defined them
     return inform_multiline("Default config, platforms matching architectures in library.properties") do
-      supported_platforms.each_key do |p|
+      supported_platforms.keys.each do |p|  # rubocop:disable Style/HashEachMethods
         puts "    #{p}"
       end # this returns supported_platforms
     end
