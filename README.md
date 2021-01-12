@@ -8,7 +8,7 @@
 Arduino CI was created to enable better collaboration among Arduino library maintainers and contributors, by enabling automated code checks to be performed as part of a pull request process.
 
 * enables running unit tests against the library **without hardware present**
-* provides a system of mocks that allow fine-grained control over the hardare inputs, including the system's clock
+* provides a system of mocks that allow fine-grained control over the hardware inputs, including the system's clock
 * verifies compilation of any example sketches included in the library
 * can test a wide range of arduino boards with different hardware options available
 * compares entries in `library.properties` to the contents of the library and reports mismatches
@@ -67,7 +67,7 @@ Add a file called `Gemfile` (no extension) to your Arduino project:
 
 ```ruby
 source 'https://rubygems.org'
-gem 'arduino_ci' '~> 1.1'
+gem 'arduino_ci', '~> 1.1'
 ```
 
 At the time of this writing, `1.1` is the latest version available, and the `~>` syntax will allow your system to update it to the latest `1.x.x` version.  The list of all available versions can be found on [rubygems.org](https://rubygems.org/gems/arduino_ci) if you prefer to explicitly pin a higher version.
