@@ -46,7 +46,7 @@ This allows a file (or glob) pattern to be executed in your tests directory, cre
 
 ### `CUSTOM_INIT_SCRIPT` environment variable
 
-If set, testing will execute (using `/bin/sh`) the script referred to by this variable -- relative to the current working directory.  This enables use cases like the GitHub action to install custom library versions (i.e. a version of a library that is different than what the library manager would automatically install by name) prior to CI test runs.
+If set, testing will execute (using `/bin/sh`) the script referred to by this variable -- relative to the current working directory (i.e. the root directory of the library).  The script will _run_ in the Arduino Libraries directory (changing to the Libraries directory, running the script, and returning to the individual library root afterward).  This enables use cases like the GitHub action to install custom library versions (i.e. a version of a library that is different than what the library manager would automatically install by name) prior to CI test runs.
 
 
 ### `USE_SUBDIR` environment variable
@@ -62,11 +62,6 @@ If set, testing will fail if no unit test files are detected (or if the director
 ### `EXPECT_EXAMPLES` environment variable
 
 If set, testing will fail if no example sketches are detected.  This is to avoid communicating a passing status in cases where a commit may have accidentally moved or deleted the examples.
-
-
-### `SKIP_LIBRARY_PROPERTIES` environment variable
-
-If set, testing will skip validating `library.properties` entries.  This is to work around any possible bugs in `arduino_ci`'s interpretation of what is "correct".
 
 
 ## Indirectly Overriding Build Behavior (medium term use), and Advanced Options

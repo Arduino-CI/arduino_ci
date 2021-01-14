@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Better indications of the build phases in the test runner `arduino_ci.rb`
+- Better indications of which example sketch is being compiled as part of testing
 
 ### Changed
+- Topmost installtion instructions now suggest `gem install arduino_ci` instead of using a `Gemfile`.  Reasons for using a `Gemfile` are listed and discussed separately further down the README.
 
 ### Deprecated
 
 ### Removed
+- scanning of `library.properties`; this can and should now be performed by the standalone [`arduino-lint` tool](https://arduino.github.io/arduino-lint).
 
 ### Fixed
+- Example sketches with no configured platforms were printing the wrong configuration values to the debug message
+- Libraries directory was not being automatically created prior to attempting to change directory into it
+- A style error whose "fix" caused an _actual_ error.
+- Proper installation order for NetworkLib in CI workflow configuration
 
 ### Security
 

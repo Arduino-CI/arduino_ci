@@ -33,6 +33,7 @@ jobs:
         run: |
           g++ -v
           cd SampleProjects/NetworkLib
-          sh ./scripts/install.sh
           bundle install
+          bundle exec ensure_arduino_installation.rb
+          sh ./scripts/install.sh
           bundle exec arduino_ci.rb

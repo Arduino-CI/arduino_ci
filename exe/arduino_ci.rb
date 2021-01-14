@@ -9,7 +9,6 @@ VAR_CUSTOM_INIT_SCRIPT = "CUSTOM_INIT_SCRIPT".freeze
 VAR_USE_SUBDIR         = "USE_SUBDIR".freeze
 VAR_EXPECT_EXAMPLES    = "EXPECT_EXAMPLES".freeze
 VAR_EXPECT_UNITTESTS   = "EXPECT_UNITTESTS".freeze
-VAR_SKIP_LIBPROPS      = "SKIP_LIBRARY_PROPERTIES".freeze
 
 @failure_count = 0
 @passfail = proc { |result| result ? "✓" : "✗" }
@@ -22,7 +21,6 @@ class Parser
     output_options = {
       skip_unittests: false,
       skip_compilation: false,
-      skip_library_properties: false,
       ci_config: {
         "unittest" => unit_config
       },
@@ -36,10 +34,6 @@ class Parser
       end
 
       opts.on("--skip-examples-compilation", "Don't compile example sketches") do |p|
-        output_options[:skip_compilation] = p
-      end
-
-      opts.on("--skip-library-properties", "Don't validate library.properties entries") do |p|
         output_options[:skip_compilation] = p
       end
 
@@ -154,8 +148,30 @@ def inform_multiline(message, &block)
   perform_action(message, true, nil, nil, false, false, &block)
 end
 
+def rule(char)
+  puts char[0] * WIDTH
+end
+
 def warn(message)
   inform("WARNING") { message }
+end
+
+def phase(name)
+  puts
+  rule("=")
+  inform("Beginning the next phase of testing") { name }
+end
+
+def banner
+  art = [
+    "         .                  __  ___",
+    " _, ,_  _| , . * ._   _    /  `  | ",
+    "(_| [ `(_] (_| | [ ) (_)   \\__. _|_   v#{ArduinoCI::VERSION}",
+  ]
+
+  pad = " " * ((WIDTH - art[2].length) / 2)
+  art.each { |l| puts "#{pad}#{l}" }
+  puts
 end
 
 # Assure that a platform exists and return its definition
@@ -351,7 +367,7 @@ def choose_platform_set(config, reason, desired_platforms, library_properties)
     # completely ignore default config, opting for brute-force library matches
     # OTOH, we don't need to assure platforms because we defined them
     return inform_multiline("Default config, platforms matching architectures in library.properties") do
-      supported_platforms.each_key do |p|
+      supported_platforms.keys.each do |p|  # rubocop:disable Style/HashEachMethods
         puts "    #{p}"
       end # this returns supported_platforms
     end
@@ -366,34 +382,9 @@ def choose_platform_set(config, reason, desired_platforms, library_properties)
   end
 end
 
-# tests of sane library.properties values
-def perform_property_tests(cpp_library)
-  return inform("Skipping library.properties tests") { "as requested via command line" } if @cli_options[:skip_library_properties]
-  return inform("Skipping library.properties tests") { "as requested via environment" } unless ENV[VAR_SKIP_LIBPROPS].nil?
-  return inform("Skipping library.properties tests") { "file not found" } unless cpp_library.library_properties?
-
-  props = cpp_library.library_properties
-
-  props.depends&.each do |l|
-    assure("library.properties 'depends=' entry '#{l}' is available via the library manager") { @backend.library_available?(l) }
-  end
-
-  # the IDE would add these entries to a sketch (as "#include <...>" lines), they are nothing to do with the compioler
-  props.includes&.map(&:strip)&.map(&Pathname::method(:new))&.each do |f|
-    if (cpp_library.path + f).exist?
-      inform("library.properties 'includes=' entry found") { f }
-    elsif (cpp_library.path + "src" + f).exist?
-      inform("library.properties 'includes=' entry found") { Pathname.new("src") + f }
-    else
-      # this is if they want to "#include <math>" or something -- may or may not be valid!  so just warn.
-      warn("library.properties 'includes=' entry '#{f}' does not refer to a file in the library")
-    end
-  end
-
-end
-
 # Unit test procedure
 def perform_unit_tests(cpp_library, file_config)
+  phase("Unit testing")
   if @cli_options[:skip_unittests]
     inform("Skipping unit tests") { "as requested via command line" }
     return
@@ -424,6 +415,7 @@ def perform_unit_tests(cpp_library, file_config)
   install_arduino_library_dependencies(config.aux_libraries_for_unittest, "<unittest/libraries>")
 
   platforms.each do |p|
+    puts
     config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
       unittest_name = unittest_path.basename.to_s
       compilers.each do |gcc_binary|
@@ -449,6 +441,7 @@ def perform_unit_tests(cpp_library, file_config)
 end
 
 def perform_example_compilation_tests(cpp_library, config)
+  phase("Compilation of example sketches")
   if @cli_options[:skip_compilation]
     inform("Skipping compilation of examples") { "as requested via command line" }
     return
@@ -463,23 +456,25 @@ def perform_example_compilation_tests(cpp_library, config)
 
   library_examples.each do |example_path|
     example_name = File.basename(example_path)
+    puts
+    inform("Discovered example sketch") { example_name }
+
     ovr_config = config.from_example(example_path)
     platforms = choose_platform_set(ovr_config, "library example", ovr_config.platforms_to_build, cpp_library.library_properties)
 
     if platforms.empty?
       explain_and_exercise_envvar(VAR_EXPECT_EXAMPLES, "examples compilation", "platforms and architectures") do
-        puts "    Configured platforms: #{config.platforms_to_build}"
-        puts "    Configuration is default: #{config.is_default}"
+        puts "    Configured platforms: #{ovr_config.platforms_to_build}"
+        puts "    Configuration is default: #{ovr_config.is_default}"
         arches = cpp_library.library_properties.nil? ? nil : cpp_library.library_properties.architectures
         puts "    Architectures in library.properties: #{arches}"
       end
     end
 
     install_all_packages(platforms, ovr_config)
+    install_arduino_library_dependencies(ovr_config.aux_libraries_for_build, "<compile/libraries>")
 
     platforms.each do |p|
-      install_arduino_library_dependencies(ovr_config.aux_libraries_for_build, "<compile/libraries>")
-
       board = ovr_config.platform_info[p][:board]
       attempt("Compiling #{example_name} for #{board}") do
         ret = @backend.compile_sketch(example_path, board)
@@ -494,10 +489,18 @@ def perform_example_compilation_tests(cpp_library, config)
   end
 end
 
+banner
+inform("Host OS") { ArduinoCI::Host.os }
+
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library
 @backend = ArduinoCI::ArduinoInstallation.autolocate!
 inform("Located arduino-cli binary") { @backend.binary_path.to_s }
+if @backend.lib_dir.exist?
+  inform("Found libraries directory") { @backend.lib_dir }
+else
+  assure("Creating libraries directory") { @backend.lib_dir.mkpath || true }
+end
 
 # run any library init scripts from the library itself.
 perform_custom_initialization(config)
@@ -523,8 +526,6 @@ else
     false
   end
 end
-
-perform_property_tests(cpp_library)
 
 install_arduino_library_dependencies(
   cpp_library.arduino_library_dependencies,
