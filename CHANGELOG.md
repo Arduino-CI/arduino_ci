@@ -7,13 +7,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [1.3.0] - 2021-01-13
+### Added
 - Better indications of the build phases in the test runner `arduino_ci.rb`
 - Better indications of which example sketch is being compiled as part of testing
 
 ### Changed
 - Topmost installtion instructions now suggest `gem install arduino_ci` instead of using a `Gemfile`.  Reasons for using a `Gemfile` are listed and discussed separately further down the README.
-
-### Deprecated
 
 ### Removed
 - scanning of `library.properties`; this can and should now be performed by the standalone [`arduino-lint` tool](https://arduino.github.io/arduino-lint).
@@ -23,8 +35,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Libraries directory was not being automatically created prior to attempting to change directory into it
 - A style error whose "fix" caused an _actual_ error.
 - Proper installation order for NetworkLib in CI workflow configuration
-
-### Security
 
 
 ## [1.2.0] - 2021-01-06
@@ -508,7 +518,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Arduino-CI/arduino_ci/compare/v0.4.0...v1.0.0
