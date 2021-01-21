@@ -9,7 +9,7 @@ ArduinoCI uses a very standard GitHub workflow.
     * If you are submitting code, use `master` as the base branch
     * If you are submitting broken unit tests (illustrating a bug that should be fixed), use `tdd` as the base branch.
 
-Pull requests will trigger a Travis CI job.  The following two commands will be expected to pass (so you may want to run them locally before opening the pull request):
+Pull requests will trigger a CI job.  The following two commands will be expected to pass (so you may want to run them locally before opening the pull request):
 
  * `bundle exec rubocop -D .` - code style tests
  * `bundle exec rspec` - functional tests
