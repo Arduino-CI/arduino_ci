@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- A missing `examples` directory no longer causes a crash in `cpp_library.rb`
 
 ### Security
 
