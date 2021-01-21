@@ -11,7 +11,6 @@ Arduino CI tests [Arduino libraries](https://arduino.github.io/arduino-cli/libra
 * provides a system of mocks that allow fine-grained control over the hardware inputs, including the system's clock
 * verifies compilation of any example sketches included in the library
 * can test a wide range of arduino boards with different hardware options available
-* compares entries in `library.properties` to the contents of the library and reports mismatches
 * can be run both locally and as part of CI (GitHub Actions, TravisCI, Appveyor, etc.)
 * runs on multiple platforms -- any platform that supports the Arduino IDE
 * provides detailed analysis of segfaults in compilers that support such debugging features
