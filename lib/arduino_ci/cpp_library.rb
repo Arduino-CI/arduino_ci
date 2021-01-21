@@ -135,7 +135,8 @@ module ArduinoCI
     # @param installed_library_path [String] The library to query
     # @return [Array<String>] Example sketch files
     def example_sketches
-      reported_dirs = info["library"]["examples"].map(&Pathname::method(:new))
+      examples = info["library"].fetch("examples", [])
+      reported_dirs = examples.map(&Pathname::method(:new))
       reported_dirs.map { |e| e + e.basename.sub_ext(".ino") }.select(&:exist?).sort_by(&:to_s)
     end
 
