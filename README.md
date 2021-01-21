@@ -5,7 +5,7 @@
 [![Gitter](https://badges.gitter.im/Arduino-CI/arduino_ci.svg)](https://gitter.im/Arduino-CI/arduino_ci?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![GitHub Marketplace](https://img.shields.io/badge/Get_it-on_Marketplace-informational.svg)](https://github.com/marketplace/actions/arduino_ci)
 
-Arduino CI was created to enable better collaboration among Arduino library maintainers and contributors, by enabling automated code checks to be performed as part of a pull request process.
+Arduino CI tests [Arduino libraries](https://arduino.github.io/arduino-cli/library-specification/); it was created to enable better collaboration among Arduino library maintainers and contributors, by enabling automated code checks to be performed as part of a pull request process.
 
 * enables running unit tests against the library **without hardware present**
 * provides a system of mocks that allow fine-grained control over the hardware inputs, including the system's clock
