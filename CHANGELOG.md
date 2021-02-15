@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Run Windows tests on Windows not Ubuntu
 - Properly report error in building shared library
 - A missing `examples` directory no longer causes a crash in `cpp_library.rb`
+- Referring to an undefined platform no longer causes a crash; it's now a helpful error message
 
 ### Security
 
