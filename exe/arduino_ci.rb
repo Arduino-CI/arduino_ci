@@ -412,6 +412,11 @@ def perform_unit_tests(cpp_library, file_config)
     end
   end
 
+  # having undefined platforms is a config error
+  platforms.select { |p| config.platform_info[p].nil? }.each do |p|
+    assure("Platform '#{p}' is defined in configuration files") { false }
+  end
+
   install_arduino_library_dependencies(config.aux_libraries_for_unittest, "<unittest/libraries>")
 
   platforms.each do |p|
@@ -462,6 +467,7 @@ def perform_example_compilation_tests(cpp_library, config)
     ovr_config = config.from_example(example_path)
     platforms = choose_platform_set(ovr_config, "library example", ovr_config.platforms_to_build, cpp_library.library_properties)
 
+    # having no platforms defined is probably an error
     if platforms.empty?
       explain_and_exercise_envvar(VAR_EXPECT_EXAMPLES, "examples compilation", "platforms and architectures") do
         puts "    Configured platforms: #{ovr_config.platforms_to_build}"
@@ -471,11 +477,16 @@ def perform_example_compilation_tests(cpp_library, config)
       end
     end
 
+    # having undefined platforms is a config error
+    platforms.select { |p| ovr_config.platform_info[p].nil? }.each do |p|
+      assure("Platform '#{p}' is defined in configuration files") { false }
+    end
+
     install_all_packages(platforms, ovr_config)
     install_arduino_library_dependencies(ovr_config.aux_libraries_for_build, "<compile/libraries>")
 
     platforms.each do |p|
-      board = ovr_config.platform_info[p][:board]
+      board = ovr_config.platform_info[p][:board] # assured to exist, above
       attempt("Compiling #{example_name} for #{board}") do
         ret = @backend.compile_sketch(example_path, board)
         unless ret
