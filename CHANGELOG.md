@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Update .gitattributes so we have consistent line endings
 
 ### Deprecated
 
