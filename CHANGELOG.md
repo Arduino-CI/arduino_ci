@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Run tests on push as well as on a pull request so developers can see impact
 
 ### Deprecated
 
