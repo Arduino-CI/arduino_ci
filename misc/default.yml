@@ -60,16 +60,16 @@ platforms:
       warnings:
       flags:
   nano_every:
-        board: arduino:megaavr:nona4809
-        package: arduino:megaavr
-        gcc:
-          features:
-          defines:
-            - MILLIS_USE_TIMERB3
-            - NO_EXTERNAL_I2C_PULLUP
-            - AVR_NANO_4809_328MODE
-          warnings:
-          flags:
+    board: arduino:megaavr:nona4809
+    package: arduino:megaavr
+    gcc:
+      features:
+      defines:
+        - MILLIS_USE_TIMERB3
+        - NO_EXTERNAL_I2C_PULLUP
+        - AVR_NANO_4809_328MODE
+      warnings:
+      flags:
   esp32:
     board: esp32:esp32:featheresp32:FlashFreq=80
     package: esp32:esp32
