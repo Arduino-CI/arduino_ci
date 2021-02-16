@@ -194,7 +194,6 @@ compile:
     - esp32
     - esp8266
     - mega2560
-    - nano_every
 
 unittest:
   compilers:
