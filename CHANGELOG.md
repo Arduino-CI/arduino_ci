@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Change 266 files from CRLF to LF.
 
 ### Deprecated
 
