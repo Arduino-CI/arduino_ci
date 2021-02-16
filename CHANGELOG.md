@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-
+Added ```nano_every``` platform to represent ```arduino:megaavr``` architecture
 ### Changed
 
 ### Deprecated
