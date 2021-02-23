@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Put build artifacts in a separate directory to reduce clutter.
 
 ### Deprecated
 
