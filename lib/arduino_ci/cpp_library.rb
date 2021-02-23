@@ -493,7 +493,7 @@ module ArduinoCI
       base = test_file.basename
       # hide build artifacts
       build_dir = '.arduino_ci'
-      Dir.mkdir build_dir unless File.exists?(build_dir)
+      Dir.mkdir build_dir unless File.exist?(build_dir)
       executable = Pathname.new("#{build_dir}/unittest_#{base}.bin").expand_path
       File.delete(executable) if File.exist?(executable)
       arg_sets = []
