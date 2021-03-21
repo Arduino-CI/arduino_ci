@@ -2,6 +2,7 @@
 #include "HardwareSerial.h"
 #include "SPI.h"
 #include "Wire.h"
+#include <list>
 
 GodmodeState* GODMODE() {
   return GodmodeState::getInstance();
@@ -32,11 +33,27 @@ unsigned long micros() {
 }
 
 void delay(unsigned long millis) {
-  GODMODE()->micros += millis * 1000;
+  delayMicroseconds(millis * 1000);
 }
 
+std::list<DelayHandler> delayHandlers;
+
 void delayMicroseconds(unsigned long micros) {
+  for (auto each : delayHandlers) {
+    each(micros);
+  }
   GODMODE()->micros += micros;
+}
+
+void addDelayHandler(DelayHandler pFunction) {
+  delayHandlers.push_back(pFunction);
+}
+
+void removeDelayHandler(DelayHandler pFunction) {
+  std::list<DelayHandler>::iterator iter = std::find(delayHandlers.begin(), delayHandlers.end(), pFunction);
+  if (iter != delayHandlers.end()) {
+    delayHandlers.erase(iter);
+  }
 }
 
 void randomSeed(unsigned long seed)

@@ -10,7 +10,14 @@ unittest_setup() {
   state->reset();
 }
 
+unsigned long myDelay = 0;
+
+void delayHandler(unsigned long micros) {
+  myDelay = micros;
+}
+
 unittest(millis_micros_and_delay) {
+  assertEqual(0, myDelay);
   assertEqual(0, millis());
   assertEqual(0, micros());
   delay(3);
@@ -19,6 +26,18 @@ unittest(millis_micros_and_delay) {
   delayMicroseconds(11000);
   assertEqual(14, millis());
   assertEqual(14000, micros());
+  assertEqual(0, myDelay);
+
+  addDelayHandler(delayHandler);
+  delay(2);
+  assertEqual(2000, myDelay);
+  myDelay = 9;
+  delayMicroseconds(25);
+  assertEqual(25, myDelay);
+  removeDelayHandler(delayHandler);
+  myDelay = 0;
+  delay(4);
+  assertEqual(0, myDelay);
 }
 
 unittest(random) {

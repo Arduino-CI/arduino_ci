@@ -13,10 +13,13 @@ long random(long vmin, long vmax);
 
 
 // Time
+typedef void (*DelayHandler)(unsigned long micros);
 void delay(unsigned long millis);
 void delayMicroseconds(unsigned long micros);
 unsigned long millis();
 unsigned long micros();
+void addDelayHandler(DelayHandler pFunction);
+void removeDelayHandler(DelayHandler pFunction);
 
 #define MOCK_PINS_COUNT 256
 

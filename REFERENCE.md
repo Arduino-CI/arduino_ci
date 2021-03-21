@@ -709,3 +709,21 @@ unittest(wire_basics) {
   assertEqual(0, mosi->size());
 }
 ```
+
+### Delay
+
+When running on the real Arduino, the `delay()` function will actually pause.
+When running on the mock Arduino, the `delay()` function increments the clock
+and then returns immediately. While this generally the right thing to do,
+this presents a couple issues. First, if we want to look at the state during
+the delay, this is difficult since the state could change after the delay
+(e.g., show a message on the LCD for one second, then clear it). Second, if
+we are using the mock Arduino library to emulate the application in a GUI,
+we want to have a real delay. To solve this, we will allow code (such as tests
+and the GUI) to register to be notified of delays. Then we can take whatever
+actionion is appropriate.
+
+To be notified of a delay, define a void function that accepts a single
+`unsigned long int` as a parameter and register the function using `addDelayHandler()`.
+You can remove the callback with `removeDelayHandler()`. For an example of the usage,
+see `millis_micros_and_delay` in `SampleProjects/TestSomething/test/godmode.cpp`.
