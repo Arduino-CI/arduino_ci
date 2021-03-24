@@ -470,16 +470,15 @@ module ArduinoCI
       ci_gcc_config[:flags]
     end
 
-    # All GCC command line args for building any unit test
+    # All non-CPP GCC command line args for building any unit test.
+    # We leave out the CPP files so they can be included or not
+    # depending on whether we are building a shared library.
     # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Array<String>] GCC command-line flags
     def test_args(aux_libraries, ci_gcc_config)
       # TODO: something with libraries?
       ret = include_args(aux_libraries)
-      # ret += cpp_files_arduino.map(&:to_s)
-      # ret += cpp_files_unittest.map(&:to_s)
-      # ret += cpp_files.map(&:to_s)
       unless ci_gcc_config.nil?
         cgc = ci_gcc_config
         ret = feature_args(cgc) + warning_args(cgc) + define_args(cgc) + flag_args(cgc) + ret
@@ -520,7 +519,6 @@ module ArduinoCI
         ]
       end
 
-      # puts "#{Time.now.to_s} arg_sets" # = #{arg_sets.to_s}"
       # combine library.properties defs (if existing) with config file.
       # TODO: as much as I'd like to rely only on the properties file(s), I think that would prevent testing 1.0-spec libs
       arg_sets << @@test_args # used cached value since building full set of include directories can take time

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- We now compile a shared library to be used for each test
 
 ### Deprecated
 
