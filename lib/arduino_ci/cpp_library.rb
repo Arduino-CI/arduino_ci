@@ -498,7 +498,7 @@ module ArduinoCI
         base = test_file.basename
         executable = Pathname.new("unittest_#{base}.bin").expand_path
       end
-      ENV["$LD_LIBRARY_PATH"] = Dir.pwd
+      ENV["LD_LIBRARY_PATH"] = Dir.pwd
       arg_sets << ["-o", executable.to_s, "-L" + Dir.pwd]
       File.delete(executable) if File.exist?(executable)
       arg_sets << ["-DARDUINO=100"]
