@@ -15,3 +15,5 @@ vendor
 # C++ stuff
 *.bin
 *.bin.dSYM
+*.so
+*.so.dSYM

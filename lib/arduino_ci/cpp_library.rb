@@ -41,6 +41,12 @@ module ArduinoCI
     # @return [Array<Pathname>] Directories suspected of being vendor-bundle
     attr_reader :vendor_bundle_cache
 
+    # @return [Array<String>] Libraries we are dependent on
+    @@full_dependencies
+
+    # @return [Array<String>] Compiler arguments, including include directories, but not .cpp files
+    @@test_args
+
     # @param friendly_name [String] The "official" name of the library, which can contain spaces
     # @param backend [ArduinoBackend] The support backend
     def initialize(friendly_name, backend)
@@ -471,9 +477,9 @@ module ArduinoCI
     def test_args(aux_libraries, ci_gcc_config)
       # TODO: something with libraries?
       ret = include_args(aux_libraries)
-      ret += cpp_files_arduino.map(&:to_s)
-      ret += cpp_files_unittest.map(&:to_s)
-      ret += cpp_files.map(&:to_s)
+      # ret += cpp_files_arduino.map(&:to_s)
+      # ret += cpp_files_unittest.map(&:to_s)
+      # ret += cpp_files.map(&:to_s)
       unless ci_gcc_config.nil?
         cgc = ci_gcc_config
         ret = feature_args(cgc) + warning_args(cgc) + define_args(cgc) + flag_args(cgc) + ret
@@ -485,16 +491,26 @@ module ArduinoCI
     #
     # The dependent libraries configuration is appended with data from library.properties internal to the library under test
     #
-    # @param test_file [Pathname] The path to the file containing the unit tests
+    # @param test_file [Pathname] The path to the file containing the unit tests (nil to compile application as shared library)
     # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Pathname] path to the compiled test executable
     def build_for_test_with_configuration(test_file, aux_libraries, gcc_binary, ci_gcc_config)
-      base = test_file.basename
-      executable = Pathname.new("unittest_#{base}.bin").expand_path
-      File.delete(executable) if File.exist?(executable)
       arg_sets = []
-      arg_sets << ["-std=c++0x", "-o", executable.to_s, "-DARDUINO=100"]
+      arg_sets << ["-std=c++0x"]
+      if test_file.nil?
+        executable = Pathname.new("libarduino.so").expand_path
+        arg_sets << ["-shared", "-fPIC", "-Wl,-undefined,dynamic_lookup"]
+        # the following two take some time, so are cached when we build the shared library
+        @@full_dependencies = all_arduino_library_dependencies!(aux_libraries)
+        @@test_args = test_args(@@full_dependencies, ci_gcc_config)
+      else
+        base = test_file.basename
+        executable = Pathname.new("unittest_#{base}.bin").expand_path
+      end
+      arg_sets << ["-o", executable.to_s, "-L."]
+      File.delete(executable) if File.exist?(executable)
+      arg_sets << ["-DARDUINO=100"]
       if libasan?(gcc_binary)
         arg_sets << [ # Stuff to help with dynamic memory mishandling
           "-g", "-O1",
@@ -504,15 +520,22 @@ module ArduinoCI
         ]
       end
 
+      # puts "#{Time.now.to_s} arg_sets" # = #{arg_sets.to_s}"
       # combine library.properties defs (if existing) with config file.
       # TODO: as much as I'd like to rely only on the properties file(s), I think that would prevent testing 1.0-spec libs
-      full_dependencies = all_arduino_library_dependencies!(aux_libraries)
-      arg_sets << test_args(full_dependencies, ci_gcc_config)
-      arg_sets << cpp_files_libraries(full_dependencies).map(&:to_s)
-      arg_sets << [test_file.to_s]
-      args = arg_sets.flatten(1)
-      return nil unless run_gcc(gcc_binary, *args)
+      arg_sets << @@test_args # used cached value since building full set of include directories can take time
 
+      if test_file.nil?  # CPP files for the shared library
+        arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
+        arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
+        arg_sets << cpp_files.map(&:to_s) # CPP files for the primary application library under test
+        arg_sets << cpp_files_libraries(@@full_dependencies).map(&:to_s) # CPP files for all the libraries we depend on
+      else  # add the test file and the shared library
+        arg_sets << [test_file.to_s, "-larduino"]
+      end
+
+      args = arg_sets.flatten(1)
+      return nil unless run_gcc(gcc_binary, *args) # 0:54
       artifacts << executable
       executable
     end
