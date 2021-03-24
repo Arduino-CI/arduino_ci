@@ -494,9 +494,6 @@ module ArduinoCI
       if test_file.nil?
         executable = Pathname.new("libarduino.so").expand_path
         arg_sets << ["-shared", "-fPIC", "-Wl,-undefined,dynamic_lookup"]
-        # the following two take some time, so are cached when we build the shared library
-        @full_dependencies = all_arduino_library_dependencies!(aux_libraries)
-        @test_args = test_args(@full_dependencies, ci_gcc_config)
       else
         base = test_file.basename
         executable = Pathname.new("unittest_#{base}.bin").expand_path
@@ -515,15 +512,19 @@ module ArduinoCI
 
       # combine library.properties defs (if existing) with config file.
       # TODO: as much as I'd like to rely only on the properties file(s), I think that would prevent testing 1.0-spec libs
+      # the following two take some time, so are cached when we build the shared library
+      @full_dependencies ||= all_arduino_library_dependencies!(aux_libraries)
+      @test_args ||= test_args(@full_dependencies, ci_gcc_config)
       arg_sets << @test_args # used cached value since building full set of include directories can take time
 
-      if test_file.nil?  # CPP files for the shared library
+      if File.exists?("libarduino.so")  # add the test file and the shared library
+        arg_sets << [test_file.to_s, "-larduino"]
+      else  # CPP files for the shared library
         arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
         arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
         arg_sets << cpp_files.map(&:to_s) # CPP files for the primary application library under test
         arg_sets << cpp_files_libraries(@full_dependencies).map(&:to_s) # CPP files for all the libraries we depend on
-      else  # add the test file and the shared library
-        arg_sets << [test_file.to_s, "-larduino"]
+        arg_sets << [test_file.to_s] if test_file
       end
 
       args = arg_sets.flatten(1)
