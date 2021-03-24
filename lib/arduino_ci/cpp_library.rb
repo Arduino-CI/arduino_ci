@@ -517,7 +517,7 @@ module ArduinoCI
       @test_args ||= test_args(@full_dependencies, ci_gcc_config)
       arg_sets << @test_args # used cached value since building full set of include directories can take time
 
-      if File.exists?("libarduino.so")  # add the test file and the shared library
+      if File.exist?("libarduino.so")  # add the test file and the shared library
         arg_sets << [test_file.to_s, "-larduino"]
       else  # CPP files for the shared library
         arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
