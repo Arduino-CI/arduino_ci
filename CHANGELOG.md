@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Fix copy/paste error to allow additional warnings for a platform
 
 ### Deprecated
 
