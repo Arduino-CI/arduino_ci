@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Working directory is now printed in test runner output
 
 ### Changed
 - Update .gitattributes so we have consistent line endings
