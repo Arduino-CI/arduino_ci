@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added a CI workflow to check for spelling errors
 - Extraction of byes usage in a compiled sketch is now calculated in a method: `ArduinoBackend.last_bytes_usage`
 - Added ```nano_every``` platform to represent ```arduino:megaavr``` architecture
+- Working directory is now printed in test runner output
+
 ### Changed
 - We now compile a shared library to be used for each test.
 - Put build artifacts in a separate directory to reduce clutter.

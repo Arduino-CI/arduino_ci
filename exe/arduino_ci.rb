@@ -533,6 +533,7 @@ end
 
 banner
 inform("Host OS") { ArduinoCI::Host.os }
+inform("Working directory") { Dir.pwd }
 
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library
