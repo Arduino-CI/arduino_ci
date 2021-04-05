@@ -446,7 +446,7 @@ module ArduinoCI
     def warning_args(ci_gcc_config)
       return [] if ci_gcc_config[:warnings].nil?
 
-      ci_gcc_config[:features].map { |w| "-W#{w}" }
+      ci_gcc_config[:warnings].map { |w| "-W#{w}" }
     end
 
     # GCC command line arguments for defines (e.g. -Dhave_something)

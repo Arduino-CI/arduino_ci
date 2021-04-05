@@ -76,6 +76,32 @@ end
 RSpec.describe ArduinoCI::CppLibrary do
   next if skip_ruby_tests
 
+  context "compiler flags" do
+    config = ArduinoCI::CIConfig.new
+    config.load_yaml(File.join(File.dirname(__FILE__), "yaml", "o1.yaml"))
+    bogo_config = config.gcc_config("bogo")
+    fld = FakeLibDir.new
+    backend = fld.backend
+    cpp_lib_path = sampleproj_path + "DoSomething"
+    cpp_library = verified_install(backend, cpp_lib_path)
+
+    # the keys are the methods of cpp_library to call
+    # the results are what we expect to see based on the config we loaded
+    methods_and_results = {
+      feature_args: ["-fa", "-fb"],
+      warning_args: ["-We", "-Wf"],
+      define_args: ["-Dc", "-Dd"],
+      flag_args: ["g", "h"]
+    }
+
+    methods_and_results.each do |m, expected|
+      it "Creates #{m} from config" do
+        expect(expected).to eq(cpp_library.send(m, bogo_config))
+      end
+    end
+
+  end
+
   context "arduino-library-specification detection" do
 
     answers = {

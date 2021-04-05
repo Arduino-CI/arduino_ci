@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - A missing `examples` directory no longer causes a crash in `cpp_library.rb`
 - Referring to an undefined platform no longer causes a crash; it's now a helpful error message
+- A copy/paste error that prevented compiler warning flags from being supplied has been fixed, via jgfoster
 
 ### Security
 
