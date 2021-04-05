@@ -307,7 +307,7 @@ RSpec.describe ArduinoCI::CppLibrary do
         it "tests #{File.basename(path)} with #{compiler} expecting #{expected}" do
           exe = @cpp_library.build_for_test_with_configuration(path, [], compiler, config.gcc_config("uno"))
           expect(exe).not_to be nil
-          expect(@cpp_library.run_test_file(exe)).to eq(expected)
+          expect(@cpp_library.run_test_file(Pathname.new(exe.path))).to eq(expected)
         end
       end
     end

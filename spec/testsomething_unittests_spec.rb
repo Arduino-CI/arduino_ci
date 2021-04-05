@@ -90,7 +90,7 @@ RSpec.describe "TestSomething C++" do
 
           it "#{tfn} builds successfully and passes tests" do
             expect(@exe).not_to be nil
-            expect(@cpp_library.run_test_file(@exe)).to_not be_falsey
+            expect(@cpp_library.run_test_file(Pathname.new(@exe.path))).to_not be_falsey
           end
         end
       end

@@ -439,7 +439,9 @@ def perform_unit_tests(cpp_library, config)
             puts cpp_library.last_err
             next false
           end
-          cpp_library.run_test_file(exe)
+          cpp_library.run_test_file(Pathname.new(exe.path))
+        ensure
+          exe&.unlink
         end
       end
     end
