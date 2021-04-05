@@ -236,9 +236,9 @@ unittest(shift_in) {
   originalSize = state->digitalPin[clockPin].historySize();
 
   input = shiftIn(dataPin, clockPin, MSBFIRST);
-  assertEqual(0x7C, (uint)input);                  // 0111 1100
+  assertEqual(0x7C, (uint8_t)input);               // 0111 1100
   assertEqual('|', input);                         // 0111 1100
-  assertEqual((uint)'|', (uint)input);             // 0111 1100
+  assertEqual((uint8_t)'|', (uint8_t)input);       // 0111 1100
 
   // now verify clock
   assertEqual(16, state->digitalPin[clockPin].historySize() - originalSize);
@@ -249,15 +249,15 @@ unittest(shift_in) {
   state->reset();
   state->digitalPin[dataPin].fromAscii("|", true); // 0111 1100
   input = shiftIn(dataPin, clockPin, LSBFIRST);    //          <- note the LSB/MSB flip
-  assertEqual(0x3E, (uint)input);                  // 0011 1110
+  assertEqual(0x3E, (uint8_t)input);               // 0011 1110
   assertEqual('>', input);                         // 0011 1110
-  assertEqual((uint)'>', (uint)input);             // 0011 1110
+  assertEqual((uint8_t)'>', (uint8_t)input);       // 0011 1110
 
   // test setting MSB
   state->reset();
   state->digitalPin[dataPin].fromAscii("U", true); // 0101 0101
   input = shiftIn(dataPin, clockPin, LSBFIRST);    //          <- note the LSB/MSB flip
-  assertEqual(0xAA, (uint)input);                  // 1010 1010
+  assertEqual(0xAA, (uint8_t)input);               // 1010 1010
 }
 
 unittest(shift_out) {
