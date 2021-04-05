@@ -72,7 +72,7 @@ RSpec.describe "TestSomething C++" do
         context "file #{tfn} (using #{compiler})" do
           around(:example) { |example| fld.in_pristine_fake_libraries_dir(example) }
 
-          before(:all) do
+          before(:each) do
             @cpp_library = backend.install_local_library(cpp_lib_path)
             @exe = @cpp_library.build_for_test_with_configuration(path, [], compiler, config.gcc_config("uno"))
           end
@@ -88,11 +88,8 @@ RSpec.describe "TestSomething C++" do
             end
           end
 
-          it "#{tfn} builds successfully" do
+          it "#{tfn} builds successfully and passes tests" do
             expect(@exe).not_to be nil
-          end
-          it "#{tfn} passes tests" do
-            skip "Can't run the test program because it failed to build" if @exe.nil?
             expect(@cpp_library.run_test_file(@exe)).to_not be_falsey
           end
         end
