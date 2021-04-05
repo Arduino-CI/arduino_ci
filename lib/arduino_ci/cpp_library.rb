@@ -485,6 +485,18 @@ module ArduinoCI
       ret
     end
 
+    # Allow users to inject extra compiler flags though environment variable.
+    def extra_compiler_flags_for_unittest
+      return [] unless ENV["ARDUINO_CI_UNIT_TEST_EXTRA_COMPILER_FLAGS"]
+
+      delimiter = if ENV["ARDUINO_CI_TEST_EXTRA_COMPILER_FLAGS_DELIMITER"]
+        yield(ENV["ARDUINO_CI_TEST_EXTRA_COMPILER_FLAGS_DELIMITER"])
+      else
+        " "
+      end
+      ENV["ARDUINO_CI_UNIT_TEST_EXTRA_COMPILER_FLAGS"].split(delimiter)
+    end
+
     # build a file for running a test of the given unit test file
     #
     # The dependent libraries configuration is appended with data from library.properties internal to the library under test
@@ -505,6 +517,7 @@ module ArduinoCI
         ]
       end
       arg_sets << @test_args
+      arg_sets << extra_compiler_flags_for_unittest
       arg_sets << [test_file.to_s, "-l#{LIBRARY_NAME}"]
       args = arg_sets.flatten(1)
       return nil unless run_gcc(gcc_binary, *args)
@@ -555,6 +568,7 @@ module ArduinoCI
       @test_args = test_args(@full_dependencies, ci_gcc_config) # build full set of include directories to be cached for later
 
       arg_sets << @test_args
+      arg_sets << extra_compiler_flags_for_unittest
       arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
       arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
       arg_sets << cpp_files.map(&:to_s) # CPP files for the primary application library under test

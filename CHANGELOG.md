@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 
+- Added support for `ARDUINO_CI_UNIT_TEST_EXTRA_COMPILER_FLAGS` environment variable.
+
 ### Changed
 
 ### Deprecated

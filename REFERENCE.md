@@ -68,6 +68,23 @@ If set, testing will fail if no unit test files are detected (or if the director
 
 If set, testing will fail if no example sketches are detected.  This is to avoid communicating a passing status in cases where a commit may have accidentally moved or deleted the examples.
 
+### `ARDUINO_CI_UNIT_TEST_EXTRA_COMPILER_FLAGS` environment variable
+
+If you want to pass on additional flags to the compiler when it runs unit tests
+you can set this variable, e.g.
+
+```bash
+export ARDUINO_CI_UNIT_TEST_EXTRA_COMPILER_FLAGS="--coverage -g -O0"
+```
+
+By default the variable will be split up by space characters. If one of the
+flags contain spaces use the `ARDUINO_CI_TEST_EXTRA_COMPILER_FLAGS_DELIMITER`
+variable to chose a different delimiter, e.g.
+
+```bash
+export ARDUINO_CI_TEST_EXTRA_COMPILER_FLAGS_DELIMITER="|"
+export ARDUINO_CI_UNIT_TEST_EXTRA_COMPILER_FLAGS="-Wall|-DGREETING='Hello world'"
+```
 
 ## Indirectly Overriding Build Behavior (medium term use), and Advanced Options
 
