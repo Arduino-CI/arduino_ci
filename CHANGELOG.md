@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Update .gitattributes so we have consistent line endings
+- Test runner detects console width if possible, allowing variable width from 80-132 chars
 
 ### Deprecated
 
