@@ -75,170 +75,173 @@ end
 RSpec.describe ArduinoCI::CppLibrary do
   next if skip_ruby_tests
 
-  answers = {
-    DoSomething: {
-      one_five: false,
-      library_properties: true,
-      cpp_files: [Pathname.new("DoSomething") + "do-something.cpp"],
-      cpp_files_libraries: [],
-      header_dirs: [Pathname.new("DoSomething")],
-      arduino_library_src_dirs: [],
-      test_files: [
-        "DoSomething/test/bad-errormessages.cpp",
-        "DoSomething/test/bad-null.cpp",
-        "DoSomething/test/good-assert.cpp",
-        "DoSomething/test/good-library.cpp",
-        "DoSomething/test/good-null.cpp",
-      ].map { |f| Pathname.new(f) }
-    },
-    OnePointOhDummy: {
-      one_five: false,
-      library_properties: false,
-      cpp_files: [
-        "OnePointOhDummy/YesBase.cpp",
-        "OnePointOhDummy/utility/YesUtil.cpp",
-      ].map { |f| Pathname.new(f) },
-      cpp_files_libraries: [],
-      header_dirs: [
-        "OnePointOhDummy",
-        "OnePointOhDummy/utility"
-      ].map { |f| Pathname.new(f) },
-      arduino_library_src_dirs: [],
-      test_files: [
-        "OnePointOhDummy/test/null.cpp",
-      ].map { |f| Pathname.new(f) }
-    },
-    OnePointFiveMalformed: {
-      one_five: false,
-      library_properties: false,
-      cpp_files: [
-        "OnePointFiveMalformed/YesBase.cpp",
-        "OnePointFiveMalformed/utility/YesUtil.cpp",
-      ].map { |f| Pathname.new(f) },
-      cpp_files_libraries: [],
-      header_dirs: [
-        "OnePointFiveMalformed",
-        "OnePointFiveMalformed/utility"
-      ].map { |f| Pathname.new(f) },
-      arduino_library_src_dirs: [],
-      test_files: []
-    },
-    OnePointFiveDummy: {
+  context "arduino-library-specification detection" do
+
+    answers = {
+      DoSomething: {
+        one_five: false,
+        library_properties: true,
+        cpp_files: [Pathname.new("DoSomething") + "do-something.cpp"],
+        cpp_files_libraries: [],
+        header_dirs: [Pathname.new("DoSomething")],
+        arduino_library_src_dirs: [],
+        test_files: [
+          "DoSomething/test/bad-errormessages.cpp",
+          "DoSomething/test/bad-null.cpp",
+          "DoSomething/test/good-assert.cpp",
+          "DoSomething/test/good-library.cpp",
+          "DoSomething/test/good-null.cpp",
+        ].map { |f| Pathname.new(f) }
+      },
+      OnePointOhDummy: {
+        one_five: false,
+        library_properties: false,
+        cpp_files: [
+          "OnePointOhDummy/YesBase.cpp",
+          "OnePointOhDummy/utility/YesUtil.cpp",
+        ].map { |f| Pathname.new(f) },
+        cpp_files_libraries: [],
+        header_dirs: [
+          "OnePointOhDummy",
+          "OnePointOhDummy/utility"
+        ].map { |f| Pathname.new(f) },
+        arduino_library_src_dirs: [],
+        test_files: [
+          "OnePointOhDummy/test/null.cpp",
+        ].map { |f| Pathname.new(f) }
+      },
+      OnePointFiveMalformed: {
+        one_five: false,
+        library_properties: false,
+        cpp_files: [
+          "OnePointFiveMalformed/YesBase.cpp",
+          "OnePointFiveMalformed/utility/YesUtil.cpp",
+        ].map { |f| Pathname.new(f) },
+        cpp_files_libraries: [],
+        header_dirs: [
+          "OnePointFiveMalformed",
+          "OnePointFiveMalformed/utility"
+        ].map { |f| Pathname.new(f) },
+        arduino_library_src_dirs: [],
+        test_files: []
+      },
+      OnePointFiveDummy: {
+        one_five: true,
+        library_properties: true,
+        cpp_files: [
+          "OnePointFiveDummy/src/YesSrc.cpp",
+          "OnePointFiveDummy/src/subdir/YesSubdir.cpp",
+        ].map { |f| Pathname.new(f) },
+        cpp_files_libraries: [],
+        header_dirs: [
+          "OnePointFiveDummy/src",
+          "OnePointFiveDummy/src/subdir",
+        ].map { |f| Pathname.new(f) },
+        arduino_library_src_dirs: [],
+        test_files: [
+          "OnePointFiveDummy/test/null.cpp",
+        ].map { |f| Pathname.new(f) }
+      }
+    }
+
+    # easier to construct this one from the other test cases
+    answers[:DependOnSomething] = {
       one_five: true,
       library_properties: true,
-      cpp_files: [
-        "OnePointFiveDummy/src/YesSrc.cpp",
-        "OnePointFiveDummy/src/subdir/YesSubdir.cpp",
-      ].map { |f| Pathname.new(f) },
-      cpp_files_libraries: [],
-      header_dirs: [
-        "OnePointFiveDummy/src",
-        "OnePointFiveDummy/src/subdir",
-      ].map { |f| Pathname.new(f) },
-      arduino_library_src_dirs: [],
+      cpp_files: ["DependOnSomething/src/YesDeps.cpp"].map { |f| Pathname.new(f) },
+      cpp_files_libraries: answers[:OnePointOhDummy][:cpp_files] + answers[:OnePointFiveDummy][:cpp_files],
+      header_dirs: ["DependOnSomething/src"].map { |f| Pathname.new(f) }, # this is not recursive!
+      arduino_library_src_dirs: answers[:OnePointOhDummy][:header_dirs] + answers[:OnePointFiveDummy][:header_dirs],
       test_files: [
-        "OnePointFiveDummy/test/null.cpp",
-      ].map { |f| Pathname.new(f) }
+          "DependOnSomething/test/null.cpp",
+        ].map { |f| Pathname.new(f) }
     }
-  }
 
-  # easier to construct this one from the other test cases
-  answers[:DependOnSomething] = {
-    one_five: true,
-    library_properties: true,
-    cpp_files: ["DependOnSomething/src/YesDeps.cpp"].map { |f| Pathname.new(f) },
-    cpp_files_libraries: answers[:OnePointOhDummy][:cpp_files] + answers[:OnePointFiveDummy][:cpp_files],
-    header_dirs: ["DependOnSomething/src"].map { |f| Pathname.new(f) }, # this is not recursive!
-    arduino_library_src_dirs: answers[:OnePointOhDummy][:header_dirs] + answers[:OnePointFiveDummy][:header_dirs],
-    test_files: [
-        "DependOnSomething/test/null.cpp",
-      ].map { |f| Pathname.new(f) }
-  }
+    answers.freeze
 
-  answers.freeze
+    answers.each do |sampleproject, expected|
 
-  answers.each do |sampleproject, expected|
+      # we will need to install some dummy libraries into a fake location, so do that on demand
+      fld = FakeLibDir.new
+      backend = fld.backend
 
-    # we will need to install some dummy libraries into a fake location, so do that on demand
-    fld = FakeLibDir.new
-    backend = fld.backend
-
-    context "#{sampleproject}" do
-      cpp_lib_path = sampleproj_path + sampleproject.to_s
-      around(:example) { |example| fld.in_pristine_fake_libraries_dir(example) }
-      before(:each) do
-        @base_dir = fld.libraries_dir
-        @cpp_library = verified_install(backend, cpp_lib_path)
-      end
-
-      it "is a sane test env" do
-        expect(sampleproject.to_s).to eq(@cpp_library.name)
-      end
-
-      it "detects 1.5 format" do
-        expect(@cpp_library.one_point_five?).to eq(expected[:one_five])
-      end
-
-      it "detects library.properties" do
-        expect(@cpp_library.library_properties?).to eq(expected[:library_properties])
-      end
-
-
-      context "cpp_files" do
-        it "finds cpp files in directory" do
-          relative_paths = @cpp_library.cpp_files.map { |f| f.relative_path_from(@base_dir) }
-          expect(relative_paths.map(&:to_s)).to match_array(expected[:cpp_files].map(&:to_s))
+      context "#{sampleproject}" do
+        cpp_lib_path = sampleproj_path + sampleproject.to_s
+        around(:example) { |example| fld.in_pristine_fake_libraries_dir(example) }
+        before(:each) do
+          @base_dir = fld.libraries_dir
+          @cpp_library = verified_install(backend, cpp_lib_path)
         end
-      end
 
-      context "cpp_files_libraries" do
-        it "finds cpp files in directories of dependencies" do
-          @cpp_library.all_arduino_library_dependencies!  # side effect: installs them
-          dependencies = @cpp_library.arduino_library_dependencies.nil? ? [] : @cpp_library.arduino_library_dependencies
-          dependencies.each { |d| verified_install(backend, sampleproj_path + d) }
-          relative_paths = @cpp_library.cpp_files_libraries(dependencies).map { |f| f.relative_path_from(@base_dir) }
-          expect(relative_paths.map(&:to_s)).to match_array(expected[:cpp_files_libraries].map(&:to_s))
+        it "is a sane test env" do
+          expect(sampleproject.to_s).to eq(@cpp_library.name)
         end
-      end
 
-      context "header_dirs" do
-        it "finds directories containing h files" do
-          relative_paths = @cpp_library.header_dirs.map { |f| f.relative_path_from(@base_dir) }
-          expect(relative_paths.map(&:to_s)).to match_array(expected[:header_dirs].map(&:to_s))
+        it "detects 1.5 format" do
+          expect(@cpp_library.one_point_five?).to eq(expected[:one_five])
         end
-      end
 
-      context "tests_dir" do
-        it "locates the tests directory" do
-          # since we don't know where the CI system will install this stuff,
-          # we need to go looking for a relative path to the SampleProjects directory
-          # just to get our "expected" value
-          relative_path = @cpp_library.tests_dir.relative_path_from(@base_dir)
-          expect(relative_path.to_s).to eq("#{sampleproject}/test")
+        it "detects library.properties" do
+          expect(@cpp_library.library_properties?).to eq(expected[:library_properties])
         end
-      end
 
-      context "examples_dir" do
-        it "locates the examples directory" do
-          relative_path = @cpp_library.examples_dir.relative_path_from(@base_dir)
-          expect(relative_path.to_s).to eq("#{sampleproject}/examples")
+
+        context "cpp_files" do
+          it "finds cpp files in directory" do
+            relative_paths = @cpp_library.cpp_files.map { |f| f.relative_path_from(@base_dir) }
+            expect(relative_paths.map(&:to_s)).to match_array(expected[:cpp_files].map(&:to_s))
+          end
         end
-      end
 
-      context "test_files" do
-        it "finds cpp files in directory" do
-          relative_paths = @cpp_library.test_files.map { |f| f.relative_path_from(@base_dir) }
-          expect(relative_paths.map(&:to_s)).to match_array(expected[:test_files].map(&:to_s))
+        context "cpp_files_libraries" do
+          it "finds cpp files in directories of dependencies" do
+            @cpp_library.all_arduino_library_dependencies!  # side effect: installs them
+            dependencies = @cpp_library.arduino_library_dependencies.nil? ? [] : @cpp_library.arduino_library_dependencies
+            dependencies.each { |d| verified_install(backend, sampleproj_path + d) }
+            relative_paths = @cpp_library.cpp_files_libraries(dependencies).map { |f| f.relative_path_from(@base_dir) }
+            expect(relative_paths.map(&:to_s)).to match_array(expected[:cpp_files_libraries].map(&:to_s))
+          end
         end
-      end
 
-      context "arduino_library_src_dirs" do
-        it "finds src dirs from dependent libraries" do
-          # we explicitly feed in the internal dependencies
-          dependencies = @cpp_library.arduino_library_dependencies.nil? ? [] : @cpp_library.arduino_library_dependencies
-          dependencies.each { |d| verified_install(backend, sampleproj_path + d) }
-          relative_paths = @cpp_library.arduino_library_src_dirs(dependencies).map { |f| f.relative_path_from(@base_dir) }
-          expect(relative_paths.map(&:to_s)).to match_array(expected[:arduino_library_src_dirs].map(&:to_s))
+        context "header_dirs" do
+          it "finds directories containing h files" do
+            relative_paths = @cpp_library.header_dirs.map { |f| f.relative_path_from(@base_dir) }
+            expect(relative_paths.map(&:to_s)).to match_array(expected[:header_dirs].map(&:to_s))
+          end
+        end
+
+        context "tests_dir" do
+          it "locates the tests directory" do
+            # since we don't know where the CI system will install this stuff,
+            # we need to go looking for a relative path to the SampleProjects directory
+            # just to get our "expected" value
+            relative_path = @cpp_library.tests_dir.relative_path_from(@base_dir)
+            expect(relative_path.to_s).to eq("#{sampleproject}/test")
+          end
+        end
+
+        context "examples_dir" do
+          it "locates the examples directory" do
+            relative_path = @cpp_library.examples_dir.relative_path_from(@base_dir)
+            expect(relative_path.to_s).to eq("#{sampleproject}/examples")
+          end
+        end
+
+        context "test_files" do
+          it "finds cpp files in directory" do
+            relative_paths = @cpp_library.test_files.map { |f| f.relative_path_from(@base_dir) }
+            expect(relative_paths.map(&:to_s)).to match_array(expected[:test_files].map(&:to_s))
+          end
+        end
+
+        context "arduino_library_src_dirs" do
+          it "finds src dirs from dependent libraries" do
+            # we explicitly feed in the internal dependencies
+            dependencies = @cpp_library.arduino_library_dependencies.nil? ? [] : @cpp_library.arduino_library_dependencies
+            dependencies.each { |d| verified_install(backend, sampleproj_path + d) }
+            relative_paths = @cpp_library.arduino_library_src_dirs(dependencies).map { |f| f.relative_path_from(@base_dir) }
+            expect(relative_paths.map(&:to_s)).to match_array(expected[:arduino_library_src_dirs].map(&:to_s))
+          end
         end
       end
     end
