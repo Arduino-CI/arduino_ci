@@ -90,7 +90,9 @@ module ArduinoCI
 
     # @return [String] the path to the Arduino libraries directory
     def lib_dir
-      Pathname.new(config_dump["directories"]["user"]) + "libraries"
+      user_dir_raw = config_dump["directories"]["user"]
+      user_dir = OS.windows? ? Host.windows_to_pathname(user_dir_raw) : user_dir_raw
+      Pathname.new(user_dir) + "libraries"
     end
 
     # Board manager URLs

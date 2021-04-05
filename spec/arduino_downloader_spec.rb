@@ -7,7 +7,6 @@ RSpec.describe ArduinoCI::ArduinoDownloader do
     it "has correct class properties" do
       ad = ArduinoCI::ArduinoDownloader
 
-      expect{ad.existing_executable}.to raise_error(NotImplementedError)
       expect{ad.extracted_file}.to raise_error(NotImplementedError)
       expect{ad.extracter}.to raise_error(NotImplementedError)
       expect{ad.extract("foo")}.to raise_error(NotImplementedError)

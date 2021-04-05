@@ -28,12 +28,6 @@ module ArduinoCI
       "arduino-cli_#{@desired_version}_Windows_64bit.zip"
     end
 
-    # The executable Arduino file in an existing installation, or nil
-    # @return [string]
-    def self.existing_executable
-      Host.which("arduino-cli")
-    end
-
     # The technology that will be used to extract the download
     # (for logging purposes)
     # @return [string]
@@ -55,6 +49,12 @@ module ArduinoCI
     # @return [string]
     def self.extracted_file
       "arduino-cli.exe"
+    end
+
+    # The executable Arduino file in a forced installation, or nil
+    # @return [Pathname]
+    def self.force_installed_executable
+      Pathname.new(Host.windows_to_pathname(ENV['HOME'])) + self.extracted_file
     end
 
   end

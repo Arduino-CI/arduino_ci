@@ -43,7 +43,7 @@ module ArduinoCI
     # The executable Arduino file in an existing installation, or nil
     # @return [Pathname]
     def self.existing_executable
-      self.must_implement(__method__)
+      Host.which("arduino-cli")
     end
 
     # The local file (dir) name of the desired IDE package (zip/tar/etc)
