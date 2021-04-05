@@ -17,12 +17,6 @@ module ArduinoCI
       "arduino-cli"
     end
 
-    # The executable Arduino file in an existing installation, or nil
-    # @return [string]
-    def self.existing_executable
-      Host.which("arduino-cli")
-    end
-
     # Make any preparations or run any checks prior to making changes
     # @return [string] Error message, or nil if success
     def prepare

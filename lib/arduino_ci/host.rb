@@ -17,13 +17,14 @@ module ArduinoCI
     # via https://stackoverflow.com/a/5471032/2063546
     #   which('ruby') #=> /usr/bin/ruby
     # @param cmd [String] the command to search for
-    # @return [String] the full path to the command if it exists
+    # @return [Pathname] the full path to the command if it exists
     def self.which(cmd)
       exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
-      ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+      ENV['PATH'].split(File::PATH_SEPARATOR).each do |string_path|
+        path = OS.windows? ? windows_to_pathname(string_path) : Pathname.new(string_path)
         exts.each do |ext|
-          exe = File.join(path, "#{cmd}#{ext}")
-          return exe if File.executable?(exe) && !File.directory?(exe)
+          exe = path.join("#{cmd}#{ext}")
+          return exe if exe.executable? && !exe.directory?
         end
       end
       nil
