@@ -17,13 +17,9 @@ VAR_EXPECT_UNITTESTS   = "EXPECT_UNITTESTS".freeze
 # Use some basic parsing to allow command-line overrides of config
 class Parser
   def self.parse(options)
-    unit_config = {}
     output_options = {
       skip_unittests: false,
       skip_compilation: false,
-      ci_config: {
-        "unittest" => unit_config
-      },
     }
 
     opt_parser = OptionParser.new do |opts|
@@ -383,14 +379,13 @@ def choose_platform_set(config, reason, desired_platforms, library_properties)
 end
 
 # Unit test procedure
-def perform_unit_tests(cpp_library, file_config)
+def perform_unit_tests(cpp_library, config)
   phase("Unit testing")
   if @cli_options[:skip_unittests]
     inform("Skipping unit tests") { "as requested via command line" }
     return
   end
 
-  config = file_config.with_override_config(@cli_options[:ci_config])
   compilers = get_annotated_compilers(config, cpp_library)
 
   inform("Library conforms to Arduino library specification") { cpp_library.one_point_five? ? "1.5" : "1.0" }
