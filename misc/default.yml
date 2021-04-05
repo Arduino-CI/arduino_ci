@@ -9,6 +9,8 @@ packages:
     url: https://downloads.arduino.cc/packages/package_index.json
   arduino:samd:
     url: https://downloads.arduino.cc/packages/package_index.json
+  arduino:megaavr:
+    url: https://downloads.arduino.cc/packages/package_index.json
   esp8266:esp8266:
     url: http://arduino.esp8266.com/stable/package_esp8266com_index.json
   adafruit:avr:
@@ -55,6 +57,17 @@ platforms:
         - ARDUINO_SAMD_ZERO
         # This also has SerialUSB, which is not included here.
         - NUM_SERIAL_PORTS=2
+      warnings:
+      flags:
+  nano_every:
+    board: arduino:megaavr:nona4809
+    package: arduino:megaavr
+    gcc:
+      features:
+      defines:
+        - MILLIS_USE_TIMERB3
+        - NO_EXTERNAL_I2C_PULLUP
+        - AVR_NANO_4809_328MODE
       warnings:
       flags:
   esp32:

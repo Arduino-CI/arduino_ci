@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Working directory is now printed in test runner output
 - Explicitly include `irb` via rubygems
+- `arduino:megaavr` architecture is now included by default, using the `nano_every` platform, via midasgossye
 
 ### Changed
 - Update .gitattributes so we have consistent line endings
