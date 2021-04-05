@@ -88,11 +88,8 @@ RSpec.describe "TestSomething C++" do
             end
           end
 
-          it "#{tfn} builds successfully" do
+          it "#{tfn} builds successfully and passes tests" do
             expect(@exe).not_to be nil
-          end
-          it "#{tfn} passes tests" do
-            skip "Can't run the test program because it failed to build" if @exe.nil?
             expect(@cpp_library.run_test_file(@exe)).to_not be_falsey
           end
         end
