@@ -3,8 +3,14 @@ require 'arduino_ci'
 require 'set'
 require 'pathname'
 require 'optparse'
+require 'io/console'
 
-WIDTH = 80
+# be flexible between 80 and 132 cols of output
+WIDTH = begin
+  [132, [80, IO::console.winsize[1] - 2].max].min
+rescue NoMethodError
+  80
+end
 VAR_CUSTOM_INIT_SCRIPT = "CUSTOM_INIT_SCRIPT".freeze
 VAR_USE_SUBDIR         = "USE_SUBDIR".freeze
 VAR_EXPECT_EXAMPLES    = "EXPECT_EXAMPLES".freeze

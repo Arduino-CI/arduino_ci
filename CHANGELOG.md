@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Run tests on push as well as on a pull request so developers can see impact
 - `ArduinoBackend` now exposes `config_file_path` instead of `config_dir` so that we can be explicit about [strange behavior in `arduino-cli` that isn't going to change anytime soon](https://github.com/arduino/arduino-cli/issues/753)
 - Use `arduino-cli` version `0.29.0` as the backend
+- Test runner detects console width if possible, allowing variable width from 80-132 chars
 
 ### Deprecated
 
