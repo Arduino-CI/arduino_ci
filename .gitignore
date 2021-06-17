@@ -1,3 +1,4 @@
+.arduino_ci
 /.bundle/
 /.yardoc
 Gemfile.lock

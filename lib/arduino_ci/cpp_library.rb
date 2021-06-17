@@ -496,7 +496,7 @@ module ArduinoCI
       arg_sets = []
       arg_sets << ["-std=c++0x"]
       if test_file.nil?
-        executable = Pathname.new("#{build_dir}/libarduino.so").expand_path
+        executable = Pathname.new("libarduino.so").expand_path
         arg_sets << ["-shared", "-fPIC", "-Wl,-undefined,dynamic_lookup"]
       else
         executable = Pathname.new("#{build_dir}/unittest_#{test_file.basename}.bin").expand_path
