@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Run tests on push as well as on a pull request so developers can see impact
 - Update .gitattributes so we have consistent line endings
 - Put build artifacts in a separate directory to reduce clutter.
+- We now compile a shared library to be used for each test
 
 ### Deprecated
 

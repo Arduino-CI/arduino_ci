@@ -416,9 +416,27 @@ def perform_unit_tests(cpp_library, file_config)
 
   platforms.each do |p|
     puts
-    config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
-      unittest_name = unittest_path.basename.to_s
-      compilers.each do |gcc_binary|
+    compilers.each do |gcc_binary|
+      # before compiling the tests, build a shared library of everything except the test code
+      attempt_multiline("Build shared library with #{gcc_binary} for #{p}") do
+        exe = cpp_library.build_for_test_with_configuration(
+          nil, # nil is a flag that we are building the shared library with everything else
+          config.aux_libraries_for_unittest,
+          gcc_binary,
+          config.gcc_config(p)
+        )
+        puts
+        unless exe
+          puts "Last command: #{cpp_library.last_cmd}"
+          puts cpp_library.last_out
+          puts cpp_library.last_err
+          next false
+        end
+        true
+      end
+      # now build and run each test using the shared library build above
+      config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
+        unittest_name = unittest_path.basename.to_s
         attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
           exe = cpp_library.build_for_test_with_configuration(
             unittest_path,
