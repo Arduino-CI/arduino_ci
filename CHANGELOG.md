@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Change 266 files from CRLF to LF.
+- Add `_BV()` macro.
 
 ### Deprecated
 
