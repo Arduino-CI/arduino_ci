@@ -36,11 +36,11 @@ typedef uint8_t byte;
 #define highByte(w) ((uint8_t) ((w) >> 8))
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 
-// might as well use that NO-op macro for these, while unit testing
-// you need interrupts? interrupt yourself
-#define yield() _NOP()
-#define interrupts() _NOP()
-#define noInterrupts() _NOP()
+// using #define for these makes it impossible for other code to use as function
+// names!
+inline void yield() { _NOP(); }
+inline void interrupts() { _NOP(); }
+inline void noInterrupts() { _NOP(); }
 
 // TODO: correctly establish this per-board!
 #define F_CPU 1000000UL

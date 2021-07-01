@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Update .gitattributes so we have consistent line endings
 - Put build artifacts in a separate directory to reduce clutter.
 - We now compile a shared library to be used for each test
+- Replace `#define yield() _NOP()` with `inline void yield() { _NOP(); }` so that other code can define a `yield()` function.
 
 ### Deprecated
 
