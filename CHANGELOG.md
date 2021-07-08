@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Better indications of the build phases in the test runner `arduino_ci.rb`
 - Better indications of which example sketch is being compiled as part of testing
+- Allow use of watchdog timer in application code (though it doesn't do anything)
 
 ### Changed
 - Topmost installtion instructions now suggest `gem install arduino_ci` instead of using a `Gemfile`.  Reasons for using a `Gemfile` are listed and discussed separately further down the README.
