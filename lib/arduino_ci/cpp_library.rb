@@ -169,10 +169,7 @@ module ArduinoCI
     # but we rely on the cli to decide for us
     # @return [bool]
     def one_point_five?
-      return false unless library_properties?
-
-      src_dir = path + "src"
-      src_dir.exist? && src_dir.directory?
+      !info["library"]["is_legacy"]
     end
 
     # Guess whether a file is part of the vendor bundle (indicating we should ignore it).
