@@ -16,7 +16,6 @@ public:
     if (mGodmodeDataIn) {
       mGodmodeDataIn = new String(mGodmodeDataIn->c_str());
     }
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
   }
   Client & operator=(const Client &client) {
     // copy assignment operator 
