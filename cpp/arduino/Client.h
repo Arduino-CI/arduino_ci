@@ -11,6 +11,20 @@ public:
       mGodmodeDataIn = new String;
     }
   }
+  Client(const Client &client) {
+    // copy constructor 
+    if (mGodmodeDataIn) {
+      mGodmodeDataIn = new String(mGodmodeDataIn->c_str());
+    }
+    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+  }
+  Client & operator=(const Client &client) {
+    // copy assignment operator 
+    if (mGodmodeDataIn) {
+      mGodmodeDataIn = new String(mGodmodeDataIn->c_str());
+    }
+    return *this;
+  }
   ~Client() {
     if (mGodmodeDataIn) {
       delete mGodmodeDataIn;

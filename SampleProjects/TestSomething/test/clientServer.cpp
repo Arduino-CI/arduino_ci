@@ -19,6 +19,13 @@ unittest(Client) {
   assertEqual(outData + "\r\n", inData);
 }
 
+unittest(Client_copy_constructor) {
+  Client client1;
+  Client client2;
+  client2 = client1;
+  assertTrue(true);
+}
+
 unittest(IPAddress) {
   IPAddress ipAddress0;
   assertEqual(0, ipAddress0.asWord());
