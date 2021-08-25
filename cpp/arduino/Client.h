@@ -13,16 +13,18 @@ public:
   }
   Client(const Client &client) { // copy constructor
     if (this != &client) {       // not a self-assignment
-      if (mGodmodeDataIn) {      // replace what we previously had
-        delete mGodmodeDataIn;   // get rid of previous value
+      if (mGodmodeDataIn &&
+          client.mGodmodeDataIn) { // replace what we previously had
+        delete mGodmodeDataIn;     // get rid of previous value
         mGodmodeDataIn = new String(client.mGodmodeDataIn->c_str());
       }
     }
   }
   Client &operator=(const Client &client) { // copy assignment operator
     if (this != &client) {                  // not a self-assignment
-      if (mGodmodeDataIn) {                 // replace what we previously had
-        delete mGodmodeDataIn;              // get rid of previous value
+      if (mGodmodeDataIn &&
+          client.mGodmodeDataIn) { // replace what we previously had
+        delete mGodmodeDataIn;     // get rid of previous value
         mGodmodeDataIn = new String(client.mGodmodeDataIn->c_str());
       }
     }

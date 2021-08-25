@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - We now compile a shared library to be used for each test
 - Replace `#define yield() _NOP()` with `inline void yield() { _NOP(); }` so that other code can define a `yield()` function.
 - Add `_BV()` macro.
+- Apply "rule of three" to Client copy constructor and copy assignment operator
 
 ### Deprecated
 
