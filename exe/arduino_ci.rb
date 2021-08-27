@@ -51,7 +51,7 @@ class Parser
       end
 
       opts.on("--min-free-space=VALUE", "Minimum free SRAM memory for stack/heap") do |p|
-        output_options[:min_free_space] = p.to_i()
+        output_options[:min_free_space] = p.to_i
       end
 
       opts.on("-h", "--help", "Prints this help") do
