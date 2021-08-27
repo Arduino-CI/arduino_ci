@@ -24,6 +24,7 @@ class Parser
       ci_config: {
         "unittest" => unit_config
       },
+      min_free_space: 0,
     }
 
     opt_parser = OptionParser.new do |opts|
@@ -47,6 +48,10 @@ class Parser
         unit_config["testfiles"] ||= {}
         unit_config["testfiles"]["reject"] ||= []
         unit_config["testfiles"]["reject"] << p
+      end
+
+      opts.on("--min-free-space=VALUE", "Minimum free SRAM memory for stack/heap") do |p|
+        output_options[:min_free_space] = p.to_i()
       end
 
       opts.on("-h", "--help", "Prints this help") do
