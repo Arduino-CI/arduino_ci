@@ -12,3 +12,6 @@
  * https://stackoverflow.com/questions/190229/where-is-the-itoa-function-in-linux
  */
 char *itoa(int val, char *s, int radix);
+
+// another function provided by Arduino
+char * 	dtostrf(double __val, signed char __width, unsigned char __prec, char *__s);
