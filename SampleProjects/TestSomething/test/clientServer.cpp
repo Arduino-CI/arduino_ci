@@ -20,10 +20,13 @@ unittest(Client) {
 }
 
 unittest(Client_copy_constructor) {
-  Client client1;
-  Client client2;
-  client2 = client1;
-  assertTrue(true);
+  {                 // Client object contains a reference to a String object
+    Client c1;      // Constructor instantiates a String (s1)
+    Client c2;      // Constructor instantiates a String (s2)
+    c2 = c1;        // Does c2 get a reference to s1 or a copy of it?
+  }                 // End of scope calls destructor on c1 and c2
+  assertTrue(true); // Was s1 deleted once (with c1) or twice (also with c2)?
+                    // Was s2 deleted at all (should be during assignment)?
 }
 
 unittest(IPAddress) {
