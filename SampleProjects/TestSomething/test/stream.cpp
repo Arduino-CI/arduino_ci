@@ -69,4 +69,16 @@ unittest(stream_parse)
 
 }
 
+unittest(readStringUntil) {
+  String data = "";
+  unsigned long micros = 100;
+  data = "abc:def";
+
+  Stream s;
+  s.mGodmodeDataIn = &data;
+  s.mGodmodeMicrosDelay = &micros;
+  // result should not include delimiter
+  assertEqual("abc", s.readStringUntil(':'));
+  assertEqual("def", s.readStringUntil(':'));
+}
 unittest_main()

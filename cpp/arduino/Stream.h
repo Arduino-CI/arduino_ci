@@ -186,7 +186,7 @@ class Stream : public Print
         ret = String(*mGodmodeDataIn);
         mGodmodeDataIn->clear();
       } else {
-        ret = mGodmodeDataIn->substring(0, idxTrm + 1);
+        ret = mGodmodeDataIn->substring(0, idxTrm);
         fastforward(idxTrm + 1);
       }
       return ret;
