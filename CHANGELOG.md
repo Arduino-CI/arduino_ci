@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Show output from successful compile
+- `--min-free-space=N` command-line argument to fail if free space is below requred value
 
 ### Changed
 - Change 266 files from CRLF to LF.
+- Run tests on push as well as on a pull request so developers can see impact
 
 ### Deprecated
 
