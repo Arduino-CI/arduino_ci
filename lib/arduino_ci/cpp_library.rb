@@ -489,6 +489,12 @@ module ArduinoCI
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Pathname] path to the compiled test executable
     def build_for_test_with_configuration(test_file, aux_libraries, gcc_binary, ci_gcc_config)
+      base = test_file.basename
+      # hide build artifacts
+      build_dir = '.arduino_ci'
+      Dir.mkdir build_dir unless File.exist?(build_dir)
+      executable = Pathname.new("#{build_dir}/unittest_#{base}.bin").expand_path
+      File.delete(executable) if File.exist?(executable)
       arg_sets = []
       arg_sets << ["-std=c++0x"]
       if test_file.nil?
