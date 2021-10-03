@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Properly report compile errors in GitHub Actions (#296)
 
 ### Deprecated
 
