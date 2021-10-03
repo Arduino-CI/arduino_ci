@@ -24,6 +24,7 @@ class Parser
       ci_config: {
         "unittest" => unit_config
       },
+      min_free_space: 0,
     }
 
     opt_parser = OptionParser.new do |opts|
@@ -47,6 +48,10 @@ class Parser
         unit_config["testfiles"] ||= {}
         unit_config["testfiles"]["reject"] ||= []
         unit_config["testfiles"]["reject"] << p
+      end
+
+      opts.on("--min-free-space=VALUE", "Minimum free SRAM memory for stack/heap") do |p|
+        output_options[:min_free_space] = p.to_i
       end
 
       opts.on("-h", "--help", "Prints this help") do
@@ -478,8 +483,18 @@ def perform_example_compilation_tests(cpp_library, config)
       board = ovr_config.platform_info[p][:board]
       attempt("Compiling #{example_name} for #{board}") do
         ret = @backend.compile_sketch(example_path, board)
-        unless ret
-          puts
+        puts
+        if ret
+          output = @backend.last_msg
+          puts output
+          i = output.index("leaving")
+          free_space = output[i + 8..-1].to_i
+          min_free_space = @cli_options[:min_free_space]
+          if free_space < min_free_space
+            puts "Free space of #{free_space} is less than minimum of #{min_free_space}"
+            ret = false
+          end
+        else
           puts "Last command: #{@backend.last_msg}"
           puts @backend.last_err
         end
