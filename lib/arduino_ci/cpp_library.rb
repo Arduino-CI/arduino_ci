@@ -489,21 +489,18 @@ module ArduinoCI
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Pathname] path to the compiled test executable
     def build_for_test_with_configuration(test_file, aux_libraries, gcc_binary, ci_gcc_config)
-      base = test_file.basename
       # hide build artifacts
       build_dir = '.arduino_ci'
       Dir.mkdir build_dir unless File.exist?(build_dir)
-      executable = Pathname.new("#{build_dir}/unittest_#{base}.bin").expand_path
-      File.delete(executable) if File.exist?(executable)
       arg_sets = []
       arg_sets << ["-std=c++0x"]
       if test_file.nil?
-        executable = Pathname.new("libarduino.so").expand_path
+        executable = Pathname.new("#{build_dir}/libarduino.so").expand_path
         arg_sets << ["-shared", "-fPIC", "-Wl,-undefined,dynamic_lookup"]
       else
-        base = test_file.basename
-        executable = Pathname.new("unittest_#{base}.bin").expand_path
+        executable = Pathname.new("#{build_dir}/unittest_#{test_file.basename}.bin").expand_path
       end
+      File.delete(executable) if File.exist?(executable)
       ENV["LD_LIBRARY_PATH"] = Dir.pwd
       arg_sets << ["-o", executable.to_s, "-L" + Dir.pwd]
       File.delete(executable) if File.exist?(executable)
