@@ -1,3 +1,18 @@
+platforms:
+  uno:
+    board: arduino:avr:uno
+    package: arduino:avr
+    gcc:
+      features:
+      defines:
+        - __AVR__
+        - __AVR_ATmega328P__
+        - ARDUINO_ARCH_AVR
+        - ARDUINO_AVR_UNO
+      warnings:
+        - no-unknown-attributes
+      flags:
+
 unittest:
   platforms:
     - uno
