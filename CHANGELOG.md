@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - We now compile a shared library to be used for each test.
 - Properly report compile errors in GitHub Actions.
+- Fix copy/paste error to allow additional warnings for a platform
+- Properly report compile errors in GitHub Actions (#296)
 - Put build artifacts in a separate directory to reduce clutter.
 - Change 266 files from CRLF to LF.
 - Update .gitattributes so we have consistent line endings.
