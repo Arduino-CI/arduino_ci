@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Show output from successful compile
+- `--min-free-space=N` command-line argument to fail if free space is below requred value
 
 ### Changed
+- Fix copy/paste error to allow additional warnings for a platform
+- Properly report compile errors in GitHub Actions (#296)
+- Put build artifacts in a separate directory to reduce clutter.
 - Change 266 files from CRLF to LF.
 - Replace `#define yield() _NOP()` with `inline void yield() { _NOP(); }` so that other code can define a `yield()` function.
+- Update .gitattributes so we have consistent line endings
+- Run tests on push as well as on a pull request so developers can see impact
 
 ### Deprecated
 
@@ -28,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Topmost installtion instructions now suggest `gem install arduino_ci` instead of using a `Gemfile`.  Reasons for using a `Gemfile` are listed and discussed separately further down the README.
+- Stream::readStreamUntil() no longer returns delimiter
 
 ### Removed
 - scanning of `library.properties`; this can and should now be performed by the standalone [`arduino-lint` tool](https://arduino.github.io/arduino-lint).
