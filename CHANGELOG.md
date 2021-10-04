@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Properly report compile errors in GitHub Actions (#296)
 - Put build artifacts in a separate directory to reduce clutter.
 - Change 266 files from CRLF to LF.
+- Replace `#define yield() _NOP()` with `inline void yield() { _NOP(); }` so that other code can define a `yield()` function.
 - Update .gitattributes so we have consistent line endings
 - Run tests on push as well as on a pull request so developers can see impact
 
