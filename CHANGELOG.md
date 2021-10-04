@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Replace `#define yield() _NOP()` with `inline void yield() { _NOP(); }` so that other code can define a `yield()` function.
 - Update .gitattributes so we have consistent line endings
 - Run tests on push as well as on a pull request so developers can see impact
+- Apply "rule of three" to Client copy constructor and copy assignment operator
 
 ### Deprecated
 
