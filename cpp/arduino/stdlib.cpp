@@ -18,6 +18,7 @@
 **            is out of range.
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -59,3 +60,22 @@ char *itoa(int N, char *str, int base)
       return str;
 }
 #endif
+
+ /*
+ The dtostrf() function converts the double value passed in val into
+ an ASCII representationthat will be stored under s. The caller is
+ responsible for providing sufficient storage in s.
+
+ Conversion is done in the format “[-]d.ddd”. The minimum field width
+ of the output string (including the ‘.’ and the possible sign for
+ negative values) is given in width, and prec determines the number of
+ digits after the decimal sign. width is signed value, negative for
+ left adjustment.
+
+ The dtostrf() function returns the pointer to the converted string s.
+ */
+
+ char *dtostrf(double __val, signed char __width, unsigned char __prec, char *__s) {
+       sprintf(__s, "%*.*f", __width, __prec, __val);
+       return __s;
+ }

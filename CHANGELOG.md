@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Show output from successful compile
 - `--min-free-space=N` command-line argument to fail if free space is below requred value
 - Add `_BV()` macro.
+- Support for `dtostrf()`
 
 ### Changed
 - Fix copy/paste error to allow additional warnings for a platform
