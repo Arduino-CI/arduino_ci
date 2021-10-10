@@ -490,7 +490,7 @@ module ArduinoCI
     # @return [Pathname] path to the compiled test executable
     def build_for_test_with_configuration(test_file, aux_libraries, gcc_binary, ci_gcc_config)
       # hide build artifacts
-      build_dir = ".arduino_ci"
+      build_dir = "#{Dir.pwd}/.arduino_ci"
       Dir.mkdir build_dir unless File.exist?(build_dir)
       lib_name = "arduino"
       full_lib_name = "#{build_dir}/lib#{lib_name}.so"
@@ -504,7 +504,7 @@ module ArduinoCI
       end
       File.delete(executable) if File.exist?(executable)
       ENV["LD_LIBRARY_PATH"] = Dir.pwd
-      arg_sets << ["-o", executable.to_s, "-L#{Dir.pwd}/#{build_dir}"]
+      arg_sets << ["-o", executable.to_s, "-L#{build_dir}"]
       File.delete(executable) if File.exist?(executable)
       arg_sets << ["-DARDUINO=100"]
       if libasan?(gcc_binary)
@@ -525,6 +525,7 @@ module ArduinoCI
 
       if File.exist?(full_lib_name)  # add the test file and the shared library
         arg_sets << [test_file.to_s, "-l#{lib_name}"] if test_file
+        puts "found #{full_lib_name}"
       else  # CPP files for the shared library
         arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
         arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
@@ -532,7 +533,7 @@ module ArduinoCI
         arg_sets << cpp_files_libraries(@full_dependencies).map(&:to_s) # CPP files for all the libraries we depend on
         arg_sets << [test_file.to_s] if test_file
       end
-
+      puts "{arg_sets}"
       args = arg_sets.flatten(1)
       return nil unless run_gcc(gcc_binary, *args)
 

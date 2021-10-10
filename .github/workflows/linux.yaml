@@ -49,3 +49,4 @@ jobs:
           bundle exec ensure_arduino_installation.rb
           sh ./scripts/install.sh
           bundle exec arduino_ci.rb
+          pwd; ls -alF; ls -alF .arduino_ci/
