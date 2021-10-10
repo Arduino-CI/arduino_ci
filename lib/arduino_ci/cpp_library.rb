@@ -493,7 +493,7 @@ module ArduinoCI
       build_dir = ".arduino_ci"
       Dir.mkdir build_dir unless File.exist?(build_dir)
       lib_name = "arduino"
-      full_lib_name = "#{build_dir}/lib#{lib_name}.sh"
+      full_lib_name = "#{build_dir}/lib#{lib_name}.so"
       arg_sets = []
       arg_sets << ["-std=c++0x"]
       if test_file.nil?
@@ -524,7 +524,7 @@ module ArduinoCI
       arg_sets << @test_args # used cached value since building full set of include directories can take time
 
       if File.exist?(full_lib_name)  # add the test file and the shared library
-        arg_sets << [test_file.to_s, "-l#{lib_name}"]
+        arg_sets << [test_file.to_s, "-l#{lib_name}"] if test_file
       else  # CPP files for the shared library
         arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
         arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
