@@ -19,6 +19,29 @@ unittest(Client) {
   assertEqual(outData + "\r\n", inData);
 }
 
+unittest(Client_copy_constructor) {
+  {            // Client object contains a reference to a String object
+    Client c1; // Constructor instantiates a String (string1)
+    Client c2; // Constructor instantiates a String (string2)
+    c1.write('1');
+    c2.write('2');
+    assertEqual("1", *(c1.mGodmodeDataIn));
+    assertEqual("2", *(c2.mGodmodeDataIn));
+    c2 = c1; // c2 should get a copy of s1, not a reference to it
+             // and string2 should have been deleted during the assignment
+    assertNotEqual(c1.mGodmodeDataIn, c2.mGodmodeDataIn);
+    assertEqual("1", *(c1.mGodmodeDataIn));
+    assertEqual("1", *(c2.mGodmodeDataIn));
+    c1.write('1');
+    c2.write('2');
+    assertEqual("11", *(c1.mGodmodeDataIn));
+    assertEqual("12", *(c2.mGodmodeDataIn));
+  } // End of scope calls destructor on c1 and c2
+    // Memory monitoring will give an error if delete is called twice on string1
+    // The following assertion is just to confirm that we got through the above
+  assertTrue(true);
+}
+
 unittest(IPAddress) {
   IPAddress ipAddress0;
   assertEqual(0, ipAddress0.asWord());

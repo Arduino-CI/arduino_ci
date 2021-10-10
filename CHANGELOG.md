@@ -7,24 +7,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Allow use of watchdog timer in application code (though it doesn't do anything)
 - Show output from successful compile
 - `--min-free-space=N` command-line argument to fail if free space is below requred value
+- Add `_BV()` macro.
+- Support for `dtostrf()`
 
 ### Changed
 - We now compile a shared library to be used for each test.
-- Properly report compile errors in GitHub Actions.
-- Fix copy/paste error to allow additional warnings for a platform
-- Properly report compile errors in GitHub Actions (#296)
 - Put build artifacts in a separate directory to reduce clutter.
+- Replace `#define yield() _NOP()` with `inline void yield() { _NOP(); }` so that other code can define a `yield()` function.
+- Update .gitattributes so we have consistent line endings
 - Change 266 files from CRLF to LF.
-- Update .gitattributes so we have consistent line endings.
-- Run tests on push as well as on a pull request so developers can see impact.
+- Run tests on push as well as on a pull request so developers can see impact
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Properly report compile errors in GitHub Actions.
+- Fix copy/paste error to allow additional warnings for a platform
+- Apply "rule of three" to Client copy constructor and copy assignment operator
 
 ### Security
 

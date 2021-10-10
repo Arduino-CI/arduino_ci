@@ -43,4 +43,12 @@ unittest(library_tests_itoa)
 
 }
 
+unittest(library_tests_dtostrf)
+{
+  float num = 123.456;
+  char buffer[10];
+  dtostrf(num, 7, 3, buffer);
+  assertEqual(strncmp(buffer, "123.456", sizeof(buffer)), 0);
+}
+
 unittest_main()
