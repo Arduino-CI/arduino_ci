@@ -4,7 +4,7 @@ name: macos
 on: [push, pull_request]
 
 jobs:
-  "unittest_lint_sampleproject":
+  "lint":
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,6 +18,18 @@ jobs:
           bundle exec rubocop --version
           bundle exec rubocop -D .
           bundle exec rspec --backtrace
+
+  "TestSomething":
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: TestSomething
+        run: |
+          g++ -v
+          bundle install
           cd SampleProjects/TestSomething
           bundle install
           bundle exec arduino_ci.rb

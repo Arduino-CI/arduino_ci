@@ -535,7 +535,7 @@ module ArduinoCI
         arg_sets << [test_file.to_s] if test_file
       end
       args = arg_sets.flatten(1)
-      puts "#{args}"
+      puts args.to_s
       return nil unless run_gcc(gcc_binary, *args)
 
       artifacts << executable
