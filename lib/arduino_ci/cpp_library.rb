@@ -504,7 +504,7 @@ module ArduinoCI
       end
       File.delete(executable) if File.exist?(executable)
       ENV["LD_LIBRARY_PATH"] = Dir.pwd
-      arg_sets << ["-o", executable.to_s, "-L" + build_dir]
+      arg_sets << ["-o", executable.to_s, "-L#{Dir.pwd}/#{build_dir}"]
       File.delete(executable) if File.exist?(executable)
       arg_sets << ["-DARDUINO=100"]
       if libasan?(gcc_binary)
