@@ -524,8 +524,6 @@ module ArduinoCI
 
       if File.exist?(full_lib_name)  # add the test file and the shared library
         arg_sets << [test_file.to_s, "-l#{lib_name}"] if test_file
-        puts "found #{full_lib_name}"
-        puts `pwd; ls -alF; ls -alF .arduino_ci`
       else  # CPP files for the shared library
         arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
         arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
@@ -534,7 +532,6 @@ module ArduinoCI
         arg_sets << [test_file.to_s] if test_file
       end
       args = arg_sets.flatten(1)
-      puts args.to_s
       return nil unless run_gcc(gcc_binary, *args)
 
       artifacts << executable

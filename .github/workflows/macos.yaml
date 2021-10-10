@@ -4,7 +4,7 @@ name: macos
 on: [push, pull_request]
 
 jobs:
-  "lint":
+  "rubocop and rspec":
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -14,9 +14,13 @@ jobs:
       - name: Check style, functionality, and usage
         run: |
           g++ -v
+          echo "-------------------------"
           bundle install
+          echo "-------------------------"
           bundle exec rubocop --version
+          echo "-------------------------"
           bundle exec rubocop -D .
+          echo "-------------------------"
           bundle exec rspec --backtrace
 
   "TestSomething":
