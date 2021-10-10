@@ -4,7 +4,7 @@ name: macos
 on: [push, pull_request]
 
 jobs:
-  "rubocop and rspec":
+  "rubocop_and_rspec":
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
