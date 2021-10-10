@@ -533,7 +533,7 @@ module ArduinoCI
         arg_sets << cpp_files_libraries(@full_dependencies).map(&:to_s) # CPP files for all the libraries we depend on
         arg_sets << [test_file.to_s] if test_file
       end
-      puts "{arg_sets}"
+      puts "#{arg_sets}"
       args = arg_sets.flatten(1)
       return nil unless run_gcc(gcc_binary, *args)
 
