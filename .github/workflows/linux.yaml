@@ -4,7 +4,7 @@ name: linux
 on: [push, pull_request]
 
 jobs:
-  "lint":
+  "rubocop_and_rspec":
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

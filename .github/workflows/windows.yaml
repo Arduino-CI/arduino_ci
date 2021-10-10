@@ -4,7 +4,7 @@ name: windows
 on: [push, pull_request]
 
 jobs:
-  "unittest_lint_sampleproject":
+  "rubocop_and_rspec":
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,12 +18,24 @@ jobs:
           bundle exec rubocop --version
           bundle exec rubocop -D .
           bundle exec rspec --backtrace
+
+  "TestSomething":
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: TestSomething
+        run: |
+          g++ -v
+          bundle install
           cd SampleProjects/TestSomething
           bundle install
           bundle exec arduino_ci.rb
 
   NetworkLib:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
