@@ -15,7 +15,7 @@
 # We would pick auto (so Windows users have CRLF to satisfy dumb editors),
 # but the automated tests include some sort of linting that complains when
 # a CR is detected. So, we use LF to force it to LF on all platforms!
-* text=LF
+* text eol=lf
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout. Git would likely get these right, but
