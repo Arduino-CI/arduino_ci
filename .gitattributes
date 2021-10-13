@@ -12,10 +12,8 @@
 # in your working directory. In either case, they will have LF line endings in
 # the Git repository itself.
 
-# We would pick auto (so Windows users have CRLF to satisfy dumb editors),
-# but the automated tests include some sort of linting that complains when
-# a CR is detected. So, we use LF to force it to LF on all platforms!
-* text eol=lf
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text eol=auto
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout. Git would likely get these right, but
