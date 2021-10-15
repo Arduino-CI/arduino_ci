@@ -4,8 +4,8 @@ name: windows
 on: [push, pull_request]
 
 jobs:
-  "rubocop_and_rspec":
-    runs-on: ubuntu-latest
+  "unittest_lint_sampleproject":
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
@@ -35,7 +35,7 @@ jobs:
           bundle exec arduino_ci.rb
 
   NetworkLib:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
