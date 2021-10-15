@@ -1,11 +1,11 @@
 # https://docs.github.com/en/github/using-git/configuring-git-to-handle-line-endings
 # https://git-scm.com/docs/gitattributes
-# https://git-scm.com/docs/git-config 
-# https://adaptivepatchwork.com/2012/03/01/mind-the-end-of-your-line/ 
+# https://git-scm.com/docs/git-config
+# https://adaptivepatchwork.com/2012/03/01/mind-the-end-of-your-line/
 
-# Configure this repository to use Git's type detection algorithm to guess 
-# whether a file is text or binary. Text files will have line endings converted 
-# as if you had set 
+# Configure this repository to use Git's type detection algorithm to guess
+# whether a file is text or binary. Text files will have line endings converted
+# as if you had set
 #   eol=native
 # That is, on Windows text files will have CRLF line endings in your working
 # directory while on Linux and macOS your text files will have LF line endings
