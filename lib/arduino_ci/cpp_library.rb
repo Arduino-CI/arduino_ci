@@ -493,13 +493,14 @@ module ArduinoCI
       build_dir = "#{Dir.pwd}/.arduino_ci"    # hide build artifacts
       Dir.mkdir build_dir unless File.exist?(build_dir)
       lib_name = "arduino"
-      full_lib_name = if OS.windows?
-        "#{build_dir}/lib#{lib_name}.dll"
+      if OS.windows?
+        full_lib_name = "#{build_dir}/lib#{lib_name}.dll"
+        ENV["PATH"] = build_dir + (ENV["PATH"].include? ";" ? ";" : ":") + ENV["PATH"] unless ENV["PATH"].include? build_dir
       else
-        "#{build_dir}/lib#{lib_name}.so"
+        full_lib_name = "#{build_dir}/lib#{lib_name}.so"
+        ENV["LD_LIBRARY_PATH"] = build_dir
       end
-      arg_sets = []
-      arg_sets << ["-std=c++0x"]
+      arg_sets = ["-std=c++0x"]
       if test_file.nil?
         executable = Pathname.new(full_lib_name).expand_path
         arg_sets << ["-shared", "-fPIC", "-Wl,-undefined,dynamic_lookup"]
@@ -507,16 +508,7 @@ module ArduinoCI
         executable = Pathname.new("#{build_dir}/unittest_#{test_file.basename}.bin").expand_path
       end
       File.delete(executable) if File.exist?(executable)
-      ENV["LD_LIBRARY_PATH"] = build_dir            # for Linux and macOS
-      delimiter = if ENV["PATH"].include? ";"
-        ";"
-      else
-        ":"
-      end
-      ENV["PATH"] = build_dir + delimiter + ENV["PATH"] unless ENV["PATH"].include? build_dir   # for Windows
-      arg_sets << ["-o", executable.to_s, "-L#{build_dir}"]
-      File.delete(executable) if File.exist?(executable)
-      arg_sets << ["-DARDUINO=100"]
+      arg_sets << ["-o", executable.to_s, "-L#{build_dir}", "-DARDUINO=100"]
       if libasan?(gcc_binary)
         arg_sets << [ # Stuff to help with dynamic memory mishandling
           "-g", "-O1",
