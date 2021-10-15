@@ -2,6 +2,7 @@ require 'find'
 require "arduino_ci/host"
 require 'pathname'
 require 'shellwords'
+require 'os'
 
 HPP_EXTENSIONS = [".hpp", ".hh", ".h", ".hxx", ".h++"].freeze
 CPP_EXTENSIONS = [".cpp", ".cc", ".c", ".cxx", ".c++"].freeze
@@ -492,7 +493,11 @@ module ArduinoCI
       build_dir = "#{Dir.pwd}/.arduino_ci"    # hide build artifacts
       Dir.mkdir build_dir unless File.exist?(build_dir)
       lib_name = "arduino"
-      full_lib_name = "#{build_dir}/lib#{lib_name}.so"
+      if OS.windows?
+        full_lib_name = "#{build_dir}/lib#{lib_name}.dll"
+      else
+        full_lib_name = "#{build_dir}/lib#{lib_name}.so"
+      end
       arg_sets = []
       arg_sets << ["-std=c++0x"]
       if test_file.nil?
@@ -505,9 +510,10 @@ module ArduinoCI
       ENV["LD_LIBRARY_PATH"] = build_dir            # for Linux and macOS
       if ENV["PATH"].include? ";"
         win_build_dir = build_dir.gsub('/', '\\')
-        ENV["PATH"] = win_build_dir + ";" + ENV["PATH"] unless ENV["PATH"].include? win_build_dir   # for Windows when in D:/a/arduino_ci/...
+        ENV["PATH"] = win_build_dir + ";" + ENV["PATH"] unless ENV["PATH"].include? win_build_dir  # for Windows when in D:/a/arduino_ci/...
       else
-        ENV["PATH"] = build_dir + ":" + ENV["PATH"]   # for Windows when in /home/runner/work/arduino_ci/...
+        win_build_dir = build_dir
+        ENV["PATH"] = win_build_dir + ":" + ENV["PATH"] unless ENV["PATH"].include? win_build_dir  # for Windows when in /home/runner/work/arduino_ci/...
       end
       puts("cpp_library.rb:512")
       puts(ENV["PATH"])
