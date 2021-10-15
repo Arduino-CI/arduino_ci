@@ -493,11 +493,11 @@ module ArduinoCI
       build_dir = "#{Dir.pwd}/.arduino_ci"    # hide build artifacts
       Dir.mkdir build_dir unless File.exist?(build_dir)
       lib_name = "arduino"
-      if OS.windows?
-        full_lib_name = "#{build_dir}/lib#{lib_name}.dll"
-      else
-        full_lib_name = "#{build_dir}/lib#{lib_name}.so"
-      end
+      full_lib_name = if OS.windows?
+                        "#{build_dir}/lib#{lib_name}.dll"
+                      else
+                        "#{build_dir}/lib#{lib_name}.so"
+                      end
       arg_sets = []
       arg_sets << ["-std=c++0x"]
       if test_file.nil?
@@ -509,16 +509,14 @@ module ArduinoCI
       File.delete(executable) if File.exist?(executable)
       ENV["LD_LIBRARY_PATH"] = build_dir            # for Linux and macOS
       if ENV["PATH"].include? ";"
-        win_build_dir = build_dir.gsub('/', '\\')
-        ENV["PATH"] = win_build_dir + ";" + ENV["PATH"] unless ENV["PATH"].include? win_build_dir  # for Windows when in D:/a/arduino_ci/...
+        win_build_dir = build_dir # .gsub('/', '\\')
+        # for Windows when in D:/a/arduino_ci/...
+        ENV["PATH"] = win_build_dir + ";" + ENV["PATH"] unless ENV["PATH"].include? win_build_dir
       else
         win_build_dir = build_dir
-        ENV["PATH"] = win_build_dir + ":" + ENV["PATH"] unless ENV["PATH"].include? win_build_dir  # for Windows when in /home/runner/work/arduino_ci/...
+        # for Windows when in /home/runner/work/arduino_ci/...
+        ENV["PATH"] = win_build_dir + ":" + ENV["PATH"] unless ENV["PATH"].include? win_build_dir
       end
-      puts("cpp_library.rb:512")
-      puts(ENV["PATH"])
-      puts(full_lib_name)
-      puts(Dir.pwd)
       arg_sets << ["-o", executable.to_s, "-L#{win_build_dir}"]
       File.delete(executable) if File.exist?(executable)
       arg_sets << ["-DARDUINO=100"]
