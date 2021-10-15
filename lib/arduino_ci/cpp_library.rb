@@ -503,7 +503,11 @@ module ArduinoCI
       end
       File.delete(executable) if File.exist?(executable)
       ENV["LD_LIBRARY_PATH"] = build_dir            # for Linux and macOS
-      ENV["PATH"] = build_dir + ":" + ENV["PATH"]   # for Windows
+      if ENV["PATH"].include? ";"
+        ENV["PATH"] = build_dir + ";" + ENV["PATH"]   # for Windows when in D:/a/arduino_ci/...
+      else
+        ENV["PATH"] = build_dir + ":" + ENV["PATH"]   # for Windows when in /home/runner/work/arduino_ci/...
+      end
       puts("cpp_library.rb:507")
       puts(ENV["PATH"])
       puts(full_lib_name)
