@@ -495,7 +495,7 @@ module ArduinoCI
       lib_name = "arduino"
       if OS.windows?
         full_lib_name = "#{build_dir}/lib#{lib_name}.dll"
-        ENV["PATH"] = build_dir + (ENV["PATH"].include? ";" ? ";" : ":") + ENV["PATH"] unless ENV["PATH"].include? build_dir
+        ENV["PATH"] = build_dir + ((ENV["PATH"].include? ";") ? ";" : ":") + ENV["PATH"] unless ENV["PATH"].include? build_dir
       else
         full_lib_name = "#{build_dir}/lib#{lib_name}.so"
         ENV["LD_LIBRARY_PATH"] = build_dir
