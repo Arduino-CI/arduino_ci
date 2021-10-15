@@ -492,7 +492,7 @@ module ArduinoCI
       build_dir = "#{Dir.pwd}/.arduino_ci"    # hide build artifacts
       Dir.mkdir build_dir unless File.exist?(build_dir)
       lib_name = "arduino"
-      full_lib_name = "#{build_dir}/lib#{lib_name}.so"
+      full_lib_name = "#{Dir.pwd}/lib#{lib_name}.so"
       arg_sets = []
       arg_sets << ["-std=c++0x"]
       if test_file.nil?
@@ -502,8 +502,7 @@ module ArduinoCI
         executable = Pathname.new("#{build_dir}/unittest_#{test_file.basename}.bin").expand_path
       end
       File.delete(executable) if File.exist?(executable)
-      ENV["LD_LIBRARY_PATH"] = build_dir
-      arg_sets << ["-o", executable.to_s, "-L#{build_dir}"]
+      arg_sets << ["-o", executable.to_s, "-L#{Dir.pwd}"]
       File.delete(executable) if File.exist?(executable)
       arg_sets << ["-DARDUINO=100"]
       if libasan?(gcc_binary)
