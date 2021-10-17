@@ -14,20 +14,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for `dtostrf()`
 
 ### Changed
-- Fix copy/paste error to allow additional warnings for a platform
-- Properly report compile errors in GitHub Actions (#296)
+- We now compile a shared library to be used for each test.
 - Put build artifacts in a separate directory to reduce clutter.
 - Replace `#define yield() _NOP()` with `inline void yield() { _NOP(); }` so that other code can define a `yield()` function.
 - Update .gitattributes so we have consistent line endings
 - Change 266 files from CRLF to LF.
 - Run tests on push as well as on a pull request so developers can see impact
-- Apply "rule of three" to Client copy constructor and copy assignment operator
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Properly report compile errors in GitHub Actions.
+- Fix copy/paste error to allow additional warnings for a platform
+- Apply "rule of three" to Client copy constructor and copy assignment operator
 
 ### Security
 
@@ -397,7 +398,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Malformed YAML (duplicate unittests section) now has no duplicate section
-- arduino_ci_remote.rb script now has correct arguments in build_for_test_with_configuration
+- arduino_ci_remote.rb script now has correct arguments in build_for_test
 
 
 ## [0.1.8] - 2018-04-03

@@ -45,10 +45,9 @@ RSpec.describe "ExcludeSomething C++" do
         config       = ArduinoCI::CIConfig.default.from_example(cpp_lib_path)
         path         = config.allowable_unittest_files(@cpp_library.test_files).first
         compiler     = config.compilers_to_use.first
-        result       = @cpp_library.build_for_test_with_configuration(path,
-                                                                      [],
-                                                                      compiler,
-                                                                      config.gcc_config("uno"))
+        result       = @cpp_library.build_shared_library([], compiler, config.gcc_config("uno"))
+        expect(result).to be nil
+        result       = @cpp_library.build_for_test(path, compiler)
         expect(result).to be nil
       end
     end
@@ -276,7 +275,9 @@ RSpec.describe ArduinoCI::CppLibrary do
       expected = path.basename.to_s.include?("good")
       config.compilers_to_use.each do |compiler|
         it "tests #{File.basename(path)} with #{compiler} expecting #{expected}" do
-          exe = @cpp_library.build_for_test_with_configuration(path, [], compiler, config.gcc_config("uno"))
+          exe = @cpp_library.build_shared_library([], compiler, config.gcc_config("uno"))
+          expect(exe).not_to be nil
+          exe = @cpp_library.build_for_test(path, compiler)
           expect(exe).not_to be nil
           expect(@cpp_library.run_test_file(exe)).to eq(expected)
         end
