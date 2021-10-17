@@ -271,12 +271,12 @@ RSpec.describe ArduinoCI::CppLibrary do
     end
 
     test_files = Pathname.glob(Pathname.new(cpp_lib_path) + "test" + "*.cpp")
-    test_files.each do |path|
-      expected = path.basename.to_s.include?("good")
-      config.compilers_to_use.each do |compiler|
+    config.compilers_to_use.each do |compiler|
+      exe = @cpp_library.build_shared_library([], compiler, config.gcc_config("uno"))
+      expect(exe).not_to be nil
+      test_files.each do |path|
+        expected = path.basename.to_s.include?("good")
         it "tests #{File.basename(path)} with #{compiler} expecting #{expected}" do
-          exe = @cpp_library.build_shared_library([], compiler, config.gcc_config("uno"))
-          expect(exe).not_to be nil
           exe = @cpp_library.build_for_test(path, compiler)
           expect(exe).not_to be nil
           expect(@cpp_library.run_test_file(exe)).to eq(expected)
