@@ -9,9 +9,8 @@ CPP_EXTENSIONS = [".cpp", ".cc", ".c", ".cxx", ".c++"].freeze
 CI_CPP_DIR = Pathname.new(__dir__).parent.parent + "cpp"
 ARDUINO_HEADER_DIR = CI_CPP_DIR + "arduino"
 UNITTEST_HEADER_DIR = CI_CPP_DIR + "unittest"
-LIBRARY_NAME = "arduino"
-BUILD_DIR = "#{Dir.pwd}/.arduino_ci"    # hide build artifacts
-
+LIBRARY_NAME = "arduino".freeze
+BUILD_DIR = "#{Dir.pwd}/.arduino_ci".freeze    # hide build artifacts
 
 module ArduinoCI
 
@@ -492,7 +491,7 @@ module ArduinoCI
     # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Pathname] path to the compiled test executable
-    def build_for_test_with_configuration(test_file, aux_libraries, gcc_binary, ci_gcc_config)
+    def build_for_test_with_configuration(test_file, gcc_binary)
       executable = Pathname.new("#{BUILD_DIR}/#{test_file.basename}.bin").expand_path
       File.delete(executable) if File.exist?(executable)
       arg_sets = ["-std=c++0x", "-o", executable.to_s, "-L#{BUILD_DIR}", "-DARDUINO=100"]

@@ -423,27 +423,24 @@ def perform_unit_tests(cpp_library, file_config)
     puts
     compilers.each do |gcc_binary|
       # before compiling the tests, build a shared library of everything except the test code
-      if build_shared_library(gcc_binary, p, config, cpp_library)
-        # now build and run each test using the shared library build above
-        config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
-          unittest_name = unittest_path.basename.to_s
-          puts "--------------------------------------------------------------------------------"
-          attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
-            exe = cpp_library.build_for_test_with_configuration(
-              unittest_path,
-              config.aux_libraries_for_unittest,
-              gcc_binary,
-              config.gcc_config(p)
-            )
-            puts
-            unless exe
-              puts "Last command: #{cpp_library.last_cmd}"
-              puts cpp_library.last_out
-              puts cpp_library.last_err
-              next false
-            end
-            cpp_library.run_test_file(exe)
+      next unless build_shared_library(gcc_binary, p, config, cpp_library)
+      # now build and run each test using the shared library build above
+      config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
+        unittest_name = unittest_path.basename.to_s
+        puts "--------------------------------------------------------------------------------"
+        attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
+          exe = cpp_library.build_for_test_with_configuration(
+            unittest_path,
+            gcc_binary
+          )
+          puts
+          unless exe
+            puts "Last command: #{cpp_library.last_cmd}"
+            puts cpp_library.last_out
+            puts cpp_library.last_err
+            next false
           end
+          cpp_library.run_test_file(exe)
         end
       end
     end
