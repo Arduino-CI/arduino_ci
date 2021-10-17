@@ -423,44 +423,48 @@ def perform_unit_tests(cpp_library, file_config)
     puts
     compilers.each do |gcc_binary|
       # before compiling the tests, build a shared library of everything except the test code
-      attempt_multiline("Build shared library with #{gcc_binary} for #{p}") do
-        exe = cpp_library.build_for_test_with_configuration(
-          nil, # nil is a flag that we are building the shared library with everything else
-          config.aux_libraries_for_unittest,
-          gcc_binary,
-          config.gcc_config(p)
-        )
-        puts
-        unless exe
-          puts "Last command: #{cpp_library.last_cmd}"
-          puts cpp_library.last_out
-          puts cpp_library.last_err
-          next false
-        end
-        true
-      end
-      # now build and run each test using the shared library build above
-      config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
-        unittest_name = unittest_path.basename.to_s
-        puts "--------------------------------------------------------------------------------"
-        attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
-          exe = cpp_library.build_for_test_with_configuration(
-            unittest_path,
-            config.aux_libraries_for_unittest,
-            gcc_binary,
-            config.gcc_config(p)
-          )
-          puts
-          unless exe
-            puts "Last command: #{cpp_library.last_cmd}"
-            puts cpp_library.last_out
-            puts cpp_library.last_err
-            next false
+      if build_shared_library(gcc_binary, p, config, cpp_library)
+        # now build and run each test using the shared library build above
+        config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
+          unittest_name = unittest_path.basename.to_s
+          puts "--------------------------------------------------------------------------------"
+          attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
+            exe = cpp_library.build_for_test_with_configuration(
+              unittest_path,
+              config.aux_libraries_for_unittest,
+              gcc_binary,
+              config.gcc_config(p)
+            )
+            puts
+            unless exe
+              puts "Last command: #{cpp_library.last_cmd}"
+              puts cpp_library.last_out
+              puts cpp_library.last_err
+              next false
+            end
+            cpp_library.run_test_file(exe)
           end
-          cpp_library.run_test_file(exe)
         end
       end
     end
+  end
+end
+
+def build_shared_library(gcc_binary, platform, config, cpp_library)
+  attempt_multiline("Build shared library with #{gcc_binary} for #{platform}") do
+    exe = cpp_library.build_share_library_with_configuration(
+      config.aux_libraries_for_unittest,
+      gcc_binary,
+      config.gcc_config(platform)
+    )
+    puts
+    unless exe
+      puts "Last command: #{cpp_library.last_cmd}"
+      puts cpp_library.last_out
+      puts cpp_library.last_err
+      return false
+    end
+    return true
   end
 end
 

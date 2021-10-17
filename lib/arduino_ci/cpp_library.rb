@@ -9,6 +9,9 @@ CPP_EXTENSIONS = [".cpp", ".cc", ".c", ".cxx", ".c++"].freeze
 CI_CPP_DIR = Pathname.new(__dir__).parent.parent + "cpp"
 ARDUINO_HEADER_DIR = CI_CPP_DIR + "arduino"
 UNITTEST_HEADER_DIR = CI_CPP_DIR + "unittest"
+LIBRARY_NAME = "arduino"
+BUILD_DIR = "#{Dir.pwd}/.arduino_ci"    # hide build artifacts
+
 
 module ArduinoCI
 
@@ -485,31 +488,53 @@ module ArduinoCI
     #
     # The dependent libraries configuration is appended with data from library.properties internal to the library under test
     #
-    # @param test_file [Pathname] The path to the file containing the unit tests (nil to compile application as shared library)
+    # @param test_file [Pathname] The path to the file containing the unit tests
     # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Pathname] path to the compiled test executable
     def build_for_test_with_configuration(test_file, aux_libraries, gcc_binary, ci_gcc_config)
-      build_dir = "#{Dir.pwd}/.arduino_ci"    # hide build artifacts
-      Dir.mkdir build_dir unless File.exist?(build_dir)
-      lib_name = "arduino"
-      if OS.windows?
-        full_lib_name = "#{build_dir}/lib#{lib_name}.dll"
-        flag = ENV["PATH"].include? ";"
-        ENV["PATH"] = build_dir + (flag ? ";" : ":") + ENV["PATH"] unless ENV["PATH"].include? build_dir
-      else
-        full_lib_name = "#{build_dir}/lib#{lib_name}.so"
-        ENV["LD_LIBRARY_PATH"] = build_dir
-      end
-      arg_sets = ["-std=c++0x"]
-      if test_file.nil?
-        executable = Pathname.new(full_lib_name).expand_path
-        arg_sets << ["-shared", "-fPIC", "-Wl,-undefined,dynamic_lookup"]
-      else
-        executable = Pathname.new("#{build_dir}/unittest_#{test_file.basename}.bin").expand_path
-      end
+      executable = Pathname.new("#{BUILD_DIR}/#{test_file.basename}.bin").expand_path
       File.delete(executable) if File.exist?(executable)
-      arg_sets << ["-o", executable.to_s, "-L#{build_dir}", "-DARDUINO=100"]
+      arg_sets = ["-std=c++0x", "-o", executable.to_s, "-L#{BUILD_DIR}", "-DARDUINO=100"]
+      if libasan?(gcc_binary)
+        arg_sets << [ # Stuff to help with dynamic memory mishandling
+          "-g", "-O1",
+          "-fno-omit-frame-pointer",
+          "-fno-optimize-sibling-calls",
+          "-fsanitize=address"
+        ]
+      end
+      arg_sets << @test_args
+      arg_sets << [test_file.to_s, "-l#{LIBRARY_NAME}"]
+      args = arg_sets.flatten(1)
+      return nil unless run_gcc(gcc_binary, *args)
+
+      artifacts << executable
+      executable
+    end
+
+    # build a shared library to be used by each test
+    #
+    # The dependent libraries configuration is appended with data from library.properties internal to the library under test
+    #
+    # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
+    # @param ci_gcc_config [Hash] The GCC config object
+    # @return [Pathname] path to the compiled test executable
+    def build_share_library_with_configuration(aux_libraries, gcc_binary, ci_gcc_config)
+      Dir.mkdir BUILD_DIR unless File.exist?(BUILD_DIR)
+      if OS.windows?
+        flag = ENV["PATH"].include? ";"
+        ENV["PATH"] = BUILD_DIR + (flag ? ";" : ":") + ENV["PATH"] unless ENV["PATH"].include? build_dir
+        suffix = "dll"
+      else
+        ENV["LD_LIBRARY_PATH"] = BUILD_DIR
+        suffix = "so"
+      end
+      full_lib_name = "#{BUILD_DIR}/lib#{LIBRARY_NAME}.#{suffix}"
+      executable = Pathname.new(full_lib_name).expand_path
+      File.delete(executable) if File.exist?(executable)
+      arg_sets = ["-std=c++0x", "-shared", "-fPIC", "-Wl,-undefined,dynamic_lookup",
+                  "-o", executable.to_s, "-L#{BUILD_DIR}", "-DARDUINO=100"]
       if libasan?(gcc_binary)
         arg_sets << [ # Stuff to help with dynamic memory mishandling
           "-g", "-O1",
@@ -522,19 +547,14 @@ module ArduinoCI
       # combine library.properties defs (if existing) with config file.
       # TODO: as much as I'd like to rely only on the properties file(s), I think that would prevent testing 1.0-spec libs
       # the following two take some time, so are cached when we build the shared library
-      @full_dependencies ||= all_arduino_library_dependencies!(aux_libraries)
-      @test_args ||= test_args(@full_dependencies, ci_gcc_config)
-      arg_sets << @test_args # used cached value since building full set of include directories can take time
+      @full_dependencies = all_arduino_library_dependencies!(aux_libraries)
+      @test_args = test_args(@full_dependencies, ci_gcc_config) # build full set of include directories to be cached for later
 
-      if File.exist?(full_lib_name)  # add the test file and the shared library
-        arg_sets << [test_file.to_s, "-l#{lib_name}"] if test_file
-      else  # CPP files for the shared library
-        arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
-        arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
-        arg_sets << cpp_files.map(&:to_s) # CPP files for the primary application library under test
-        arg_sets << cpp_files_libraries(@full_dependencies).map(&:to_s) # CPP files for all the libraries we depend on
-        arg_sets << [test_file.to_s] if test_file
-      end
+      arg_sets << @test_args
+      arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
+      arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
+      arg_sets << cpp_files.map(&:to_s) # CPP files for the primary application library under test
+      arg_sets << cpp_files_libraries(@full_dependencies).map(&:to_s) # CPP files for all the libraries we depend on
       args = arg_sets.flatten(1)
       return nil unless run_gcc(gcc_binary, *args)
 
