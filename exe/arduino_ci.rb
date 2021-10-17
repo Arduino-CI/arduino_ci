@@ -430,10 +430,7 @@ def perform_unit_tests(cpp_library, file_config)
         unittest_name = unittest_path.basename.to_s
         puts "--------------------------------------------------------------------------------"
         attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
-          exe = cpp_library.build_for_test_with_configuration(
-            unittest_path,
-            gcc_binary
-          )
+          exe = cpp_library.build_for_test(unittest_path, gcc_binary)
           puts
           unless exe
             puts "Last command: #{cpp_library.last_cmd}"

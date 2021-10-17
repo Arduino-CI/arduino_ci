@@ -488,10 +488,9 @@ module ArduinoCI
     # The dependent libraries configuration is appended with data from library.properties internal to the library under test
     #
     # @param test_file [Pathname] The path to the file containing the unit tests
-    # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
-    # @param ci_gcc_config [Hash] The GCC config object
+    # @param gcc_binary [String] name of a compiler
     # @return [Pathname] path to the compiled test executable
-    def build_for_test_with_configuration(test_file, gcc_binary)
+    def build_for_test(test_file, gcc_binary)
       executable = Pathname.new("#{BUILD_DIR}/#{test_file.basename}.bin").expand_path
       File.delete(executable) if File.exist?(executable)
       arg_sets = ["-std=c++0x", "-o", executable.to_s, "-L#{BUILD_DIR}", "-DARDUINO=100"]
@@ -517,6 +516,7 @@ module ArduinoCI
     # The dependent libraries configuration is appended with data from library.properties internal to the library under test
     #
     # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
+    # @param gcc_binary [String] name of a compiler
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Pathname] path to the compiled test executable
     def build_share_library_with_configuration(aux_libraries, gcc_binary, ci_gcc_config)

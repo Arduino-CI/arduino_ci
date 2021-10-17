@@ -398,7 +398,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Malformed YAML (duplicate unittests section) now has no duplicate section
-- arduino_ci_remote.rb script now has correct arguments in build_for_test_with_configuration
+- arduino_ci_remote.rb script now has correct arguments in build_for_test
 
 
 ## [0.1.8] - 2018-04-03
