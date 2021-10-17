@@ -523,7 +523,7 @@ module ArduinoCI
       Dir.mkdir BUILD_DIR unless File.exist?(BUILD_DIR)
       if OS.windows?
         flag = ENV["PATH"].include? ";"
-        ENV["PATH"] = BUILD_DIR + (flag ? ";" : ":") + ENV["PATH"] unless ENV["PATH"].include? build_dir
+        ENV["PATH"] = BUILD_DIR + (flag ? ";" : ":") + ENV["PATH"] unless ENV["PATH"].include? BUILD_DIR
         suffix = "dll"
       else
         ENV["LD_LIBRARY_PATH"] = BUILD_DIR
