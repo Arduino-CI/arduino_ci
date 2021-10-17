@@ -1,5 +1,7 @@
 #include <ArduinoUnitTests.h>
 #include <Arduino.h>
+#include <ctype.h>
+#include <string.h>
 
 #define ARRAY_SIZEOF(a) ( sizeof(a) / sizeof((a)[0]) )
 
@@ -26,6 +28,9 @@ unittest(library_tests_itoa)
   };
 
   for (int i = 0; i < ARRAY_SIZEOF(table); i++) {
+    for (int j = 0; j < strlen(buf); ++j) {
+      buf[j] = toupper(buf[j]);
+    }
     result = itoa(table[i].value, buf, table[i].base);
     assertEqual(table[i].expected, result);
   }
