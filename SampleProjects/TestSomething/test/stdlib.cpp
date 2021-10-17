@@ -26,7 +26,7 @@ unittest(library_tests_itoa)
   };
 
   for (int i = 0; i < ARRAY_SIZEOF(table); i++) {
-    result = itoa(table[i].value, buf, table[i].base).upcase;
+    result = itoa(table[i].value, buf, table[i].base);
     assertEqual(table[i].expected, result);
   }
 
