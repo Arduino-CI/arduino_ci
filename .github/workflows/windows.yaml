@@ -4,7 +4,7 @@ name: windows
 on: [push, pull_request]
 
 jobs:
-  "unittest_lint_sampleproject":
+  "rubocop":
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,6 +17,18 @@ jobs:
           bundle install
           bundle exec rubocop --version
           bundle exec rubocop -D .
+
+  "rspec":
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Check style, functionality, and usage
+        run: |
+          g++ -v
+          bundle install
           bundle exec rspec --backtrace
 
   "TestSomething":
