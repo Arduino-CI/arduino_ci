@@ -26,11 +26,11 @@ unittest(library_tests_itoa)
   };
 
   for (int i = 0; i < ARRAY_SIZEOF(table); i++) {
-    result = itoa(table[i].value, buf, table[i].base);
+    result = itoa(table[i].value, buf, table[i].base).upcase;
     assertEqual(table[i].expected, result);
   }
 
-  // While only bases 2, 8, 10 and 16 are of real interest, lets test that all
+  // While only bases 2, 8, 10 and 16 are of real interest, let's test that all
   // bases at least produce expected output for a few test points simple to test.
   for (int base = 2; base <= 16; base++) {
     result = itoa(0, buf, base);
