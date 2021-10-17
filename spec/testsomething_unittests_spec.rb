@@ -74,7 +74,7 @@ RSpec.describe "TestSomething C++" do
 
           before(:each) do
             @cpp_library = backend.install_local_library(cpp_lib_path)
-            @cpp.library.build_shared_library(path, [], compiler, config.gcc_config("uno"))
+            @cpp.library.build_shared_library([], compiler, config.gcc_config("uno"))
             @exe = @cpp_library.build_for_test(path, compiler)
           end
 

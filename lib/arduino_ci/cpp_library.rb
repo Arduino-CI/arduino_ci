@@ -519,7 +519,7 @@ module ArduinoCI
     # @param gcc_binary [String] name of a compiler
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Pathname] path to the compiled test executable
-    def build_share_library_with_configuration(aux_libraries, gcc_binary, ci_gcc_config)
+    def build_shared_library(aux_libraries, gcc_binary, ci_gcc_config)
       Dir.mkdir BUILD_DIR unless File.exist?(BUILD_DIR)
       if OS.windows?
         flag = ENV["PATH"].include? ";"

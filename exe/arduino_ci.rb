@@ -447,7 +447,7 @@ end
 
 def build_shared_library(gcc_binary, platform, config, cpp_library)
   attempt_multiline("Build shared library with #{gcc_binary} for #{platform}") do
-    exe = cpp_library.build_share_library_with_configuration(
+    exe = cpp_library.build_shared_library(
       config.aux_libraries_for_unittest,
       gcc_binary,
       config.gcc_config(platform)
