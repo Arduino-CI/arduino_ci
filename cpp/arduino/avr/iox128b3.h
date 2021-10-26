@@ -559,8 +559,8 @@ typedef enum PORTCFG_EVOUT_enum
 /* Clock and Event Output Port */
 typedef enum PORTCFG_CLKEVPIN_enum
 {
-    PORTCFG_CLKEVPIN_PIN7_gc = (0x00<<7),  /* Clock and Event Ouput on PIN 7 */
-    PORTCFG_CLKEVPIN_PIN4_gc = (0x01<<7),  /* Clock and Event Ouput on PIN 4 */
+    PORTCFG_CLKEVPIN_PIN7_gc = (0x00<<7),  /* Clock and Event Output on PIN 7 */
+    PORTCFG_CLKEVPIN_PIN4_gc = (0x01<<7),  /* Clock and Event Output on PIN 4 */
 } PORTCFG_CLKEVPIN_t;
 
 /* Event Output Select */
@@ -712,7 +712,7 @@ typedef enum DMA_CH_SRCDIR_enum
     DMA_CH_SRCDIR_DEC_gc = (0x02<<4),  /* Decrement */
 } DMA_CH_SRCDIR_t;
 
-/* Destination adress reload mode */
+/* Destination address reload mode */
 typedef enum DMA_CH_DESTRELOAD_enum
 {
     DMA_CH_DESTRELOAD_NONE_gc = (0x00<<2),  /* No reload */
@@ -721,7 +721,7 @@ typedef enum DMA_CH_DESTRELOAD_enum
     DMA_CH_DESTRELOAD_TRANSACTION_gc = (0x03<<2),  /* Reload at end of transaction */
 } DMA_CH_DESTRELOAD_t;
 
-/* Destination adressing mode */
+/* Destination addressing mode */
 typedef enum DMA_CH_DESTDIR_enum
 {
     DMA_CH_DESTDIR_FIXED_gc = (0x00<<0),  /* Fixed */
@@ -1213,7 +1213,7 @@ typedef enum ADC_EVACT_enum
     ADC_EVACT_SYNCSWEEP_gc = (0x06<<0),  /* The ADC is flushed and restarted for accurate timing */
 } ADC_EVACT_t;
 
-/* Interupt mode */
+/* Interrupt mode */
 typedef enum ADC_CH_INTMODE_enum
 {
     ADC_CH_INTMODE_COMPLETE_gc = (0x00<<2),  /* Interrupt on conversion complete */
@@ -3573,8 +3573,8 @@ IO Module Instances. Mapped to memory.
 #define WDT_WCEN_bp  0  /* Windowed Mode Change Enable bit position. */
 
 /* WDT.STATUS  bit masks and bit positions */
-#define WDT_SYNCBUSY_bm  0x01  /* Syncronization busy bit mask. */
-#define WDT_SYNCBUSY_bp  0  /* Syncronization busy bit position. */
+#define WDT_SYNCBUSY_bm  0x01  /* Synchronization busy bit mask. */
+#define WDT_SYNCBUSY_bp  0  /* Synchronization busy bit position. */
 
 /* MCU - MCU Control */
 /* MCU.MCUCR  bit masks and bit positions */
@@ -3832,8 +3832,8 @@ IO Module Instances. Mapped to memory.
 #define DMA_CH_ERRIF_bm  0x20  /* Block Transfer Error Interrupt Flag bit mask. */
 #define DMA_CH_ERRIF_bp  5  /* Block Transfer Error Interrupt Flag bit position. */
 
-#define DMA_CH_TRNIF_bm  0x10  /* Transaction Complete Interrup Flag bit mask. */
-#define DMA_CH_TRNIF_bp  4  /* Transaction Complete Interrup Flag bit position. */
+#define DMA_CH_TRNIF_bm  0x10  /* Transaction Complete Interrupt Flag bit mask. */
+#define DMA_CH_TRNIF_bp  4  /* Transaction Complete Interrupt Flag bit position. */
 
 #define DMA_CH_ERRINTLVL_gm  0x0C  /* Transfer Error Interrupt Level group mask. */
 #define DMA_CH_ERRINTLVL_gp  2  /* Transfer Error Interrupt Level group position. */
@@ -4647,11 +4647,11 @@ IO Module Instances. Mapped to memory.
 #define USB_EP_CRC_bm  0x80  /* CRC Error Flag bit mask. */
 #define USB_EP_CRC_bp  7  /* CRC Error Flag bit position. */
 
-#define USB_EP_UNF_bm  0x40  /* Underflow Enpoint FLag bit mask. */
-#define USB_EP_UNF_bp  6  /* Underflow Enpoint FLag bit position. */
+#define USB_EP_UNF_bm  0x40  /* Underflow Endpoint FLag bit mask. */
+#define USB_EP_UNF_bp  6  /* Underflow Endpoint FLag bit position. */
 
-#define USB_EP_OVF_bm  0x40  /* Overflow Enpoint Flag for Output Endpoints bit mask. */
-#define USB_EP_OVF_bp  6  /* Overflow Enpoint Flag for Output Endpoints bit position. */
+#define USB_EP_OVF_bm  0x40  /* Overflow Endpoint Flag for Output Endpoints bit mask. */
+#define USB_EP_OVF_bp  6  /* Overflow Endpoint Flag for Output Endpoints bit position. */
 
 #define USB_EP_TRNCOMPL0_bm  0x20  /* Transaction Complete 0 Flag bit mask. */
 #define USB_EP_TRNCOMPL0_bp  5  /* Transaction Complete 0 Flag bit position. */

@@ -35,7 +35,7 @@
 /** \defgroup avr_io <avr/io.h": AVR device-specific IO definitions
     \code #include "io.h" \endcode
 
-    This header file includes the apropriate IO definitions for the
+    This header file includes the appropriate IO definitions for the
     device that has been specified by the <tt>-mmcu=</tt> compiler
     command-line switch.  This is done by diverting to the appropriate
     file <tt>&lt;avr/io</tt><em>XXXX</em><tt>.h&gt;</tt> which should
@@ -59,7 +59,7 @@
     so even identical functions sometimes get different names on
     different devices.
 
-    Also included are the specific names useable for interrupt
+    Also included are the specific names usable for interrupt
     function definitions as documented
     \ref avr_signames "here".
 

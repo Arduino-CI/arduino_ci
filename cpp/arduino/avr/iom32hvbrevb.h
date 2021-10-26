@@ -869,7 +869,7 @@
 #define TIMER0_IC_vect     _VECTOR(16)  /* Timer 0 Input Capture */
 
 #define TIMER0_COMPA_vect_num  17
-#define TIMER0_COMPA_vect  _VECTOR(17)  /* Timer 0 Comapre Match A */
+#define TIMER0_COMPA_vect  _VECTOR(17)  /* Timer 0 Compare Match A */
 
 #define TIMER0_COMPB_vect_num  18
 #define TIMER0_COMPB_vect  _VECTOR(18)  /* Timer 0 Compare Match B */

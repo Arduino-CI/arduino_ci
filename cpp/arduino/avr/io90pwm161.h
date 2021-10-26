@@ -823,7 +823,7 @@
 #define INT1_vect            _VECTOR(14)
 #define INT1_vect_num        14
 
-/* SPI Serial Transfer Complet */
+/* SPI Serial Transfer Complete */
 #define SPI_STC_vect            _VECTOR(15)
 #define SPI_STC_vect_num        15
 

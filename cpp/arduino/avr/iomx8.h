@@ -209,7 +209,7 @@ must be written to 0, according to the datasheet, hence the EEARH register
 must be defined for the mega48.
 */
 /* 6-char sequence denoting where to find the EEPROM registers in memory space.
-   Adresses denoted in hex syntax with uppercase letters. Used by the EEPROM
+   Addresses denoted in hex syntax with uppercase letters. Used by the EEPROM
    subroutines.
    First two letters:  EECR address.
    Second two letters: EEDR address.

@@ -59,7 +59,7 @@ class Parser
         puts
         puts "Additionally, the following environment variables control the script:"
         puts " - #{VAR_CUSTOM_INIT_SCRIPT} - if set, this script will be run from the Arduino/libraries directory"
-        puts "       prior to any automated library installation or testing (e.g. to install unoffical libraries)"
+        puts "       prior to any automated library installation or testing (e.g. to install unofficial libraries)"
         puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
         puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
         puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"

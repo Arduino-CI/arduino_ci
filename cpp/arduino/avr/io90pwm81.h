@@ -952,7 +952,7 @@
 #define INT1_vect_num  14
 #define INT1_vect      _VECTOR(14)  /* External Interrupt Request 1 */
 #define SPI_STC_vect_num  15
-#define SPI_STC_vect      _VECTOR(15)  /* SPI Serial Transfer Complet */
+#define SPI_STC_vect      _VECTOR(15)  /* SPI Serial Transfer Complete */
 #define INT2_vect_num  16
 #define INT2_vect      _VECTOR(16)  /* External Interrupt Request 2 */
 #define WDT_vect_num  17

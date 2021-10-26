@@ -3,7 +3,7 @@
 #include "Stream.h"
 #include "Godmode.h"
 
-// definitions neeeded for Serial.begin's config arg
+// definitions needed for Serial.begin's config arg
 
 class SoftwareSerial : public Stream
 {

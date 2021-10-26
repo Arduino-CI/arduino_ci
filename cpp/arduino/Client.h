@@ -6,7 +6,7 @@
 class Client : public Stream {
 public:
   Client() {
-    // The Stream mock defines a String buffer but never puts anyting in it!
+    // The Stream mock defines a String buffer but never puts anything in it!
     if (!mGodmodeDataIn) {
       mGodmodeDataIn = new String;
     }

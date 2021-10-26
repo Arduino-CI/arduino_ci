@@ -1023,7 +1023,7 @@ typedef enum ADC_EVACT_enum
     ADC_EVACT_SYNCSWEEP_gc = (0x06<<0),  /* The ADC is flushed and restarted for accurate timing */
 } ADC_EVACT_t;
 
-/* Interupt mode */
+/* Interrupt mode */
 typedef enum ADC_CH_INTMODE_enum
 {
     ADC_CH_INTMODE_COMPLETE_gc = (0x00<<2),  /* Interrupt on conversion complete */
@@ -3278,8 +3278,8 @@ IO Module Instances. Mapped to memory.
 #define WDT_WCEN_bp  0  /* Windowed Mode Change Enable bit position. */
 
 /* WDT.STATUS  bit masks and bit positions */
-#define WDT_SYNCBUSY_bm  0x01  /* Syncronization busy bit mask. */
-#define WDT_SYNCBUSY_bp  0  /* Syncronization busy bit position. */
+#define WDT_SYNCBUSY_bm  0x01  /* Synchronization busy bit mask. */
+#define WDT_SYNCBUSY_bp  0  /* Synchronization busy bit position. */
 
 /* MCU - MCU Control */
 /* MCU.ANAINIT  bit masks and bit positions */

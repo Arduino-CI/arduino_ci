@@ -163,7 +163,7 @@
     }
     \endcode
     
-    If you are compiling in C++, you cannot use the designated intializers so
+    If you are compiling in C++, you cannot use the designated initializers so
     you must do:
 
     \code

@@ -274,7 +274,7 @@ module ArduinoCI
 
     # Get a list of all CPP source files in a directory and its subdirectories
     # @param some_dir [Pathname] The directory in which to begin the search
-    # @param extensions [Array<Sring>] The set of allowable file extensions
+    # @param extensions [Array<String>] The set of allowable file extensions
     # @return [Array<Pathname>] The paths of the found files
     def code_files_in(some_dir, extensions)
       raise ArgumentError, 'some_dir is not a Pathname' unless some_dir.is_a? Pathname
@@ -290,7 +290,7 @@ module ArduinoCI
 
     # Get a list of all CPP source files in a directory and its subdirectories
     # @param some_dir [Pathname] The directory in which to begin the search
-    # @param extensions [Array<Sring>] The set of allowable file extensions
+    # @param extensions [Array<String>] The set of allowable file extensions
     # @return [Array<Pathname>] The paths of the found files
     def code_files_in_recursive(some_dir, extensions)
       raise ArgumentError, 'some_dir is not a Pathname' unless some_dir.is_a? Pathname
@@ -352,7 +352,7 @@ module ArduinoCI
       @exclude_dirs.map { |p| Pathname.new(path) + p }.select(&:exist?)
     end
 
-    # The directory where we expect to find unit test defintions provided by the user
+    # The directory where we expect to find unit test definitions provided by the user
     # @return [Pathname]
     def tests_dir
       Pathname.new(path) + "test"
@@ -421,7 +421,7 @@ module ArduinoCI
 
     # GCC command line arguments for including aux libraries
     #
-    # This function recursively collects the library directores of the dependencies
+    # This function recursively collects the library directories of the dependencies
     #
     # @param aux_libraries [Array<Pathname>] The external Arduino libraries required by this project
     # @return [Array<String>] The GCC command-line flags necessary to include those libraries

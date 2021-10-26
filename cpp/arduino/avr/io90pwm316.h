@@ -273,7 +273,7 @@
 #define EEAR11  3
 
 /* 6-char sequence denoting where to find the EEPROM registers in memory space.
-   Adresses denoted in hex syntax with uppercase letters. Used by the EEPROM
+   Addresses denoted in hex syntax with uppercase letters. Used by the EEPROM
    subroutines.
    First two letters:  EECR address.
    Second two letters: EEDR address.
@@ -568,8 +568,8 @@
 #define WGM11   1   /* Waveform Generation Mode */
 #define COM1B0  4   /* Compare Output Mode 1B, bit 0 */
 #define COM1B1  5   /* Compare Output Mode 1B, bit 1 */
-#define COM1A0  6   /* Comparet Ouput Mode 1A, bit 0 */
-#define COM1A1  7   /* Comparet Ouput Mode 1A, bit 1 */
+#define COM1A0  6   /* Comparet Output Mode 1A, bit 0 */
+#define COM1A1  7   /* Comparet Output Mode 1A, bit 1 */
 
 /* Timer/Counter1 Control Register B */
 #define TCCR1B  _SFR_MEM8(0x81)

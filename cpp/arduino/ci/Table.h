@@ -15,7 +15,7 @@ class ArduinoCITable {
 
     Node* mStart;
     unsigned long mSize;
-    // to alow const reference signatures, pre-allocate nil values
+    // to allow const reference signatures, pre-allocate nil values
     K mNilK;
     V mNilV;
 
