@@ -1,10 +1,27 @@
 # This is the name of the workflow, visible on GitHub UI
-name: spelling
+name: Check Spelling
 
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore: [master, main]
+    # Remove the line above to run when pushing to master
+  pull_request:
+    branches: [master, main]
 
 jobs:
-  uses: codespell-project/actions-codespell@master
-  with:
-    check_filenames: true
-    ignore_words_file: .codespellignore
+  build:
+    name: Check Spelling
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      - name: Check Spelling
+        uses: codespell-project/actions-codespell@master
+        with:
+          check_filenames: true
+          ignore_words_file: .codespellignore
