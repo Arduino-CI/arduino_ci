@@ -74,7 +74,7 @@ module ArduinoCI
     # The technology that will be used to extract the download
     # (for logging purposes)
     # @return [string]
-    def self.extracter
+    def self.extractor
       self.must_implement(__method__)
     end
 
@@ -150,7 +150,7 @@ module ArduinoCI
       if File.exist?(self.class.extracted_file)
         @output.puts "#{arduino_package} seems to have been extracted already at #{self.class.extracted_file}"
       elsif File.exist?(package_file)
-        @output.print "Extracting archive with #{self.class.extracter}"
+        @output.print "Extracting archive with #{self.class.extractor}"
         self.class.extract(package_file)
         @output.puts
       end
