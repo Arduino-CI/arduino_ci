@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `--min-free-space=N` command-line argument to fail if free space is below requred value
 - Add `_BV()` macro.
 - Support for `dtostrf()`
+- Added a CI workflow to lint the code base
 
 ### Changed
 - We now compile a shared library to be used for each test.
