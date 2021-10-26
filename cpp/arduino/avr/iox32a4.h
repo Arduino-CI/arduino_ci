@@ -520,7 +520,7 @@ typedef enum DMA_CH_SRCDIR_enum
     DMA_CH_SRCDIR_DEC_gc = (0x02<<4),  /* Decrement */
 } DMA_CH_SRCDIR_t;
 
-/* Destination address reload mode */
+/* Destination adress reload mode */
 typedef enum DMA_CH_DESTRELOAD_enum
 {
     DMA_CH_DESTRELOAD_NONE_gc = (0x00<<2),  /* No reload */
@@ -529,7 +529,7 @@ typedef enum DMA_CH_DESTRELOAD_enum
     DMA_CH_DESTRELOAD_TRANSACTION_gc = (0x03<<2),  /* Reload at end of transaction */
 } DMA_CH_DESTRELOAD_t;
 
-/* Destination addressing mode */
+/* Destination adressing mode */
 typedef enum DMA_CH_DESTDIR_enum
 {
     DMA_CH_DESTDIR_FIXED_gc = (0x00<<0),  /* Fixed */
@@ -1370,7 +1370,7 @@ typedef enum ADC_EVACT_enum
     ADC_EVACT_SYNCHSWEEP_gc = (0x06<<0),  /* First event triggers synchronized sweep */
 } ADC_EVACT_t;
 
-/* Interrupt mode */
+/* Interupt mode */
 typedef enum ADC_CH_INTMODE_enum
 {
     ADC_CH_INTMODE_COMPLETE_gc = (0x00<<2),  /* Interrupt on conversion complete */
@@ -1606,7 +1606,7 @@ typedef struct EBI_struct
     EBI_CS_t CS3;  /* Chip Select 3 */
 } EBI_t;
 
-/* Chip Select address space */
+/* Chip Select adress space */
 typedef enum EBI_CS_ASIZE_enum
 {
     EBI_CS_ASIZE_256B_gc = (0x00<<2),  /* 256 bytes */
@@ -3770,8 +3770,8 @@ IO Module Instances. Mapped to memory.
 
 
 /* WDT.STATUS  bit masks and bit positions */
-#define WDT_SYNCBUSY_bm  0x01  /* Synchronization busy bit mask. */
-#define WDT_SYNCBUSY_bp  0  /* Synchronization busy bit position. */
+#define WDT_SYNCBUSY_bm  0x01  /* Syncronization busy bit mask. */
+#define WDT_SYNCBUSY_bp  0  /* Syncronization busy bit position. */
 
 
 /* MCU - MCU Control */
@@ -3863,8 +3863,8 @@ IO Module Instances. Mapped to memory.
 #define DMA_CH_ERRIF_bm  0x20  /* Block Transfer Error Interrupt Flag bit mask. */
 #define DMA_CH_ERRIF_bp  5  /* Block Transfer Error Interrupt Flag bit position. */
 
-#define DMA_CH_TRNIF_bm  0x10  /* Transaction Complete Interrupt Flag bit mask. */
-#define DMA_CH_TRNIF_bp  4  /* Transaction Complete Interrupt Flag bit position. */
+#define DMA_CH_TRNIF_bm  0x10  /* Transaction Complete Interrup Flag bit mask. */
+#define DMA_CH_TRNIF_bp  4  /* Transaction Complete Interrup Flag bit position. */
 
 #define DMA_CH_ERRINTLVL_gm  0x0C  /* Transfer Error Interrupt Level group mask. */
 #define DMA_CH_ERRINTLVL_gp  2  /* Transfer Error Interrupt Level group position. */

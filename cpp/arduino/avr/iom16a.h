@@ -680,7 +680,7 @@
 #define SPI_STC_vect      _VECTOR(10)  /* Serial Transfer Complete */
 
 /* The following vectors use an inconsistent (to the ATmega16 etc.)
-   naming scheme.  The inconsistent names are preserved here for software
+   naming scheme.  The inconsistent names are preserved here for softwares
    that already use them: */
 #define USARTRXC_vect_num  11
 #define USARTRXC_vect      _VECTOR(11)  /* USART, Rx Complete */

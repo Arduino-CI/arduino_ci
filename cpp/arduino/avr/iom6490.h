@@ -296,7 +296,7 @@
 #define EEARH  _SFR_IO8(0X22)
 
 /* 6-char sequence denoting where to find the EEPROM registers in memory space.
-   Addresses denoted in hex syntax with uppercase letters. Used by the EEPROM
+   Adresses denoted in hex syntax with uppercase letters. Used by the EEPROM
    subroutines.
    First two letters:  EECR address.
    Second two letters: EEDR address.

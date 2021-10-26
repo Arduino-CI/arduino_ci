@@ -1047,7 +1047,7 @@ typedef enum ADC_EVACT_enum
     ADC_EVACT_SYNCSWEEP_gc = (0x06<<0),  /* The ADC is flushed and restarted for accurate timing */
 } ADC_EVACT_t;
 
-/* Interrupt mode */
+/* Interupt mode */
 typedef enum ADC_CH_INTMODE_enum
 {
     ADC_CH_INTMODE_COMPLETE_gc = (0x00<<2),  /* Interrupt on conversion complete */
@@ -3536,8 +3536,8 @@ IO Module Instances. Mapped to memory.
 #define WDT_WCEN_bp  0  /* Windowed Mode Change Enable bit position. */
 
 /* WDT.STATUS  bit masks and bit positions */
-#define WDT_SYNCBUSY_bm  0x01  /* Synchronization busy bit mask. */
-#define WDT_SYNCBUSY_bp  0  /* Synchronization busy bit position. */
+#define WDT_SYNCBUSY_bm  0x01  /* Syncronization busy bit mask. */
+#define WDT_SYNCBUSY_bp  0  /* Syncronization busy bit position. */
 
 /* MCU - MCU Control */
 /* MCU.ANAINIT  bit masks and bit positions */
@@ -4390,11 +4390,11 @@ IO Module Instances. Mapped to memory.
 #define USB_EP_CRC_bm  0x80  /* CRC Error Flag bit mask. */
 #define USB_EP_CRC_bp  7  /* CRC Error Flag bit position. */
 
-#define USB_EP_UNF_bm  0x40  /* Underflow Endpoint FLag bit mask. */
-#define USB_EP_UNF_bp  6  /* Underflow Endpoint FLag bit position. */
+#define USB_EP_UNF_bm  0x40  /* Underflow Enpoint FLag bit mask. */
+#define USB_EP_UNF_bp  6  /* Underflow Enpoint FLag bit position. */
 
-#define USB_EP_OVF_bm  0x40  /* Overflow Endpoint Flag for Output Endpoints bit mask. */
-#define USB_EP_OVF_bp  6  /* Overflow Endpoint Flag for Output Endpoints bit position. */
+#define USB_EP_OVF_bm  0x40  /* Overflow Enpoint Flag for Output Endpoints bit mask. */
+#define USB_EP_OVF_bp  6  /* Overflow Enpoint Flag for Output Endpoints bit position. */
 
 #define USB_EP_TRNCOMPL0_bm  0x20  /* Transaction Complete 0 Flag bit mask. */
 #define USB_EP_TRNCOMPL0_bp  5  /* Transaction Complete 0 Flag bit position. */

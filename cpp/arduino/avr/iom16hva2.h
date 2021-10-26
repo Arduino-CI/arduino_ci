@@ -692,7 +692,7 @@
 #define TIMER0_IC_vect_num  12
 #define TIMER0_IC_vect      _VECTOR(12)  /* Timer 0 Input Capture */
 #define TIMER0_COMPA_vect_num  13
-#define TIMER0_COMPA_vect      _VECTOR(13)  /* Timer 0 Compare Match A */
+#define TIMER0_COMPA_vect      _VECTOR(13)  /* Timer 0 Comapre Match A */
 #define TIMER0_COMPB_vect_num  14
 #define TIMER0_COMPB_vect      _VECTOR(14)  /* Timer 0 Compare Match B */
 #define TIMER0_OVF_vect_num  15

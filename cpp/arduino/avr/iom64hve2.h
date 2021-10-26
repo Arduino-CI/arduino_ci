@@ -652,7 +652,7 @@
 #define TIMER0_IC_vect            _VECTOR(10)
 #define TIMER0_IC_vect_num        10
 
-/* Timer 0 Compare Match A */
+/* Timer 0 Comapre Match A */
 #define TIMER0_COMPA_vect            _VECTOR(11)
 #define TIMER0_COMPA_vect_num        11
 

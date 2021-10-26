@@ -653,7 +653,7 @@ struct __reg_GPIOR0 {
 #define GPIOR07                         7
 
 /* 6-char sequence denoting where to find the EEPROM registers in memory space.
-   Addresses denoted in hex syntax with uppercase letters. Used by the EEPROM
+   Adresses denoted in hex syntax with uppercase letters. Used by the EEPROM
    subroutines.
    First two letters:  EECR address.
    Second two letters: EEDR address.
@@ -5280,7 +5280,7 @@ struct __reg_TST_RX_LENGTH {
 #define TRX24_TX_END_vect               _VECTOR(63)
 #define TRX24_TX_END_vect_num           63
 
-/* TRX24 AWAKE - transceiver is reaching state TRX_OFF */
+/* TRX24 AWAKE - tranceiver is reaching state TRX_OFF */
 #define TRX24_AWAKE_vect                _VECTOR(64)
 #define TRX24_AWAKE_vect_num            64
 

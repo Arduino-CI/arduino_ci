@@ -2568,7 +2568,7 @@
 #define TRX24_TX_END_vect            _VECTOR(63)
 #define TRX24_TX_END_vect_num        63
 
-/* TRX24 AWAKE - transceiver is reaching state TRX_OFF */
+/* TRX24 AWAKE - tranceiver is reaching state TRX_OFF */
 #define TRX24_AWAKE_vect            _VECTOR(64)
 #define TRX24_AWAKE_vect_num        64
 

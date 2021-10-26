@@ -480,8 +480,8 @@ typedef struct PORTCFG_struct
 /* Clock and Event Output Port */
 typedef enum PORTCFG_CLKEVPIN_enum
 {
-    PORTCFG_CLKEVPIN_PIN7_gc = (0x00<<7),  /* Clock and Event Output on PIN 7 */
-    PORTCFG_CLKEVPIN_PIN4_gc = (0x01<<7),  /* Clock and Event Output on PIN 4 */
+    PORTCFG_CLKEVPIN_PIN7_gc = (0x00<<7),  /* Clock and Event Ouput on PIN 7 */
+    PORTCFG_CLKEVPIN_PIN4_gc = (0x01<<7),  /* Clock and Event Ouput on PIN 4 */
 } PORTCFG_CLKEVPIN_t;
 
 /* RTC Clock Output Port */
@@ -1198,7 +1198,7 @@ typedef enum ADC_CH_MUXNEG_enum
     ADC_CH_MUXNEG_PIN0_gc = (0x00<<0),  /* Input pin 0 */
 } ADC_CH_MUXNEG_t;
 
-/* Interrupt mode */
+/* Interupt mode */
 typedef enum ADC_CH_INTMODE_enum
 {
     ADC_CH_INTMODE_COMPLETE_gc = (0x00<<2),  /* Interrupt on conversion complete */
@@ -1471,7 +1471,7 @@ typedef struct XCL_struct
     register8_t CTRLG;  /* Control Register G */
     register8_t INTCTRL;  /* Interrupt Control Register */
     register8_t INTFLAGS;  /* Interrupt Flag Register */
-    register8_t PLC;  /* Peripheral Length Control Register  */
+    register8_t PLC;  /* Peripheral Lenght Control Register  */
     register8_t CNTL;  /* Counter Register Low */
     register8_t CNTH;  /* Counter Register High */
     register8_t CMPL;  /* Compare Register Low */
@@ -2059,7 +2059,7 @@ typedef enum TC45_EVSEL_enum
 typedef enum TC45_CCAMODE_enum
 {
     TC45_CCAMODE_DISABLE_gc = (0x00<<0),  /* Channel Disabled */
-    TC45_CCAMODE_COMP_gc = (0x01<<0),  /* Output Compare enabled */
+    TC45_CCAMODE_COMP_gc = (0x01<<0),  /* Ouput Compare enabled */
     TC45_CCAMODE_CAPT_gc = (0x02<<0),  /* Input Capture enabled */
     TC45_CCAMODE_BOTHCC_gc = (0x03<<0),  /* Both Compare and Capture enabled */
 } TC45_CCAMODE_t;
@@ -2068,7 +2068,7 @@ typedef enum TC45_CCAMODE_enum
 typedef enum TC45_CCBMODE_enum
 {
     TC45_CCBMODE_DISABLE_gc = (0x00<<2),  /* Channel Disabled */
-    TC45_CCBMODE_COMP_gc = (0x01<<2),  /* Output Compare enabled */
+    TC45_CCBMODE_COMP_gc = (0x01<<2),  /* Ouput Compare enabled */
     TC45_CCBMODE_CAPT_gc = (0x02<<2),  /* Input Capture enabled */
     TC45_CCBMODE_BOTHCC_gc = (0x03<<2),  /* Both Compare and Capture enabled */
 } TC45_CCBMODE_t;
@@ -2077,7 +2077,7 @@ typedef enum TC45_CCBMODE_enum
 typedef enum TC45_CCCMODE_enum
 {
     TC45_CCCMODE_DISABLE_gc = (0x00<<4),  /* Channel Disabled */
-    TC45_CCCMODE_COMP_gc = (0x01<<4),  /* Output Compare enabled */
+    TC45_CCCMODE_COMP_gc = (0x01<<4),  /* Ouput Compare enabled */
     TC45_CCCMODE_CAPT_gc = (0x02<<4),  /* Input Capture enabled */
     TC45_CCCMODE_BOTHCC_gc = (0x03<<4),  /* Both Compare and Capture enabled */
 } TC45_CCCMODE_t;
@@ -2086,7 +2086,7 @@ typedef enum TC45_CCCMODE_enum
 typedef enum TC45_CCDMODE_enum
 {
     TC45_CCDMODE_DISABLE_gc = (0x00<<6),  /* Channel Disabled */
-    TC45_CCDMODE_COMP_gc = (0x01<<6),  /* Output Compare enabled */
+    TC45_CCDMODE_COMP_gc = (0x01<<6),  /* Ouput Compare enabled */
     TC45_CCDMODE_CAPT_gc = (0x02<<6),  /* Input Capture enabled */
     TC45_CCDMODE_BOTHCC_gc = (0x03<<6),  /* Both Compare and Capture enabled */
 } TC45_CCDMODE_t;
@@ -2095,7 +2095,7 @@ typedef enum TC45_CCDMODE_enum
 typedef enum TC45_LCCAMODE_enum
 {
     TC45_LCCAMODE_DISABLE_gc = (0x00<<0),  /* Channel Disabled */
-    TC45_LCCAMODE_COMP_gc = (0x01<<0),  /* Output Compare enabled */
+    TC45_LCCAMODE_COMP_gc = (0x01<<0),  /* Ouput Compare enabled */
     TC45_LCCAMODE_CAPT_gc = (0x02<<0),  /* Input Capture enabled */
     TC45_LCCAMODE_BOTHCC_gc = (0x03<<0),  /* Both Compare and Capture enabled */
 } TC45_LCCAMODE_t;
@@ -2104,7 +2104,7 @@ typedef enum TC45_LCCAMODE_enum
 typedef enum TC45_LCCBMODE_enum
 {
     TC45_LCCBMODE_DISABLE_gc = (0x00<<2),  /* Channel Disabled */
-    TC45_LCCBMODE_COMP_gc = (0x01<<2),  /* Output Compare enabled */
+    TC45_LCCBMODE_COMP_gc = (0x01<<2),  /* Ouput Compare enabled */
     TC45_LCCBMODE_CAPT_gc = (0x02<<2),  /* Input Capture enabled */
     TC45_LCCBMODE_BOTHCC_gc = (0x03<<2),  /* Both Compare and Capture enabled */
 } TC45_LCCBMODE_t;
@@ -2113,7 +2113,7 @@ typedef enum TC45_LCCBMODE_enum
 typedef enum TC45_LCCCMODE_enum
 {
     TC45_LCCCMODE_DISABLE_gc = (0x00<<4),  /* Channel Disabled */
-    TC45_LCCCMODE_COMP_gc = (0x01<<4),  /* Output Compare enabled */
+    TC45_LCCCMODE_COMP_gc = (0x01<<4),  /* Ouput Compare enabled */
     TC45_LCCCMODE_CAPT_gc = (0x02<<4),  /* Input Capture enabled */
     TC45_LCCCMODE_BOTHCC_gc = (0x03<<4),  /* Both Compare and Capture enabled */
 } TC45_LCCCMODE_t;
@@ -2122,7 +2122,7 @@ typedef enum TC45_LCCCMODE_enum
 typedef enum TC45_LCCDMODE_enum
 {
     TC45_LCCDMODE_DISABLE_gc = (0x00<<6),  /* Channel Disabled */
-    TC45_LCCDMODE_COMP_gc = (0x01<<6),  /* Output Compare enabled */
+    TC45_LCCDMODE_COMP_gc = (0x01<<6),  /* Ouput Compare enabled */
     TC45_LCCDMODE_CAPT_gc = (0x02<<6),  /* Input Capture enabled */
     TC45_LCCDMODE_BOTHCC_gc = (0x03<<6),  /* Both Compare and Capture enabled */
 } TC45_LCCDMODE_t;
@@ -2131,7 +2131,7 @@ typedef enum TC45_LCCDMODE_enum
 typedef enum TC45_HCCAMODE_enum
 {
     TC45_HCCAMODE_DISABLE_gc = (0x00<<0),  /* Channel Disabled */
-    TC45_HCCAMODE_COMP_gc = (0x01<<0),  /* Output Compare enabled */
+    TC45_HCCAMODE_COMP_gc = (0x01<<0),  /* Ouput Compare enabled */
     TC45_HCCAMODE_CAPT_gc = (0x02<<0),  /* Input Capture enabled */
     TC45_HCCAMODE_BOTHCC_gc = (0x03<<0),  /* Both Compare and Capture enabled */
 } TC45_HCCAMODE_t;
@@ -2140,7 +2140,7 @@ typedef enum TC45_HCCAMODE_enum
 typedef enum TC45_HCCBMODE_enum
 {
     TC45_HCCBMODE_DISABLE_gc = (0x00<<2),  /* Channel Disabled */
-    TC45_HCCBMODE_COMP_gc = (0x01<<2),  /* Output Compare enabled */
+    TC45_HCCBMODE_COMP_gc = (0x01<<2),  /* Ouput Compare enabled */
     TC45_HCCBMODE_CAPT_gc = (0x02<<2),  /* Input Capture enabled */
     TC45_HCCBMODE_BOTHCC_gc = (0x03<<2),  /* Both Compare and Capture enabled */
 } TC45_HCCBMODE_t;
@@ -2149,7 +2149,7 @@ typedef enum TC45_HCCBMODE_enum
 typedef enum TC45_HCCCMODE_enum
 {
     TC45_HCCCMODE_DISABLE_gc = (0x00<<4),  /* Channel Disabled */
-    TC45_HCCCMODE_COMP_gc = (0x01<<4),  /* Output Compare enabled */
+    TC45_HCCCMODE_COMP_gc = (0x01<<4),  /* Ouput Compare enabled */
     TC45_HCCCMODE_CAPT_gc = (0x02<<4),  /* Input Capture enabled */
     TC45_HCCCMODE_BOTHCC_gc = (0x03<<4),  /* Both Compare and Capture enabled */
 } TC45_HCCCMODE_t;
@@ -2158,7 +2158,7 @@ typedef enum TC45_HCCCMODE_enum
 typedef enum TC45_HCCDMODE_enum
 {
     TC45_HCCDMODE_DISABLE_gc = (0x00<<6),  /* Channel Disabled */
-    TC45_HCCDMODE_COMP_gc = (0x01<<6),  /* Output Compare enabled */
+    TC45_HCCDMODE_COMP_gc = (0x01<<6),  /* Ouput Compare enabled */
     TC45_HCCDMODE_CAPT_gc = (0x02<<6),  /* Input Capture enabled */
     TC45_HCCDMODE_BOTHCC_gc = (0x03<<6),  /* Both Compare and Capture enabled */
 } TC45_HCCDMODE_t;
@@ -2381,7 +2381,7 @@ typedef struct WEX_struct
 /* Output Matrix Mode */
 typedef enum WEX_OTMX_enum
 {
-    WEX_OTMX_DEFAULT_gc = (0x00<<4),  /* Default Output Matrix Mode */
+    WEX_OTMX_DEFAULT_gc = (0x00<<4),  /* Default Ouput Matrix Mode */
     WEX_OTMX_FIRST_gc = (0x01<<4),  /* First Output matrix Mode */
     WEX_OTMX_SECOND_gc = (0x02<<4),  /* Second Output matrix Mode */
     WEX_OTMX_THIRD_gc = (0x03<<4),  /* Third Output matrix Mode */
@@ -2523,9 +2523,9 @@ typedef enum USART_LUTACT_enum
 typedef enum USART_PECACT_enum
 {
     USART_PECACT_OFF_gc = (0x00<<0),  /* Standard Mode */
-    USART_PECACT_PEC0_gc = (0x01<<0),  /* Variable Data Length in Reception */
-    USART_PECACT_PEC1_gc = (0x02<<0),  /* Variable Data Length in Transmission */
-    USART_PECACT_PERC01_gc = (0x03<<0),  /* Variable Data Length in both Reception and Transmission */
+    USART_PECACT_PEC0_gc = (0x01<<0),  /* Variable Data Lenght in Reception */
+    USART_PECACT_PEC1_gc = (0x02<<0),  /* Variable Data Lenght in Transmission */
+    USART_PECACT_PERC01_gc = (0x03<<0),  /* Variable Data Lenght in both Reception and Transmission */
 } USART_PECACT_t;
 
 
@@ -2548,10 +2548,10 @@ typedef struct SPI_struct
 /* SPI Mode */
 typedef enum SPI_MODE_enum
 {
-    SPI_MODE_0_gc = (0x00<<2),  /* SPI Mode 0, base clock at "0", sampling on leading edge (rising) & set-up on trailing edge (falling). */
-    SPI_MODE_1_gc = (0x01<<2),  /* SPI Mode 1, base clock at "0", set-up on leading edge (rising) & sampling on trailing edge (falling). */
-    SPI_MODE_2_gc = (0x02<<2),  /* SPI Mode 2, base clock at "1", sampling on leading edge (falling) & set-up on trailing edge (rising). */
-    SPI_MODE_3_gc = (0x03<<2),  /* SPI Mode 3, base clock at "1", set-up on leading edge (falling) & sampling on trailing edge (rising). */
+    SPI_MODE_0_gc = (0x00<<2),  /* SPI Mode 0, base clock at "0", sampling on leading edge (rising) & set-up on trailling edge (falling). */
+    SPI_MODE_1_gc = (0x01<<2),  /* SPI Mode 1, base clock at "0", set-up on leading edge (rising) & sampling on trailling edge (falling). */
+    SPI_MODE_2_gc = (0x02<<2),  /* SPI Mode 2, base clock at "1", sampling on leading edge (falling) & set-up on trailling edge (rising). */
+    SPI_MODE_3_gc = (0x03<<2),  /* SPI Mode 3, base clock at "1", set-up on leading edge (falling) & sampling on trailling edge (rising). */
 } SPI_MODE_t;
 
 /* Prescaler setting */
@@ -3870,8 +3870,8 @@ IO Module Instances. Mapped to memory.
 #define WDT_WCEN_bp  0  /* Windowed Mode Change Enable bit position. */
 
 /* WDT.STATUS  bit masks and bit positions */
-#define WDT_SYNCBUSY_bm  0x01  /* Synchronization busy bit mask. */
-#define WDT_SYNCBUSY_bp  0  /* Synchronization busy bit position. */
+#define WDT_SYNCBUSY_bm  0x01  /* Syncronization busy bit mask. */
+#define WDT_SYNCBUSY_bp  0  /* Syncronization busy bit position. */
 
 /* MCU - MCU Control */
 /* MCU.ANAINIT  bit masks and bit positions */
@@ -4154,8 +4154,8 @@ IO Module Instances. Mapped to memory.
 #define EDMA_CH_ERRIF_bm  0x20  /* Channel Transaction Error Interrupt Flag bit mask. */
 #define EDMA_CH_ERRIF_bp  5  /* Channel Transaction Error Interrupt Flag bit position. */
 
-#define EDMA_CH_TRNIF_bm  0x10  /* Channel Transaction Complete Interrupt Flag bit mask. */
-#define EDMA_CH_TRNIF_bp  4  /* Channel Transaction Complete Interrupt Flag bit position. */
+#define EDMA_CH_TRNIF_bm  0x10  /* Channel Transaction Complete Interrup Flag bit mask. */
+#define EDMA_CH_TRNIF_bp  4  /* Channel Transaction Complete Interrup Flag bit position. */
 
 #define EDMA_CH_ERRINTLVL_gm  0x0C  /* Channel Transaction Error Interrupt Level group mask. */
 #define EDMA_CH_ERRINTLVL_gp  2  /* Channel Transaction Error Interrupt Level group position. */
@@ -5294,24 +5294,24 @@ IO Module Instances. Mapped to memory.
 #define XCL_CC0IF_bp  4  /* Compare or Capture Channel 0 Interrupt Flag bit position. */
 
 /* XCL.PLC  bit masks and bit positions */
-#define XCL_PLC_gm  0xFF  /* Peripheral Length Control Bits group mask. */
-#define XCL_PLC_gp  0  /* Peripheral Length Control Bits group position. */
-#define XCL_PLC0_bm  (1<<0)  /* Peripheral Length Control Bits bit 0 mask. */
-#define XCL_PLC0_bp  0  /* Peripheral Length Control Bits bit 0 position. */
-#define XCL_PLC1_bm  (1<<1)  /* Peripheral Length Control Bits bit 1 mask. */
-#define XCL_PLC1_bp  1  /* Peripheral Length Control Bits bit 1 position. */
-#define XCL_PLC2_bm  (1<<2)  /* Peripheral Length Control Bits bit 2 mask. */
-#define XCL_PLC2_bp  2  /* Peripheral Length Control Bits bit 2 position. */
-#define XCL_PLC3_bm  (1<<3)  /* Peripheral Length Control Bits bit 3 mask. */
-#define XCL_PLC3_bp  3  /* Peripheral Length Control Bits bit 3 position. */
-#define XCL_PLC4_bm  (1<<4)  /* Peripheral Length Control Bits bit 4 mask. */
-#define XCL_PLC4_bp  4  /* Peripheral Length Control Bits bit 4 position. */
-#define XCL_PLC5_bm  (1<<5)  /* Peripheral Length Control Bits bit 5 mask. */
-#define XCL_PLC5_bp  5  /* Peripheral Length Control Bits bit 5 position. */
-#define XCL_PLC6_bm  (1<<6)  /* Peripheral Length Control Bits bit 6 mask. */
-#define XCL_PLC6_bp  6  /* Peripheral Length Control Bits bit 6 position. */
-#define XCL_PLC7_bm  (1<<7)  /* Peripheral Length Control Bits bit 7 mask. */
-#define XCL_PLC7_bp  7  /* Peripheral Length Control Bits bit 7 position. */
+#define XCL_PLC_gm  0xFF  /* Peripheral Lenght Control Bits group mask. */
+#define XCL_PLC_gp  0  /* Peripheral Lenght Control Bits group position. */
+#define XCL_PLC0_bm  (1<<0)  /* Peripheral Lenght Control Bits bit 0 mask. */
+#define XCL_PLC0_bp  0  /* Peripheral Lenght Control Bits bit 0 position. */
+#define XCL_PLC1_bm  (1<<1)  /* Peripheral Lenght Control Bits bit 1 mask. */
+#define XCL_PLC1_bp  1  /* Peripheral Lenght Control Bits bit 1 position. */
+#define XCL_PLC2_bm  (1<<2)  /* Peripheral Lenght Control Bits bit 2 mask. */
+#define XCL_PLC2_bp  2  /* Peripheral Lenght Control Bits bit 2 position. */
+#define XCL_PLC3_bm  (1<<3)  /* Peripheral Lenght Control Bits bit 3 mask. */
+#define XCL_PLC3_bp  3  /* Peripheral Lenght Control Bits bit 3 position. */
+#define XCL_PLC4_bm  (1<<4)  /* Peripheral Lenght Control Bits bit 4 mask. */
+#define XCL_PLC4_bp  4  /* Peripheral Lenght Control Bits bit 4 position. */
+#define XCL_PLC5_bm  (1<<5)  /* Peripheral Lenght Control Bits bit 5 mask. */
+#define XCL_PLC5_bp  5  /* Peripheral Lenght Control Bits bit 5 position. */
+#define XCL_PLC6_bm  (1<<6)  /* Peripheral Lenght Control Bits bit 6 mask. */
+#define XCL_PLC6_bp  6  /* Peripheral Lenght Control Bits bit 6 position. */
+#define XCL_PLC7_bm  (1<<7)  /* Peripheral Lenght Control Bits bit 7 mask. */
+#define XCL_PLC7_bp  7  /* Peripheral Lenght Control Bits bit 7 position. */
 
 /* XCL.CNTL  bit masks and bit positions */
 #define XCL_BCNTO_gm  0xFF  /* BTC0 Counter Byte group mask. */
@@ -7354,11 +7354,11 @@ IO Module Instances. Mapped to memory.
 #define NVM_FUSES_BODLVL2_bp  2  /* Brownout Detection Voltage Level bit 2 position. */
 
 /* NVM_FUSES.FUSEBYTE6  bit masks and bit positions */
-#define NVM_FUSES_FDACT5_bm  0x80  /* Fault Detection Action on TC5 bit mask. */
-#define NVM_FUSES_FDACT5_bp  7  /* Fault Detection Action on TC5 bit position. */
+#define NVM_FUSES_FDACT5_bm  0x80  /* Fault Dectection Action on TC5 bit mask. */
+#define NVM_FUSES_FDACT5_bp  7  /* Fault Dectection Action on TC5 bit position. */
 
-#define NVM_FUSES_FDACT4_bm  0x40  /* Fault Detection Action on TC4 bit mask. */
-#define NVM_FUSES_FDACT4_bp  6  /* Fault Detection Action on TC4 bit position. */
+#define NVM_FUSES_FDACT4_bm  0x40  /* Fault Dectection Action on TC4 bit mask. */
+#define NVM_FUSES_FDACT4_bp  6  /* Fault Dectection Action on TC4 bit position. */
 
 #define NVM_FUSES_VALUE_gm  0x3F  /* Port Pin Value group mask. */
 #define NVM_FUSES_VALUE_gp  0  /* Port Pin Value group position. */
@@ -7650,8 +7650,8 @@ IO Module Instances. Mapped to memory.
 #define FUSE_VALUE3  (unsigned char)~_BV(3)  /* Port Pin Value Bit 3 */
 #define FUSE_VALUE4  (unsigned char)~_BV(4)  /* Port Pin Value Bit 4 */
 #define FUSE_VALUE5  (unsigned char)~_BV(5)  /* Port Pin Value Bit 5 */
-#define FUSE_FDACT4  (unsigned char)~_BV(6)  /* Fault Detection Action on TC4 */
-#define FUSE_FDACT5  (unsigned char)~_BV(7)  /* Fault Detection Action on TC5 */
+#define FUSE_FDACT4  (unsigned char)~_BV(6)  /* Fault Dectection Action on TC4 */
+#define FUSE_FDACT5  (unsigned char)~_BV(7)  /* Fault Dectection Action on TC5 */
 #define FUSE6_DEFAULT  (0xFF)
 
 /* ========== Lock Bits ========== */

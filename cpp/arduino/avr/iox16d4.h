@@ -1178,7 +1178,7 @@ typedef enum ADC_EVACT_enum
     ADC_EVACT_CH0_gc = (0x01<<0),  /* First event triggers channel 0 */
 } ADC_EVACT_t;
 
-/* Interrupt mode */
+/* Interupt mode */
 typedef enum ADC_CH_INTMODE_enum
 {
     ADC_CH_INTMODE_COMPLETE_gc = (0x00<<2),  /* Interrupt on conversion complete */
@@ -1306,7 +1306,7 @@ typedef struct EBI_struct
     EBI_CS_t CS3;  /* Chip Select 3 */
 } EBI_t;
 
-/* Chip Select address space */
+/* Chip Select adress space */
 typedef enum EBI_CS_ASIZE_enum
 {
     EBI_CS_ASIZE_256B_gc = (0x00<<2),  /* 256 bytes */
@@ -3282,8 +3282,8 @@ IO Module Instances. Mapped to memory.
 
 
 /* WDT.STATUS  bit masks and bit positions */
-#define WDT_SYNCBUSY_bm  0x01  /* Synchronization busy bit mask. */
-#define WDT_SYNCBUSY_bp  0  /* Synchronization busy bit position. */
+#define WDT_SYNCBUSY_bm  0x01  /* Syncronization busy bit mask. */
+#define WDT_SYNCBUSY_bp  0  /* Syncronization busy bit position. */
 
 
 /* MCU - MCU Control */
