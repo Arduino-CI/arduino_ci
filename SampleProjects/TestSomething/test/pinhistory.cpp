@@ -22,7 +22,7 @@ unittest(pin_read_history_bool_to_ascii) {
   PinHistory<bool> phb;  // pin history bool
   phb.fromAscii("Yo", true);
 
-  // digitial history as serial data, big-endian
+  // digital history as serial data, big-endian
   bool binaryAscii[16] = {
       0, 1, 0, 1, 1, 0, 0, 1,
       0, 1, 1, 0, 1, 1, 1, 1};

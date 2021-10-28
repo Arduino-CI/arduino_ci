@@ -9,7 +9,7 @@ RSpec.describe ArduinoCI::ArduinoDownloader do
 
       expect{ad.existing_executable}.to raise_error(NotImplementedError)
       expect{ad.extracted_file}.to raise_error(NotImplementedError)
-      expect{ad.extracter}.to raise_error(NotImplementedError)
+      expect{ad.extractor}.to raise_error(NotImplementedError)
       expect{ad.extract("foo")}.to raise_error(NotImplementedError)
     end
 
@@ -32,7 +32,7 @@ RSpec.describe ArduinoCI::ArduinoDownloaderLinux do
       # expect(ad.force_installed_executable).to be nil
 
       expect(ad.downloader).to eq("open-uri")
-      expect(ad.extracter).to eq("tar")
+      expect(ad.extractor).to eq("tar")
     end
 
     it "has correct instance properties" do
@@ -55,7 +55,7 @@ RSpec.describe ArduinoCI::ArduinoDownloaderOSX do
       # expect(ad.force_installed_executable).to be nil
 
       expect(ad.downloader).to eq("open-uri")
-      expect(ad.extracter).to eq("tar")
+      expect(ad.extractor).to eq("tar")
     end
 
     it "has correct instance properties" do
@@ -80,7 +80,7 @@ if ArduinoCI::Host.os == :windows
         # expect(ad.force_installed_executable).to be nil
 
         expect(ad.downloader).to eq("open-uri")
-        expect(ad.extracter).to eq("Expand-Archive")
+        expect(ad.extractor).to eq("Expand-Archive")
       end
 
       it "has correct instance properties" do

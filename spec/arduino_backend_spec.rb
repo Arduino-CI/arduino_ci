@@ -70,7 +70,7 @@ RSpec.describe ArduinoCI::ArduinoBackend do
       fake_urls = ["http://foo.bar", "http://arduino.ci"]
       existing_urls = backend.board_manager_urls
 
-      # try to ensure maxiumum variability in the test
+      # try to ensure maximum variability in the test
       test_url_sets = (existing_urls.empty? ? [fake_urls, []] : [[], fake_urls]) + [existing_urls]
 
       test_url_sets.each do |urls|

@@ -9,9 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Allow use of watchdog timer in application code (though it doesn't do anything)
 - Show output from successful compile
-- `--min-free-space=N` command-line argument to fail if free space is below requred value
+- `--min-free-space=N` command-line argument to fail if free space is below required value
 - Add `_BV()` macro.
 - Support for `dtostrf()`
+- Added a CI workflow to check for spelling errors
 
 ### Changed
 - We now compile a shared library to be used for each test.
@@ -39,7 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Better indications of which example sketch is being compiled as part of testing
 
 ### Changed
-- Topmost installtion instructions now suggest `gem install arduino_ci` instead of using a `Gemfile`.  Reasons for using a `Gemfile` are listed and discussed separately further down the README.
+- Topmost installation instructions now suggest `gem install arduino_ci` instead of using a `Gemfile`.  Reasons for using a `Gemfile` are listed and discussed separately further down the README.
 - Stream::readStreamUntil() no longer returns delimiter
 
 ### Removed
@@ -100,7 +101,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.0.0] - 2020-11-29
 ### Added
 - Special handling of attempts to run the `arduino_ci.rb` CI script against the ruby library instead of an actual Arduino project
-- Explicit checks for attemping to test `arduino_ci` itself as if it were a library, resolving a minor annoyance to this developer.
+- Explicit checks for attempting to test `arduino_ci` itself as if it were a library, resolving a minor annoyance to this developer.
 - Code coverage tooling
 - Explicit check and warning for library directory names that do not match our guess of what the library should/would be called
 - Symlink tests for `Host`
@@ -207,7 +208,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.1.21] - 2019-02-07
 ### Added
 - Proper `ostream operator <<` for `nullptr`
-- Proper comparison operations fro `nullptr`
+- Proper comparison operations for `nullptr`
 
 ### Changed
 - `Compare.h` heavily refactored to use a smallish macro
@@ -235,7 +236,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Assertions on `nullptr`
-- The defintion of `nullptr`
+- The definition of `nullptr`
 
 
 ## [0.1.18] - 2019-01-29
@@ -298,7 +299,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Checking for (empty) set of platforms to build now precedes the check for examples to build; this avoids assuming that all libraries will have an example and dumping the file set when none are found
 
 ### Fixed
-- Spaces in the names of project directores no longer cause unit test binaries to fail execution
+- Spaces in the names of project directories no longer cause unit test binaries to fail execution
 - Configuration file overrides with `nil`s (or empty arrays) now properly override their base configuration
 
 
@@ -429,7 +430,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Replaced pipes with `Open3.capture3` to avoid deadlocks when commands have too much output
 - `ci_config.rb` now returns empty arrays (instead of nil) for undefined config keys
-- `pgmspace.h` explictly includes `<string.h>`
+- `pgmspace.h` explicitly includes `<string.h>`
 - `__FlashStringHelper` should now be properly mocked for compilation
 - `WString.h` bool operator now works and is simpler
 
@@ -437,7 +438,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.1.5] - 2018-03-05
 ### Added
 - Yaml files can have either `.yml` or `.yaml` extensions
-- Yaml files support select/reject critera for paths of unit tests for targeted testing
+- Yaml files support select/reject criteria for paths of unit tests for targeted testing
 - Pins now track history and can report it in Ascii (big- or little-endian) for digital sequences
 - Pins now accept an array (or string) of input bits for providing pin values across multiple reads
 - FlashStringHelper (and related macros) compilation mocks
@@ -490,7 +491,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - All test files were reporting "not ok" in TAP output.  Now they are OK iff all asserts pass.
 - Directories with a C++ extension in their name could cause problems.  Now they are ignored.
-- `CppLibrary` had trouble with symlinks. It shoudn't anymore.
+- `CppLibrary` had trouble with symlinks. It shouldn't anymore.
 - `CppLibrary` had trouble with vendor bundles.  It might in the future, but I have a better fix ready to go if it's an issue.
 
 

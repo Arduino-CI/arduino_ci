@@ -60,7 +60,7 @@ class MockEventQueue {
       return ++mSize;
     }
 
-    // fully specfied event
+    // fully specified event
     bool push(const T& v, unsigned long const time) {
       Event e = {v, time};
       return push(e);
