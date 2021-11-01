@@ -23,6 +23,11 @@ jobs:
       - name: Lint Code Base
         uses: github/super-linter/slim@v4
         env:
-          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_ALL_CODEBASE: true
+          FILTER_REGEX_EXCLUDE: ./cpp/arduino/avr/*
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_CPP: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_RUBY: true
+          VALIDATE_YAML: true
