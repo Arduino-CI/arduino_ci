@@ -30,6 +30,3 @@ jobs:
           VALIDATE_CPP: true
           VALIDATE_MARKDOWN: true
           VALIDATE_YAML: true
-          # Also run with other tests
-          RUBY_CONFIG_FILE: .rubocop.yml
-          VALIDATE_RUBY: true
