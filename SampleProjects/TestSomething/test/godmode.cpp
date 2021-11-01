@@ -75,7 +75,7 @@ unittest(pin_read_history) {
   assertEqual(future[5], analogRead(1));
 
   state->digitalPin[1].fromAscii("Yo", true);
-  // digitial history as serial data, big-endian
+  // digital history as serial data, big-endian
   bool binaryAscii[16] = {
     0, 1, 0, 1, 1, 0, 0, 1,
     0, 1, 1, 0, 1, 1, 1, 1

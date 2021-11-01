@@ -3,7 +3,7 @@
 //#include <inttypes.h>
 #include "ci/StreamTape.h"
 
-// definitions neeeded for Serial.begin's config arg
+// definitions needed for Serial.begin's config arg
 #define SERIAL_5N1 0x00
 #define SERIAL_6N1 0x02
 #define SERIAL_7N1 0x04

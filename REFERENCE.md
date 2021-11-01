@@ -2,7 +2,7 @@
 
 All tests are run via the same command: `bundle exec arduino_ci.rb`.
 
-This script is responsible for detecting and runing all unit tests, on every combination of Arduino platform and C++ compiler.  This is followed by attempting to detect and build every example on every "default" Arduino platform.
+This script is responsible for detecting and running all unit tests, on every combination of Arduino platform and C++ compiler.  This is followed by attempting to detect and build every example on every "default" Arduino platform.
 
 As a prerequisite, all Arduino "default" platforms are installed if they are not already available.
 
@@ -398,7 +398,7 @@ unittest(pin_read_history)
   bool bigEndian = true;
   state->digitalPin[1].fromAscii("Yo", bigEndian);
 
-  // digitial history as serial data, big-endian
+  // digital history as serial data, big-endian
   bool expectedBits[16] = {
     0, 1, 0, 1, 1, 0, 0, 1,  // Y
     0, 1, 1, 0, 1, 1, 1, 1   // o
@@ -515,7 +515,7 @@ For additional complexity, there are some cases where you want to use a pin as a
 ```C++
   int myPin = 3;
 
-  // digitial history as serial data, big-endian
+  // digital history as serial data, big-endian
   bool bigEndian = true;
   bool binaryAscii[24] = {
     0, 1, 0, 1, 1, 0, 0, 1,  // Y
