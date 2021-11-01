@@ -205,7 +205,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `GodmodeState` now uses timestamped PinHistory for Analog and Digital
 
 ### Fixed
-* `ArduinoQueue` no longer leaks memory
+- `ArduinoQueue` no longer leaks memory
 
 
 ## [0.1.21] - 2019-02-07

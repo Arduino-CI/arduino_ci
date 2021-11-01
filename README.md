@@ -120,13 +120,13 @@ gem 'arduino_ci', path: '/path/to/development/dir/for/arduino_ci'
 ### Installing the Dependencies
 
 Fulfilling the `arduino_ci` library dependency is as easy as running either of these two commands:
-```
+
+```sh
 $ bundle install   # adds packages to global library (may require admin rights)
 $ bundle install --path vendor/bundle   # adds packages to local library
 ```
 
 This will create a `Gemfile.lock` in your project directory, which you may optionally check into source control.  A broader introduction to ruby dependencies is outside the scope of this document.
-
 
 
 ### Running `arduino_ci.rb` To Test Your Library

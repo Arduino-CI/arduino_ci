@@ -11,8 +11,8 @@ ArduinoCI uses a very standard GitHub workflow.
 
 Pull requests will trigger a Travis CI job.  The following two commands will be expected to pass (so you may want to run them locally before opening the pull request):
 
- * `bundle exec rubocop -D .` - code style tests
- * `bundle exec rspec` - functional tests
+* `bundle exec rubocop -D .` - code style tests
+* `bundle exec rspec` - functional tests
 
  If you do not already have a working ruby development environment set up, run the following commands:
 
