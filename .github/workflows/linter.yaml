@@ -29,5 +29,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_CPP: true
           VALIDATE_MARKDOWN: true
-          MARKDOWN_CONFIG_FILE: .markdown-lint.json
+          MARKDOWN_CONFIG_FILE: /.markdown-lint.json
           VALIDATE_YAML: true

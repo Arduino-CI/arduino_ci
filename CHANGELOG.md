@@ -42,8 +42,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Topmost installation instructions now suggest `gem install arduino_ci` instead of using a `Gemfile`.  Reasons for using a `Gemfile` are listed and discussed separately further down the README.
-### Changed
-- Topmost installation instructions now suggest `gem install arduino_ci` instead of using a `Gemfile`.  Reasons for using a `Gemfile` are listed and discussed separately further down the README.
 - Stream::readStreamUntil() no longer returns delimiter
 
 ### Removed
@@ -301,8 +299,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Checking for (empty) set of platforms to build now precedes the check for examples to build; this avoids assuming that all libraries will have an example and dumping the file set when none are found
 
-### Fixed
-- Spaces in the names of project directories no longer cause unit test binaries to fail execution
 ### Fixed
 - Spaces in the names of project directories no longer cause unit test binaries to fail execution
 - Configuration file overrides with `nil`s (or empty arrays) now properly override their base configuration
