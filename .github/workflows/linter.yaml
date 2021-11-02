@@ -32,4 +32,3 @@ jobs:
           VALIDATE_YAML: true
           LINTER_RULES_PATH: /
           MARKDOWN_CONFIG_FILE: /.markdown-lint.json
- 
