@@ -30,4 +30,5 @@ jobs:
           VALIDATE_CPP: true
           VALIDATE_MARKDOWN: true
           MARKDOWN_CONFIG_FILE: /.markdown-lint.json
+          MARKDOWN_LINTER_RULES: /
           VALIDATE_YAML: true
