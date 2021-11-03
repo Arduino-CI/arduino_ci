@@ -3,13 +3,13 @@
 This project is a template for a CI-enabled (and unit testable) Arduino project of your own.
 
 
-## Features
+### Features
 
 * Travis CI
 * Unit tests
 * Development workflow matches CI workflow
 
-## Where The Magic Happens
+# Where The Magic Happens
 
 Here is the minimal set of files that you will need to adapt to your own project:
 
@@ -104,6 +104,6 @@ unittest_main()
 This test defines one `unittest` (a macro provided by `ArduinoUnitTests.h`), called `your_test_name`, which makes some assertions on the target library.  The `int main` section is boilerplate.
 
 
-## Credits
+# Credits
 
 This Arduino example was created in January 2018 by Ian Katz <ianfixes@gmail.com>.
