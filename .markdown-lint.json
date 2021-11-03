@@ -4,6 +4,7 @@
   "blanks-around-lists": false,
   "commands-show-output": false,
   "first-line-h1": false,
+  "header-increment": false,
   "line_length": {
     "line_length": 600
   },
@@ -12,6 +13,7 @@
   "no-multiple-blanks": {
     "maximum": 2
   },
+  "single-h1": false,
   "ul-indent": {
     "indent": 4
   }

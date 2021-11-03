@@ -121,7 +121,7 @@ gem 'arduino_ci', path: '/path/to/development/dir/for/arduino_ci'
 
 Fulfilling the `arduino_ci` library dependency is as easy as running either of these two commands:
 
-```sh
+```console
 $ bundle install   # adds packages to global library (may require admin rights)
 $ bundle install --path vendor/bundle   # adds packages to local library
 ```

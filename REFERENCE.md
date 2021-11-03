@@ -273,7 +273,7 @@ unittest_main()
 ```
 
 
-## Build Scripts
+# Build Scripts
 
 For most build environments, the only script that need be executed by the CI system is
 
@@ -314,7 +314,7 @@ bundle exec arduino_ci.rb
 Note the use of subshell to execute `bundle exec arduino_library_location.rb`.  This command simply returns the directory in which Arduino Libraries are (or should be) installed.
 
 
-## Mocks of Arduino Hardware Functions
+# Mocks of Arduino Hardware Functions
 
 Unless your library peforms something general (e.g. a mathematical or string function, a data structure like Queue, etc), you may need to ensure that your code interacts properly with the Arduino hardware.  There are a series of mocks to assist in this.
 
