@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `--min-free-space=N` command-line argument to fail if free space is below required value
 - Add `_BV()` macro.
 - Support for `dtostrf()`
+- Added a CI workflow to lint the code base
 - Added a CI workflow to check for spelling errors
 
 ### Changed
@@ -202,7 +203,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `GodmodeState` now uses timestamped PinHistory for Analog and Digital
 
 ### Fixed
-* `ArduinoQueue` no longer leaks memory
+- `ArduinoQueue` no longer leaks memory
 
 
 ## [0.1.21] - 2019-02-07
