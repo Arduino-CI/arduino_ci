@@ -108,7 +108,7 @@ module ArduinoCI
         dots = needed_dots
       end
 
-      open(package_url, ssl_verify_mode: 0, progress_proc: dot_printer) do |url|
+      URI.open(package_url, ssl_verify_mode: 0, progress_proc: dot_printer) do |url|
         File.open(package_file, 'wb') { |file| file.write(url.read) }
       end
     rescue Net::OpenTimeout, Net::ReadTimeout, OpenURI::HTTPError, URI::InvalidURIError => e
