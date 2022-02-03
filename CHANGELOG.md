@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fix missing `LED_BUILTIN` definition for Arduino Due.
+
 ### Security
 
 
