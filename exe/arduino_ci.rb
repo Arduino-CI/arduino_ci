@@ -442,7 +442,9 @@ def perform_unit_tests(cpp_library, file_config)
     puts
     compilers.each do |gcc_binary|
       # before compiling the tests, build a shared library of everything except the test code
-      next unless build_shared_library(gcc_binary, p, config, cpp_library)
+      build_result = build_shared_library(gcc_binary, p, config, cpp_library)
+      @failure_count += 1 unless build_result
+      next unless build_result
 
       # now build and run each test using the shared library build above
       config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|

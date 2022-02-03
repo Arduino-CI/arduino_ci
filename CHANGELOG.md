@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `arduino_ci.rb --help` no longer crashes
 
 - Fix missing `LED_BUILTIN` definition for Arduino Due, Zero and Circuit Playground.
+- No longer ignore failures if the first step of compiling files for the
+  unit test fails.
 
 ### Security
 
