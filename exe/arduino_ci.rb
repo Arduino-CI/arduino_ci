@@ -331,20 +331,20 @@ def get_annotated_compilers(config, cpp_library)
   compilers
 end
 
-# Handle existence or nonexistence of custom initialization script -- run it if you have it
+# Run custom custom script specified by user.
 #
 # This feature is to drive GitHub actions / docker image installation where the container is
 # in a clean-slate state but needs some way to have custom library versions injected into it.
 # In this case, the user provided script would fetch a git repo or some other method.
-def perform_custom_initialization()
-  script_path = ENV[VAR_CUSTOM_INIT_SCRIPT]
-  script_shell = ENV[VAR_CUSTOM_INIT_SCRIPT + "_SHELL"] || "/bin/sh"
-  inform("Environment variable #{VAR_CUSTOM_INIT_SCRIPT}") { "'#{script_path}'" }
+def run_custom_script(env_var)
+  script_path = ENV[env_var]
+  script_shell = ENV[env_var + "_SHELL"] || "/bin/sh"
+  inform("Environment variable #{env_var}") { "'#{script_path}'" }
   return if script_path.nil?
   return if script_path.empty?
 
   script_pathname = Pathname.getwd + script_path
-  assure("Script at #{VAR_CUSTOM_INIT_SCRIPT} exists") { script_pathname.exist? }
+  assure("Script at #{env_var} exists") { script_pathname.exist? }
 
   assure_multiline("Running #{script_pathname} with #{script_shell} in libraries working dir") do
     Dir.chdir(@backend.lib_dir) do
@@ -570,7 +570,7 @@ else
 end
 
 # run any library init scripts from the library itself.
-perform_custom_initialization()
+run_custom_script(VAR_CUSTOM_INIT_SCRIPT)
 
 # initialize library under test
 inform("Environment variable #{VAR_USE_SUBDIR}") { "'#{ENV[VAR_USE_SUBDIR]}'" }
