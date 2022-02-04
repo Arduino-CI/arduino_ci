@@ -62,6 +62,31 @@ action to install custom library versions (i.e. a version of a library that
 is different than what the library manager would automatically install by name)
 prior to CI test runs.
 
+### `ARDUINO_CI_PRE_UNIT_TEST_RUN_SCRIPT` and `ARDUINO_CI_POST_UNIT_TEST_RUN_SCRIPT` environment variables
+
+If set, the corresponding script will be run before/after each run of unit tests
+for each configured platform and for each compiler, e.g. if `.arduino-ci.yaml`
+contains
+
+```yaml
+unittest:
+  compilers:
+    - g++-10
+    - g++-11
+  libraries: ~
+  platforms:
+    - leonardo
+    - uno
+```
+
+the scripts will be invoked four times, with the current platform name being
+tested as the first parameter to the script and the current compiler used as
+the second parameter. It is not necessary to define both PRE and POST script;
+if you only want to run something before or after unit tests that's fine.
+By default the scripts are executed by `/bin/sh`, you can override by setting
+`ARDUINO_CI_PRE_UNIT_TEST_RUN_SCRIPT_SHELL` and
+`ARDUINO_CI_POST_UNIT_TEST_RUN_SCRIPT_SHELL` respectively.
+
 ### `USE_SUBDIR` environment variable
 
 If set, testing will be conducted in this subdirectory (relative to the working directory).  This is for monorepos or other layouts where the library directory and project root directory are different.
