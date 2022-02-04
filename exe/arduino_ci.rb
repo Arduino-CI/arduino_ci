@@ -333,8 +333,8 @@ end
 #
 # This feature is to drive GitHub actions / docker image installation where the container is
 # in a clean-slate state but needs some way to have custom library versions injected into it.
-# In this case, the user provided script would fetch a git repo or some other method
-def perform_custom_initialization(_config)
+# In this case, the user provided script would fetch a git repo or some other method.
+def perform_custom_initialization()
   script_path = ENV[VAR_CUSTOM_INIT_SCRIPT]
   inform("Environment variable #{VAR_CUSTOM_INIT_SCRIPT}") { "'#{script_path}'" }
   return if script_path.nil?
@@ -567,7 +567,7 @@ else
 end
 
 # run any library init scripts from the library itself.
-perform_custom_initialization(config)
+perform_custom_initialization()
 
 # initialize library under test
 inform("Environment variable #{VAR_USE_SUBDIR}") { "'#{ENV[VAR_USE_SUBDIR]}'" }
