@@ -51,9 +51,11 @@ This specifies the minimum free SRAM memory for stack/heap, in bytes, that _must
 
 ### `CUSTOM_INIT_SCRIPT` environment variable
 
-If set, testing will execute (using `/bin/sh`) the script referred to by this
-variable -- relative to the current working directory (i.e. the root directory
-of the library).  The script will _run_ in the Arduino Libraries directory
+If set, testing will execute the script referred to by this variable -- relative
+to the current working directory (i.e. the root directory of the library). By
+default the script will be executed using `/bin/sh` but you can override by
+setting `CUSTOM_INIT_SCRIPT_SHELL` (e.g to `powershell`, `/usr/bin/perl` etc).
+The script will _run_ in the Arduino Libraries directory
 (changing to the Libraries directory, running the script, and returning to the
 individual library root afterward).  This enables use cases like the GitHub
 action to install custom library versions (i.e. a version of a library that

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added support for `ARDUINO_CI_UNIT_TEST_EXTRA_COMPILER_FLAGS` environment variable.
+- Added support for overriding the shell used to execute `CUSTOM_INIT_SCRIPT`
+  by setting `CUSTOM_INIT_SCRIPT_SHELL` (defaults to `/bin/sh`).
 
 ### Changed
 

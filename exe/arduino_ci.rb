@@ -66,6 +66,8 @@ class Parser
         puts "Additionally, the following environment variables control the script:"
         puts " - #{VAR_CUSTOM_INIT_SCRIPT} - if set, this script will be run from the Arduino/libraries directory"
         puts "       prior to any automated library installation or testing (e.g. to install unofficial libraries)"
+        puts " - #{VAR_CUSTOM_INIT_SCRIPT}_SHELL - if set, this will override the"
+        puts "       default shell (/bin/sh) used to execute #{VAR_CUSTOM_INIT_SCRIPT} with."
         puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
         puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
         puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
@@ -336,6 +338,7 @@ end
 # In this case, the user provided script would fetch a git repo or some other method.
 def perform_custom_initialization()
   script_path = ENV[VAR_CUSTOM_INIT_SCRIPT]
+  script_shell = ENV[VAR_CUSTOM_INIT_SCRIPT + "_SHELL"] || "/bin/sh"
   inform("Environment variable #{VAR_CUSTOM_INIT_SCRIPT}") { "'#{script_path}'" }
   return if script_path.nil?
   return if script_path.empty?
@@ -343,9 +346,9 @@ def perform_custom_initialization()
   script_pathname = Pathname.getwd + script_path
   assure("Script at #{VAR_CUSTOM_INIT_SCRIPT} exists") { script_pathname.exist? }
 
-  assure_multiline("Running #{script_pathname} with sh in libraries working dir") do
+  assure_multiline("Running #{script_pathname} with #{script_shell} in libraries working dir") do
     Dir.chdir(@backend.lib_dir) do
-      IO.popen(["/bin/sh", script_pathname.to_s], err: [:child, :out]) do |io|
+      IO.popen([script_shell, script_pathname.to_s], err: [:child, :out]) do |io|
         io.each_line { |line| puts "    #{line}" }
       end
     end
