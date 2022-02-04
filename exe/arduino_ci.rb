@@ -336,7 +336,7 @@ end
 # This feature is to drive GitHub actions / docker image installation where the container is
 # in a clean-slate state but needs some way to have custom library versions injected into it.
 # In this case, the user provided script would fetch a git repo or some other method.
-def run_custom_script(env_var)
+def run_custom_script(env_var, *args)
   script_path = ENV[env_var]
   script_shell = ENV[env_var + "_SHELL"] || "/bin/sh"
   inform("Environment variable #{env_var}") { "'#{script_path}'" }
@@ -348,7 +348,7 @@ def run_custom_script(env_var)
 
   assure_multiline("Running #{script_pathname} with #{script_shell} in libraries working dir") do
     Dir.chdir(@backend.lib_dir) do
-      IO.popen([script_shell, script_pathname.to_s], err: [:child, :out]) do |io|
+      IO.popen([script_shell, script_pathname.to_s, *args], err: [:child, :out]) do |io|
         io.each_line { |line| puts "    #{line}" }
       end
     end
