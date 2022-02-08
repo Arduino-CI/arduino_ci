@@ -410,9 +410,9 @@ module ArduinoCI
       recursive = (additional_libraries + arduino_library_dependencies).map do |n|
         other_lib = self.class.new(n, @backend)
         other_lib.install unless other_lib.installed?
-        other_lib.all_arduino_library_dependencies!
+        [n] + other_lib.all_arduino_library_dependencies!
       end.flatten
-      (additional_libraries + recursive).uniq
+      recursive.uniq
     end
 
     # Arduino library directories containing sources -- only those of the dependencies
