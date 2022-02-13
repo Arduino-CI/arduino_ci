@@ -26,7 +26,7 @@ module ArduinoCI
     # Make any preparations or run any checks prior to making changes
     # @return [string] Error message, or nil if success
     def prepare
-      reqs = [self.class.extracter]
+      reqs = [self.class.extractor]
       reqs.each do |req|
         return "#{req} does not appear to be installed!" unless Host.which(req)
       end
@@ -36,14 +36,14 @@ module ArduinoCI
     # The technology that will be used to extract the download
     # (for logging purposes)
     # @return [string]
-    def self.extracter
+    def self.extractor
       "tar"
     end
 
     # Extract the package_file to extracted_file
     # @return [bool] whether successful
     def self.extract(package_file)
-      system(extracter, "xf", package_file, extracted_file)
+      system(extractor, "xf", package_file, extracted_file)
     end
 
   end

@@ -37,7 +37,7 @@ module ArduinoCI
     # The technology that will be used to extract the download
     # (for logging purposes)
     # @return [string]
-    def self.extracter
+    def self.extractor
       "Expand-Archive"
     end
 

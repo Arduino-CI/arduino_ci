@@ -72,9 +72,10 @@ RSpec.describe "TestSomething C++" do
         context "file #{tfn} (using #{compiler})" do
           around(:example) { |example| fld.in_pristine_fake_libraries_dir(example) }
 
-          before(:all) do
+          before(:each) do
             @cpp_library = backend.install_local_library(cpp_lib_path)
-            @exe = @cpp_library.build_for_test_with_configuration(path, [], compiler, config.gcc_config("uno"))
+            @cpp_library.build_shared_library([], compiler, config.gcc_config("uno"))
+            @exe = @cpp_library.build_for_test(path, compiler)
           end
 
           # extra debug for c++ failures

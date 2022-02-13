@@ -74,7 +74,7 @@ module ArduinoCI
     # The technology that will be used to extract the download
     # (for logging purposes)
     # @return [string]
-    def self.extracter
+    def self.extractor
       self.must_implement(__method__)
     end
 
@@ -108,7 +108,7 @@ module ArduinoCI
         dots = needed_dots
       end
 
-      open(package_url, ssl_verify_mode: 0, progress_proc: dot_printer) do |url|
+      URI.open(package_url, ssl_verify_mode: 0, progress_proc: dot_printer) do |url|
         File.open(package_file, 'wb') { |file| file.write(url.read) }
       end
     rescue Net::OpenTimeout, Net::ReadTimeout, OpenURI::HTTPError, URI::InvalidURIError => e
@@ -150,7 +150,7 @@ module ArduinoCI
       if File.exist?(self.class.extracted_file)
         @output.puts "#{arduino_package} seems to have been extracted already at #{self.class.extracted_file}"
       elsif File.exist?(package_file)
-        @output.print "Extracting archive with #{self.class.extracter}"
+        @output.print "Extracting archive with #{self.class.extractor}"
         self.class.extract(package_file)
         @output.puts
       end

@@ -24,6 +24,7 @@ class Parser
       ci_config: {
         "unittest" => unit_config
       },
+      min_free_space: 0,
     }
 
     opt_parser = OptionParser.new do |opts|
@@ -49,12 +50,16 @@ class Parser
         unit_config["testfiles"]["reject"] << p
       end
 
+      opts.on("--min-free-space=VALUE", "Minimum free SRAM memory for stack/heap") do |p|
+        output_options[:min_free_space] = p.to_i
+      end
+
       opts.on("-h", "--help", "Prints this help") do
         puts opts
         puts
         puts "Additionally, the following environment variables control the script:"
         puts " - #{VAR_CUSTOM_INIT_SCRIPT} - if set, this script will be run from the Arduino/libraries directory"
-        puts "       prior to any automated library installation or testing (e.g. to install unoffical libraries)"
+        puts "       prior to any automated library installation or testing (e.g. to install unofficial libraries)"
         puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
         puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
         puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
@@ -416,16 +421,16 @@ def perform_unit_tests(cpp_library, file_config)
 
   platforms.each do |p|
     puts
-    config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
-      unittest_name = unittest_path.basename.to_s
-      compilers.each do |gcc_binary|
+    compilers.each do |gcc_binary|
+      # before compiling the tests, build a shared library of everything except the test code
+      next unless build_shared_library(gcc_binary, p, config, cpp_library)
+
+      # now build and run each test using the shared library build above
+      config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
+        unittest_name = unittest_path.basename.to_s
+        puts "--------------------------------------------------------------------------------"
         attempt_multiline("Unit testing #{unittest_name} with #{gcc_binary} for #{p}") do
-          exe = cpp_library.build_for_test_with_configuration(
-            unittest_path,
-            config.aux_libraries_for_unittest,
-            gcc_binary,
-            config.gcc_config(p)
-          )
+          exe = cpp_library.build_for_test(unittest_path, gcc_binary)
           puts
           unless exe
             puts "Last command: #{cpp_library.last_cmd}"
@@ -437,6 +442,24 @@ def perform_unit_tests(cpp_library, file_config)
         end
       end
     end
+  end
+end
+
+def build_shared_library(gcc_binary, platform, config, cpp_library)
+  attempt_multiline("Build shared library with #{gcc_binary} for #{platform}") do
+    exe = cpp_library.build_shared_library(
+      config.aux_libraries_for_unittest,
+      gcc_binary,
+      config.gcc_config(platform)
+    )
+    puts
+    unless exe
+      puts "Last command: #{cpp_library.last_cmd}"
+      puts cpp_library.last_out
+      puts cpp_library.last_err
+      return false
+    end
+    return true
   end
 end
 
@@ -478,8 +501,18 @@ def perform_example_compilation_tests(cpp_library, config)
       board = ovr_config.platform_info[p][:board]
       attempt("Compiling #{example_name} for #{board}") do
         ret = @backend.compile_sketch(example_path, board)
-        unless ret
-          puts
+        puts
+        if ret
+          output = @backend.last_msg
+          puts output
+          i = output.index("leaving")
+          free_space = output[i + 8..-1].to_i
+          min_free_space = @cli_options[:min_free_space]
+          if free_space < min_free_space
+            puts "Free space of #{free_space} is less than minimum of #{min_free_space}"
+            ret = false
+          end
+        else
           puts "Last command: #{@backend.last_msg}"
           puts @backend.last_err
         end

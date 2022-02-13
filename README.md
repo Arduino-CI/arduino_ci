@@ -33,7 +33,7 @@ This project has the following dependencies:
 
 * `ruby` 2.5 or higher
 * A compiler like `g++` (on OSX, `clang` works; on Cygwin, use the `mingw-gcc-c++` package)
-* `python` (if using a board architecutre that requires it, e.g. ESP32, ESP8266; see [this issue](https://github.com/Arduino-CI/arduino_ci/issues/235#issuecomment-739629243)). Consider `pyserial` as well.
+* `python` (if using a board architecture that requires it, e.g. ESP32, ESP8266; see [this issue](https://github.com/Arduino-CI/arduino_ci/issues/235#issuecomment-739629243)). Consider `pyserial` as well.
 
 In that environment, you can install by running `gem install arduino_ci`.  To update to a latest version, use `gem update arduino_ci`.
 
@@ -51,7 +51,7 @@ Arduino expects all libraries to be in a specific `Arduino/libraries` directory 
 
 ### Changes to Your Repository
 
-Unit testing binaries created by `arduino_ci` should not be commited to the codebase.  To avoid that, add the following to your `.gitignore`:
+Unit testing binaries created by `arduino_ci` should not be committed to the codebase.  To avoid that, add the following to your `.gitignore`:
 
 ```ignore-list
 # arduino_ci unit test binaries and artifacts
@@ -120,13 +120,13 @@ gem 'arduino_ci', path: '/path/to/development/dir/for/arduino_ci'
 ### Installing the Dependencies
 
 Fulfilling the `arduino_ci` library dependency is as easy as running either of these two commands:
-```
+
+```console
 $ bundle install   # adds packages to global library (may require admin rights)
 $ bundle install --path vendor/bundle   # adds packages to local library
 ```
 
 This will create a `Gemfile.lock` in your project directory, which you may optionally check into source control.  A broader introduction to ruby dependencies is outside the scope of this document.
-
 
 
 ### Running `arduino_ci.rb` To Test Your Library

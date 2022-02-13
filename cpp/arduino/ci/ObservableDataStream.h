@@ -42,7 +42,7 @@ class DataStreamObserver {
       onByte(aByte);
     }
 
-    // entry poitn for bit-related handler
+    // entry point for bit-related handler
     void handleBit(bool aBit) {
       onBit(aBit);
 
