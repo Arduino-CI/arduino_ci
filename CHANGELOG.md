@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Update .gitattributes so we have consistent line endings
 - Change 266 files from CRLF to LF.
 - Run tests on push as well as on a pull request so developers can see impact
+- Align value indicators in assertion statements
+- Change some stderr messages in unittest to stdout and add flushes to prevent loss from SEGFAULT
 
 ### Deprecated
 
