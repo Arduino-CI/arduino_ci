@@ -49,24 +49,20 @@ class Test
         ~ReporterTAP() {}
 
         void onTestRunInit(int numTests) {
-          cerr << "TAP version 13" << endl;
-          cerr << 1 << ".." << numTests << endl; // we know how many tests, in advance
+          cout << "TAP version 13" << endl << flush;
+          cout << 1 << ".." << numTests << endl << flush; // we know how many tests, in advance
           mTestCounter = 0;
         }
 
         void onTestStart(TestData td) {
           mAssertCounter = 0;
           ++mTestCounter;
-          cerr << "# Subtest: " << td.name << endl;
+          cout << "# Subtest: " << td.name << endl << flush;
         }
 
         void onTestEnd(TestData td) {
-          cerr << "    1.." << mAssertCounter << endl;
-          if (td.result == RESULT_PASS) {
-            cerr << "ok " << mTestCounter << " - " << td.name << endl;
-          } else {
-            cerr << "not ok " << mTestCounter << " - " << td.name << endl;
-          }
+          cout << "    1.." << mAssertCounter << endl << flush;
+          cout << (td.result == RESULT_PASS ? "ok " : "not ok ") << mTestCounter << " - " << td.name << endl << flush;
         }
 
         // non-comparative assert
@@ -76,8 +72,10 @@ class Test
           const char* description,
           bool pass
         ) {
-          cerr << "    " << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - " << description << endl;
-          if (!pass) {
+          if (pass) {
+          	cout << "    ok " << ++mAssertCounter << " - " << description << endl << flush;
+					} else {
+          	cout << "    not ok " << ++mAssertCounter << " - " << description << endl << flush;
             cerr << "      ---" << endl;
             cerr << "      at:" << endl;
             cerr << "        file: " << file << endl;
@@ -99,9 +97,12 @@ class Test
           const char* rhsLabel,
           const B &rhs
         ) {
-          cerr << "    " << (pass ? "" : "not ") << "ok " << ++mAssertCounter << " - ";
-          cerr << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl;
-          if (!pass) {
+          if (pass) {
+						cout << "    ok " << ++mAssertCounter << " - ";
+						cout << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl << flush;
+					} else {
+						cout << "    not ok " << ++mAssertCounter << " - ";
+						cout << description << " " << lhsLabel << " " << opLabel << " " << rhsLabel << endl << flush;
             cerr << "      ---" << endl;
             cerr << "      operator: " << opLabel << endl;
             cerr << "      " << lhsRelevance << ": " << lhs << endl;
