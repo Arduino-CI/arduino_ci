@@ -163,7 +163,12 @@ module ArduinoCI
         @last_msg = "Can't compile Sketch at nonexistent path '#{path}'!"
         return false
       end
-      ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path.to_s)
+      use_dry_run = should_use_dry_run?
+      if use_dry_run
+        ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path.to_s)
+      else
+        ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", path.to_s)
+      end
       @last_msg = ret[:out]
       ret[:success]
     end
@@ -234,6 +239,14 @@ module ArduinoCI
       libraries_dir.mkpath unless libraries_dir.exist?
       Host.symlink(src_path, destination_path)
       cpp_library
+    end
+
+    private
+
+    def should_use_dry_run?
+      ret = capture_json("version")
+      version = ret[:json]["VersionString"]
+      Gem::Version.new(version) < Gem::Version.new('0.14')
     end
   end
 end
