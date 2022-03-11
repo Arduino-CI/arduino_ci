@@ -211,11 +211,11 @@ module ArduinoCI
         @last_msg = "Can't compile Sketch at nonexistent path '#{path}'!"
         return false
       end
-      use_dry_run = should_use_dry_run?
-      if use_dry_run
-        ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path.to_s)
+
+      ret = if should_use_dry_run?
+        run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path.to_s)
       else
-        ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", path.to_s)
+        run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", path.to_s)
       end
       @last_msg = ret[:out]
       ret[:success]
@@ -305,6 +305,10 @@ module ArduinoCI
       Hash[mem_info.names.map(&:to_sym).zip(mem_info.captures.map(&:to_i))]
     end
 
+    private
+
+    # Since the dry-run behavior became default in arduino-cli 0.14, the command line flag was removed
+    # @return [Bool] whether the --dry-run flag is available for this arduino-cli version
     def should_use_dry_run?
       ret = capture_json("version")
       version = ret[:json]["VersionString"]
