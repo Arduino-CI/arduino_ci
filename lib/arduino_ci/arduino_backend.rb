@@ -242,7 +242,7 @@ module ArduinoCI
     end
 
     private
-    
+
     # Since the dry-run behavior became default in arduino-cli 0.14, the command line flag was removed
     # @return [Bool] whether the --dry-run flag is available for this arduino-cli version
     def should_use_dry_run?
