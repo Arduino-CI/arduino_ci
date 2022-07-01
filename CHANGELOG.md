@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Properly report compile errors in GitHub Actions.
 - Fix copy/paste error to allow additional warnings for a platform
 - Apply "rule of three" to Client copy constructor and copy assignment operator
+- Run Windows tests on Windows not Ubuntu
 
 ### Security
 
