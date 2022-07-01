@@ -70,4 +70,4 @@ jobs:
         with:
           ruby-version: 2.6
       - name: Test SharedLibrary should fail
-        run: test.sh
+        run: ./SampleProjects/SharedLibrary/test.sh
