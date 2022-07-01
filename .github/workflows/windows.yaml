@@ -21,7 +21,7 @@ jobs:
           bundle exec rspec --backtrace
 
   "TestSomething":
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
