@@ -61,3 +61,21 @@ jobs:
           bundle exec ensure_arduino_installation.rb
           sh ./scripts/install.sh
           bundle exec arduino_ci.rb
+
+  SharedLibrary:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Test SharedLibrary should fail
+        run: |
+          g++ -v
+          cd SampleProjects/SharedLibrary
+          bundle install
+          bundle exec ensure_arduino_installation.rb
+          bundle exec arduino_ci.rb --skip-examples-compilation
+          if [ $? -ne 1 ]; then
+            exit 1
+          fi
