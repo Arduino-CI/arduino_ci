@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix copy/paste error to allow additional warnings for a platform
 - Apply "rule of three" to Client copy constructor and copy assignment operator
 - Run Windows tests on Windows not Ubuntu
+- Properly report error in building shared library
 
 ### Security
 

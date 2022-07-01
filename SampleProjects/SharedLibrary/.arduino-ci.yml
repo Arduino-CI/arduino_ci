@@ -1,0 +1,7 @@
+unittest:
+  platforms:
+    - mega2560
+
+compile:
+  platforms:
+    - mega2560

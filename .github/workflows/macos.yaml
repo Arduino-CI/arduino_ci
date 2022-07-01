@@ -61,3 +61,13 @@ jobs:
           bundle exec ensure_arduino_installation.rb
           sh ./scripts/install.sh
           bundle exec arduino_ci.rb
+
+  SharedLibrary:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Test SharedLibrary should fail
+        run: ./SampleProjects/SharedLibrary/test.sh
