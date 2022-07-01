@@ -1,5 +1,5 @@
 #include "SharedLibrary.h"
 
-void main() {
-  return foo; // unrecognized variable
+int main() {
+  return foo; // 'foo' was not declared in this scope
 }

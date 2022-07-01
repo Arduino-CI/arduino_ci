@@ -438,9 +438,7 @@ def perform_unit_tests(cpp_library, file_config)
         end
         next got_shared_library
       end
-      if !got_shared_library
-        next
-      end
+      next unless got_shared_library
       # now build and run each test using the shared library build above
       config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
         unittest_name = unittest_path.basename.to_s
