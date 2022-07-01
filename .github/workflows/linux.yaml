@@ -75,10 +75,10 @@ jobs:
           cd SampleProjects/SharedLibrary
           bundle install
           bundle exec ensure_arduino_installation.rb
-          eval "bundle exec arduino_ci.rb --skip-examples-compilation"
-          status = $?
-          echo "Status = $status"
-          if [ $status -ne 1 ]; then
-            exit 1
-          fi
-          exit 0
+          eval "bundle exec arduino_ci.rb --skip-examples-compilation; echo status = $?"
+          # status = $?
+          # echo "Status = $status"
+          # if [ $status -ne 1 ]; then
+          #   exit 1
+          # fi
+          # exit 0
