@@ -436,7 +436,7 @@ def perform_unit_tests(cpp_library, file_config)
           puts cpp_library.last_err
           got_shared_library = false
         end
-        next true # got_shared_library
+        next got_shared_library
       end
       if got_shared_library
         # now build and run each test using the shared library build above
