@@ -76,17 +76,19 @@ end
 # Read in command line options and make them read-only
 @cli_options = (Parser.parse ARGV).freeze
 
+def print_backend_logs
+  puts "========== Last backend command (if relevant):"
+  puts @backend.last_msg.to_s
+  puts "========== Backend Stdout:"
+  puts @backend.last_out
+  puts "========== Backend Stderr:"
+  puts @backend.last_err
+end
+
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate(final = nil)
   puts "Failures: #{@failure_count}"
-  unless @failure_count.zero? || final || @backend.nil?
-    puts "========== Last backend command (if relevant):"
-    puts @backend.last_msg.to_s
-    puts "========== Backend Stdout:"
-    puts @backend.last_out
-    puts "========== Backend Stderr:"
-    puts @backend.last_err
-  end
+  print_backend_logs unless @failure_count.zero? || final || @backend.nil?
   retcode = @failure_count.zero? ? 0 : 1
   exit(retcode)
 end
