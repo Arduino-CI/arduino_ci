@@ -11,7 +11,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - name: Check style, functionality, and usage
+      - name: Check style and functionality
         run: |
           g++ -v
           bundle install
@@ -27,7 +27,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - name: TestSomething
+      - name: Check usage - TestSomething
         run: |
           g++ -v
           bundle install
@@ -42,7 +42,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - name: Test NetworkLib from scratch
+      - name: Check usage - Test NetworkLib from scratch
         run: |
           g++ -v
           cd SampleProjects/NetworkLib
@@ -58,5 +58,5 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - name: Test SharedLibrary should fail
+      - name: Check usage - Test SharedLibrary should fail
         run: ./SampleProjects/SharedLibrary/test.sh
