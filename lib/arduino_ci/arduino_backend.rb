@@ -235,5 +235,21 @@ module ArduinoCI
       Host.symlink(src_path, destination_path)
       cpp_library
     end
+
+    # extract the "Free space remaining" amount from the last run
+    # @return [Hash] the usage, as a hash with keys :free, :max, and :globals
+    def last_bytes_usage
+      # Free-spacing syntax for regexes is not working today, not sure why. Make a string and convert to regex.
+      re_str = [
+        'Global variables use (?<globals>\d+) bytes',
+        '\(\d+%\) of dynamic memory,',
+        'leaving (?<free>\d+) bytes for local variables.',
+        'Maximum is (?<max>\d+) bytes.'
+      ].join(" ")
+      mem_info = Regexp.new(re_str).match(@last_msg)
+      return {} if mem_info.nil?
+
+      Hash[mem_info.names.map(&:to_sym).zip(mem_info.captures.map(&:to_i))]
+    end
   end
 end

@@ -103,5 +103,13 @@ RSpec.describe ArduinoCI::ArduinoBackend do
     it "Passes a simple INO sketch at #{sketch_path_ino}" do
       expect(backend.compile_sketch(sketch_path_ino, "arduino:avr:uno")).to be true
     end
+
+    it "Detects the bytes usage after compiling a sketch" do
+      expect(backend.compile_sketch(sketch_path_ino, "arduino:avr:uno")).to be true
+      the_bytes = backend.last_bytes_usage
+      expect(the_bytes[:globals]).to eq 9
+      expect(the_bytes[:free]).to eq 2039
+      expect(the_bytes[:max]).to eq 2048
+    end
   end
 end
