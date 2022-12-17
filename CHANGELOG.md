@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Update .gitattributes so we have consistent line endings
 - Change 266 files from CRLF to LF.
 - Run tests on push as well as on a pull request so developers can see impact
+- `ArduinoBackend` now exposes `config_file_path` instead of `config_dir` so that we can be explicit about [strange behavior in `arduino-cli` that isn't going to change anytime soon](https://github.com/arduino/arduino-cli/issues/753)
 
 ### Deprecated
 

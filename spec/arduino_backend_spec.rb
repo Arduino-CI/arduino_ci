@@ -1,10 +1,8 @@
 require "spec_helper"
-require 'pathname'
 
 def get_sketch(dir, file)
-  File.join(File.dirname(__FILE__), dir, file)
+  Pathname.new(__FILE__).parent + dir + file
 end
-
 
 RSpec.describe ArduinoCI::ArduinoBackend do
   next if skip_ruby_tests

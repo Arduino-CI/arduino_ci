@@ -17,15 +17,17 @@ module ArduinoCI
     # @return [String] the only allowable name for the arduino-cli config file.
     CONFIG_FILE_NAME = "arduino-cli.yaml".freeze
 
+    # Unfortunately we need error messaging around this quirk
+    # @return [String] The text to use for user apologies regarding the config file
+    CONFIG_FILE_APOLOGY = "Sorry this is weird, see https://github.com/arduino/arduino-cli/issues/753".freeze
+
     # the actual path to the executable on this platform
     # @return [Pathname]
     attr_accessor :binary_path
 
-    # If a custom config is deired (i.e. for testing), specify it here.
-    # Note https://github.com/arduino/arduino-cli/issues/753 : the --config-file option
-    # is really the director that contains the file
+    # The directory that contains the config file
     # @return [Pathname]
-    attr_accessor :config_dir
+    attr_reader :config_dir
 
     # @return [String] STDOUT of the most recently-run command
     attr_reader   :last_out
@@ -53,13 +55,59 @@ module ArduinoCI
       has_env = !args.empty? && args[0].instance_of?(Hash)
       env_vars = has_env ? args[0] : {}
       actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
-      custom_config = @config_dir.nil? ? [] : ["--config-file", @config_dir.to_s]
+      custom_config = @config_dir.nil? ? [] : ["--config-file", config_file_cli_param.to_s]
       full_args = [binary_path.to_s, "--format", "json"] + custom_config + actual_args
       full_cmd = env_vars.empty? ? full_args : [env_vars] + full_args
 
       shell_vars = env_vars.map { |k, v| "#{k}=#{v}" }.join(" ")
       @last_msg = " $ #{shell_vars} #{full_args.join(' ')}"
       work_fn.call(*full_cmd, **kwargs)
+    end
+
+    # The config file name to be passed on the command line
+    #
+    # Note https://github.com/arduino/arduino-cli/issues/753 : the --config-file option
+    # is really the directory that contains the file
+    #
+    # @return [Pathname]
+    def config_file_path
+      @config_dir + CONFIG_FILE_NAME
+    end
+
+    # The config file name to be passed on the command line
+    #
+    # Note https://github.com/arduino/arduino-cli/issues/753 : the --config-file option
+    # is really the directory that contains the file
+    #
+    # @param val [Pathname] The config file that will be used
+    # @return [Pathname]
+    def config_file_path=(rhs)
+      path_rhs = Pathname(rhs)
+      err_text = "Config file basename must be '#{CONFIG_FILE_NAME}'. #{CONFIG_FILE_APOLOGY}"
+      raise ArgumentError, err_text unless path_rhs.basename.to_s == CONFIG_FILE_NAME
+
+      @config_dir = path_rhs.dirname
+    end
+
+    # The config file to be used as a CLI param
+    #
+    # Apparently Linux wants the whole path, and OSX wants just the directory as of 0.29.0,
+    # it's all very annoying.  See unit tests.
+    #
+    # @return [Pathname] the path to use for a given OS
+    def config_file_cli_param
+      OS.linux? ? config_file_path : @config_dir
+    end
+
+    # Get an acceptable filename for use as a config file
+    #
+    # Note https://github.com/arduino/arduino-cli/issues/753 : the --config-file option
+    # is really the directory that contains the file
+    #
+    # @param dir [Pathname] the desired directory
+    # @return [Pathname]
+    def self.config_file_path_from_dir(dir)
+      Pathname(dir) + CONFIG_FILE_NAME
     end
 
     # build and run the arduino command

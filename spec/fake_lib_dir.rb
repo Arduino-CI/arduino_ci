@@ -11,9 +11,9 @@ class FakeLibDir
   def initialize
     # we will need to install some dummy libraries into a fake location, so do that on demand
     @config_dir = Pathname.new(Dir.pwd).realpath
-    @config_file = @config_dir + ArduinoCI::ArduinoBackend::CONFIG_FILE_NAME
+    @config_file = ArduinoCI::ArduinoBackend.config_file_path_from_dir(@config_dir)
     @backend = ArduinoCI::ArduinoInstallation.autolocate!
-    @backend.config_dir = @config_dir
+    @backend.config_file_path = @config_file
   end
 
   # designed to be called by rspec's "around" function
