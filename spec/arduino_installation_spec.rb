@@ -39,7 +39,7 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
 
   context "constants" do
     it "Exposes desired backend version" do
-      expect(ArduinoCI::ArduinoInstallation::DESIRED_ARDUINO_CLI_VERSION).to eq("0.13.0")
+      expect(ArduinoCI::ArduinoInstallation::DESIRED_ARDUINO_CLI_VERSION).to eq("0.29.0")
     end
   end
 

@@ -211,7 +211,7 @@ module ArduinoCI
         @last_msg = "Can't compile Sketch at nonexistent path '#{path}'!"
         return false
       end
-      ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path.to_s)
+      ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", path.to_s)
       @last_msg = ret[:out]
       ret[:success]
     end

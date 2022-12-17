@@ -12,7 +12,7 @@ module ArduinoCI
   # Manage the OS-specific install location of Arduino
   class ArduinoInstallation
 
-    DESIRED_ARDUINO_CLI_VERSION = "0.13.0".freeze
+    DESIRED_ARDUINO_CLI_VERSION = "0.29.0".freeze
 
     class << self
 
