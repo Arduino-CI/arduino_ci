@@ -4,23 +4,34 @@ name: windows
 on: [push, pull_request]
 
 jobs:
-  "rubocop_and_rspec":
+  "rubocop":
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - name: Check style and functionality
+      - name: Check style
         run: |
           g++ -v
           bundle install
           bundle exec rubocop --version
-          bundle exec rubocop -D .
-          echo "done with Rubocop (See https://github.com/Arduino-CI/arduino_ci/issues/315)"
+          bundle exec rubocop -D . --except Layout/EndOfLine
+
+  "rspec":
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Check functionality
+        run: |
+          g++ -v
+          bundle install
           bundle exec rspec --backtrace
 
-  "TestSomething":
+  TestSomething:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
