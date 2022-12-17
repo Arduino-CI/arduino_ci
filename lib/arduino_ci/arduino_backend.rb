@@ -96,7 +96,7 @@ module ArduinoCI
     #
     # @return [Pathname] the path to use for a given OS
     def config_file_cli_param
-      OS.linux? ? config_file_path : @config_dir
+      OS.osx? ? @config_dir : config_file_path
     end
 
     # Get an acceptable filename for use as a config file

@@ -80,10 +80,10 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
         expect(config_dir).to exist
         expect(config_file).to exist
         ret = ArduinoCI::Host.run_and_capture(*bug_753_cmd(backend, config_file))
-        if OS.linux?
-          expect(ret[:out].lines[0]).to include(config_success_msg(config_file))
-        else
+        if OS.osx?
           expect(ret[:out].lines[0]).to include(config_fail_msg)
+        else
+          expect(ret[:out].lines[0]).to include(config_success_msg(config_file))
         end
       end
     end
@@ -104,10 +104,10 @@ RSpec.describe ArduinoCI::ArduinoInstallation do
         expect(config_dir).to exist
         expect(config_file).to exist
         ret = ArduinoCI::Host.run_and_capture(*bug_753_cmd(backend, config_dir))
-        if OS.linux?
-          expect(ret[:out].lines[0]).to include(config_fail_msg)
-        else
+        if OS.osx?
           expect(ret[:out].lines[0]).to include(config_success_msg(config_file))
+        else
+          expect(ret[:out].lines[0]).to include(config_fail_msg)
         end
       end
     end
