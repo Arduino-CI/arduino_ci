@@ -46,18 +46,6 @@ class FakeLibDir
           # cool, already done
         end
       end
-    ensure
-      # the tmp dir will be cleaned up automatically, but if we did our own symlink hack then here is the place to clean it up
-      if ArduinoCI::Host.needs_symlink_hack?
-        stdout, stderr, exitstatus = Open3.capture3('cmd.exe', "/c rmdir /s /q #{ArduinoCI::Host.pathname_to_windows(d)}")
-        unless exitstatus.success?
-          puts "====== rmdir of #{d} failed"
-          puts stdout
-          puts stderr
-        end
-      end
     end
   end
-
-
 end
