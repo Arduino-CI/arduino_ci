@@ -48,6 +48,7 @@ module ArduinoCI
       @last_out           = ""
       @last_err           = ""
       @last_msg           = ""
+      @config_dir_hack    = false
     end
 
     def _wrap_run(work_fn, *args, **kwargs)
@@ -55,7 +56,8 @@ module ArduinoCI
       has_env = !args.empty? && args[0].instance_of?(Hash)
       env_vars = has_env ? args[0] : {}
       actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
-      custom_config = @config_dir.nil? ? [] : ["--config-file", config_file_cli_param.to_s]
+      custom_config = []
+      custom_config += ["--config-file", config_file_cli_param.to_s] unless @config_dir_hack || @config_dir.nil?
       full_args = [binary_path.to_s, "--format", "json"] + custom_config + actual_args
       full_cmd = env_vars.empty? ? full_args : [env_vars] + full_args
 
@@ -91,12 +93,11 @@ module ArduinoCI
 
     # The config file to be used as a CLI param
     #
-    # Apparently Linux wants the whole path, and OSX wants just the directory as of 0.29.0,
-    # it's all very annoying.  See unit tests.
+    # This format changes based on version, which is very annoying.  See unit tests.
     #
     # @return [Pathname] the path to use for a given OS
     def config_file_cli_param
-      OS.osx? ? @config_dir : config_file_path
+      should_use_config_dir? ? @config_dir : config_file_path
     end
 
     # Get an acceptable filename for use as a config file
@@ -307,14 +308,29 @@ module ArduinoCI
       Hash[mem_info.names.map(&:to_sym).zip(mem_info.captures.map(&:to_i))]
     end
 
-    private
+    # @return [String] the arduino-cli version that the backend is using, as String
+    def version_str
+      capture_json("version")[:json]["VersionString"]
+    end
+
+    # @return [Gem::Version] the arduino-cli version that the backend is using, as a semver object
+    def version
+      Gem::Version.new(version_str)
+    end
 
     # Since the dry-run behavior became default in arduino-cli 0.14, the command line flag was removed
     # @return [Bool] whether the --dry-run flag is available for this arduino-cli version
     def should_use_dry_run?
-      ret = capture_json("version")
-      version = ret[:json]["VersionString"]
-      Gem::Version.new(version) < Gem::Version.new('0.14')
+      version < Gem::Version.new('0.14')
+    end
+
+    # Since the config dir behavior has changed from a directory to a file (At some point??)
+    # @return [Bool] whether to specify configuration by directory or filename
+    def should_use_config_dir?
+      @config_dir_hack = true   # prevent an infinite loop when trying to run the command
+      version < Gem::Version.new('0.14')
+    ensure
+      @config_dir_hack = false
     end
   end
 end
