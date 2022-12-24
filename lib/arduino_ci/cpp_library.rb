@@ -98,7 +98,7 @@ module ArduinoCI
     #
     # @return [bool]
     def installed?
-      path.exist?
+      path.exist? || path.symlink?
     end
 
     # install a library by name

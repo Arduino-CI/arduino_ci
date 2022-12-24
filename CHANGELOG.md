@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - A copy/paste error that prevented compiler warning flags from being supplied has been fixed, via jgfoster
 - RSpec was not communicating compile errors from unit test executables that failed to build. Now it does, via jgfoster
 - Windows paths now avoid picking up backslashes, for proper equality comparisons
+- Libraries are now considered installed if their entry is a symlink (for which `exist?` would return `false`)
 
 ### Security
 
