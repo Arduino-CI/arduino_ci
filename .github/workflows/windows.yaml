@@ -18,7 +18,7 @@ jobs:
           bundle exec rubocop --version
           bundle exec rubocop -D . --except Layout/EndOfLine
 
-  "rspec":
+  "rspec-windows":
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,7 +29,7 @@ jobs:
         run: |
           g++ -v
           bundle install
-          bundle exec rspec --backtrace
+          bundle exec rspec
 
   TestSomething:
     runs-on: windows-latest
