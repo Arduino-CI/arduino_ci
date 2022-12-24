@@ -82,7 +82,9 @@ RSpec.describe ArduinoCI::CppLibrary do
     fld = FakeLibDir.new
     backend = fld.backend
     cpp_lib_path = sampleproj_path + "DoSomething"
-    cpp_library = verified_install(backend, cpp_lib_path)
+
+    around(:example) { |example| fld.in_pristine_fake_libraries_dir(example) }
+    before(:each) { @cpp_library = verified_install(backend, cpp_lib_path) }
 
     # the keys are the methods of cpp_library to call
     # the results are what we expect to see based on the config we loaded
@@ -95,7 +97,7 @@ RSpec.describe ArduinoCI::CppLibrary do
 
     methods_and_results.each do |m, expected|
       it "Creates #{m} from config" do
-        expect(expected).to eq(cpp_library.send(m, bogo_config))
+        expect(expected).to eq(@cpp_library.send(m, bogo_config))
       end
     end
 
