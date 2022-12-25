@@ -71,4 +71,23 @@ RSpec.describe ArduinoCI::Host do
     end
   end
 
+  context "merge_capture_results" do
+    it "merges results" do
+      a1 = { out: "one", err: "ONE", success: true }
+      a2 = { out: "two", err: "TWO", success: false }
+      a3 = { out: "three", err: "THREE", success: true }
+      res = ArduinoCI::Host.merge_capture_results([a1, a2, a3])
+      expect(res[:out]).to eq("onetwothree")
+      expect(res[:err]).to eq("ONETWOTHREE")
+      expect(res[:success]).to eq(false)
+    end
+
+    it "handles empty input" do
+      res = ArduinoCI::Host.merge_capture_results([])
+      expect(res[:out]).to eq("")
+      expect(res[:err]).to eq("")
+      expect(res[:success]).to eq(true)
+    end
+  end
+
 end

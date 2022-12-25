@@ -35,6 +35,16 @@ module ArduinoCI
       { out: stdout, err: stderr, success: status.exitstatus.zero? }
     end
 
+    def self.merge_capture_results(args)
+      result = { out: "", err: "", success: true }
+      args.each do |a|
+        result[:out] = result[:out] + a[:out]
+        result[:err] = result[:err] + a[:err]
+        result[:success] = a[:success] unless a[:success]
+      end
+      result
+    end
+
     def self.run_and_output(*args, **kwargs)
       system(*args, **kwargs)
     end
