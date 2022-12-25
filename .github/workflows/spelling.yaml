@@ -21,6 +21,6 @@ jobs:
           fetch-depth: 0
 
       - name: Check Spelling
-        uses: codespell-project/actions-codespell@master
+        uses: codespell-project/actions-codespell@v1.0
         with:
           check_filenames: true
