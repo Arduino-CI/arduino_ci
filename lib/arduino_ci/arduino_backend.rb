@@ -182,7 +182,10 @@ module ArduinoCI
       result = if @additional_urls.empty?
         run_and_capture("core", "install", boardfamily)
       else
-        run_and_capture("core", "install", boardfamily, "--additional-urls", @additional_urls.join(","))
+        urls = @additional_urls.join(",")
+        res1 = run_and_capture("core", "update-index", "--additional-urls", urls)
+        res2 = run_and_capture("core", "install", boardfamily, "--additional-urls", urls)
+        Host.merge_capture_results([res1, res2])
       end
       result[:success]
     end
