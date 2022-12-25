@@ -13,6 +13,7 @@ Pull requests will trigger a CI job.  The following two commands will be expecte
 
 * `bundle exec rubocop -D .` - code style tests
 * `bundle exec rspec` - functional tests
+* `bundle exec rspec spec/some_file_spec.rb` - functional tests for just some file
 
  If you do not already have a working ruby development environment set up, run the following commands:
 
