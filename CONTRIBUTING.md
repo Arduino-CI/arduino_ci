@@ -18,8 +18,8 @@ Pull requests will trigger a CI job.  The following two commands will be expecte
 
 ```shell
 apt-get install ruby ruby-dev    # For Debian/Ubuntu
-dnf install ruby ruby-devel      # For Fedora
-yum install ruby ruby-devel      # For Centos/RHEL
+dnf install ruby ruby-devel      # For Fedora/newer Centos/RHEL
+yum install ruby ruby-devel      # For older Centos/RHEL
 gem install bundler
 ```
 
