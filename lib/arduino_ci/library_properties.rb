@@ -11,6 +11,8 @@ module ArduinoCI
     # @param path [Pathname] The path to the library.properties file
     def initialize(path)
       @fields = {}
+      raise ArgumentError, "Library properties at '#{path}' doesn't exist" unless path.exist?
+
       File.foreach(path) do |line_with_delim|
         line = line_with_delim.chomp
         parts = line.split("=", 2)

@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for `dtostrf()`
 - Added a CI workflow to lint the code base
 - Added a CI workflow to check for spelling errors
+- Extraction of byes usage in a compiled sketch is now calculated in a method: `ArduinoBackend.last_bytes_usage`
+- Added ```nano_every``` platform to represent ```arduino:megaavr``` architecture
+- Working directory is now printed in test runner output
+- Explicitly include `irb` via rubygems
 
 ### Changed
 - We now compile a shared library to be used for each test.
@@ -22,6 +26,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Update .gitattributes so we have consistent line endings
 - Change 266 files from CRLF to LF.
 - Run tests on push as well as on a pull request so developers can see impact
+- `ArduinoBackend` now exposes `config_file_path` instead of `config_dir` so that we can be explicit about [strange behavior in `arduino-cli` that isn't going to change anytime soon](https://github.com/arduino/arduino-cli/issues/753)
+- Use `arduino-cli` version `0.29.0` as the backend
+- Test runner detects console width if possible, allowing variable width from 80-132 chars
 
 ### Deprecated
 
@@ -33,6 +40,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Apply "rule of three" to Client copy constructor and copy assignment operator
 - Run Windows tests on Windows not Ubuntu
 - Properly report error in building shared library
+- A missing `examples` directory no longer causes a crash in `cpp_library.rb`
+- Referring to an undefined platform no longer causes a crash; it's now a helpful error message
+- A copy/paste error that prevented compiler warning flags from being supplied has been fixed, via jgfoster
+- RSpec was not communicating compile errors from unit test executables that failed to build. Now it does, via jgfoster
+- Windows paths now avoid picking up backslashes, for proper equality comparisons
+- Libraries are now considered installed if their entry is a symlink (for which `exist?` would return `false`)
 
 ### Security
 

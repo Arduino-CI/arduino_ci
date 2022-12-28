@@ -3,6 +3,7 @@ require "arduino_ci/host"
 require 'pathname'
 require 'shellwords'
 require 'os'
+require 'fileutils'
 
 HPP_EXTENSIONS = [".hpp", ".hh", ".h", ".hxx", ".h++"].freeze
 CPP_EXTENSIONS = [".cpp", ".cc", ".c", ".cxx", ".c++"].freeze
@@ -97,7 +98,7 @@ module ArduinoCI
     #
     # @return [bool]
     def installed?
-      path.exist?
+      path.exist? || path.symlink?
     end
 
     # install a library by name
@@ -135,7 +136,8 @@ module ArduinoCI
     # @param installed_library_path [String] The library to query
     # @return [Array<String>] Example sketch files
     def example_sketches
-      reported_dirs = info["library"]["examples"].map(&Pathname::method(:new))
+      examples = info["library"].fetch("examples", [])
+      reported_dirs = examples.map(&Pathname::method(:new))
       reported_dirs.map { |e| e + e.basename.sub_ext(".ino") }.select(&:exist?).sort_by(&:to_s)
     end
 
@@ -511,6 +513,15 @@ module ArduinoCI
       executable
     end
 
+    # Add build dir to path
+    def add_build_dirs_to_env
+      ENV["LD_LIBRARY_PATH"] = BUILD_DIR unless OS.windows?
+      paths = ENV["PATH"].split(File::PATH_SEPARATOR)
+      return if paths.include?(BUILD_DIR)
+
+      ENV["PATH"] = BUILD_DIR + File::PATH_SEPARATOR + ENV["PATH"] if OS.windows?
+    end
+
     # build a shared library to be used by each test
     #
     # The dependent libraries configuration is appended with data from library.properties internal to the library under test
@@ -520,15 +531,9 @@ module ArduinoCI
     # @param ci_gcc_config [Hash] The GCC config object
     # @return [Pathname] path to the compiled test executable
     def build_shared_library(aux_libraries, gcc_binary, ci_gcc_config)
-      Dir.mkdir BUILD_DIR unless File.exist?(BUILD_DIR)
-      if OS.windows?
-        flag = ENV["PATH"].include? ";"
-        ENV["PATH"] = BUILD_DIR + (flag ? ";" : ":") + ENV["PATH"] unless ENV["PATH"].include? BUILD_DIR
-        suffix = "dll"
-      else
-        ENV["LD_LIBRARY_PATH"] = BUILD_DIR
-        suffix = "so"
-      end
+      FileUtils.mkdir_p(BUILD_DIR)
+      add_build_dirs_to_env
+      suffix = OS.windows? ? "dll" : "so"
       full_lib_name = "#{BUILD_DIR}/lib#{LIBRARY_NAME}.#{suffix}"
       executable = Pathname.new(full_lib_name).expand_path
       File.delete(executable) if File.exist?(executable)

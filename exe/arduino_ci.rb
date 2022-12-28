@@ -3,8 +3,14 @@ require 'arduino_ci'
 require 'set'
 require 'pathname'
 require 'optparse'
+require 'io/console'
 
-WIDTH = 80
+# be flexible between 80 and 132 cols of output
+WIDTH = begin
+  [132, [80, IO::console.winsize[1] - 2].max].min
+rescue NoMethodError
+  80
+end
 VAR_CUSTOM_INIT_SCRIPT = "CUSTOM_INIT_SCRIPT".freeze
 VAR_USE_SUBDIR         = "USE_SUBDIR".freeze
 VAR_EXPECT_EXAMPLES    = "EXPECT_EXAMPLES".freeze
@@ -24,7 +30,7 @@ class Parser
       ci_config: {
         "unittest" => unit_config
       },
-      min_free_space: 0,
+      min_free_space: nil,
     }
 
     opt_parser = OptionParser.new do |opts|
@@ -50,7 +56,7 @@ class Parser
         unit_config["testfiles"]["reject"] << p
       end
 
-      opts.on("--min-free-space=VALUE", "Minimum free SRAM memory for stack/heap") do |p|
+      opts.on("--min-free-space=VALUE", "Minimum free SRAM memory for stack/heap, in bytes") do |p|
         output_options[:min_free_space] = p.to_i
       end
 
@@ -76,23 +82,25 @@ end
 # Read in command line options and make them read-only
 @cli_options = (Parser.parse ARGV).freeze
 
+def print_backend_logs
+  puts "========== Last backend command (if relevant):"
+  puts @backend.last_msg.to_s
+  puts "========== Backend Stdout:"
+  puts @backend.last_out
+  puts "========== Backend Stderr:"
+  puts @backend.last_err
+end
+
 # terminate after printing any debug info.  TODO: capture debug info
 def terminate(final = nil)
   puts "Failures: #{@failure_count}"
-  unless @failure_count.zero? || final || @backend.nil?
-    puts "========== Last backend command (if relevant):"
-    puts @backend.last_msg.to_s
-    puts "========== Backend Stdout:"
-    puts @backend.last_out
-    puts "========== Backend Stderr:"
-    puts @backend.last_err
-  end
+  print_backend_logs unless @failure_count.zero? || final || @backend.nil?
   retcode = @failure_count.zero? ? 0 : 1
   exit(retcode)
 end
 
 # make a nice status line for an action and react to the action
-# TODO / note to self: inform_multline is tougher to write
+# TODO / note to self: inform_multiline is tougher to write
 #   without altering the signature because it only leaves space
 #   for the checkmark _after_ the multiline, it doesn't know how
 #   to make that conditionally the body
@@ -113,7 +121,7 @@ def perform_action(message, multiline, mark_fn, on_fail_msg, tally_on_fail, abor
   $stdout.flush
   result = yield
   mark = mark_fn.nil? ? "" : mark_fn.call(result)
-  # if multline, put checkmark at full width
+  # if multiline, put checkmark at full width
   print endline if multiline
   puts mark.to_s.rjust(WIDTH - line.length, " ")
   unless result
@@ -417,28 +425,18 @@ def perform_unit_tests(cpp_library, file_config)
     end
   end
 
+  # having undefined platforms is a config error
+  platforms.select { |p| config.platform_info[p].nil? }.each do |p|
+    assure("Platform '#{p}' is defined in configuration files") { false }
+  end
+
   install_arduino_library_dependencies(config.aux_libraries_for_unittest, "<unittest/libraries>")
 
   platforms.each do |p|
     puts
     compilers.each do |gcc_binary|
       # before compiling the tests, build a shared library of everything except the test code
-      got_shared_library = true
-      attempt_multiline("Build shared library with #{gcc_binary} for #{p}") do
-        exe = cpp_library.build_shared_library(
-          config.aux_libraries_for_unittest,
-          gcc_binary,
-          config.gcc_config(p)
-        )
-        unless exe
-          puts "Last command: #{cpp_library.last_cmd}"
-          puts cpp_library.last_out
-          puts cpp_library.last_err
-          got_shared_library = false
-        end
-        next got_shared_library
-      end
-      next unless got_shared_library
+      next unless build_shared_library(gcc_binary, p, config, cpp_library)
 
       # now build and run each test using the shared library build above
       config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
@@ -457,6 +455,23 @@ def perform_unit_tests(cpp_library, file_config)
         end
       end
     end
+  end
+end
+
+def build_shared_library(gcc_binary, platform, config, cpp_library)
+  attempt_multiline("Build shared library with #{gcc_binary} for #{platform}") do
+    exe = cpp_library.build_shared_library(
+      config.aux_libraries_for_unittest,
+      gcc_binary,
+      config.gcc_config(platform)
+    )
+    puts
+    unless exe
+      puts "Last command: #{cpp_library.last_cmd}"
+      puts cpp_library.last_out
+      puts cpp_library.last_err
+    end
+    exe
   end
 end
 
@@ -482,6 +497,7 @@ def perform_example_compilation_tests(cpp_library, config)
     ovr_config = config.from_example(example_path)
     platforms = choose_platform_set(ovr_config, "library example", ovr_config.platforms_to_build, cpp_library.library_properties)
 
+    # having no platforms defined is probably an error
     if platforms.empty?
       explain_and_exercise_envvar(VAR_EXPECT_EXAMPLES, "examples compilation", "platforms and architectures") do
         puts "    Configured platforms: #{ovr_config.platforms_to_build}"
@@ -491,29 +507,31 @@ def perform_example_compilation_tests(cpp_library, config)
       end
     end
 
+    # having undefined platforms is a config error
+    platforms.select { |p| ovr_config.platform_info[p].nil? }.each do |p|
+      assure("Platform '#{p}' is defined in configuration files") { false }
+    end
+
     install_all_packages(platforms, ovr_config)
     install_arduino_library_dependencies(ovr_config.aux_libraries_for_build, "<compile/libraries>")
 
     platforms.each do |p|
-      board = ovr_config.platform_info[p][:board]
+      board = ovr_config.platform_info[p][:board] # assured to exist, above
       attempt("Compiling #{example_name} for #{board}") do
         ret = @backend.compile_sketch(example_path, board)
-        puts
-        if ret
-          output = @backend.last_msg
-          puts output
-          i = output.index("leaving")
-          free_space = output[i + 8..-1].to_i
-          min_free_space = @cli_options[:min_free_space]
-          if free_space < min_free_space
-            puts "Free space of #{free_space} is less than minimum of #{min_free_space}"
-            ret = false
-          end
-        else
+        unless ret
           puts "Last command: #{@backend.last_msg}"
           puts @backend.last_err
         end
         ret
+      end
+
+      next if @cli_options[:min_free_space].nil?
+
+      usage = @backend.last_bytes_usage
+      min_free_space = @cli_options[:min_free_space]
+      attempt("Checking that free space of #{usage[:free]} is less than desired minimum #{min_free_space}") do
+        min_free_space <= usage[:free]
       end
     end
   end
@@ -521,6 +539,7 @@ end
 
 banner
 inform("Host OS") { ArduinoCI::Host.os }
+inform("Working directory") { Dir.pwd }
 
 # initialize command and config
 config = ArduinoCI::CIConfig.default.from_project_library

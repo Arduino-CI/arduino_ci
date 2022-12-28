@@ -54,7 +54,20 @@ RSpec.describe ArduinoCI::Host do
     it "can find things with which" do
       ruby_path = ArduinoCI::Host.which("ruby")
       expect(ruby_path).not_to be nil
-      expect(ruby_path.include? "ruby").to be true
+      expect(ruby_path.to_s.include? "ruby").to be true
+    end
+  end
+
+  context "path mangling" do
+    win_path = "D:\\a\\_temp\\d20221224-4508-11w7f4\\foo.yml"
+    posix_pathname = Pathname.new("D:/a/_temp/d20221224-4508-11w7f4/foo.yml")
+
+    it "converts windows paths to pathnames" do
+      expect(ArduinoCI::Host.pathname_to_windows(posix_pathname)).to eq(win_path)
+    end
+
+    it "converts pathnames to windows paths" do
+      expect(ArduinoCI::Host.windows_to_pathname(win_path)).to eq(posix_pathname)
     end
   end
 

@@ -17,15 +17,17 @@ module ArduinoCI
     # @return [String] the only allowable name for the arduino-cli config file.
     CONFIG_FILE_NAME = "arduino-cli.yaml".freeze
 
+    # Unfortunately we need error messaging around this quirk
+    # @return [String] The text to use for user apologies regarding the config file
+    CONFIG_FILE_APOLOGY = "Sorry this is weird, see https://github.com/arduino/arduino-cli/issues/753".freeze
+
     # the actual path to the executable on this platform
     # @return [Pathname]
     attr_accessor :binary_path
 
-    # If a custom config is deired (i.e. for testing), specify it here.
-    # Note https://github.com/arduino/arduino-cli/issues/753 : the --config-file option
-    # is really the director that contains the file
+    # The directory that contains the config file
     # @return [Pathname]
-    attr_accessor :config_dir
+    attr_reader :config_dir
 
     # @return [String] STDOUT of the most recently-run command
     attr_reader   :last_out
@@ -46,6 +48,7 @@ module ArduinoCI
       @last_out           = ""
       @last_err           = ""
       @last_msg           = ""
+      @config_dir_hack    = false
     end
 
     def _wrap_run(work_fn, *args, **kwargs)
@@ -53,13 +56,59 @@ module ArduinoCI
       has_env = !args.empty? && args[0].instance_of?(Hash)
       env_vars = has_env ? args[0] : {}
       actual_args = has_env ? args[1..-1] : args  # need to shift over if we extracted args
-      custom_config = @config_dir.nil? ? [] : ["--config-file", @config_dir.to_s]
+      custom_config = []
+      custom_config += ["--config-file", config_file_cli_param.to_s] unless @config_dir_hack || @config_dir.nil?
       full_args = [binary_path.to_s, "--format", "json"] + custom_config + actual_args
       full_cmd = env_vars.empty? ? full_args : [env_vars] + full_args
 
       shell_vars = env_vars.map { |k, v| "#{k}=#{v}" }.join(" ")
       @last_msg = " $ #{shell_vars} #{full_args.join(' ')}"
       work_fn.call(*full_cmd, **kwargs)
+    end
+
+    # The config file name to be passed on the command line
+    #
+    # Note https://github.com/arduino/arduino-cli/issues/753 : the --config-file option
+    # is really the directory that contains the file
+    #
+    # @return [Pathname]
+    def config_file_path
+      @config_dir + CONFIG_FILE_NAME
+    end
+
+    # The config file name to be passed on the command line
+    #
+    # Note https://github.com/arduino/arduino-cli/issues/753 : the --config-file option
+    # is really the directory that contains the file
+    #
+    # @param val [Pathname] The config file that will be used
+    # @return [Pathname]
+    def config_file_path=(rhs)
+      path_rhs = Pathname(rhs)
+      err_text = "Config file basename must be '#{CONFIG_FILE_NAME}'. #{CONFIG_FILE_APOLOGY}"
+      raise ArgumentError, err_text unless path_rhs.basename.to_s == CONFIG_FILE_NAME
+
+      @config_dir = path_rhs.dirname
+    end
+
+    # The config file to be used as a CLI param
+    #
+    # This format changes based on version, which is very annoying.  See unit tests.
+    #
+    # @return [Pathname] the path to use for a given OS
+    def config_file_cli_param
+      should_use_config_dir? ? @config_dir : config_file_path
+    end
+
+    # Get an acceptable filename for use as a config file
+    #
+    # Note https://github.com/arduino/arduino-cli/issues/753 : the --config-file option
+    # is really the directory that contains the file
+    #
+    # @param dir [Pathname] the desired directory
+    # @return [Pathname]
+    def self.config_file_path_from_dir(dir)
+      Pathname(dir) + CONFIG_FILE_NAME
     end
 
     # build and run the arduino command
@@ -90,7 +139,9 @@ module ArduinoCI
 
     # @return [String] the path to the Arduino libraries directory
     def lib_dir
-      Pathname.new(config_dump["directories"]["user"]) + "libraries"
+      user_dir_raw = config_dump["directories"]["user"]
+      user_dir = OS.windows? ? Host.windows_to_pathname(user_dir_raw) : user_dir_raw
+      Pathname.new(user_dir) + "libraries"
     end
 
     # Board manager URLs
@@ -163,7 +214,12 @@ module ArduinoCI
         @last_msg = "Can't compile Sketch at nonexistent path '#{path}'!"
         return false
       end
-      ret = run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path.to_s)
+
+      ret = if should_use_dry_run?
+        run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", "--dry-run", path.to_s)
+      else
+        run_and_capture("compile", "--fqbn", boardname, "--warnings", "all", path.to_s)
+      end
       @last_msg = ret[:out]
       ret[:success]
     end
@@ -234,6 +290,47 @@ module ArduinoCI
       libraries_dir.mkpath unless libraries_dir.exist?
       Host.symlink(src_path, destination_path)
       cpp_library
+    end
+
+    # extract the "Free space remaining" amount from the last run
+    # @return [Hash] the usage, as a hash with keys :free, :max, and :globals
+    def last_bytes_usage
+      # Free-spacing syntax for regexes is not working today, not sure why. Make a string and convert to regex.
+      re_str = [
+        'Global variables use (?<globals>\d+) bytes',
+        '\(\d+%\) of dynamic memory,',
+        'leaving (?<free>\d+) bytes for local variables.',
+        'Maximum is (?<max>\d+) bytes.'
+      ].join(" ")
+      mem_info = Regexp.new(re_str).match(@last_msg)
+      return {} if mem_info.nil?
+
+      Hash[mem_info.names.map(&:to_sym).zip(mem_info.captures.map(&:to_i))]
+    end
+
+    # @return [String] the arduino-cli version that the backend is using, as String
+    def version_str
+      capture_json("version")[:json]["VersionString"]
+    end
+
+    # @return [Gem::Version] the arduino-cli version that the backend is using, as a semver object
+    def version
+      Gem::Version.new(version_str)
+    end
+
+    # Since the dry-run behavior became default in arduino-cli 0.14, the command line flag was removed
+    # @return [Bool] whether the --dry-run flag is available for this arduino-cli version
+    def should_use_dry_run?
+      version < Gem::Version.new('0.14')
+    end
+
+    # Since the config dir behavior has changed from a directory to a file (At some point??)
+    # @return [Bool] whether to specify configuration by directory or filename
+    def should_use_config_dir?
+      @config_dir_hack = true   # prevent an infinite loop when trying to run the command
+      version < Gem::Version.new('0.14')
+    ensure
+      @config_dir_hack = false
     end
   end
 end
