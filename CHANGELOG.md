@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [1.4.0] - 2022-12-28
+### Added
 - Allow use of watchdog timer in application code (though it doesn't do anything)
 - Show output from successful compile
 - `--min-free-space=N` command-line argument to fail if free space is below required value
@@ -30,10 +44,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Use `arduino-cli` version `0.29.0` as the backend
 - Test runner detects console width if possible, allowing variable width from 80-132 chars
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Properly report compile errors in GitHub Actions.
 - Fix copy/paste error to allow additional warnings for a platform
@@ -46,8 +56,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - RSpec was not communicating compile errors from unit test executables that failed to build. Now it does, via jgfoster
 - Windows paths now avoid picking up backslashes, for proper equality comparisons
 - Libraries are now considered installed if their entry is a symlink (for which `exist?` would return `false`)
-
-### Security
 
 
 ## [1.3.0] - 2021-01-13
@@ -550,7 +558,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.0.0...v1.1.0
