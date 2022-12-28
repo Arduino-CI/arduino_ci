@@ -69,7 +69,6 @@ class Parser
         puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
         puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
         puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
-        puts " - #{VAR_SKIP_LIBPROPS} - if set, testing will skip [experimental] library.properties validation"
         exit
       end
     end
