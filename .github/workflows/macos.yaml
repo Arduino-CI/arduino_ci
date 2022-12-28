@@ -44,6 +44,7 @@ jobs:
           bundle install
           cd SampleProjects/TestSomething
           bundle install
+          bundle exec arduino_ci.rb --help
           bundle exec arduino_ci.rb
 
   NetworkLib:
