@@ -13,14 +13,21 @@ Pull requests will trigger a CI job.  The following two commands will be expecte
 
 * `bundle exec rubocop -D .` - code style tests
 * `bundle exec rspec` - functional tests
+* `bundle exec rspec spec/some_file_spec.rb` - functional tests for just some file
 
  If you do not already have a working ruby development environment set up, run the following commands:
 
 ```shell
+# One of the following
 apt-get install ruby ruby-dev    # For Debian/Ubuntu
-dnf install ruby ruby-devel      # For Fedora
-yum install ruby ruby-devel      # For Centos/RHEL
+dnf install ruby ruby-devel      # For Fedora/newer Centos/RHEL
+yum install ruby ruby-devel      # For older Centos/RHEL
+
+# All below
 gem install bundler
+gem install rspec
+# Now you are ready to install dependencies with bundle (as described in the
+# README file) and to run unit tests.
 ```
 
 Be prepared to write tests to accompany any code you would like to see merged.
