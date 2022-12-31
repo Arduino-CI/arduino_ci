@@ -193,6 +193,13 @@ def assured_platform(purpose, name, config)
   platform_definition
 end
 
+def inform_override(from_where, &block)
+  inform("Using configuration override from #{from_where}") do
+    file = block.call
+    file.nil? ? "<none>" : file
+  end
+end
+
 # Return true if the file (or one of the dirs containing it) is hidden
 def file_is_hidden_somewhere?(path)
   # this is clunkly but pre-2.2-ish ruby doesn't return ascend as an enumerator
@@ -493,7 +500,9 @@ def perform_example_compilation_tests(cpp_library, config)
     puts
     inform("Discovered example sketch") { example_name }
 
-    ovr_config = config.from_example(example_path)
+    inform_override("example") { ex_config.override_file_from_example(example_path) }
+    ovr_config = ex_config.from_example(example_path)
+
     platforms = choose_platform_set(ovr_config, "library example", ovr_config.platforms_to_build, cpp_library.library_properties)
 
     # having no platforms defined is probably an error
@@ -541,7 +550,10 @@ inform("Host OS") { ArduinoCI::Host.os }
 inform("Working directory") { Dir.pwd }
 
 # initialize command and config
-config = ArduinoCI::CIConfig.default.from_project_library
+default_config = ArduinoCI::CIConfig.default
+inform_override("project") { default_config.override_file_from_project_library }
+config = default_config.from_project_library
+
 @backend = ArduinoCI::ArduinoInstallation.autolocate!
 inform("Located arduino-cli binary") { @backend.binary_path.to_s }
 if @backend.lib_dir.exist?
