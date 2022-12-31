@@ -183,9 +183,9 @@ module ArduinoCI
         run_and_capture("core", "install", boardfamily)
       else
         urls = @additional_urls.join(",")
-        res1 = run_and_capture("core", "update-index", "--additional-urls", urls)
-        res2 = run_and_capture("core", "install", boardfamily, "--additional-urls", urls)
-        Host.merge_capture_results([res1, res2])
+        # update the index, then install. if the update step fails, return that result
+        updater = run_and_capture("core", "update-index", "--additional-urls", urls)
+        updater[:success] ? run_and_capture("core", "install", boardfamily, "--additional-urls", urls) : updater
       end
       result[:success]
     end
