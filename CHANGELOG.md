@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- C++ definitions of `ARDUINO_CI_COMPILATION_MOCKS` and `ARDUINO_CI_GODMODE` to aid in compilation macros
 
 ### Changed
 

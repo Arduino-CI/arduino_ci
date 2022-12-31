@@ -6,6 +6,9 @@
 #include "WString.h"
 #include "PinHistory.h"
 
+// signal to the developer that we are in an arduino_ci mocked environment
+#define ARDUINO_CI_GODMODE
+
 // random
 void randomSeed(unsigned long seed);
 long random(long vmax);
