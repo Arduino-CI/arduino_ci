@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `CIConfig.available_override_config_path()` to search for available override files in standard locations
 - `CIConfig.override_file_from_project_library` and `CIConfig.override_file_from_example` to expose config locations
 - CI runner script now expliclty informs about config overrides
+- A project `examples/` directory can now provide its own configuration override file, which provides no new flexibility but simply mirrors the behavior for `tests/`.
 
 ### Changed
 - `CIConfig` now uses `Pathname` instead of strings

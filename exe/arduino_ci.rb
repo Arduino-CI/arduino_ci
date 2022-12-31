@@ -495,6 +495,9 @@ def perform_example_compilation_tests(cpp_library, config)
     return
   end
 
+  inform_override("examples") { config.override_file_from_example(cpp_library.examples_dir) }
+  ex_config = config.from_example(cpp_library.examples_dir)
+
   library_examples.each do |example_path|
     example_name = File.basename(example_path)
     puts
