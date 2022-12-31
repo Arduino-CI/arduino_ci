@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - C++ definitions of `ARDUINO_CI_COMPILATION_MOCKS` and `ARDUINO_CI_GODMODE` to aid in compilation macros
+- `CIConfig.available_override_config_path()` to search for available override files in standard locations
+- `CIConfig.override_file_from_project_library` and `CIConfig.override_file_from_example` to expose config locations
 
 ### Changed
 - `CIConfig` now uses `Pathname` instead of strings
@@ -15,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Deprecated
 
 ### Removed
+- `CIConfig.with_config`, which was only used internally
 
 ### Fixed
 - `arduino_ci.rb --help` no longer crashes

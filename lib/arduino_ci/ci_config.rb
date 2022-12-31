@@ -196,26 +196,36 @@ module ArduinoCI
       overridden_config
     end
 
-    # Get the config file at a given path, if it exists, and pass that to a block.
-    # Many config files may exist, but only the first match is used
+    # Get available configuration file, if one exists
     # @param base_dir [String] The directory in which to search for a config file
-    # @param val_when_no_match [Object] The value to return if no config files are found
-    # @yield [path] Process the configuration file at the given path
-    # @yieldparam [String] The path of an existing config file
-    # @yieldreturn [ArduinoCI::CIConfig] a settings object
-    # @return [ArduinoCI::CIConfig]
-    def with_config(base_dir, val_when_no_match)
-      CONFIG_FILENAMES.each do |f|
-        path = base_dir.nil? ? Pathname.new(f) : base_dir + f
-        return (yield path) if path.exist?
-      end
-      val_when_no_match
+    # @return [Pathname] the first available config file we could find, or nil
+    def available_override_config_path(base_dir = nil)
+      CONFIG_FILENAMES.map { |f| base_dir.nil? ? Pathname.new(f) : base_dir + f }.find(&:exist?)
+    end
+
+    # Find an available override file from the project directory
+    #
+    # @todo this is currently reliant on launching the arduino_ci.rb test runner from
+    #        the correct working directory
+    # @return [Pathname] A file that can override project config, or nil if none was found
+    def override_file_from_project_library
+      available_override_config_path(nil)
+    end
+
+    # Find an available override file from an example sketch
+    #
+    # @param path [Pathname] the path to the example or example directory
+    # @return [Pathname] A file that can override project config, or nil if none was found
+    def override_file_from_example(example_path)
+      base_dir = example_path.directory? ? example_path : example_path.dirname
+      available_override_config_path(base_dir)
     end
 
     # Produce a configuration, assuming the CI script runs from the working directory of the base project
     # @return [ArduinoCI::CIConfig] the new settings object
     def from_project_library
-      with_config(nil, self) { |path| with_override(path) }
+      ovr = override_file_from_project_library
+      ovr.nil? ? self : with_override(ovr)
     end
 
     # Produce a configuration override taken from an Arduino library example path
@@ -223,8 +233,8 @@ module ArduinoCI
     # @param path [Pathname] the path to the settings yaml file
     # @return [ArduinoCI::CIConfig] the new settings object
     def from_example(example_path)
-      base_dir = example_path.directory? ? example_path : example_path.dirname
-      with_config(base_dir, self) { |path| with_override(path) }
+      ovr = override_file_from_example(example_path)
+      ovr.nil? ? self : with_override(ovr)
     end
 
     # get information about a given platform: board name, package name, compiler stuff, etc

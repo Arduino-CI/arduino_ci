@@ -121,10 +121,14 @@ RSpec.describe ArduinoCI::CIConfig do
     end
   end
 
-  context "with_config" do
+  context "with overrides from files" do
     it "loads from yaml" do
       override_dir = Pathname.new(__dir__) + "yaml" + "override1"
       base_config = ArduinoCI::CIConfig.default
+      found_override_file = base_config.override_file_from_example(override_dir)
+      expect(found_override_file).to_not be(nil)
+      expect(found_override_file).to be_a(Pathname)
+      expect(found_override_file).to exist
       combined_config = base_config.from_example(override_dir)
 
       expect(combined_config).not_to be nil
