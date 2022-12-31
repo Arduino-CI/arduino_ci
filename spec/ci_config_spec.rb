@@ -43,7 +43,7 @@ RSpec.describe ArduinoCI::CIConfig do
   context "hash" do
     it "converts to hash" do
       base = ArduinoCI::CIConfig.new
-      base.load_yaml(File.join(File.dirname(__FILE__), "yaml", "o2.yaml"))
+      base.load_yaml(Pathname.new(__dir__) + "yaml" + "o2.yaml")
 
       expect(base.to_h).to eq(
         packages: {},
@@ -82,7 +82,7 @@ RSpec.describe ArduinoCI::CIConfig do
 
   context "with_override" do
     it "loads from yaml" do
-      override_file = File.join(File.dirname(__FILE__), "yaml", "o1.yaml")
+      override_file = Pathname.new(__dir__) + "yaml" + "o1.yaml"
       base = ArduinoCI::CIConfig.default
       expect(base.is_default).to be true
       combined_config = base.with_override(override_file)
@@ -123,7 +123,7 @@ RSpec.describe ArduinoCI::CIConfig do
 
   context "with_config" do
     it "loads from yaml" do
-      override_dir = File.join(File.dirname(__FILE__), "yaml", "override1")
+      override_dir = Pathname.new(__dir__) + "yaml" + "override1"
       base_config = ArduinoCI::CIConfig.default
       combined_config = base_config.from_example(override_dir)
 
@@ -188,7 +188,7 @@ RSpec.describe ArduinoCI::CIConfig do
         "mars.cpp"
       ])
 
-      override_file = File.join(File.dirname(__FILE__), "yaml", "o1.yaml")
+      override_file = Pathname.new(__dir__) + "yaml" + "o1.yaml"
       combined_config = ArduinoCI::CIConfig.default.with_override(override_file)
       expect(combined_config.unittest_info[:testfiles][:select]).to match_array(["*-*.*"])
       expect(combined_config.unittest_info[:testfiles][:reject]).to match_array(["sam-squamsh.*"])

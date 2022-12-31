@@ -1,4 +1,5 @@
 require 'yaml'
+require 'pathname'
 
 # base config (platforms)
 #   project config - .arduino_ci_platforms.yml
@@ -58,7 +59,7 @@ module ArduinoCI
       def default
         ret = new
         ret.instance_variable_set("@is_default", true)
-        ret.load_yaml(File.expand_path("../../misc/default.yml", __dir__))
+        ret.load_yaml((Pathname.new(__dir__) + "../../misc/default.yml").realpath)
         ret
       end
     end
@@ -205,8 +206,8 @@ module ArduinoCI
     # @return [ArduinoCI::CIConfig]
     def with_config(base_dir, val_when_no_match)
       CONFIG_FILENAMES.each do |f|
-        path = base_dir.nil? ? f : File.join(base_dir, f)
-        return (yield path) if File.exist?(path)
+        path = base_dir.nil? ? Pathname.new(f) : base_dir + f
+        return (yield path) if path.exist?
       end
       val_when_no_match
     end
@@ -219,10 +220,10 @@ module ArduinoCI
 
     # Produce a configuration override taken from an Arduino library example path
     # handle either path to example file or example dir
-    # @param path [String] the path to the settings yaml file
+    # @param path [Pathname] the path to the settings yaml file
     # @return [ArduinoCI::CIConfig] the new settings object
     def from_example(example_path)
-      base_dir = File.directory?(example_path) ? example_path : File.dirname(example_path)
+      base_dir = example_path.directory? ? example_path : example_path.dirname
       with_config(base_dir, self) { |path| with_override(path) }
     end
 
