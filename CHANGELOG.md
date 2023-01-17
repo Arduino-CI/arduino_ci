@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [1.5.0] - 2023-01-17
+### Added
 - C++ definitions of `ARDUINO_CI_COMPILATION_MOCKS` and `ARDUINO_CI_GODMODE` to aid in compilation macros
 - `CIConfig.available_override_config_path()` to search for available override files in standard locations
 - `CIConfig.override_file_from_project_library` and `CIConfig.override_file_from_example` to expose config locations
@@ -16,8 +30,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - `CIConfig` now uses `Pathname` instead of strings
 
-### Deprecated
-
 ### Removed
 - `CIConfig.with_config`, which was only used internally
 
@@ -26,8 +38,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fix missing `LED_BUILTIN` definition for Arduino Due, Zero and Circuit Playground.
 - No longer ignore failures if the first step of compiling files for the unit test fails.
-
-### Security
 
 
 ## [1.4.0] - 2022-12-28
@@ -569,7 +579,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.1.0...v1.2.0
