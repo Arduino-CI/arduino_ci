@@ -30,11 +30,31 @@ module ArduinoCI
       nil
     end
 
+    # Execute a shell command and capture stdout, stderr, and status
+    #
+    # @see Process.spawn
+    # @see https://docs.ruby-lang.org/en/2.0.0/Process.html#method-c-spawn
+    # @return [Hash] with keys "stdout" (String), "stderr" (String), and "success" (bool)
     def self.run_and_capture(*args, **kwargs)
       stdout, stderr, status = Open3.capture3(*args, **kwargs)
       { out: stdout, err: stderr, success: status.exitstatus.zero? }
     end
 
+    # Merge multiple capture results into one aggregate value
+    #
+    # @param args [Array] Array of hashes from `run_and_capture`
+    # @return [Hash] with keys "stdout" (String), "stderr" (String), and "success" (bool)
+    def self.merge_capture_results(*args)
+      {
+        out: args.map { |a| a[:out] }.join,
+        err: args.map { |a| a[:err] }.join,
+        success: args.all? { |a| a[:success] }
+      }
+    end
+
+    # Execute a shell command
+    #
+    # @see system
     def self.run_and_output(*args, **kwargs)
       system(*args, **kwargs)
     end

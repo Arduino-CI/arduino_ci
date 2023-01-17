@@ -7,16 +7,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- C++ definitions of `ARDUINO_CI_COMPILATION_MOCKS` and `ARDUINO_CI_GODMODE` to aid in compilation macros
+- `CIConfig.available_override_config_path()` to search for available override files in standard locations
+- `CIConfig.override_file_from_project_library` and `CIConfig.override_file_from_example` to expose config locations
+- CI runner script now expliclty informs about config overrides
+- A project `examples/` directory can now provide its own configuration override file, which provides no new flexibility but simply mirrors the behavior for `tests/`.
 
 ### Changed
+- `CIConfig` now uses `Pathname` instead of strings
 
 ### Deprecated
 
 ### Removed
+- `CIConfig.with_config`, which was only used internally
 
 ### Fixed
+- `arduino_ci.rb --help` no longer crashes
 
 - Fix missing `LED_BUILTIN` definition for Arduino Due, Zero and Circuit Playground.
+- No longer ignore failures if the first step of compiling files for the unit test fails.
 
 ### Security
 
@@ -30,7 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for `dtostrf()`
 - Added a CI workflow to lint the code base
 - Added a CI workflow to check for spelling errors
-- Extraction of byes usage in a compiled sketch is now calculated in a method: `ArduinoBackend.last_bytes_usage`
+- Extraction of bytes usage in a compiled sketch is now calculated in a method: `ArduinoBackend.last_bytes_usage`
 - Added ```nano_every``` platform to represent ```arduino:megaavr``` architecture
 - Working directory is now printed in test runner output
 - Explicitly include `irb` via rubygems

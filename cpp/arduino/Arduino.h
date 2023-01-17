@@ -5,6 +5,11 @@ Mock Arduino.h library.
 Where possible, variable names from the Arduino library are used to avoid conflicts
 
 */
+
+// signal to the developer that we are in an arduino_ci mocked environment
+#define ARDUINO_CI_COMPILATION_MOCKS
+
+
 // Chars and strings
 
 #include "ArduinoDefines.h"

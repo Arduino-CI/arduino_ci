@@ -44,6 +44,11 @@ This allows a file (or glob) pattern to be executed in your tests directory, cre
 This allows a file (or glob) pattern to be executed in your tests directory, creating a blacklist of files to skip.  E.g. `--testfile-reject=test_animal_*.cpp` would match `test_animal_cat.cpp` and `test_animal_dog.cpp` (skipping those) and test only `test_plant_rose.cpp`, `test_plant_daisy.cpp`, etc.
 
 
+### `--min-free-space` option
+
+This specifies the minimum free SRAM memory for stack/heap, in bytes, that _must_ be leftover after compilation.  This value applies globally -- to _all_ platforms that will be included in a test run.
+
+
 ### `CUSTOM_INIT_SCRIPT` environment variable
 
 If set, testing will execute (using `/bin/sh`) the script referred to by this variable -- relative to the current working directory (i.e. the root directory of the library).  The script will _run_ in the Arduino Libraries directory (changing to the Libraries directory, running the script, and returning to the individual library root afterward).  This enables use cases like the GitHub action to install custom library versions (i.e. a version of a library that is different than what the library manager would automatically install by name) prior to CI test runs.

@@ -182,7 +182,10 @@ module ArduinoCI
       result = if @additional_urls.empty?
         run_and_capture("core", "install", boardfamily)
       else
-        run_and_capture("core", "install", boardfamily, "--additional-urls", @additional_urls.join(","))
+        urls = @additional_urls.join(",")
+        # update the index, then install. if the update step fails, return that result
+        updater = run_and_capture("core", "update-index", "--additional-urls", urls)
+        updater[:success] ? run_and_capture("core", "install", boardfamily, "--additional-urls", urls) : updater
       end
       result[:success]
     end

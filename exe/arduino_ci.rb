@@ -69,7 +69,6 @@ class Parser
         puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
         puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
         puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
-        puts " - #{VAR_SKIP_LIBPROPS} - if set, testing will skip [experimental] library.properties validation"
         exit
       end
     end
@@ -192,6 +191,13 @@ def assured_platform(purpose, name, config)
   platform_definition = config.platform_definition(name)
   assure("Requested #{purpose} platform '#{name}' is defined in 'platforms' YML") { !platform_definition.nil? }
   platform_definition
+end
+
+def inform_override(from_where, &block)
+  inform("Using configuration override from #{from_where}") do
+    file = block.call
+    file.nil? ? "<none>" : file
+  end
 end
 
 # Return true if the file (or one of the dirs containing it) is hidden
@@ -436,7 +442,7 @@ def perform_unit_tests(cpp_library, file_config)
     puts
     compilers.each do |gcc_binary|
       # before compiling the tests, build a shared library of everything except the test code
-      next unless build_shared_library(gcc_binary, p, config, cpp_library)
+      next @failure_count += 1 unless build_shared_library(gcc_binary, p, config, cpp_library)
 
       # now build and run each test using the shared library build above
       config.allowable_unittest_files(cpp_library.test_files).each do |unittest_path|
@@ -489,12 +495,17 @@ def perform_example_compilation_tests(cpp_library, config)
     return
   end
 
+  inform_override("examples") { config.override_file_from_example(cpp_library.examples_dir) }
+  ex_config = config.from_example(cpp_library.examples_dir)
+
   library_examples.each do |example_path|
     example_name = File.basename(example_path)
     puts
     inform("Discovered example sketch") { example_name }
 
-    ovr_config = config.from_example(example_path)
+    inform_override("example") { ex_config.override_file_from_example(example_path) }
+    ovr_config = ex_config.from_example(example_path)
+
     platforms = choose_platform_set(ovr_config, "library example", ovr_config.platforms_to_build, cpp_library.library_properties)
 
     # having no platforms defined is probably an error
@@ -542,9 +553,13 @@ inform("Host OS") { ArduinoCI::Host.os }
 inform("Working directory") { Dir.pwd }
 
 # initialize command and config
-config = ArduinoCI::CIConfig.default.from_project_library
+default_config = ArduinoCI::CIConfig.default
+inform_override("project") { default_config.override_file_from_project_library }
+config = default_config.from_project_library
+
 @backend = ArduinoCI::ArduinoInstallation.autolocate!
 inform("Located arduino-cli binary") { @backend.binary_path.to_s }
+inform("Using arduino-cli version") { @backend.version.to_s }
 if @backend.lib_dir.exist?
   inform("Found libraries directory") { @backend.lib_dir }
 else
