@@ -559,6 +559,7 @@ config = default_config.from_project_library
 
 @backend = ArduinoCI::ArduinoInstallation.autolocate!
 inform("Located arduino-cli binary") { @backend.binary_path.to_s }
+inform("Using arduino-cli version") { @backend.version.to_s }
 if @backend.lib_dir.exist?
   inform("Found libraries directory") { @backend.lib_dir }
 else
