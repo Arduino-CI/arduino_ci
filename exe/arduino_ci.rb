@@ -137,8 +137,17 @@ def display_files(pathname)
   @log.indent { non_hidden.each(&@log.method(:iputs)) }
 end
 
+# helper recursive function for library installation
+#
+# This recursively descends the dependency tree starting from an initial list,
+# and either uses existing installations (based on directory naming only) or
+# forcibly installs the dependency.  Each child dependency logs which parent requested it
+#
+# @param library_names [Array<String>] the list of libraries to install
+# @param on_behalf_of [String] the requestor of a given dependency
+# @param already_installed [Array<String>] the set of dependencies installed by previous steps
 # @return [Array<String>] The list of installed libraries
-def install_arduino_library_dependencies(library_names, on_behalf_of, already_installed = [])
+def install_arduino_library_dependencies_h(library_names, on_behalf_of, already_installed)
   installed = already_installed.clone
   (library_names.map { |n| @backend.library_of_name(n) } - installed).each do |l|
     if l.installed?
@@ -151,9 +160,21 @@ def install_arduino_library_dependencies(library_names, on_behalf_of, already_in
       end
     end
     installed << l.name
-    installed += install_arduino_library_dependencies(l.arduino_library_dependencies, l.name, installed)
+    installed += install_arduino_library_dependencies_h(l.arduino_library_dependencies, l.name, installed)
   end
   installed
+end
+
+# @return [Array<String>] The list of installed libraries
+def install_arduino_library_dependencies(library_names, on_behalf_of)
+  if library_names.empty?
+    @log.inform("Arduino library dependencies (configured in #{on_behalf_of}) to resolve") { library_names.length }
+    return []
+  end
+
+  @log.inform_multiline("Resolving #{library_names.length} Arduino library dependencies configured in #{on_behalf_of})") do
+    install_arduino_library_dependencies_h(library_names, on_behalf_of, [])
+  end
 end
 
 # @param platforms [Array<String>] list of platforms to consider
