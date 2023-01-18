@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Add util/atomic.h
+- `Logger` class to centralize CI runner script logging (in particular, indentation)
 
 ### Changed
+- `arduino_ci.rb` uses new `Logger`
 
 ### Deprecated
 
