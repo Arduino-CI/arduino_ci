@@ -15,6 +15,8 @@ VAR_CUSTOM_INIT_SCRIPT = "CUSTOM_INIT_SCRIPT".freeze
 VAR_USE_SUBDIR         = "USE_SUBDIR".freeze
 VAR_EXPECT_EXAMPLES    = "EXPECT_EXAMPLES".freeze
 VAR_EXPECT_UNITTESTS   = "EXPECT_UNITTESTS".freeze
+VAR_ARDUINO_CI_PRE_UNIT_TEST_RUN_SCRIPT  = "ARDUINO_CI_PRE_UNIT_TEST_RUN_SCRIPT".freeze
+VAR_ARDUINO_CI_POST_UNIT_TEST_RUN_SCRIPT = "ARDUINO_CI_POST_UNIT_TEST_RUN_SCRIPT".freeze
 
 @failure_count = 0
 @passfail = proc { |result| result ? "✓" : "✗" }
@@ -66,6 +68,10 @@ class Parser
         puts "Additionally, the following environment variables control the script:"
         puts " - #{VAR_CUSTOM_INIT_SCRIPT} - if set, this script will be run from the Arduino/libraries directory"
         puts "       prior to any automated library installation or testing (e.g. to install unofficial libraries)"
+        puts " - #{VAR_CUSTOM_INIT_SCRIPT}_SHELL - if set, this will override the"
+        puts "       default shell (/bin/sh) used to execute #{VAR_CUSTOM_INIT_SCRIPT} with."
+        puts " - #{VAR_ARDUINO_CI_PRE_UNIT_TEST_RUN_SCRIPT} and/or #{VAR_ARDUINO_CI_POST_UNIT_TEST_RUN_SCRIPT}"
+        puts "       if set, run the script before/after each unit test run"
         puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
         puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
         puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
@@ -329,23 +335,24 @@ def get_annotated_compilers(config, cpp_library)
   compilers
 end
 
-# Handle existence or nonexistence of custom initialization script -- run it if you have it
+# Run custom custom script specified by user.
 #
 # This feature is to drive GitHub actions / docker image installation where the container is
 # in a clean-slate state but needs some way to have custom library versions injected into it.
-# In this case, the user provided script would fetch a git repo or some other method
-def perform_custom_initialization(_config)
-  script_path = ENV[VAR_CUSTOM_INIT_SCRIPT]
-  inform("Environment variable #{VAR_CUSTOM_INIT_SCRIPT}") { "'#{script_path}'" }
+# In this case, the user provided script would fetch a git repo or some other method.
+def run_custom_script(env_var, *args)
+  script_path = ENV[env_var]
+  script_shell = ENV[env_var + "_SHELL"] || "/bin/sh"
+  inform("Environment variable #{env_var}") { "'#{script_path}'" }
   return if script_path.nil?
   return if script_path.empty?
 
   script_pathname = Pathname.getwd + script_path
-  assure("Script at #{VAR_CUSTOM_INIT_SCRIPT} exists") { script_pathname.exist? }
+  assure("Script at #{env_var} exists") { script_pathname.exist? }
 
-  assure_multiline("Running #{script_pathname} with sh in libraries working dir") do
+  assure_multiline("Running #{script_pathname} with #{script_shell} in libraries working dir") do
     Dir.chdir(@backend.lib_dir) do
-      IO.popen(["/bin/sh", script_pathname.to_s], err: [:child, :out]) do |io|
+      IO.popen([script_shell, script_pathname.to_s, *args], err: [:child, :out]) do |io|
         io.each_line { |line| puts "    #{line}" }
       end
     end
@@ -441,6 +448,7 @@ def perform_unit_tests(cpp_library, file_config)
   platforms.each do |p|
     puts
     compilers.each do |gcc_binary|
+      run_custom_script(VAR_ARDUINO_CI_PRE_UNIT_TEST_RUN_SCRIPT, p, gcc_binary)
       # before compiling the tests, build a shared library of everything except the test code
       next @failure_count += 1 unless build_shared_library(gcc_binary, p, config, cpp_library)
 
@@ -460,6 +468,7 @@ def perform_unit_tests(cpp_library, file_config)
           cpp_library.run_test_file(exe)
         end
       end
+      run_custom_script(VAR_ARDUINO_CI_POST_UNIT_TEST_RUN_SCRIPT, p, gcc_binary)
     end
   end
 end
@@ -567,7 +576,7 @@ else
 end
 
 # run any library init scripts from the library itself.
-perform_custom_initialization(config)
+run_custom_script(VAR_CUSTOM_INIT_SCRIPT)
 
 # initialize library under test
 inform("Environment variable #{VAR_USE_SUBDIR}") { "'#{ENV[VAR_USE_SUBDIR]}'" }
