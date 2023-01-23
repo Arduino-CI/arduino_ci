@@ -9,6 +9,9 @@ VAR_USE_SUBDIR         = "USE_SUBDIR".freeze
 VAR_EXPECT_EXAMPLES    = "EXPECT_EXAMPLES".freeze
 VAR_EXPECT_UNITTESTS   = "EXPECT_UNITTESTS".freeze
 
+CLI_SKIP_EXAMPLES_COMPILATION = "--skip-examples-compilation".freeze
+CLI_SKIP_UNITTESTS            = "--skip-unittests".freeze
+
 # script-level variables we'll use
 @log         = nil
 @backend     = nil
@@ -30,11 +33,11 @@ class Parser
     opt_parser = OptionParser.new do |opts|
       opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
 
-      opts.on("--skip-unittests", "Don't run unit tests") do |p|
+      opts.on(CLI_SKIP_UNITTESTS, "Don't run unit tests") do |p|
         output_options[:skip_unittests] = p
       end
 
-      opts.on("--skip-examples-compilation", "Don't compile example sketches") do |p|
+      opts.on(CLI_SKIP_EXAMPLES_COMPILATION, "Don't compile example sketches") do |p|
         output_options[:skip_compilation] = p
       end
 
@@ -195,10 +198,11 @@ end
 
 # @param expectation_envvar [String] the name of the env var to check
 # @param operation [String] a description of what operation we might be skipping
+# @param howto_skip [String] a description of how the runner can skip this
 # @param filegroup_name [String] a description of the set of files without which we effectively skip the operation
 # @param dir_description [String] a description of the directory where we looked for the files
 # @param dir [Pathname] the directory where we looked for the files
-def handle_expectation_of_files(expectation_envvar, operation, filegroup_name, dir_description, dir_path)
+def handle_expectation_of_files(expectation_envvar, operation, howto_skip, filegroup_name, dir_description, dir_path)
   # alert future me about running the script from the wrong directory, instead of doing the huge file dump
   # otherwise, assume that the user might be running the script on a library with no actual unit tests
   if Pathname.new(__dir__).parent == Pathname.new(Dir.pwd)
@@ -222,20 +226,22 @@ def handle_expectation_of_files(expectation_envvar, operation, filegroup_name, d
   end
 
   @log.inform(problem) { dir_path }
-  explain_and_exercise_envvar(expectation_envvar, operation, "contents of #{dir_desc}") { display_files(dir) }
+  explain_and_exercise_envvar(expectation_envvar, operation, howto_skip, "contents of #{dir_desc}") { display_files(dir) }
 end
 
 # @param expectation_envvar [String] the name of the env var to check
 # @param operation [String] a description of what operation we might be skipping
+# @param howto_skip [String] a description of how the runner can skip this
 # @param block_desc [String] a description of what information will be dumped to assist the user
 # @param block [Proc] a function that dumps information
-def explain_and_exercise_envvar(expectation_envvar, operation, block_desc, &block)
+def explain_and_exercise_envvar(expectation_envvar, operation, howto_skip, block_desc, &block)
   @log.inform("Environment variable #{expectation_envvar} is") { "(#{ENV[expectation_envvar].class}) #{ENV[expectation_envvar]}" }
   if ENV[expectation_envvar].nil?
     @log.inform_multiline("Skipping #{operation}") do
       @log.iputs "In case that's an error, displaying #{block_desc}:"
       block.call
       @log.iputs "To force an error in this case, set the environment variable #{expectation_envvar}"
+      @log.iputs "To explicitly skip this check, use #{howto_skip}"
       true
     end
   else
@@ -410,14 +416,21 @@ def perform_unit_tests(cpp_library, file_config)
 
   # Handle lack of test files
   if cpp_library.test_files.empty?
-    handle_expectation_of_files(VAR_EXPECT_UNITTESTS, "unit tests", "test files", "tests directory", cpp_library.tests_dir)
+    handle_expectation_of_files(
+      VAR_EXPECT_UNITTESTS,
+      "unit tests",
+      CLI_SKIP_UNITTESTS,
+      "test files",
+      "tests directory",
+      cpp_library.tests_dir
+    )
     return
   end
 
   # Get platforms, handle lack of them
   platforms = choose_platform_set(config, "unittest", config.platforms_to_unittest, cpp_library.library_properties)
   if platforms.empty?
-    explain_and_exercise_envvar(VAR_EXPECT_UNITTESTS, "unit tests", "platforms and architectures") do
+    explain_and_exercise_envvar(VAR_EXPECT_UNITTESTS, "unit tests", CLI_SKIP_UNITTESTS, "platforms and architectures") do
       @log.iputs "Configured platforms: #{config.platforms_to_unittest}"
       @log.iputs "Configuration is default: #{config.is_default}"
       arches = cpp_library.library_properties.nil? ? nil : cpp_library.library_properties.architectures
@@ -479,7 +492,14 @@ def perform_example_compilation_tests(cpp_library, config)
   library_examples = cpp_library.example_sketches
 
   if library_examples.empty?
-    handle_expectation_of_files(VAR_EXPECT_EXAMPLES, "builds", "examples", "the examples directory", cpp_library.examples_dir)
+    handle_expectation_of_files(
+      VAR_EXPECT_EXAMPLES,
+      "builds",
+      CLI_SKIP_EXAMPLES_COMPILATION,
+      "examples",
+      "the examples directory",
+      cpp_library.examples_dir
+    )
     return
   end
 
@@ -498,7 +518,12 @@ def perform_example_compilation_tests(cpp_library, config)
 
     # having no platforms defined is probably an error
     if platforms.empty?
-      explain_and_exercise_envvar(VAR_EXPECT_EXAMPLES, "examples compilation", "platforms and architectures") do
+      explain_and_exercise_envvar(
+        VAR_EXPECT_EXAMPLES,
+        "examples compilation",
+        CLI_SKIP_EXAMPLES_COMPILATION,
+        "platforms and architectures"
+      ) do
         @log.iputs "Configured platforms: #{ovr_config.platforms_to_build}"
         @log.iputs "Configuration is default: #{ovr_config.is_default}"
         arches = cpp_library.library_properties.nil? ? nil : cpp_library.library_properties.architectures
