@@ -541,7 +541,7 @@ def perform_example_compilation_tests(cpp_library, config)
 
       usage = @backend.last_bytes_usage
       min_free_space = @cli_options[:min_free_space]
-      attempt("Checking that free space of #{usage[:free]} is less than desired minimum #{min_free_space}") do
+      attempt("Checking that the free space of #{usage[:free]} is at least the desired minimum of #{min_free_space}") do
         min_free_space <= usage[:free]
       end
     end
