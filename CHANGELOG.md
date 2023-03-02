@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Fix phrasing of free-space check
+- Handle unrecognized command line errors in a nicer way
 
 ### Security
 

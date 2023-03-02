@@ -19,6 +19,18 @@ CLI_SKIP_UNITTESTS            = "--skip-unittests".freeze
 
 # Use some basic parsing to allow command-line overrides of config
 class Parser
+
+  def self.show_help(opts)
+    puts opts
+    puts
+    puts "Additionally, the following environment variables control the script:"
+    puts " - #{VAR_CUSTOM_INIT_SCRIPT} - if set, this script will be run from the Arduino/libraries directory"
+    puts "       prior to any automated library installation or testing (e.g. to install unofficial libraries)"
+    puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
+    puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
+    puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
+  end
+
   def self.parse(options)
     unit_config = {}
     output_options = {
@@ -58,19 +70,19 @@ class Parser
       end
 
       opts.on("-h", "--help", "Prints this help") do
-        puts opts
-        puts
-        puts "Additionally, the following environment variables control the script:"
-        puts " - #{VAR_CUSTOM_INIT_SCRIPT} - if set, this script will be run from the Arduino/libraries directory"
-        puts "       prior to any automated library installation or testing (e.g. to install unofficial libraries)"
-        puts " - #{VAR_USE_SUBDIR} - if set, the script will install the library from this subdirectory of the cwd"
-        puts " - #{VAR_EXPECT_EXAMPLES} - if set, testing will fail if no example sketches are present"
-        puts " - #{VAR_EXPECT_UNITTESTS} - if set, testing will fail if no unit tests are present"
+        show_help(opts)
         exit
       end
     end
 
-    opt_parser.parse!(options)
+    begin
+      opt_parser.parse!(options)
+    rescue OptionParser::InvalidOption => e
+      puts e
+      puts
+      show_help(opt_parser)
+      exit 1
+    end
     output_options
   end
 end
@@ -585,7 +597,7 @@ end
 #
 
 # Read in command line options and make them read-only
-@cli_options = (Parser.parse ARGV).freeze
+@cli_options = Parser.parse(ARGV).freeze
 
 @log = ArduinoCI::Logger.auto_width
 @log.banner
