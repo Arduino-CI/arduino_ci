@@ -42,7 +42,8 @@
 /* Internal helper functions. */
 static __inline__ uint8_t __iSeiRetVal(void)
 {
-    sei();
+    // Just do nothing
+    //sei();
     return 1;
 }
 
