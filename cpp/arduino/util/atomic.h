@@ -91,7 +91,7 @@ static __inline__ void __iRestore(const  uint8_t *__s)
     set to either \c c99 or \c gnu99.
 
     The macros in this header file deal with code blocks that are
-    guaranteed to be excuted Atomically or Non-Atmomically.  The term
+    guaranteed to be executed Atomically or Non-Atmomically.  The term
     "Atomic" in this context refers to the unability of the respective
     code to be interrupted.
 
