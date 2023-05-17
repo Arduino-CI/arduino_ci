@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add util/atomic.h
 - `Logger` class to centralize CI runner script logging (in particular, indentation)
 - Explicit reporting of free bytes after compilation
+- `interrupt.h` mock
 
 ### Changed
 - `arduino_ci.rb` uses new `Logger`
