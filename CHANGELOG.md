@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Logger` class to centralize CI runner script logging (in particular, indentation)
 - Explicit reporting of free bytes after compilation
 - `interrupt.h` mock
+- `#define` statements for analog pins `A0` - `A11`
 
 ### Changed
 - `arduino_ci.rb` uses new `Logger`
