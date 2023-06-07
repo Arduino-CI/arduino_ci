@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [1.6.0] - 2023-06-07
+### Added
 - Add util/atomic.h
 - `Logger` class to centralize CI runner script logging (in particular, indentation)
 - Explicit reporting of free bytes after compilation
@@ -16,15 +30,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - `arduino_ci.rb` uses new `Logger`
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 - Fix phrasing of free-space check
 - Handle unrecognized command line errors in a nicer way
-
-### Security
 
 
 ## [1.5.0] - 2023-01-17
@@ -587,7 +595,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.2.0...v1.3.0
