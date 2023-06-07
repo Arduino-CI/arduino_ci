@@ -92,6 +92,20 @@
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__SAM3X8E__) || defined(__SAMD21G18A__)
   // Verified on these platforms, see https://github.com/Arduino-CI/arduino_ci/pull/341#issuecomment-1368118880
   #define LED_BUILTIN 13
+
+  #define A0 14
+  #define A1 15
+  #define A2 16
+  #define A3 17
+  #define A4 18
+  #define A5 19
+  #define A6 20
+  #define A7 21
+  #define A8 22
+  #define A9 23
+  #define A10 24
+  #define A11 25
+
 #endif
 
 // Arduino defines this

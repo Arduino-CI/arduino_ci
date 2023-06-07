@@ -8,8 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Add util/atomic.h
+- `Logger` class to centralize CI runner script logging (in particular, indentation)
+- Explicit reporting of free bytes after compilation
+- `interrupt.h` mock
+- `#define` statements for analog pins `A0` - `A11`
 
 ### Changed
+- `arduino_ci.rb` uses new `Logger`
 
 ### Deprecated
 
@@ -17,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Fix phrasing of free-space check
+- Handle unrecognized command line errors in a nicer way
 
 ### Security
 
@@ -52,7 +58,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added a CI workflow to lint the code base
 - Added a CI workflow to check for spelling errors
 - Extraction of bytes usage in a compiled sketch is now calculated in a method: `ArduinoBackend.last_bytes_usage`
-- Added ```nano_every``` platform to represent ```arduino:megaavr``` architecture
+- Added `nano_every` platform to represent `arduino:megaavr` architecture
 - Working directory is now printed in test runner output
 - Explicitly include `irb` via rubygems
 

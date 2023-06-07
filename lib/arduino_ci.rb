@@ -1,4 +1,5 @@
 require "arduino_ci/version"
+require "arduino_ci/logger"
 require "arduino_ci/arduino_installation"
 require "arduino_ci/cpp_library"
 require "arduino_ci/ci_config"
