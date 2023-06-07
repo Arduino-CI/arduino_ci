@@ -89,7 +89,7 @@
 #define TIMER5B 17
 #define TIMER5C 18
 
-#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__SAM3X8E__) || defined(__SAMD21G18A__)
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega4809__) || defined(__SAM3X8E__) || defined(__SAMD21G18A__)
   // Verified on these platforms, see https://github.com/Arduino-CI/arduino_ci/pull/341#issuecomment-1368118880
   #define LED_BUILTIN 13
 
