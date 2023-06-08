@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- Fixes #352, in which the Arduino backend was being referenced in the CI runner before being explicitly assigned; this affected all tests of modules that used `library.properties` to specify runtime Arduino module dependencies.
 
 ### Security
 
