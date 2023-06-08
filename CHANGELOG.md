@@ -15,9 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-- Compiler flags for Nano Every
 
 ### Security
+
+
+## [1.6.1] - 2023-06-08
+### Fixed
+- Compiler flags for Nano Every
 
 
 ## [1.6.0] - 2023-06-07
@@ -596,7 +600,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/Arduino-CI/arduino_ci/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.3.0...v1.4.0
