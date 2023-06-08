@@ -1,7 +1,7 @@
 
 # ArduinoCI Ruby gem (`arduino_ci`)
 [![Gem Version](https://badge.fury.io/rb/arduino_ci.svg)](https://rubygems.org/gems/arduino_ci)
-[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/1.6.1)
+[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/arduino_ci/1.6.2)
 [![Gitter](https://badges.gitter.im/Arduino-CI/arduino_ci.svg)](https://gitter.im/Arduino-CI/arduino_ci?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![GitHub Marketplace](https://img.shields.io/badge/Get_it-on_Marketplace-informational.svg)](https://github.com/marketplace/actions/arduino_ci)
 

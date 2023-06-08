@@ -15,9 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-- Fixes #352, in which the Arduino backend was being referenced in the CI runner before being explicitly assigned; this affected all tests of modules that used `library.properties` to specify runtime Arduino module dependencies.
 
 ### Security
+
+
+## [1.6.2] - 2023-06-08
+### Fixed
+- Fixes #352, in which the Arduino backend was being referenced in the CI runner before being explicitly assigned; this affected all tests of modules that used `library.properties` to specify runtime Arduino module dependencies.
 
 
 ## [1.6.1] - 2023-06-08
@@ -601,7 +605,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Skeleton for gem with working unit tests
 
 
-[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/Arduino-CI/arduino_ci/compare/v1.6.2...HEAD
+[1.6.2]: https://github.com/Arduino-CI/arduino_ci/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/Arduino-CI/arduino_ci/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/Arduino-CI/arduino_ci/compare/v1.4.0...v1.5.0
