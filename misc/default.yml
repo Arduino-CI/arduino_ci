@@ -65,9 +65,10 @@ platforms:
     gcc:
       features:
       defines:
+        - __AVR_ATmega4809__
+        - AVR_NANO_4809_328MODE
         - MILLIS_USE_TIMERB3
         - NO_EXTERNAL_I2C_PULLUP
-        - AVR_NANO_4809_328MODE
       warnings:
       flags:
   esp32:
