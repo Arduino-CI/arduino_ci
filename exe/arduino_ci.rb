@@ -351,11 +351,6 @@ def perform_bootstrap
     end
   end
 
-  install_arduino_library_dependencies(
-    cpp_library.arduino_library_dependencies,
-    "<#{ArduinoCI::CppLibrary::LIBRARY_PROPERTIES_FILE}>"
-  )
-
   # return all objects needed by other steps
   {
     backend: backend,
@@ -604,6 +599,12 @@ end
 
 strap = perform_bootstrap
 @backend = strap[:backend]
+
+install_arduino_library_dependencies(
+  strap[:cpp_library].arduino_library_dependencies,
+  "<#{ArduinoCI::CppLibrary::LIBRARY_PROPERTIES_FILE}>"
+)
+
 perform_unit_tests(strap[:cpp_library], strap[:config])
 perform_example_compilation_tests(strap[:cpp_library], strap[:config])
 
