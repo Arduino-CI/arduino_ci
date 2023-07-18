@@ -87,3 +87,13 @@ jobs:
           ruby-version: 2.6
       - name: Check usage - Test SharedLibrary should fail
         run: ./SampleProjects/SharedLibrary/test.sh
+
+  Makefile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Check usage - Demo Makefile
+        run: ./SampleProjects/Makefile/test.sh
