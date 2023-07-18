@@ -494,7 +494,7 @@ module ArduinoCI
     # @return [Pathname] path to the compiled test executable
     def build_for_test(test_file, gcc_binary)
       executable = Pathname.new("#{BUILD_DIR}/#{test_file.basename}.bin").expand_path
-      if File.file?("Makefile") && ArduinoCI::Host.os != :windows
+      if File.file?("Makefile") && ArduinoCI::Host.os == :osx
         # we should already have everything built!
       else
         File.delete(executable) if File.exist?(executable)
@@ -540,7 +540,7 @@ module ArduinoCI
       suffix = OS.windows? ? "dll" : "so"
       full_lib_name = "#{BUILD_DIR}/lib#{LIBRARY_NAME}.#{suffix}"
       executable = Pathname.new(full_lib_name).expand_path
-      if File.file?("Makefile") && ArduinoCI::Host.os != :windows
+      if File.file?("Makefile") && ArduinoCI::Host.os == :osx
         @last_cmd = " $ make --jobs"
         ret = Host.run_and_capture("export ARDUINO_CI=#{CI_CPP_DIR}; make --jobs")
         @last_err = ret[:err]
