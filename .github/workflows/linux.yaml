@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
       - name: Check usage - Test BusIO from scratch
         run: |
           g++ -v
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
       - name: Check style
         run: |
           g++ -v
@@ -39,7 +39,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
       - name: Check functionality
         run: |
           g++ -v
@@ -52,7 +52,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
       - name: Check usage - TestSomething
         run: |
           g++ -v
@@ -68,7 +68,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
       - name: Check usage - Test NetworkLib from scratch
         run: |
           g++ -v
@@ -84,7 +84,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
       - name: Check usage - Test SharedLibrary should fail
         run: ./SampleProjects/SharedLibrary/test.sh
 
@@ -94,6 +94,6 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: 3.2
       - name: Check usage - Demo Makefile
         run: ./SampleProjects/Makefile/test.sh

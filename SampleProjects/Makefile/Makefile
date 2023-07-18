@@ -33,21 +33,21 @@ $(BIN)/test.cpp.bin: $(BIN)/libarduino.so $(TEST)/test.cpp
 	echo "building test.cpp.bin"
 	$(GPP_TEST) -o $(BIN)/test.cpp.bin $(TEST)/test.cpp -larduino
 
-OBJECTS=$(BIN)/Arduino.o $(BIN)/Godmode.o $(BIN)/stdlib.o $(BIN)/ArduinoUnitTests.o \
+OBJECTS=$(BIN)/stdlib.o $(BIN)/Godmode.o $(BIN)/Arduino.o $(BIN)/ArduinoUnitTests.o \
 	$(BIN)/SharedLibrary.o 
 
 $(BIN)/libarduino.so: $(OBJECTS)
 	g++ $(FLAGS) -shared -fPIC -Wl,-undefined,dynamic_lookup -L$(BIN) $(INCLUDE) \
 	-o $(BIN)/libarduino.so $(OBJECTS)
 
-$(BIN)/Arduino.o: $(ARDUINO_CI)/arduino/Arduino.cpp
-	g++ -c $(FLAGS) $(INCLUDE) -o $(BIN)/Arduino.o $(ARDUINO_CI)/arduino/Arduino.cpp
+$(BIN)/stdlib.o: $(ARDUINO_CI)/arduino/stdlib.cpp
+	g++ -c $(FLAGS) $(INCLUDE) -o $(BIN)/stdlib.o $(ARDUINO_CI)/arduino/stdlib.cpp
 
 $(BIN)/Godmode.o: $(ARDUINO_CI)/arduino/Godmode.cpp
 	g++ -c $(FLAGS) $(INCLUDE) -o $(BIN)/Godmode.o $(ARDUINO_CI)/arduino/Godmode.cpp
 
-$(BIN)/stdlib.o: $(ARDUINO_CI)/arduino/stdlib.cpp
-	g++ -c $(FLAGS) $(INCLUDE) -o $(BIN)/stdlib.o $(ARDUINO_CI)/arduino/stdlib.cpp
+$(BIN)/Arduino.o: $(ARDUINO_CI)/arduino/Arduino.cpp
+	g++ -c $(FLAGS) $(INCLUDE) -o $(BIN)/Arduino.o $(ARDUINO_CI)/arduino/Arduino.cpp
 
 $(BIN)/ArduinoUnitTests.o: $(ARDUINO_CI)/unittest/ArduinoUnitTests.cpp
 	g++ -c $(FLAGS) $(INCLUDE) -o $(BIN)/ArduinoUnitTests.o $(ARDUINO_CI)/unittest/ArduinoUnitTests.cpp
