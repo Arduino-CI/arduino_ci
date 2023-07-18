@@ -494,20 +494,24 @@ module ArduinoCI
     # @return [Pathname] path to the compiled test executable
     def build_for_test(test_file, gcc_binary)
       executable = Pathname.new("#{BUILD_DIR}/#{test_file.basename}.bin").expand_path
-      File.delete(executable) if File.exist?(executable)
-      arg_sets = ["-std=c++0x", "-o", executable.to_s, "-L#{BUILD_DIR}", "-DARDUINO=100"]
-      if libasan?(gcc_binary)
-        arg_sets << [ # Stuff to help with dynamic memory mishandling
-          "-g", "-O1",
-          "-fno-omit-frame-pointer",
-          "-fno-optimize-sibling-calls",
-          "-fsanitize=address"
-        ]
+      if (File.file?("Makefile") and ArduinoCI::Host.os != :windows)
+        # we should already have everything built!
+      else
+        File.delete(executable) if File.exist?(executable)
+        arg_sets = ["-std=c++0x", "-o", executable.to_s, "-L#{BUILD_DIR}", "-DARDUINO=100"]
+        if libasan?(gcc_binary)
+          arg_sets << [ # Stuff to help with dynamic memory mishandling
+            "-g", "-O1",
+            "-fno-omit-frame-pointer",
+            "-fno-optimize-sibling-calls",
+            "-fsanitize=address"
+          ]
+        end
+        arg_sets << @test_args
+        arg_sets << [test_file.to_s, "-l#{LIBRARY_NAME}"]
+        args = arg_sets.flatten(1)
+        return nil unless run_gcc(gcc_binary, *args)
       end
-      arg_sets << @test_args
-      arg_sets << [test_file.to_s, "-l#{LIBRARY_NAME}"]
-      args = arg_sets.flatten(1)
-      return nil unless run_gcc(gcc_binary, *args)
 
       artifacts << executable
       executable
@@ -536,31 +540,37 @@ module ArduinoCI
       suffix = OS.windows? ? "dll" : "so"
       full_lib_name = "#{BUILD_DIR}/lib#{LIBRARY_NAME}.#{suffix}"
       executable = Pathname.new(full_lib_name).expand_path
-      File.delete(executable) if File.exist?(executable)
-      arg_sets = ["-std=c++0x", "-shared", "-fPIC", "-Wl,-undefined,dynamic_lookup",
-                  "-o", executable.to_s, "-L#{BUILD_DIR}", "-DARDUINO=100"]
-      if libasan?(gcc_binary)
-        arg_sets << [ # Stuff to help with dynamic memory mishandling
-          "-g", "-O1",
-          "-fno-omit-frame-pointer",
-          "-fno-optimize-sibling-calls",
-          "-fsanitize=address"
-        ]
+      if (File.file?("Makefile") and ArduinoCI::Host.os != :windows)
+        @last_cmd = " $ make --jobs"
+        ret = Host.run_and_capture("export ARDUINO_CI=#{CI_CPP_DIR}; make --jobs")
+        return nil unless ret[:success]
+      else
+        File.delete(executable) if File.exist?(executable)
+        arg_sets = ["-std=c++0x", "-shared", "-fPIC", "-Wl,-undefined,dynamic_lookup",
+                    "-o", executable.to_s, "-L#{BUILD_DIR}", "-DARDUINO=100"]
+        if libasan?(gcc_binary)
+          arg_sets << [ # Stuff to help with dynamic memory mishandling
+            "-g", "-O1",
+            "-fno-omit-frame-pointer",
+            "-fno-optimize-sibling-calls",
+            "-fsanitize=address"
+          ]
+        end
+
+        # combine library.properties defs (if existing) with config file.
+        # TODO: as much as I'd like to rely only on the properties file(s), I think that would prevent testing 1.0-spec libs
+        # the following two take some time, so are cached when we build the shared library
+        @full_dependencies = all_arduino_library_dependencies!(aux_libraries)
+        @test_args = test_args(@full_dependencies, ci_gcc_config) # build full set of include directories to be cached for later
+
+        arg_sets << @test_args
+        arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
+        arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
+        arg_sets << cpp_files.map(&:to_s) # CPP files for the primary application library under test
+        arg_sets << cpp_files_libraries(@full_dependencies).map(&:to_s) # CPP files for all the libraries we depend on
+        args = arg_sets.flatten(1)
+        return nil unless run_gcc(gcc_binary, *args)
       end
-
-      # combine library.properties defs (if existing) with config file.
-      # TODO: as much as I'd like to rely only on the properties file(s), I think that would prevent testing 1.0-spec libs
-      # the following two take some time, so are cached when we build the shared library
-      @full_dependencies = all_arduino_library_dependencies!(aux_libraries)
-      @test_args = test_args(@full_dependencies, ci_gcc_config) # build full set of include directories to be cached for later
-
-      arg_sets << @test_args
-      arg_sets << cpp_files_arduino.map(&:to_s)  # Arduino.cpp, Godmode.cpp, and stdlib.cpp
-      arg_sets << cpp_files_unittest.map(&:to_s) # ArduinoUnitTests.cpp
-      arg_sets << cpp_files.map(&:to_s) # CPP files for the primary application library under test
-      arg_sets << cpp_files_libraries(@full_dependencies).map(&:to_s) # CPP files for all the libraries we depend on
-      args = arg_sets.flatten(1)
-      return nil unless run_gcc(gcc_binary, *args)
 
       artifacts << executable
       executable
