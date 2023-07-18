@@ -7,6 +7,7 @@ BIN=$(LIBRARIES)/Makefile/.arduino_ci
 FLAGS=-std=c++0x \
 	-Wno-deprecated-declarations \
   -DARDUINO=100 \
+  -fPIC \
   -g \
   -O1 \
   -fno-omit-frame-pointer \
@@ -23,7 +24,7 @@ INCLUDE=-I$(ARDUINO_CI)/arduino \
   -I$(ARDUINO_CI)/unittest \
   -I$(LIBRARIES)/Makefile/src \
 
-GPP_TEST=g++ -fPIC $(FLAGS) -L$(BIN) $(INCLUDE)
+GPP_TEST=g++ $(FLAGS) -L$(BIN) $(INCLUDE)
 
 .PHONY : all
 all : $(BIN)/test.cpp.bin
@@ -36,7 +37,7 @@ OBJECTS=$(BIN)/stdlib.o $(BIN)/Godmode.o $(BIN)/Arduino.o $(BIN)/ArduinoUnitTest
 	$(BIN)/SharedLibrary.o 
 
 $(BIN)/libarduino.so: $(OBJECTS)
-	g++ $(FLAGS) -shared -fPIC -Wl,-undefined,dynamic_lookup -L$(BIN) $(INCLUDE) \
+	g++ $(FLAGS) -shared -Wl,-undefined,dynamic_lookup -L$(BIN) $(INCLUDE) \
 	-o $(BIN)/libarduino.so $(OBJECTS)
 
 $(BIN)/stdlib.o: $(ARDUINO_CI)/arduino/stdlib.cpp
