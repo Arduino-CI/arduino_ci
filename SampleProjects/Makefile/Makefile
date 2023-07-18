@@ -23,14 +23,13 @@ INCLUDE=-I$(ARDUINO_CI)/arduino \
   -I$(ARDUINO_CI)/unittest \
   -I$(LIBRARIES)/Makefile/src \
 
-GPP_TEST=g++ $(FLAGS) -L$(BIN) $(INCLUDE)
+GPP_TEST=g++ -no-pie -fon-pie $(FLAGS) -L$(BIN) $(INCLUDE)
 
 .PHONY : all
 all : $(BIN)/test.cpp.bin
 
 
 $(BIN)/test.cpp.bin: $(BIN)/libarduino.so $(TEST)/test.cpp
-	echo "building test.cpp.bin"
 	$(GPP_TEST) -o $(BIN)/test.cpp.bin $(TEST)/test.cpp -larduino
 
 OBJECTS=$(BIN)/stdlib.o $(BIN)/Godmode.o $(BIN)/Arduino.o $(BIN)/ArduinoUnitTests.o \
