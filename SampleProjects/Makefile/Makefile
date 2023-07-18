@@ -23,7 +23,7 @@ INCLUDE=-I$(ARDUINO_CI)/arduino \
   -I$(ARDUINO_CI)/unittest \
   -I$(LIBRARIES)/Makefile/src \
 
-GPP_TEST=g++ -no-pie -fon-pie $(FLAGS) -L$(BIN) $(INCLUDE)
+GPP_TEST=g++ -fPIC $(FLAGS) -L$(BIN) $(INCLUDE)
 
 .PHONY : all
 all : $(BIN)/test.cpp.bin
